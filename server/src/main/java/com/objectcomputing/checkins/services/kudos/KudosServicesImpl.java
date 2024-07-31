@@ -1,51 +1,79 @@
 package com.objectcomputing.checkins.services.kudos;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipient;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientServices;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.transaction.annotation.Transactional;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 class KudosServicesImpl implements KudosServices {
-
+    private static final Logger LOG = LoggerFactory.getLogger(KudosServicesImpl.class);
     public static final String KUDOS_DOES_NOT_EXIST_MSG = "Kudos with id %s does not exist";
+    public static final String KUDOS_EMAIL_SUBJECT = "Kudos";
     private final KudosRepository kudosRepository;
     private final KudosRecipientServices kudosRecipientServices;
     private final KudosRecipientRepository kudosRecipientRepository;
     private final TeamRepository teamRepository;
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
+    private final EmailSender emailSender;
+    private final CheckInsConfiguration checkInsConfiguration;
+    private final RoleServices roleServices;
+    private final MemberProfileServices memberProfileServices;
+
+    private enum NotificationType {
+        creation, approval
+    }
 
     KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
                              KudosRecipientRepository kudosRecipientRepository,
                              TeamRepository teamRepository,
                              MemberProfileRetrievalServices memberProfileRetrievalServices,
-                             CurrentUserServices currentUserServices) {
+                             CurrentUserServices currentUserServices,
+                             RoleServices roleServices,
+                             MemberProfileServices memberProfileServices,
+                             @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
+                             CheckInsConfiguration checkInsConfiguration) {
         this.kudosRepository = kudosRepository;
         this.kudosRecipientServices = kudosRecipientServices;
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.teamRepository = teamRepository;
         this.memberProfileRetrievalServices = memberProfileRetrievalServices;
+        this.memberProfileServices = memberProfileServices;
+        this.roleServices = roleServices;
         this.currentUserServices = currentUserServices;
+        this.emailSender = emailSender;
+        this.checkInsConfiguration = checkInsConfiguration;
     }
 
     @Override
@@ -76,6 +104,7 @@ class KudosServicesImpl implements KudosServices {
             kudosRecipientServices.save(kudosRecipient);
         }
 
+        sendNotification(savedKudos, NotificationType.creation);
         return savedKudos;
     }
 
@@ -95,7 +124,9 @@ class KudosServicesImpl implements KudosServices {
 
         existingKudos.setDateApproved(LocalDate.now());
 
-        return kudosRepository.update(existingKudos);
+        Kudos updated = kudosRepository.update(existingKudos);
+        sendNotification(updated, NotificationType.approval);
+        return updated;
     }
 
     @Override
@@ -268,5 +299,71 @@ class KudosServicesImpl implements KudosServices {
         kudosResponseDTO.setRecipientMembers(members);
 
         return kudosResponseDTO;
+    }
+
+    public static String getApprovalEmailContent(
+                             CheckInsConfiguration checkInsConfiguration) {
+        return "You have received new kudos!<br>\nClick " +
+               checkInsConfiguration.getWebAddress() +
+               "/kudos to view them.";
+    }
+
+    public static String getAdminEmailContent(
+                             CheckInsConfiguration checkInsConfiguration) {
+        return "There are new kudos to review.<br>\nClick " +
+               checkInsConfiguration.getWebAddress() +
+               "/admin/manage-kudos to review them.";
+    }
+
+    private void sendNotification(Kudos kudos, NotificationType notificationType) {
+        try {
+            // Only deal with public kudos here.
+            if (kudos.getPubliclyVisible()) {
+                List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
+                if (!recipients.isEmpty()) {
+                    // Send email to receivers of kudos that they have new kudos...
+                    MemberProfile sender = memberProfileRetrievalServices.getById(kudos.getSenderId()).orElse(null);
+                    if (sender == null) {
+                        LOG.error(String.format("Unable to locate member %s.", kudos.getSenderId().toString()));
+                    } else {
+                        String fromEmail = sender.getWorkEmail();
+                        String fromName = sender.getFirstName() + " " + sender.getLastName();
+                        String content = "";
+                        List<String> recipientAddresses = new ArrayList<String>();
+                        switch(notificationType) {
+                        case NotificationType.approval:
+                            content = getApprovalEmailContent(checkInsConfiguration);
+                            for (KudosRecipient kudosRecipient : recipients) {
+                                MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElse(null);
+                                if (member == null) {
+                                    LOG.error(String.format("Unable to locate member %s.", kudosRecipient.getMemberId().toString()));
+                                } else {
+                                    recipientAddresses.add(member.getWorkEmail());
+                                }
+                            }
+                            break;
+                        case NotificationType.creation:
+                            content = getAdminEmailContent(checkInsConfiguration);
+                            String adminRole = RoleType.ADMIN.toString();
+                            for (MemberProfile profile : memberProfileServices.findAll()) {
+                                Set<Role> userRoles = roleServices.findUserRoles(profile.getId());
+                                for (Role role : userRoles) {
+                                    if (role.getRole().equals(adminRole)) {
+                                        recipientAddresses.add(profile.getWorkEmail());
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        if (recipientAddresses.size() > 0) {
+                            emailSender.sendEmail(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, recipientAddresses.toArray(new String[recipientAddresses.size()]));
+                        }
+                    }
+                }
+            }
+        } catch(Exception ex) {
+          LOG.error("An unexpected error occurred while sending notifications: {}", ex.getLocalizedMessage(), ex);
+        }
     }
 }
