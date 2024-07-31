@@ -38,6 +38,9 @@ flyway:
 ---
 check-ins:
   web-address: "https://checkins.objectcomputing.com"
+  application:
+    google-api:
+      delegated-user: test@objectcomputing.com
 ---
 aes:
   key: BOGUS_TEST_KEY

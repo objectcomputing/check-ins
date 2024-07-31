@@ -50,9 +50,6 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     @Client("/services/feedback/requests")
     HttpClient client;
 
-    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT)
-    String notificationSubject;
-
     @Inject
     CheckInsConfiguration checkInsConfiguration;
 
@@ -214,7 +211,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                         "SEND_EMAIL",
                         fromName,
                         pdlMemberProfile.getWorkEmail(),
-                        notificationSubject,
+                        checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
                         correctContent,
                         recipient.getWorkEmail()
                 ),
@@ -1078,7 +1075,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                         "SEND_EMAIL",
                         fromName,
                         pdl.getWorkEmail(),
-                        notificationSubject,
+                        checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
                         correctContent,
                         recipient.getWorkEmail()
                 ),
