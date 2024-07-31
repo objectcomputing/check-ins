@@ -244,6 +244,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals("Kudos with id %s does not exist".formatted(nonExistentKudosId), responseException.getMessage());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -255,6 +256,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals("Kudos with id %s has already been approved".formatted(kudos.getId()), responseException.getMessage());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -266,6 +268,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
         assertEquals("Forbidden", responseException.getMessage());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
