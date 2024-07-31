@@ -17,6 +17,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrieva
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 
 @Singleton
 public class KudosRecipientServicesImpl implements KudosRecipientServices {
-
+    public static final String KUDOS_EMAIL_SUBJECT = "Kudos";
+    private static final Logger LOG = LoggerFactory.getLogger(KudosRecipientServicesImpl.class);
     private final KudosRecipientRepository kudosRecipientRepository;
     private final CurrentUserServices currentUserServices;
     private final KudosRepository kudosRepository;
@@ -36,7 +39,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
     private final MemberProfileServices memberProfileServices;
     private final RoleServices roleServices;
     private final EmailSender emailSender;
-    private final String webAddress;
+    private final CheckInsConfiguration checkInsConfiguration;
 
     public KudosRecipientServicesImpl(KudosRecipientRepository kudosRecipientRepository,
                                       CurrentUserServices currentUserServices,
@@ -53,7 +56,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
         this.memberProfileServices = memberProfileServices;
         this.roleServices = roleServices;
         this.emailSender = emailSender;
-        this.webAddress = checkInsConfiguration.getWebAddress();
+        this.checkInsConfiguration = checkInsConfiguration;
     }
 
     @Override
@@ -89,35 +92,46 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
         return kudosRecipientRepository.findByKudosId(kudosId);
     }
 
-    private void sendNotification(Kudos kudos, MemberProfile member) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        String fromEmail = currentUser.getWorkEmail();
-        String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
-        String subject = "Kudos";
-        List<String> recipients = new ArrayList<String>();
-        String content = "";
-        if (kudos.getPubliclyVisible()) {
-            // Build a list of admin email addresses.
-            String adminRole = RoleType.ADMIN.toString();
-            for (MemberProfile profile : memberProfileServices.findAll()) {
-                Set<Role> userRoles = roleServices.findUserRoles(profile.getId());
-                for (Role role : userRoles) {
-                    if (role.getRole().equals(adminRole)) {
-                        recipients.add(profile.getWorkEmail());
-                        break;
-                    }
-                }
-            }
-            content = "There are new kudos to review.<br>\nClick " +
-                      webAddress + "/admin/manage-kudos to review them.";
-        } else {
-            // This is a private kudos, so notify the receiver directly.
-            recipients.add(member.getWorkEmail());
-            content = kudos.getMessage();
-        }
+    public static String getAdminEmailContent(
+                             CheckInsConfiguration checkInsConfiguration) {
+        return "There are new kudos to review.<br>\nClick " +
+               checkInsConfiguration.getWebAddress() +
+               "/admin/manage-kudos to review them.";
+    }
 
-        for (String recipient : recipients) {
-            emailSender.sendEmail(fromName, fromEmail, subject, content, recipient);
+    private void sendNotification(Kudos kudos, MemberProfile member) {
+        try {
+            MemberProfile sender = memberProfileRetrievalServices.getById(kudos.getSenderId()).orElse(null);
+            if (sender == null) {
+                LOG.error(String.format("Unable to locate member %s.", kudos.getSenderId().toString()));
+            } else {
+                String fromEmail = sender.getWorkEmail();
+                String fromName = sender.getFirstName() + " " + sender.getLastName();
+                List<String> recipients = new ArrayList<String>();
+                String content = "";
+                if (kudos.getPubliclyVisible()) {
+                    // Build a list of admin email addresses.
+                    String adminRole = RoleType.ADMIN.toString();
+                    for (MemberProfile profile : memberProfileServices.findAll()) {
+                        Set<Role> userRoles = roleServices.findUserRoles(profile.getId());
+                        for (Role role : userRoles) {
+                            if (role.getRole().equals(adminRole)) {
+                                recipients.add(profile.getWorkEmail());
+                                break;
+                            }
+                        }
+                    }
+                    content = getAdminEmailContent(checkInsConfiguration);
+                } else {
+                    // This is a private kudos, so notify the receiver directly.
+                    recipients.add(member.getWorkEmail());
+                    content = kudos.getMessage();
+                }
+
+                emailSender.sendEmail(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, recipients.toArray(new String[recipients.size()]));
+            }
+        } catch(Exception ex) {
+          LOG.error("An unexpected error occurred while sending notifications: {}", ex.getLocalizedMessage(), ex);
         }
     }
 }

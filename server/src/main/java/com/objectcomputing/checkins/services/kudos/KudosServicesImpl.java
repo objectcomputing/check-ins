@@ -33,6 +33,7 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 class KudosServicesImpl implements KudosServices {
     private static final Logger LOG = LoggerFactory.getLogger(KudosServicesImpl.class);
     public static final String KUDOS_DOES_NOT_EXIST_MSG = "Kudos with id %s does not exist";
+    public static final String KUDOS_EMAIL_SUBJECT = "Kudos";
     private final KudosRepository kudosRepository;
     private final KudosRecipientServices kudosRecipientServices;
     private final KudosRecipientRepository kudosRecipientRepository;
@@ -40,7 +41,7 @@ class KudosServicesImpl implements KudosServices {
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final CurrentUserServices currentUserServices;
     private final EmailSender emailSender;
-    private final String webAddress;
+    private final CheckInsConfiguration checkInsConfiguration;
 
     KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
@@ -57,7 +58,7 @@ class KudosServicesImpl implements KudosServices {
         this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
-        this.webAddress = checkInsConfiguration.getWebAddress();
+        this.checkInsConfiguration = checkInsConfiguration;
     }
 
     @Override
@@ -284,28 +285,42 @@ class KudosServicesImpl implements KudosServices {
         return kudosResponseDTO;
     }
 
+    public static String getApprovalEmailContent(
+                             CheckInsConfiguration checkInsConfiguration) {
+        return "You have received new kudos!<br>\nClick " +
+               checkInsConfiguration.getWebAddress() +
+               "/kudos to view them.";
+    }
+
     void sendNotification(Kudos kudos) {
-        // Only public kudos really need approval, but just in case...
-        if (kudos.getPubliclyVisible()) {
-            List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
-            if (!recipients.isEmpty()) {
-                // Send email to receivers of kudos that they have new kudos...
-                MemberProfile currentUser = currentUserServices.getCurrentUser();
-                String fromEmail = currentUser.getWorkEmail();
-                String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
-                String subject = "Kudos";
-                String content = "You have received new kudos!<br>\nClick " +
-                                 webAddress + "/kudos to view them.";
-                for (KudosRecipient kudosRecipient : recipients) {
-                    MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElse(null);
-                    if (member == null) {
-                        LOG.error(String.format("Unable to locate member %s.", kudosRecipient.getMemberId().toString()));
+        try {
+            // Only public kudos really need approval, but just in case...
+            if (kudos.getPubliclyVisible()) {
+                List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
+                if (!recipients.isEmpty()) {
+                    // Send email to receivers of kudos that they have new kudos...
+                    MemberProfile sender = memberProfileRetrievalServices.getById(kudos.getSenderId()).orElse(null);
+                    if (sender == null) {
+                        LOG.error(String.format("Unable to locate member %s.", kudos.getSenderId().toString()));
                     } else {
-                        String recipient = member.getWorkEmail();
-                        emailSender.sendEmail(fromName, fromEmail, subject, content, recipient);
+                        String fromEmail = sender.getWorkEmail();
+                        String fromName = sender.getFirstName() + " " + sender.getLastName();
+                        String content = getApprovalEmailContent(checkInsConfiguration);
+                        List<String> recipientAddresses = new ArrayList<String>();
+                        for (KudosRecipient kudosRecipient : recipients) {
+                            MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElse(null);
+                            if (member == null) {
+                                LOG.error(String.format("Unable to locate member %s.", kudosRecipient.getMemberId().toString()));
+                            } else {
+                                recipientAddresses.add(member.getWorkEmail());
+                            }
+                        }
+                        emailSender.sendEmail(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, recipientAddresses.toArray(new String[recipientAddresses.size()]));
                     }
                 }
             }
+        } catch(Exception ex) {
+          LOG.error("An unexpected error occurred while sending notifications: {}", ex.getLocalizedMessage(), ex);
         }
     }
 }
