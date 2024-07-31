@@ -122,8 +122,8 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
                             "SEND_EMAIL",
                             sender.getFirstName() + " " + sender.getLastName(),
                             sender.getWorkEmail(),
-                            KudosRecipientServicesImpl.KUDOS_EMAIL_SUBJECT,
-                            KudosRecipientServicesImpl.getAdminEmailContent(checkInsConfiguration),
+                            KudosServicesImpl.KUDOS_EMAIL_SUBJECT,
+                            KudosServicesImpl.getAdminEmailContent(checkInsConfiguration),
                             admin.getWorkEmail() + ","
                     ),
                     emailSender.events.getFirst()

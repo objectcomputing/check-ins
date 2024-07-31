@@ -9,8 +9,12 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipient;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientServices;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRetrievalServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
@@ -26,6 +30,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
@@ -42,6 +47,12 @@ class KudosServicesImpl implements KudosServices {
     private final CurrentUserServices currentUserServices;
     private final EmailSender emailSender;
     private final CheckInsConfiguration checkInsConfiguration;
+    private final RoleServices roleServices;
+    private final MemberProfileServices memberProfileServices;
+
+    private enum NotificationType {
+        creation, approval
+    }
 
     KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
@@ -49,6 +60,8 @@ class KudosServicesImpl implements KudosServices {
                              TeamRepository teamRepository,
                              MemberProfileRetrievalServices memberProfileRetrievalServices,
                              CurrentUserServices currentUserServices,
+                             RoleServices roleServices,
+                             MemberProfileServices memberProfileServices,
                              @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              CheckInsConfiguration checkInsConfiguration) {
         this.kudosRepository = kudosRepository;
@@ -56,6 +69,8 @@ class KudosServicesImpl implements KudosServices {
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.teamRepository = teamRepository;
         this.memberProfileRetrievalServices = memberProfileRetrievalServices;
+        this.memberProfileServices = memberProfileServices;
+        this.roleServices = roleServices;
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
         this.checkInsConfiguration = checkInsConfiguration;
@@ -89,6 +104,7 @@ class KudosServicesImpl implements KudosServices {
             kudosRecipientServices.save(kudosRecipient);
         }
 
+        sendNotification(savedKudos, NotificationType.creation);
         return savedKudos;
     }
 
@@ -109,7 +125,7 @@ class KudosServicesImpl implements KudosServices {
         existingKudos.setDateApproved(LocalDate.now());
 
         Kudos updated = kudosRepository.update(existingKudos);
-        sendNotification(updated);
+        sendNotification(updated, NotificationType.approval);
         return updated;
     }
 
@@ -292,9 +308,16 @@ class KudosServicesImpl implements KudosServices {
                "/kudos to view them.";
     }
 
-    void sendNotification(Kudos kudos) {
+    public static String getAdminEmailContent(
+                             CheckInsConfiguration checkInsConfiguration) {
+        return "There are new kudos to review.<br>\nClick " +
+               checkInsConfiguration.getWebAddress() +
+               "/admin/manage-kudos to review them.";
+    }
+
+    private void sendNotification(Kudos kudos, NotificationType notificationType) {
         try {
-            // Only public kudos really need approval, but just in case...
+            // Only deal with public kudos here.
             if (kudos.getPubliclyVisible()) {
                 List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
                 if (!recipients.isEmpty()) {
@@ -305,17 +328,37 @@ class KudosServicesImpl implements KudosServices {
                     } else {
                         String fromEmail = sender.getWorkEmail();
                         String fromName = sender.getFirstName() + " " + sender.getLastName();
-                        String content = getApprovalEmailContent(checkInsConfiguration);
+                        String content = "";
                         List<String> recipientAddresses = new ArrayList<String>();
-                        for (KudosRecipient kudosRecipient : recipients) {
-                            MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElse(null);
-                            if (member == null) {
-                                LOG.error(String.format("Unable to locate member %s.", kudosRecipient.getMemberId().toString()));
-                            } else {
-                                recipientAddresses.add(member.getWorkEmail());
+                        switch(notificationType) {
+                        case NotificationType.approval:
+                            content = getApprovalEmailContent(checkInsConfiguration);
+                            for (KudosRecipient kudosRecipient : recipients) {
+                                MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElse(null);
+                                if (member == null) {
+                                    LOG.error(String.format("Unable to locate member %s.", kudosRecipient.getMemberId().toString()));
+                                } else {
+                                    recipientAddresses.add(member.getWorkEmail());
+                                }
                             }
+                            break;
+                        case NotificationType.creation:
+                            content = getAdminEmailContent(checkInsConfiguration);
+                            String adminRole = RoleType.ADMIN.toString();
+                            for (MemberProfile profile : memberProfileServices.findAll()) {
+                                Set<Role> userRoles = roleServices.findUserRoles(profile.getId());
+                                for (Role role : userRoles) {
+                                    if (role.getRole().equals(adminRole)) {
+                                        recipientAddresses.add(profile.getWorkEmail());
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
                         }
-                        emailSender.sendEmail(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, recipientAddresses.toArray(new String[recipientAddresses.size()]));
+                        if (recipientAddresses.size() > 0) {
+                            emailSender.sendEmail(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, recipientAddresses.toArray(new String[recipientAddresses.size()]));
+                        }
                     }
                 }
             }
