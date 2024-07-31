@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { AppContext } from '../../context/AppContext';
 import { UPDATE_TEAMS, UPDATE_TOAST } from '../../context/actions';
 import EditTeamModal from './EditTeamModal';
+import KudosDialog from '../kudos_dialog/KudosDialog';
 import { Link } from 'react-router-dom';
 import {
   Button,
@@ -59,6 +60,8 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const { state, dispatch } = useContext(AppContext);
   const { teams, userProfile, csrf } = state;
   const [openDelete, setOpenDelete] = useState(false);
+  const [openKudos, setOpenKudos] = useState(false);
+  // const [selectedTeam, setSelectedTeam] = useState(null);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   const isAdmin =
@@ -79,8 +82,10 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
       : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
 
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
+  const handleOpenKudos = () => setOpenKudos(true);
 
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
+  const handleCloseKudos = () => setOpenKudos(false);
 
   const teamId = team?.id;
   const deleteATeam = useCallback(async () => {
@@ -106,12 +111,14 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   }, [teamId, csrf, dispatch, teams]);
 
   const options =
-    isAdmin || isTeamLead ? ['Edit Team', 'Delete Team'] : ['Edit Team'];
+    isAdmin || isTeamLead ? ['Edit Team', 'Give Kudos', 'Delete Team'] : ['Edit Team', 'Give Kudos'];
 
   const handleAction = (e, index) => {
     if (index === 0) {
       onTeamSelect(team.id);
     } else if (index === 1) {
+      handleOpenKudos();
+    } else if (index === 2) {
       handleOpenDeleteConfirmation();
     }
   };
@@ -209,6 +216,11 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
                 </Button>
               </DialogActions>
             </Dialog>
+            <KudosDialog
+              open={openKudos}
+              onClose={handleCloseKudos}
+              teamId={null}
+            />
           </>
         )}
       </CardActions>

@@ -1,15 +1,19 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,19 +23,32 @@ import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class PulseResponseTest extends TestContainersSuite {
+
     @Inject
     protected Validator validator;
+
+    @Inject
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
+
     private MemberProfileServices memberProfileServices;
     private MemberProfileRepository memberRepo;
-    private EmailSender emailSender;
     private CurrentUserServices currentUserServices;
     private RolePermissionServices rolePermissionServices;
     private PulseResponseServicesImpl pulseResponseService;
@@ -45,7 +62,7 @@ class PulseResponseTest extends TestContainersSuite {
         memberRepo = Mockito.mock(MemberProfileRepository.class);
         currentUserServices = Mockito.mock(CurrentUserServices.class);
         rolePermissionServices = Mockito.mock(RolePermissionServices.class);
-        emailSender = Mockito.mock(EmailSender.class);
+        emailSender.reset();
 
         pulseResponseService = Mockito.spy(new PulseResponseServicesImpl(pulseResponseRepo,
                 memberProfileServices,
@@ -58,7 +75,7 @@ class PulseResponseTest extends TestContainersSuite {
     @AfterEach
     @Tag("mocked")
     void tearDown() {
-        Mockito.reset(memberRepo, memberProfileServices, emailSender);
+        Mockito.reset(memberRepo, memberProfileServices);
     }
 
     @Test
@@ -203,7 +220,7 @@ class PulseResponseTest extends TestContainersSuite {
         });
 
         assertEquals(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()), exception.getMessage());
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -229,7 +246,7 @@ class PulseResponseTest extends TestContainersSuite {
         });
 
         assertEquals(String.format("Member %s doesn't exists", memberId), exception.getMessage());
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -261,7 +278,7 @@ class PulseResponseTest extends TestContainersSuite {
         });
 
         assertEquals(String.format("Invalid date for pulseresponse submission date %s", memberId), exception.getMessage());
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -293,14 +310,14 @@ class PulseResponseTest extends TestContainersSuite {
         });
 
         assertEquals(String.format("User %s does not have permission to create pulse response for user %s", currentUserId, memberId), exception.getMessage());
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
     @Tag("mocked")
     void testSendPulseLowScoreEmail_NullPulseResponse() {
         pulseResponseService.sendPulseLowScoreEmail(null);
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -308,7 +325,7 @@ class PulseResponseTest extends TestContainersSuite {
     void testSendPulseLowScoreEmail_NoLowScores() {
         PulseResponse pulseResponse = new PulseResponse(3, 4, LocalDate.now(), UUID.randomUUID(), "Good", "Great");
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -334,7 +351,11 @@ class PulseResponseTest extends TestContainersSuite {
 
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
 
-        verify(emailSender, times(1)).sendEmail(any(), any(), eq("Internal pulse scores are low for team member John Doe"), any(), eq("pdl@example.com"));
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Internal pulse scores are low for team member John Doe", "Team member John Doe has left low internal pulse scores. Please consider reaching out to this employee at null<br>Internal Feelings: Sad<br>", pdlProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -360,7 +381,11 @@ class PulseResponseTest extends TestContainersSuite {
 
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
 
-        verify(emailSender, times(1)).sendEmail(any(), any(), eq("External pulse scores are low for team member John Doe"), any(), eq("pdl@example.com"));
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "External pulse scores are low for team member John Doe", "Team member John Doe has left low external pulse scores. Please consider reaching out to this employee at null<br>External Feelings: Sad<br>", pdlProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -385,7 +410,11 @@ class PulseResponseTest extends TestContainersSuite {
 
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
 
-        verify(emailSender, times(1)).sendEmail(any(), any(), eq("Internal and external pulse scores are low for team member John Doe"), any(), eq("pdl@example.com"));
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Internal and external pulse scores are low for team member John Doe", "Team member John Doe has left low internal and external pulse scores. Please consider reaching out to this employee at null<br>Internal Feelings: Very Sad<br>External Feelings: Very Sad<br>", pdlProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -395,7 +424,7 @@ class PulseResponseTest extends TestContainersSuite {
 
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -408,7 +437,7 @@ class PulseResponseTest extends TestContainersSuite {
 
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -433,10 +462,10 @@ class PulseResponseTest extends TestContainersSuite {
 
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
 
-        verify(emailSender, times(1)).sendEmail(
-                any(), any(), eq("Internal and external pulse scores are low for team member John Doe"),
-                contains("Team member John Doe has left low internal and external pulse scores."),
-                eq(new String[]{"pdl@example.com"})
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Internal and external pulse scores are low for team member John Doe", "Team member John Doe has left low internal and external pulse scores. Please consider reaching out to this employee at null<br>Internal Feelings: Very Sad<br>External Feelings: Very Sad<br>", pdlProfile.getWorkEmail()),
+                emailSender.events.getFirst()
         );
     }
 
@@ -462,10 +491,11 @@ class PulseResponseTest extends TestContainersSuite {
 
         pulseResponseService.sendPulseLowScoreEmail(pulseResponse);
 
-        verify(emailSender, times(1)).sendEmail(
-                any(), any(), eq("Internal and external pulse scores are low for team member John Doe"),
-                contains("Team member John Doe has left low internal and external pulse scores."),
-                eq(new String[]{"supervisor@example.com"})
+
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Internal and external pulse scores are low for team member John Doe", "Team member John Doe has left low internal and external pulse scores. Please consider reaching out to this employee at null<br>Internal Feelings: Very Sad<br>External Feelings: Very Sad<br>", supervisorProfile.getWorkEmail()),
+                emailSender.events.getFirst()
         );
     }
 }
