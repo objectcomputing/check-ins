@@ -131,7 +131,7 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
           title: classes.title,
           subheader: classes.title
         }}
-        title={team.name}
+        title={team.name + (team.active ? ' (Active)' : ' (Inactive)')}
         subheader={
           <Tooltip
             open={tooltipIsOpen}

@@ -14,7 +14,7 @@ exports[`renders correctly 1`] = `
         <span
           class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
         >
-          string
+          string (Inactive)
         </span>
         <span
           class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
@@ -63,7 +63,7 @@ exports[`renders correctly for ADMIN 1`] = `
         <span
           class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
         >
-          string
+          string (Inactive)
         </span>
         <span
           class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
@@ -153,7 +153,7 @@ exports[`renders correctly for team lead 1`] = `
         <span
           class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
         >
-          stuff
+          stuff (Inactive)
         </span>
         <span
           class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
