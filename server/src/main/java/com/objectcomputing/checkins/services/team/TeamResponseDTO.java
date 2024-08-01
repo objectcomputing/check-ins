@@ -26,16 +26,21 @@ public class TeamResponseDTO {
     @Schema(description = "description of the team")
     private String description;
 
+    @NotNull
+    @Schema(description = "whether the team is active")
+    private boolean active;
+
     List<TeamMemberResponseDTO> teamMembers;
 
-    public TeamResponseDTO(UUID id, String name, @Nullable String description) {
+    public TeamResponseDTO(UUID id, String name, @Nullable String description, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.active = active;
     }
 
-    public TeamResponseDTO(String id, String name, @Nullable String description) {
-        this(UUID.fromString(id), name, description);
+    public TeamResponseDTO(String id, String name, @Nullable String description, boolean active) {
+        this(UUID.fromString(id), name, description, active);
     }
 
     public TeamResponseDTO() {
