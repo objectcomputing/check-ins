@@ -22,7 +22,7 @@ Then run the application:
 
 This step requires your environment to be set. Reach out to the team for the `run.sh` file which, in addition to setting your environment, will execute the `:server:run` gradle task.
 
-You can access the application by navigating to [http://localhost:8080](http://localhost:8080) in your browser.
+You can access the application by navigating to [http://localhost:8080/login](http://localhost:8080/login) in your browser.
 
 Next login to the application with:
 

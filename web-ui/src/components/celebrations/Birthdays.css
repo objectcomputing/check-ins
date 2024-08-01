@@ -244,7 +244,7 @@ body {
     transform: translate(-15px, 10px) rotate(10deg);
   }
 }
-@media (max-width: 1180px) {
+@media (max-width: 1526px) {
   .birthdays-container {
     margin-top: 6rem;
   }

@@ -25,8 +25,8 @@ public class EmailServicesImpl implements EmailServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmailServicesImpl.class);
 
-    private EmailSender htmlEmailSender;
-    private EmailSender textEmailSender;
+    private final EmailSender htmlEmailSender;
+    private final EmailSender textEmailSender;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileRepository memberProfileRepository;
     private final EmailRepository emailRepository;
@@ -41,14 +41,6 @@ public class EmailServicesImpl implements EmailServices {
         this.currentUserServices = currentUserServices;
         this.memberProfileRepository = memberProfileRepository;
         this.emailRepository = emailRepository;
-    }
-
-    public void setHtmlEmailSender(EmailSender emailSender) {
-        this.htmlEmailSender = emailSender;
-    }
-
-    public void setTextEmailSender(EmailSender emailSender) {
-        this.textEmailSender = emailSender;
     }
 
     @Override

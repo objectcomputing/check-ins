@@ -4,14 +4,16 @@ import com.objectcomputing.checkins.services.skillcategory.SkillCategory;
 
 public interface SkillCategoryFixture extends RepositoryFixture {
 
-    default SkillCategory createDefaultSkillCategory() {
-        SkillCategory skillCategory = new SkillCategory("Languages", "Programming Languages");
+    default SkillCategory createSkillCategory(String name, String description) {
+        SkillCategory skillCategory = new SkillCategory(name, description);
         return getSkillCategoryRepository().save(skillCategory);
+    }
+
+    default SkillCategory createDefaultSkillCategory() {
+        return createSkillCategory("Languages", "Programming Languages");
     }
 
     default SkillCategory createAnotherSkillCategory() {
-        SkillCategory skillCategory = new SkillCategory("Libraries", "Libraries used");
-        return getSkillCategoryRepository().save(skillCategory);
+        return createSkillCategory("Libraries", "Libraries used");
     }
-
 }

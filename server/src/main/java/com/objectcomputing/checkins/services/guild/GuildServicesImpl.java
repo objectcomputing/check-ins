@@ -46,7 +46,7 @@ public class GuildServicesImpl implements GuildServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final GuildMemberServices guildMemberServices;
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
 
@@ -68,10 +68,6 @@ public class GuildServicesImpl implements GuildServices {
         this.emailSender = emailSender;
         this.webAddress = checkInsConfiguration.getWebAddress();
         this.environment = environment;
-    }
-
-    public void setEmailSender (EmailSender emailSender){
-        this.emailSender = emailSender;
     }
 
     public boolean validateLink (String link ) {
