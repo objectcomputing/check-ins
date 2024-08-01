@@ -146,6 +146,11 @@ INSERT INTO member_profile -- Tim Yates
 VALUES
   ('1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('Tim','${aeskey}'), PGP_SYM_ENCRYPT('Yates','${aeskey}'), PGP_SYM_ENCRYPT('Senior Developer','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Manchester','${aeskey}'), PGP_SYM_ENCRYPT('yatest@objectcomputing.com','${aeskey}'), 'tim-12345678', '2024-05-08', PGP_SYM_ENCRYPT('Java developer for ages','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1999-12-31', '2024-03-29');
 
+INSERT INTO member_profile -- Chad Elliott
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+VALUES
+  ('5c863416-c65a-4f49-b980-0193f7b11827', PGP_SYM_ENCRYPT('Chad','${aeskey}'), PGP_SYM_ENCRYPT('Elliott','${aeskey}'), PGP_SYM_ENCRYPT('Principal Software Engineer','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('elliottc@objectcomputing.com','${aeskey}'), '11', '1996-08-01', PGP_SYM_ENCRYPT('Developing code since 1988','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1973-08-24', '2024-08-01');
+
 
 -- Roles
 INSERT INTO role
@@ -954,6 +959,16 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_VOLUNTEERING_EVENTS');
 
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_KUDOS');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_KUDOS');
+
 -- PDL Permissions
 insert into role_permissions
     (roleid, permission)
@@ -1030,6 +1045,11 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_REVIEW_PERIOD');
 
+insert into role_permissions
+    (roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_CREATE_KUDOS');
+
 -- Member permissions
 insert into role_permissions
     (roleid, permission)
@@ -1075,6 +1095,11 @@ insert into role_permissions
 (roleid, permission)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_REVIEW_PERIOD');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_CREATE_KUDOS');
 
 
 -- Feedback Templates
