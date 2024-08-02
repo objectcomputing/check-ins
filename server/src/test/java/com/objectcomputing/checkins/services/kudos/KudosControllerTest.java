@@ -355,7 +355,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     }
 
     @Test
-    void testGetApprovedKudosByIdWithoutApprovePermissionByRecipient() {
+    void testGetApprovedKudosByIdWithoutAdminRoleByRecipient() {
         Kudos kudos = createApprovedKudos(senderId);
         createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
