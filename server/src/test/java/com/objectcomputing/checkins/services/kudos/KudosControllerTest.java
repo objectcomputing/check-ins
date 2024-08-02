@@ -256,7 +256,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     }
 
     @Test
-    void testApproveKudosWithoutApprovePermission() {
+    void testApproveKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
         final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(senderWorkEmail, MEMBER_ROLE);
@@ -496,7 +496,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     }
 
     @Test
-    void testDeleteKudosWithoutAdminRole() {
+    void testDeleteKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
         HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s", kudos.getId())).basicAuth(senderWorkEmail, MEMBER_ROLE);
