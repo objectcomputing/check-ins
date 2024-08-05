@@ -840,6 +840,16 @@ insert into role_permissions
 values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_VOLUNTEERING_EVENTS');
 
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_KUDOS');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_CREATE_KUDOS');
+
 -- PDL Permissions
 insert into role_permissions
     (roleid, permission)
@@ -916,6 +926,11 @@ insert into role_permissions
 values
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_VIEW_REVIEW_PERIOD');
 
+insert into role_permissions
+    (roleid, permission)
+values
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'CAN_CREATE_KUDOS');
+
 -- Member permissions
 insert into role_permissions
     (roleid, permission)
@@ -961,6 +976,11 @@ insert into role_permissions
 (roleid, permission)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_VIEW_REVIEW_PERIOD');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_CREATE_KUDOS');
 
 
 -- Feedback Templates

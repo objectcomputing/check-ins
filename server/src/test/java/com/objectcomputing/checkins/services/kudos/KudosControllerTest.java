@@ -71,17 +71,23 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
     @BeforeEach
     void setUp() {
+        createAndAssignRoles();
         client = httpClient.toBlocking();
+
         sender = createADefaultMemberProfile();
-        MemberProfile recipient = createASecondDefaultMemberProfile();
-        admin = createAThirdDefaultMemberProfile();
-        createAndAssignAdminRole(admin);
-        Team team = createDefaultTeam();
-        message = "Kudos!";
         senderId = sender.getId();
         senderWorkEmail = sender.getWorkEmail();
+
+        MemberProfile recipient = createASecondDefaultMemberProfile();
         recipientMembers = List.of(recipient);
+
+        admin = createAThirdDefaultMemberProfile();
+        assignAdminRole(admin);
+
+        Team team = createDefaultTeam();
         teamId = team.getId();
+
+        message = "Kudos!";
         emailSender.reset();
     }
 
@@ -101,7 +107,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
                 recipientMembers
         );
 
-        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("/", kudosCreateDTO).basicAuth("", ADMIN_ROLE);
+        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("/", kudosCreateDTO).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpResponse<Kudos> httpResponse = client.exchange(request, Kudos.class);
 
         Kudos kudos = httpResponse.body();
@@ -121,10 +127,10 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
             assertEquals(List.of(
                             "SEND_EMAIL",
                             sender.getFirstName() + " " + sender.getLastName(),
-                            sender.getWorkEmail(),
+                            senderWorkEmail,
                             KudosServicesImpl.KUDOS_EMAIL_SUBJECT,
                             KudosServicesImpl.getAdminEmailContent(checkInsConfiguration),
-                            admin.getWorkEmail() + ","
+                            admin.getWorkEmail()
                     ),
                     emailSender.events.getFirst()
             );
@@ -133,7 +139,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
             assertEquals(List.of(
                             "SEND_EMAIL",
                             sender.getFirstName() + " " + sender.getLastName(),
-                            sender.getWorkEmail(),
+                            senderWorkEmail,
                             KudosRecipientServicesImpl.KUDOS_EMAIL_SUBJECT,
                             message,
                             recipientMembers.getFirst().getWorkEmail()
@@ -144,23 +150,13 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     }
 
     @Test
-    void testCreateKudosWithoutAdminRole() {
-        KudosCreateDTO kudosCreateDTO = new KudosCreateDTO(message, senderId, null, true, recipientMembers);
-
-        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth("", MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
-
-        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
-        assertEquals(0, emailSender.events.size());
-    }
-
-    @Test
     void testCreateKudosWithNonExistentSenderId() {
         UUID nonExistentSenderId = UUID.randomUUID();
         KudosCreateDTO kudosCreateDTO = new KudosCreateDTO(message, nonExistentSenderId, null, true, recipientMembers);
 
-        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth("", ADMIN_ROLE);
+        // The sender does not exist, so they do not have an email address to
+        // provide in basicAuth().
+        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth("", MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -174,7 +170,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         UUID nonExistentTeamId = UUID.randomUUID();
         KudosCreateDTO kudosCreateDTO = new KudosCreateDTO(message, senderId, nonExistentTeamId, true, recipientMembers);
 
-        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth("", ADMIN_ROLE);
+        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -187,7 +183,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testCreateKudosWithBlankMessage() {
         KudosCreateDTO kudosCreateDTO = new KudosCreateDTO("", senderId, null, true, recipientMembers);
 
-        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth("", ADMIN_ROLE);
+        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -201,7 +197,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testCreateKudosWithEmptyRecipientMembers() {
         KudosCreateDTO kudosCreateDTO = new KudosCreateDTO(message, senderId, null, true, Collections.emptyList());
 
-        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth("", ADMIN_ROLE);
+        HttpRequest<KudosCreateDTO> request = HttpRequest.POST("", kudosCreateDTO).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -215,7 +211,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         assertNull(kudos.getDateApproved());
         KudosRecipient recipient = createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth("", ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Kudos> response = client.exchange(request, Kudos.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -224,7 +220,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         assertEquals(List.of(
                         "SEND_EMAIL",
                         sender.getFirstName() + " " + sender.getLastName(),
-                        sender.getWorkEmail(),
+                        senderWorkEmail,
                         KudosServicesImpl.KUDOS_EMAIL_SUBJECT,
                         KudosServicesImpl.getApprovalEmailContent(checkInsConfiguration),
                         recipientMembers.getFirst().getWorkEmail()
@@ -239,7 +235,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         UUID nonExistentKudosId = UUID.randomUUID();
         kudos.setId(nonExistentKudosId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth("", ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -251,7 +247,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testApproveAlreadyApprovedKudos() {
         Kudos kudos = createApprovedKudos(senderId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth("", ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -260,10 +256,10 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     }
 
     @Test
-    void testApproveKudosWithoutAdminRole() {
+    void testApproveKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth("", MEMBER_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
@@ -276,7 +272,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         Kudos kudos = createADefaultKudos(senderId);
         createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth("", ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpResponse<KudosResponseDTO> response = client.exchange(request, KudosResponseDTO.class);
 
         assertEquals(OK, response.getStatus());
@@ -293,7 +289,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testGetKudosByIdWithNoRecipients() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth("", ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", kudos.getId())).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, KudosResponseDTO.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -304,7 +300,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testGetKudosByNonExistentId() {
         UUID nonExistentId = UUID.randomUUID();
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", nonExistentId))
-                .basicAuth("", ADMIN_ROLE);
+                .basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> {
             client.exchange(request, KudosResponseDTO.class);
         });
@@ -318,6 +314,8 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         Kudos kudos = createADefaultKudos(senderId);
         createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
+        // This should fail because the user making this request is not an
+        // admin, the sender or recipient.
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", kudos.getId()))
                 .basicAuth("", MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> {
@@ -347,7 +345,8 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testGetApprovedKudosByIdWithoutAdminRole() {
         Kudos kudos = createApprovedKudos(senderId);
         createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
-
+        // This should fail because the user making this request is not an
+        // admin, the sender or recipient.
         final HttpRequest<?> request = HttpRequest.GET("/%s".formatted(kudos.getId())).basicAuth("", MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, KudosResponseDTO.class));
 
@@ -380,7 +379,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         UUID recipientId = recipientMembers.getFirst().getId();
         createKudosRecipient(kudos.getId(), recipientId);
 
-        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?recipientId=%s", recipientId)).basicAuth("", ADMIN_ROLE);
+        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?recipientId=%s", recipientId)).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
 
         assertEquals(OK, response.getStatus());
@@ -401,7 +400,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         UUID recipientId = recipientMembers.getFirst().getId();
         createKudosRecipient(kudos.getId(), recipientId);
 
-        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?recipientId=%s", UUID.randomUUID())).basicAuth("", ADMIN_ROLE);
+        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?recipientId=%s", UUID.randomUUID())).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
 
         assertEquals(OK, response.getStatus());
@@ -420,7 +419,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         createKudosRecipient(kudos2.getId(), recipientId);
         createKudosRecipient(kudos3.getId(), someOtherRecipientId);
 
-        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?recipientId=%s", recipientId)).basicAuth("", ADMIN_ROLE);
+        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?recipientId=%s", recipientId)).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
 
         assertEquals(OK, response.getStatus());
@@ -434,7 +433,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         Kudos kudos = createApprovedKudos(senderId);
         createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
-        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?senderId=%s", senderId)).basicAuth("", ADMIN_ROLE);
+        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?senderId=%s", senderId)).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
 
         assertEquals(OK, response.getStatus());
@@ -458,7 +457,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         createKudosRecipient(unapprovedKudos.getId(), recipientMembers.getFirst().getId());
         createKudosRecipient(approvedKudos.getId(), recipientMembers.getFirst().getId());
 
-        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?isPending=%s", isPending)).basicAuth("", ADMIN_ROLE);
+        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/?isPending=%s", isPending)).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
 
         var expected = isPending ? unapprovedKudos : approvedKudos;
@@ -479,7 +478,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testDeleteKudos() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        final HttpRequest<Object> request = HttpRequest.DELETE("/%s".formatted(kudos.getId())).basicAuth("", ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.DELETE("/%s".formatted(kudos.getId())).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Kudos> response = client.exchange(request);
 
         assertEquals(NO_CONTENT, response.getStatus());
@@ -489,7 +488,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testDeleteKudosWithNonExistentKudosId() {
         UUID nonExistentKudosId = UUID.randomUUID();
 
-        final HttpRequest<Object> request = HttpRequest.DELETE("/%s".formatted(nonExistentKudosId)).basicAuth("", ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.DELETE("/%s".formatted(nonExistentKudosId)).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -497,10 +496,10 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     }
 
     @Test
-    void testDeleteKudosWithoutAdminRole() {
+    void testDeleteKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s", kudos.getId())).basicAuth("", MEMBER_ROLE);
+        HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s", kudos.getId())).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
