@@ -25,7 +25,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/CheckCircle';
 import { AppContext } from '../context/AppContext';
 import mjml2html from 'mjml-browser';
-import ReactHtmlParser from 'react-html-parser';
+import parse from 'html-react-parser';
 import { UPDATE_TOAST } from '../context/actions';
 import { sendEmail } from '../api/notifications';
 
@@ -192,7 +192,7 @@ const ComposeEmailStep = ({
 
   useEffect(() => {
     if (emailContents && emailFormat === 'file') {
-      const preview = ReactHtmlParser(emailContents);
+      const preview = parse(emailContents);
       setEmailPreview(preview);
     }
   }, [emailFormat, emailContents]);
