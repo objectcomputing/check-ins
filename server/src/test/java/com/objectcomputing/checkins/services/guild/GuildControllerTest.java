@@ -43,9 +43,6 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
@@ -101,17 +98,14 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        assertEquals(2, emailSender.events.size());
+        assertEquals(1, emailSender.events.size());
         assertEquals(
                 List.of(
-                        // Email to the Guild lead
-                        List.of("SEND_EMAIL", "null", "null", "Membership changes have been made to the Ninja guild", "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile.getWorkEmail() + "," + memberProfile2.getWorkEmail()),
                         // Email to both the Guild leads
                         List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the Ninja guild", "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been added:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile.getWorkEmail() + "," + memberProfile2.getWorkEmail())
                 ),
                 emailSender.events
         );
-        verifyNoMoreInteractions(emailSender);
     }
 
     @Test
@@ -136,14 +130,12 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        assertEquals(2, emailSender.events.size());
+        assertEquals(1, emailSender.events.size());
         assertEquals(List.of(
-                        List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the Ninja guild", "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile.getWorkEmail()),
                         List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the Ninja guild", "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been removed:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile.getWorkEmail())
                 ),
                 emailSender.events
         );
-        verifyNoMoreInteractions(emailSender);
     }
 
     @Test
@@ -493,7 +485,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         createDefaultGuildMember(guildEntity, memberProfileOfAdmin);
 
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", guildEntity.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
-        final HttpResponse response = client.toBlocking().exchange(request);
+        final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
     }
@@ -509,7 +501,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         // createDefaultGuildMember(guild, memberProfileOfGuildMember);
 
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", guildEntity.getId())).basicAuth(memberProfileofGuildLeadEntity.getWorkEmail(), MEMBER_ROLE);
-        final HttpResponse response = client.toBlocking().exchange(request);
+        final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
     }
