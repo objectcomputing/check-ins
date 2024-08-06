@@ -57,7 +57,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         this.emailSender = emailSender;
     }
 
-    public GuildMember save(@Valid @NotNull GuildMember guildMember) {
+    public GuildMember save(@Valid @NotNull GuildMember guildMember, boolean sendEmail) {
         final UUID guildId = guildMember.getGuildId();
         final UUID memberId = guildMember.getMemberId();
         Optional<Guild> guild = guildRepo.findById(guildId);
@@ -84,11 +84,13 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
-        emailSender
-                .sendEmail(null, null, "Membership changes have been made to the " + guild.get().getName() + " guild",
-                        constructEmailContent(guildMember, true),
-                        getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
-                );
+        if (sendEmail) {
+            emailSender
+                    .sendEmail(null, null, "Membership changes have been made to the " + guild.get().getName() + " guild",
+                            constructEmailContent(guildMember, true),
+                            getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
+                    );
+        }
 
         GuildMember guildMemberSaved = guildMemberRepo.save(guildMember);
         guildMemberHistoryRepository.save(buildGuildMemberHistory(guildId,memberId,"Added", LocalDateTime.now()));
@@ -145,7 +147,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         return guildMembers;
     }
 
-    public void delete(@NotNull UUID id) {
+    public void delete(@NotNull UUID id, boolean sendEmail) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         GuildMember guildMember = guildMemberRepo.findById(id).orElse(null);
 
@@ -166,11 +168,13 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         Guild guild = guildRepo.findById(guildMember.getGuildId())
                 .orElseThrow(() -> new NotFoundException("No Guild found with id " + guildMember.getGuildId()));
 
-        emailSender
-                .sendEmail(null, null, "Membership Changes have been made to the " + guild.getName() + " guild",
-                        constructEmailContent(guildMember, false),
-                        getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
-                );
+        if (sendEmail) {
+            emailSender
+                    .sendEmail(null, null, "Membership Changes have been made to the " + guild.getName() + " guild",
+                            constructEmailContent(guildMember, false),
+                            getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
+                    );
+        }
 
         guildMemberRepo.deleteById(id);
         guildMemberHistoryRepository.save(buildGuildMemberHistory(guildMember.getGuildId(),guildMember.getMemberId(),"Deleted", LocalDateTime.now()));
