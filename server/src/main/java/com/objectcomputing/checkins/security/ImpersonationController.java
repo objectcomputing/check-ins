@@ -14,7 +14,6 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Produces;
@@ -79,7 +78,6 @@ public class ImpersonationController {
         this.securityService = securityService;
     }
 
-    @ExecuteOn(TaskExecutors.BLOCKING)
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
     @Post("/begin")
     @RequiredPermission(Permission.CAN_IMPERSONATE_MEMBERS)
@@ -119,7 +117,7 @@ public class ImpersonationController {
                             eventPublisher.publishEvent(new LoginFailedEvent(authenticationResponse, null, null, Locale.getDefault()));
                             return loginHandler.loginFailed(authenticationResponse, request);
                         }
-                    }).single(Mono.just(HttpResponse.status(HttpStatus.UNAUTHORIZED)));
+                    }).single(Mono.just(HttpResponse.unauthorized()));
                 }
             } else {
                 LOG.error("Attempted impersonation without authentication.");
@@ -128,13 +126,12 @@ public class ImpersonationController {
         return null;
     }
 
-    @ExecuteOn(TaskExecutors.BLOCKING)
     @Produces(MediaType.TEXT_HTML)
     @Get("/end")
-    public HttpResponse revert(HttpRequest<?> request) {
+    public HttpResponse<Object> revert(HttpRequest<?> request) {
         final Cookie ojwt = request.getCookies().get(originalJWT);
         if (ojwt == null) {
-            return HttpResponse.status(HttpStatus.UNAUTHORIZED);
+            return HttpResponse.unauthorized();
         } else {
             // Swap the OJWT back to the JWT and remove the original JWT
             Set<Cookie> cookies = new HashSet<Cookie>();
