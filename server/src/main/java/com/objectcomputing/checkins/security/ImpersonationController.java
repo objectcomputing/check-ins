@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.cookie.SameSite;
 import io.micronaut.http.cookie.Cookie;
 import io.micronaut.http.netty.cookies.NettyCookie;
@@ -86,7 +85,6 @@ public class ImpersonationController {
         if (securityService != null) {
             Optional<Authentication> auth = securityService.getAuthentication();
             if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
-                HttpHeaders headers = request.getHeaders();
                 final Cookie jwt = request.getCookies().get("JWT");
                 if (jwt == null) {
                     // The user is required to be logged in.  If this is null,
@@ -132,7 +130,6 @@ public class ImpersonationController {
     @Produces(MediaType.TEXT_HTML)
     @Get("/end")
     public HttpResponse revert(HttpRequest<?> request) {
-        HttpHeaders headers = request.getHeaders();
         final Cookie ojwt = request.getCookies().get(originalJWT);
         if (ojwt == null) {
             return HttpResponse.status(HttpStatus.UNAUTHORIZED);
