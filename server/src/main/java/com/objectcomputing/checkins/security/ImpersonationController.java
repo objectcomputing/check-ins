@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class ImpersonationController {
+    public static final String JWT = "JWT";
     public static final String originalJWT = "OJWT";
     private static final Logger LOG = LoggerFactory.getLogger(ImpersonationController.class);
     protected final Authenticator authenticator;
@@ -64,6 +65,7 @@ public class ImpersonationController {
      * @param loginHandler        A collaborator which helps to build HTTP response depending on success or failure.
      * @param eventPublisher      The application event publisher
      * @param currentUserServices Current User services
+     * @param securityService     The Security Service
      */
     public ImpersonationController(Authenticator authenticator,
                                    LoginHandler loginHandler,
@@ -85,7 +87,7 @@ public class ImpersonationController {
         if (securityService != null) {
             Optional<Authentication> auth = securityService.getAuthentication();
             if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
-                final Cookie jwt = request.getCookies().get("JWT");
+                final Cookie jwt = request.getCookies().get(JWT);
                 if (jwt == null) {
                     // The user is required to be logged in.  If this is null,
                     // we are in an impossible state!
@@ -136,7 +138,7 @@ public class ImpersonationController {
         } else {
             // Swap the OJWT back to the JWT and remove the original JWT
             Set<Cookie> cookies = new HashSet<Cookie>();
-            cookies.add(new NettyCookie("JWT", ojwt.getValue()).path("/")
+            cookies.add(new NettyCookie(JWT, ojwt.getValue()).path("/")
                               .sameSite(SameSite.Strict)
                               .maxAge(ojwt.getMaxAge()).httpOnly());
             cookies.add(new NettyCookie(originalJWT, "").path("/").maxAge(0));

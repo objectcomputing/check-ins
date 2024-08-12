@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.security.ImpersonationController;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
@@ -64,7 +65,8 @@ class ImpersonationControllerTest extends TestContainersSuite implements MemberP
                              Map.of("email", nonAdmin.getWorkEmail()))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
-        ((MutableHttpRequest)request).cookie(Cookie.of("JWT", jwt));
+        ((MutableHttpRequest)request).cookie(
+                                 Cookie.of(ImpersonationController.JWT, jwt));
         Publisher<String> response = client.retrieve(request);
         assertNotNull(response);
         final StringBuilder json = new StringBuilder();
@@ -83,8 +85,9 @@ class ImpersonationControllerTest extends TestContainersSuite implements MemberP
         MutableHttpRequest<Object> next = HttpRequest.GET("/end")
                               .basicAuth(nonAdmin.getWorkEmail(), MEMBER_ROLE);
         next.cookies(
-          Set.of(Cookie.of("OJWT", jwt),
-                 Cookie.of("JWT", jsonObject.get("access_token").toString())));
+          Set.of(Cookie.of(ImpersonationController.originalJWT, jwt),
+                 Cookie.of(ImpersonationController.JWT,
+                           jsonObject.get("access_token").toString())));
         response = client.retrieve(next);
         assertNotNull(response);
         // This just needs to complete in order to verify that it has succeeded.
