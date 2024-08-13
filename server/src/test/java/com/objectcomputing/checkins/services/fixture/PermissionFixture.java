@@ -95,7 +95,8 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_ADMINISTER_VOLUNTEERING_EVENTS,
         Permission.CAN_ADMINISTER_DOCUMENTATION,
         Permission.CAN_ADMINISTER_KUDOS,
-        Permission.CAN_CREATE_KUDOS
+        Permission.CAN_CREATE_KUDOS,
+        Permission.CAN_IMPERSONATE_MEMBERS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {

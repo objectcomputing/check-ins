@@ -6,7 +6,7 @@ import MemberModal from './MemberModal';
 import { AppContext } from '../../context/AppContext';
 import { DELETE_MEMBER_PROFILE, UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../context/actions';
 import { selectProfileMap } from '../../context/selectors';
-import { getAvatarURL } from '../../api/api.js';
+import { getAvatarURL, resolve } from '../../api/api.js';
 
 import Avatar from '@mui/material/Avatar';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
@@ -73,15 +73,44 @@ const AdminMemberCard = ({ member, index }) => {
   const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-  const options = isAdmin ? ['Edit', 'Delete'] : ['Edit'];
+  const options = () => {
+    let entries = ['Edit'];
+    if (isAdmin) {
+      entries.push('Delete');
+      // If we have not already impersonated a user, we can provide that option.
+      if (document.cookie.indexOf("OJWT=") == -1) {
+        entries.push('Impersonate');
+      }
+    }
+    return entries;
+  }
 
   const handleAction = (e, index) => {
     if (index === 0) {
       handleOpen();
     } else if (index === 1) {
       handleOpenDeleteConfirmation();
+    } else if (index === 2) {
+      handleImpersonate();
     }
   };
+
+  const handleImpersonate = async () => {
+    // "log in" as the chosen user with the default role.
+    const res = await resolve({
+      method: 'POST',
+      url: '/impersonation/begin',
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: { email: workEmail }
+    });
+
+    // If that was successful, take the user back to the main page.
+    if (!res.error) window.location.href = "/";
+  }
 
   const handleDeleteMember = async () => {
     let res = await deleteMember(memberId, csrf);
@@ -184,7 +213,7 @@ const AdminMemberCard = ({ member, index }) => {
           <CardActions>
             <SplitButton
               className="split-button"
-              options={options}
+              options={options()}
               onClick={handleAction}
             />
             <Dialog

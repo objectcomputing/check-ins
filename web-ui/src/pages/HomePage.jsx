@@ -9,6 +9,7 @@ import MyBirthday from '../components/celebrations/MyBirthday';
 import { AppContext } from '../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
 import { sortAnniversaries, sortBirthdays } from '../context/util';
+import { Button } from '@mui/material';
 
 import './HomePage.css';
 
@@ -71,6 +72,10 @@ export default function HomePage() {
     setMyBirthday(false);
   };
 
+  const checkForImpersonation = () => {
+    return document.cookie.indexOf("OJWT=") != -1;
+  }
+
   return (
     <div className="home-page">
       <div className="celebrations">
@@ -89,6 +94,8 @@ export default function HomePage() {
           </>
         )}
       </div>
+      {checkForImpersonation() &&
+        <a class="bottom-right" href="/impersonation/end"><Button variant="contained">Original User</Button></a>}
     </div>
   );
 }
