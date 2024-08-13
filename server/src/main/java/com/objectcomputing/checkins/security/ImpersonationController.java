@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.context.env.Environment;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.cookie.SameSite;
 import io.micronaut.http.cookie.Cookie;
@@ -45,7 +46,7 @@ import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Requires(env = Environments.LOCAL)
+@Requires(env = {Environments.LOCAL, Environment.DEVELOPMENT})
 @Controller("/impersonation")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -123,7 +124,7 @@ public class ImpersonationController {
                 LOG.error("Attempted impersonation without authentication.");
             }
         }
-        return null;
+        return Mono.just(HttpResponse.unauthorized());
     }
 
     @Produces(MediaType.TEXT_HTML)
