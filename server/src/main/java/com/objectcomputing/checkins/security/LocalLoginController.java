@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@Requires(env = Environments.LOCAL)
+@Requires(env = "garbage", notEnv = Environments.OPENID)
 @Controller("/oauth/login/google")
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_ANONYMOUS)

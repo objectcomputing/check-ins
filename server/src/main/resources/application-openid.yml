@@ -1,0 +1,42 @@
+micronaut:
+  security:
+    enabled: true
+    authentication: cookie
+    token:
+      jwt:
+        enabled: true
+        generator:
+          refresh-token:
+            enabled: true
+            path: /oauth/access_token
+            secret: ${ OAUTH_REFRESH_TOKEN_SECRET:'pleaseChangeThisSecretForANewOne' }
+          access-token:
+            expiration: 28800
+    oauth2:
+      callback-uri: ${ OAUTH_CALLBACK_URI }
+      clients:
+        google:
+          client-id: ${ OAUTH_CLIENT_ID }
+          client-secret: ${ OAUTH_CLIENT_SECRET }
+          openid:
+            issuer: 'https://accounts.google.com'
+    endpoints:
+      logout:
+        get-allowed: true
+    intercept-url-map:
+      -
+        pattern: /**
+        http-method: GET
+        access:
+          - isAuthenticated()
+    reject-not-found: false
+    redirect:
+      prior-to-login: true
+      login-success: /
+      on-rejection: /oauth/login/google
+      unauthorized:
+        url: /oauth/login/google
+      forbidden:
+        url: /forbidden
+    session:
+      enabled: true
