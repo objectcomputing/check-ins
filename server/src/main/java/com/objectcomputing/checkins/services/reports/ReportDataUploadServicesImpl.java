@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.reports;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -38,12 +39,14 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
     private final CurrentUserServices currentUserServices;
     private final Map<UUID, Stored> storedUploads = new HashMap<UUID, Stored>();
     private final Timer timer = new Timer();
+    private final long expireCheck = 10*60*1000;
+    private final long expiration = 60*60*1000;
 
     public ReportDataUploadServicesImpl(
                                    CurrentUserServices currentUserServices) {
         this.currentUserServices = currentUserServices;
 
-        timer.scheduleAtFixedRate(this, new Date(), 10*60*1000);
+        timer.scheduleAtFixedRate(this, new Date(), expireCheck);
     }
 
 
@@ -61,11 +64,15 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
             perUser = new Stored();
             storedUploads.put(id, perUser);
         }
+
+        // Update the timestamp to allow us to check later to see if we
+        // need to remove this user's data.
         perUser.timestamp = new Date();
         perUser.data.put(file.getName(), file.getByteBuffer());
     }
 
-    public ByteBuffer get(String name) {
+    @Override
+    public ByteBuffer get(String name) throws NotFoundException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, NOT_AUTHORIZED_MSG);
@@ -74,19 +81,23 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
         if (storedUploads.containsKey(id)) {
             Stored perUser = storedUploads.get(id);
             if (perUser.data.containsKey(name)) {
+                // Update the timestamp to allow us to check later to see if we
+                // need to remove this user's data.
                 perUser.timestamp = new Date();
                 return perUser.data.get(name);
             }
         }
-        throw new BadArgException("Document does not exist");
+        throw new NotFoundException("Document does not exist");
     }
 
+    /// Check periodically to see if any data has expired.  If it has, remove
+    /// it.
     @Override
     public void run() {
         long current = (new Date()).getTime();
         for (Map.Entry<UUID, Stored> entry : storedUploads.entrySet()) {
             Stored value = entry.getValue();
-            if (current >= (value.timestamp.getTime() + 60*60*1000)) {
+            if (current >= (value.timestamp.getTime() + expiration)) {
                 storedUploads.remove(entry.getKey());
             }
         }
