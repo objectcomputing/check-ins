@@ -79,7 +79,8 @@ public class ReportDataCollation {
         List<CompensationHistory.Compensation> history = compensationHistory.getHistory();
         if (history.isEmpty()) {
             try {
-                ByteBuffer buffer = reportDataUploadServices.get("TODO");
+                ByteBuffer buffer = reportDataUploadServices.get(memberId,
+                    ReportDataUploadServices.DataType.compensationHistory);
                 compensationHistory.load(buffer);
                 history = compensationHistory.getHistory();
             } catch(Exception ex) {

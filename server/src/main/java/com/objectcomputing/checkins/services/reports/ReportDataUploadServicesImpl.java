@@ -51,11 +51,12 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
 
 
     @Override
-    public void store(CompletedFileUpload file) throws IOException {
+    public void store(UUID memberId, CompletedFileUpload file) throws IOException, BadArgException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, NOT_AUTHORIZED_MSG);
 
+        // Get the map for the current user.
         Stored perUser;
         UUID id = currentUser.getId();
         if (storedUploads.containsKey(id)) {
@@ -65,14 +66,29 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
             storedUploads.put(id, perUser);
         }
 
+        // Translate the file name to a data type that we know about.
+        String fileName = file.getName().toLowerCase();
+        DataType dataType;
+        if (fileName.contains("comp")) {
+            dataType = DataType.compensationHistory;
+        } else if (fileName.contains("position")) {
+            dataType = DataType.positionHistory;
+        } else if (fileName.contains("current") ||
+                   fileName.contains("information")) {
+            dataType = DataType.currentInformation;
+        } else {
+            throw new BadArgException("Unable to determine data type: " + fileName);
+        }
+        String name = getKeyName(memberId, dataType);
+
         // Update the timestamp to allow us to check later to see if we
         // need to remove this user's data.
         perUser.timestamp = new Date();
-        perUser.data.put(file.getName(), file.getByteBuffer());
+        perUser.data.put(name, file.getByteBuffer());
     }
 
     @Override
-    public ByteBuffer get(String name) throws NotFoundException {
+    public ByteBuffer get(UUID memberId, DataType dataType) throws NotFoundException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, NOT_AUTHORIZED_MSG);
@@ -80,6 +96,7 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
         UUID id = currentUser.getId();
         if (storedUploads.containsKey(id)) {
             Stored perUser = storedUploads.get(id);
+            String name = getKeyName(memberId, dataType);
             if (perUser.data.containsKey(name)) {
                 // Update the timestamp to allow us to check later to see if we
                 // need to remove this user's data.
@@ -103,10 +120,13 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
         }
     }
 
+    private String getKeyName(UUID memberId, DataType dataType) {
+        return memberId.toString() + "-" + dataType.toString();
+    }
+
     private void validate(boolean isError, String message, Object... args) {
         if (isError) {
             throw new BadArgException(String.format(message, args));
         }
     }
-
 }

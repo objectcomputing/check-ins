@@ -18,6 +18,7 @@ import reactor.core.scheduler.Schedulers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
 import java.util.List;
 import java.io.IOException;
 
@@ -32,18 +33,13 @@ public class ReportDataUploadController {
         this.reportDataUploadServices = reportDataUploadServices;
     }
 
-    /**
-     * Parse the CSV file and store it to employee hours table
-     * @param file
-     * @{@link HttpResponse<ReportDataUploadResponseDTO>}
-     */
     @Post(uri="/upload" , consumes = MediaType.MULTIPART_FORM_DATA)
-    public Mono<List<String>> upload(@Part("file") Publisher<CompletedFileUpload> file){
+    public Mono<List<String>> upload(@Part("memberId") UUID memberId, @Part("file") Publisher<CompletedFileUpload> file){
         return Flux.from(file)
                 .subscribeOn(Schedulers.boundedElastic())
                 .map(part -> {
                     try {
-                        reportDataUploadServices.store(part);
+                        reportDataUploadServices.store(memberId, part);
                         return part.getFilename();
                     } catch(IOException ex) {
                         LOG.error(ex.toString());
