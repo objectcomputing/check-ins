@@ -74,15 +74,6 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
     }
 
     @Test
-    void testReportNullRequest() {
-        assertNull(skillsReportServices.report(null));
-        verify(memberSkillRepository, never()).findBySkillid(any(UUID.class));
-        verify(memberProfileServices, never()).getById(any(UUID.class));
-        verify(skillRepository, never()).existsById(any(UUID.class));
-        verify(memberProfileRepository, never()).existsById(any(UUID.class));
-    }
-
-    @Test
     void testReportSkillNotExist() {
         final SkillLevelDTO dto = new SkillLevelDTO();
         dto.setId(UUID.randomUUID());

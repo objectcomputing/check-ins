@@ -2,7 +2,8 @@ package com.objectcomputing.checkins.services.reviews;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
@@ -10,7 +11,9 @@ import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -18,20 +21,19 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -43,12 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
-// Disabled in nativeTest, as we get an exception from Mockito
-//     => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
-@DisabledInNativeImage
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class ReviewPeriodControllerTest
         extends TestContainersSuite
         implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture {
@@ -57,17 +55,12 @@ class ReviewPeriodControllerTest
     @Client("/services/review-periods")
     private HttpClient client;
 
-    @Mock
-    private EmailSender emailSender = mock(EmailSender.class);
+    @Inject
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
     private ReviewPeriodServicesImpl reviewPeriodServices;
-
-    @BeforeEach
-    void resetMocks() {
-        Mockito.reset(emailSender);
-        reviewPeriodServices.setEmailSender(emailSender);
-    }
 
     private String encodeValue(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
@@ -76,6 +69,7 @@ class ReviewPeriodControllerTest
     @BeforeEach
     void createRolesAndPermissions() {
         createAndAssignRoles();
+        emailSender.reset();
     }
 
     @Test
@@ -480,11 +474,10 @@ class ReviewPeriodControllerTest
         assertEquals(HttpStatus.OK, response.getStatus());
 
         // expect email has been sent
-        verify(emailSender).sendEmail(null, null,
-                "Review Assignments Awaiting Approval",
-                "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3>" +
-                "<a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.",
-                supervisor.getWorkEmail()
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Review Assignments Awaiting Approval", "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3><a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.", supervisor.getWorkEmail()),
+                emailSender.events.getFirst()
         );
     }
 

@@ -164,7 +164,7 @@ public class TeamServicesImpl implements TeamServices {
         if (dto == null) {
             return null;
         }
-        return new Team(dto.getId(), dto.getName(), dto.getDescription());
+        return new Team(dto.getId(), dto.getName(), dto.getDescription(), dto.isActive());
     }
 
     private TeamMember fromMemberDTO(TeamCreateDTO.TeamMemberCreateDTO memberDTO, UUID teamId) {
@@ -183,7 +183,7 @@ public class TeamServicesImpl implements TeamServices {
         if (entity == null) {
             return null;
         }
-        TeamResponseDTO dto = new TeamResponseDTO(entity.getId(), entity.getName(), entity.getDescription());
+        TeamResponseDTO dto = new TeamResponseDTO(entity.getId(), entity.getName(), entity.getDescription(), entity.isActive());
         dto.setTeamMembers(memberEntities);
         return dto;
     }
@@ -192,7 +192,7 @@ public class TeamServicesImpl implements TeamServices {
         if (dto == null) {
             return null;
         }
-        return new Team(null, dto.getName(), dto.getDescription());
+        return new Team(null, dto.getName(), dto.getDescription(), dto.isActive());
     }
 
     private TeamMemberResponseDTO fromMemberEntity(TeamMember teamMember, MemberProfile memberProfile) {

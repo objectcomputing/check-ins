@@ -3,6 +3,9 @@ package com.objectcomputing.checkins.security;
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.security.ImpersonationController;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.netty.cookies.NettyCookie;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.http.HttpRequest;
@@ -88,7 +91,10 @@ public class LocalLoginController {
                 Authentication updatedAuth = Authentication.build(authentication.getName(), authentication.getRoles(), newAttributes);
 
                 eventPublisher.publishEvent(new LoginSuccessfulEvent(updatedAuth, null, Locale.getDefault()));
-                return loginHandler.loginSuccess(updatedAuth, request);
+
+                // Remove the original JWT on login.
+                return ((MutableHttpResponse)loginHandler.loginSuccess(updatedAuth, request))
+                           .cookie(new NettyCookie(ImpersonationController.originalJWT, "").path("/").maxAge(0));
             } else {
                 eventPublisher.publishEvent(new LoginFailedEvent(authenticationResponse, null, null, Locale.getDefault()));
                 return loginHandler.loginFailed(authenticationResponse, request);

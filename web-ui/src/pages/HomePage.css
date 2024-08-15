@@ -27,3 +27,9 @@
     font-weight: bolder;
   }
 }
+
+.bottom-right {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}

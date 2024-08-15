@@ -12,7 +12,6 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.util.Util;
-import io.micronaut.context.annotation.Property;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -35,13 +34,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
 
-    public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
-    public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final ReviewPeriodRepository reviewPeriodRepository;
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
     private final String notificationSubject;
     private final String webURL;
 
@@ -50,7 +47,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                        MemberProfileServices memberProfileServices,
                                        ReviewPeriodRepository reviewPeriodRepository,
                                        @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
-                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
                                        CheckInsConfiguration checkInsConfiguration
     ) {
         this.feedbackReqRepository = feedbackReqRepository;
@@ -58,12 +54,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.memberProfileServices = memberProfileServices;
         this.reviewPeriodRepository = reviewPeriodRepository;
         this.emailSender = emailSender;
-        this.notificationSubject = notificationSubject;
+        this.notificationSubject = checkInsConfiguration.getApplication().getFeedback().getRequestSubject();
         this.webURL = checkInsConfiguration.getWebAddress();
-    }
-
-    public void setEmailSender(EmailSender emailSender) {
-        this.emailSender = emailSender;
     }
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
@@ -153,10 +145,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
         // If a status update is made to anything other than submitted by the requestee, throw an error.
-        if (!feedbackRequest.getStatus().equals("submitted") && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())) {
-            if (currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
-                throw new PermissionException(NOT_AUTHORIZED_MSG);
-            }
+        if (!"submitted".equals(feedbackRequest.getStatus())
+                && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())
+                && currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (reassignAttempted) {
@@ -278,7 +270,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean isSupervisor(UUID requesteeId, UUID currentUserId) {
-        return requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        return requesteeId != null
+                && memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
     }
 
     private boolean createIsPermitted(UUID requesteeId) {
@@ -321,12 +314,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (isAdmin) {
+        if (isAdmin || (currentUserId.equals(feedbackRequest.getCreatorId()) && feedbackRequest.getSubmitDate() != null)) {
             return true;
-        } else if (currentUserId.equals(feedbackRequest.getCreatorId())) {
-            if (feedbackRequest.getSubmitDate() != null) {
-                return true;
-            }
         }
 
         return currentUserId.equals(feedbackRequest.getRecipientId());

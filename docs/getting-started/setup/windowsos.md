@@ -10,8 +10,6 @@ grand_parent: Getting Started
 - [Install Git](#install-git)
   - [Install Hub](#install-hub)
   - [SSH Keys](#ssh-keys)
-- [Install jEnv](#install-jenv)
-  - [Plugins](#plugins)
 - [Install OpenJDK](#install-openjdk)
 - [Install NVM](#install-nvm)
 - [Install Yarn](#install-yarn)

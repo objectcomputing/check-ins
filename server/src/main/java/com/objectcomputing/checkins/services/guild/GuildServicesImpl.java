@@ -46,7 +46,7 @@ public class GuildServicesImpl implements GuildServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final GuildMemberServices guildMemberServices;
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
 
@@ -68,10 +68,6 @@ public class GuildServicesImpl implements GuildServices {
         this.emailSender = emailSender;
         this.webAddress = checkInsConfiguration.getWebAddress();
         this.environment = environment;
-    }
-
-    public void setEmailSender (EmailSender emailSender){
-        this.emailSender = emailSender;
     }
 
     public boolean validateLink (String link ) {
@@ -176,7 +172,7 @@ public class GuildServicesImpl implements GuildServices {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                         if(first.isEmpty()) {
-                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
+                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId()), false), existingMember));
                             addedMembers.add(existingMember);
                         } else {
                             newMembers.add(fromMemberEntity(guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
@@ -186,7 +182,7 @@ public class GuildServicesImpl implements GuildServices {
                     //delete any removed members from guild
                     existingGuildMembers.forEach(existingMember -> {
                         if(!guildDTO.getGuildMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
-                            guildMemberServices.delete(existingMember.getId());
+                            guildMemberServices.delete(existingMember.getId(), false);
                             removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
                         }
                     });

@@ -27,17 +27,22 @@ public class TeamUpdateDTO {
     @Schema(description = "description of the team")
     private String description;
 
+    @NotNull
+    @Schema(description = "whether the team is active")
+    private boolean active;
+
     @Schema(description = "members of this team")
     private List<TeamMemberUpdateDTO> teamMembers;
 
-    public TeamUpdateDTO(UUID id, String name, @Nullable String description) {
+    public TeamUpdateDTO(UUID id, String name, @Nullable String description, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.active = active;
     }
 
-    public TeamUpdateDTO(String id, String name, String description) {
-        this(nullSafeUUIDFromString(id), name, description);
+    public TeamUpdateDTO(String id, String name, String description, boolean active) {
+        this(nullSafeUUIDFromString(id), name, description, active);
     }
 
     public TeamUpdateDTO() {

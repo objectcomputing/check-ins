@@ -3,7 +3,8 @@ package com.objectcomputing.checkins.services.guild;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
@@ -12,9 +13,12 @@ import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -26,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -34,15 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 // Disabled in nativeTest, as we get an exception from Mockito
 //    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
 @DisabledInNativeImage
@@ -54,13 +58,16 @@ class GuildTest extends TestContainersSuite {
     @Inject
     private CheckInsConfiguration checkInsConfiguration;
 
+    @Inject
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
+
     private GuildRepository guildsRepo;
     private GuildMemberRepository guildMemberRepo;
     private GuildMemberHistoryRepository guildMemberHistoryRepo;
     private CurrentUserServices currentUserServices;
     private MemberProfileServices memberProfileServices;
     private GuildMemberServices guildMemberServices;
-    private EmailSender emailSender;
     private Environment environment;
     private GuildServicesImpl guildServices;
 
@@ -73,8 +80,9 @@ class GuildTest extends TestContainersSuite {
         currentUserServices = Mockito.mock(CurrentUserServices.class);
         memberProfileServices = Mockito.mock(MemberProfileServices.class);
         guildMemberServices = Mockito.mock(GuildMemberServices.class);
-        emailSender = Mockito.mock(EmailSender.class);
         environment = Mockito.mock(Environment.class);
+
+        emailSender.reset();
 
         guildServices = Mockito.spy(new GuildServicesImpl(
                 guildsRepo,
@@ -187,10 +195,12 @@ class GuildTest extends TestContainersSuite {
         guildServices.emailGuildLeaders(guildLeadersEmails, guild);
 
         String[] emails = guildLeadersEmails.toArray(new String[0]);
-        verify(emailSender, times(1)).sendEmail(any(), any(),
-                eq("You have been assigned as a guild leader of Test Guild"),
-                eq("Congratulations, you have been assigned as a guild leader of Test Guild"),
-                eq(emails));
+
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "You have been assigned as a guild leader of Test Guild", "Congratulations, you have been assigned as a guild leader of Test Guild", String.join(",", emails)),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -201,7 +211,7 @@ class GuildTest extends TestContainersSuite {
 
         guildServices.emailGuildLeaders(guildLeadersEmails, null);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -214,7 +224,7 @@ class GuildTest extends TestContainersSuite {
 
         guildServices.emailGuildLeaders(guildLeadersEmails, guild);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -228,7 +238,7 @@ class GuildTest extends TestContainersSuite {
 
         guildServices.emailGuildLeaders(guildLeadersEmails, guild);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
 
@@ -259,7 +269,12 @@ class GuildTest extends TestContainersSuite {
         GuildResponseDTO response = guildServices.save(guildDTO);
 
         verify(guildsRepo, times(1)).save(any());
-        verify(emailSender, times(1)).sendEmail(any(), any(), anyString(), anyString(), any(String[].class));
+
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "You have been assigned as a guild leader of test", "Congratulations, you have been assigned as a guild leader of test", memberProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -273,7 +288,7 @@ class GuildTest extends TestContainersSuite {
         assertThrows(BadArgException.class, () -> guildServices.save(guildDTO));
 
         verify(guildsRepo, never()).save(any());
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any(String[].class));
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -293,7 +308,7 @@ class GuildTest extends TestContainersSuite {
         assertThrows(BadArgException.class, () -> guildServices.save(guildDTO));
 
         verify(guildsRepo, never()).save(any());
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any(String[].class));
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -303,7 +318,7 @@ class GuildTest extends TestContainersSuite {
         GuildResponseDTO response = guildServices.save(null);
 
         verify(guildsRepo, never()).save(any());
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any(String[].class));
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -365,20 +380,14 @@ class GuildTest extends TestContainersSuite {
 
         GuildResponseDTO response = guildServices.update(guildDTO);
 
-        verify(emailSender, times(1)).sendEmail(
-                any(),
-                any(),
-                eq("Membership Changes have been made to the Test Guild guild"),
-                anyString(),
-                any()
+        assertEquals(2, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the Test Guild guild", "<h3>Changes have been made to the Test Guild guild.</h3><h4>The following members have been added:</h4><ul><li>null null</li><li>null null</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile1.getWorkEmail()),
+                emailSender.events.get(0)
         );
-
-        verify(emailSender, times(1)).sendEmail(
-                any(),
-                any(),
-                eq("You have been assigned as a guild leader of Test Guild"),
-                eq("Congratulations, you have been assigned as a guild leader of Test Guild"),
-                anyString()
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "You have been assigned as a guild leader of Test Guild", "Congratulations, you have been assigned as a guild leader of Test Guild", memberProfile2.getWorkEmail()),
+                emailSender.events.get(1)
         );
     }
 
@@ -429,22 +438,12 @@ class GuildTest extends TestContainersSuite {
         when(memberProfileServices.getById(memberId2)).thenReturn(memberProfile2);
         when(guildMemberServices.findByFields(guildId, null, true)).thenReturn(Collections.singleton(existingGuildMember));
 
-        GuildResponseDTO response = guildServices.update(guildDTO);
+        guildServices.update(guildDTO);
 
-        verify(emailSender, times(1)).sendEmail(
-                any(),
-                any(),
-                eq("Membership Changes have been made to the Test Guild guild"),
-                anyString(),
-                any()
-        );
-
-        verify(emailSender, never()).sendEmail(
-                any(),
-                any(),
-                eq("You have been assigned as a guild leader of Test Guild"),
-                eq("Congratulations, you have been assigned as a guild leader of Test Guild"),
-                anyString()
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the Test Guild guild", "<h3>Changes have been made to the Test Guild guild.</h3><h4>The following members have been added:</h4><ul><li>null null</li><li>null null</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile1.getWorkEmail()),
+                emailSender.events.getFirst()
         );
     }
 
@@ -459,7 +458,7 @@ class GuildTest extends TestContainersSuite {
 
         assertThrows(BadArgException.class, () -> guildServices.update(guildDTO));
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -478,7 +477,7 @@ class GuildTest extends TestContainersSuite {
 
         assertThrows(BadArgException.class, () -> guildServices.update(guildDTO));
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -498,7 +497,7 @@ class GuildTest extends TestContainersSuite {
             guildServices.update(guildDTO);
         });
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -519,6 +518,6 @@ class GuildTest extends TestContainersSuite {
 
         assertThrows(BadArgException.class, () -> guildServices.update(guildDTO));
 
-        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), any());
+        assertEquals(0, emailSender.events.size());
     }
 }

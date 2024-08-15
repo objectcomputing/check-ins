@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
   AddCircleOutline,
   Delete,
@@ -453,7 +454,7 @@ const EarnedCertificationsTable = ({
         <DialogContent>
           {selectedEarned?.certificateImageUrl && (
             <img
-              src={selectedEarned.certificateImageUrl}
+              src={sanitizeUrl(selectedEarned.certificateImageUrl)}
               style={{ width: '100%' }}
             />
           )}

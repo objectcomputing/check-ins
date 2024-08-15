@@ -9,6 +9,7 @@ import {
 import { Button } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
 import './EditTeamModal.css';
 
@@ -173,6 +174,14 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           value={editedTeam.name ? editedTeam.name : ''}
           onChange={e => setTeam({ ...editedTeam, name: e.target.value })}
         />
+        <Checkbox
+            id="team-active-input"
+            label="Active"
+            variant="outlined"
+            className="halfWidth"
+            checked={editedTeam.active ? editedTeam.active : false}
+            onChange={e => setTeam({ ...editedTeam, active: e.target.checked })}
+        /> Active
         <TextField
           id="team-description-input"
           label="Description"

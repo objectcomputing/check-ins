@@ -1,15 +1,19 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -18,6 +22,7 @@ import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -26,22 +31,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.contains;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 // Disabled in nativeTest, as we get an exception from Mockito
 //    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
 @DisabledInNativeImage
 class MemberProfileTest extends TestContainersSuite {
+
     @Inject
     protected Validator validator;
+
+    @Inject
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
+
     private MemberProfileRepository memberRepo;
-    private EmailSender emailSender;
 
     private MemberProfileServicesImpl memberProfileServices;
 
@@ -54,7 +59,7 @@ class MemberProfileTest extends TestContainersSuite {
         CheckInServices checkinServices = Mockito.mock(CheckInServices.class);
         MemberSkillServices memberSkillServices = Mockito.mock(MemberSkillServices.class);
         TeamMemberServices teamMemberServices = Mockito.mock(TeamMemberServices.class);
-        emailSender = Mockito.mock(EmailSender.class);
+        emailSender.reset();
 
         memberProfileServices = new MemberProfileServicesImpl(
                 memberRepo,
@@ -229,20 +234,12 @@ class MemberProfileTest extends TestContainersSuite {
         assertNotNull(savedProfile, "The saved profile should not be null");
         assertEquals(newProfile, savedProfile);
 
-        // Verifying that email was sent for PDL assignment
-        verify(emailSender, times(1)).sendEmail(
-                any(), any(),
-                eq("You have been assigned as the PDL of John Smith"),
-                eq("John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com"),
-                any()
-        );
-
-        // Verifying that email was sent for Supervisor assignment
-        verify(emailSender, times(1)).sendEmail(
-                any(), any(),
-                eq("You have been assigned as the supervisor of John Smith"),
-                eq("John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com"),
-                any()
+        assertEquals(2, emailSender.events.size());
+        assertEquals(List.of(
+                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com", pdlProfile.getWorkEmail()),
+                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com", supervisorProfile.getWorkEmail())
+                ),
+                emailSender.events
         );
     }
 
@@ -263,7 +260,12 @@ class MemberProfileTest extends TestContainersSuite {
         MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
 
         assertEquals(updatedProfile, result);
-        verify(emailSender, times(1)).sendEmail(any(), any(), contains("You have been assigned as the PDL of"), contains("Please engage with them: john.smith@example.com"), eq("jane.doe@example.com"));
+
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: " + existingProfile.getWorkEmail(), pdlProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -283,7 +285,11 @@ class MemberProfileTest extends TestContainersSuite {
         MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
 
         assertEquals(updatedProfile, result);
-        verify(emailSender, times(1)).sendEmail(any(), any(), contains("You have been assigned as the supervisor of"), contains("Please engage with them: john.smith@example.com"), eq("jane.doe@example.com"));
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: " + existingProfile.getWorkEmail(), supervisorProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -299,9 +305,8 @@ class MemberProfileTest extends TestContainersSuite {
         MemberProfile result = memberProfileServices.saveProfile(existingProfile);
 
         assertEquals(existingProfile, result);
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
-
 
     @Test
     @Tag("mocked")
@@ -316,12 +321,11 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, times(1)).sendEmail(
-                any(), // from email
-                any(), // reply-to email
-                eq("You have been assigned as the PDL of John Smith"), // subject
-                eq("John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com"), // body
-                eq("jane.doe@example.com")); // recipient
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com", pdlProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -337,12 +341,11 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, false);
 
-        verify(emailSender, times(1)).sendEmail(
-                any(), // from email
-                any(), // reply-to email
-                eq("You have been assigned as the supervisor of John Smith"),
-                eq("John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com"),
-                eq("jane.doe@example.com"));
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com", supervisorProfile.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
     }
 
     @Test
@@ -364,19 +367,13 @@ class MemberProfileTest extends TestContainersSuite {
         memberProfileServices.emailAssignment(member, true); // for PDL
         memberProfileServices.emailAssignment(member, false); // for supervisor
 
-        verify(emailSender, times(1)).sendEmail(
-                any(), // from email
-                any(), // reply-to email
-                eq("You have been assigned as the PDL of John Smith"),
-                eq("John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com"),
-                eq("jane.doe@example.com"));
-
-        verify(emailSender, times(1)).sendEmail(
-                any(), // from email
-                any(), // reply-to email
-                eq("You have been assigned as the supervisor of John Smith"),
-                eq("John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com"),
-                eq("janine.doe@example.com"));
+        assertEquals(2, emailSender.events.size());
+        assertEquals(List.of(
+                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com", pdlProfile.getWorkEmail()),
+                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com", supervisorProfile.getWorkEmail())
+                ),
+                emailSender.events
+        );
     }
 
     @Test
@@ -390,7 +387,7 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -404,7 +401,7 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -415,7 +412,7 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
@@ -426,6 +423,6 @@ class MemberProfileTest extends TestContainersSuite {
 
         memberProfileServices.emailAssignment(member, true);
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 }
