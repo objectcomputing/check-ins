@@ -51,7 +51,7 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
 
 
     @Override
-    public void store(UUID memberId, CompletedFileUpload file) throws IOException, BadArgException {
+    public void store(CompletedFileUpload file) throws IOException, BadArgException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, NOT_AUTHORIZED_MSG);
@@ -79,16 +79,15 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
         } else {
             throw new BadArgException("Unable to determine data type: " + fileName);
         }
-        String name = getKeyName(memberId, dataType);
 
         // Update the timestamp to allow us to check later to see if we
         // need to remove this user's data.
         perUser.timestamp = new Date();
-        perUser.data.put(name, file.getByteBuffer());
+        perUser.data.put(dataType.name(), file.getByteBuffer());
     }
 
     @Override
-    public ByteBuffer get(UUID memberId, DataType dataType) throws NotFoundException {
+    public ByteBuffer get(DataType dataType) throws NotFoundException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, NOT_AUTHORIZED_MSG);
@@ -96,7 +95,7 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
         UUID id = currentUser.getId();
         if (storedUploads.containsKey(id)) {
             Stored perUser = storedUploads.get(id);
-            String name = getKeyName(memberId, dataType);
+            String name = dataType.name();
             if (perUser.data.containsKey(name)) {
                 // Update the timestamp to allow us to check later to see if we
                 // need to remove this user's data.
@@ -118,10 +117,6 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
                 storedUploads.remove(entry.getKey());
             }
         }
-    }
-
-    private String getKeyName(UUID memberId, DataType dataType) {
-        return memberId.toString() + "-" + dataType.toString();
     }
 
     private void validate(boolean isError, String message, Object... args) {
