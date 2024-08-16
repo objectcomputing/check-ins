@@ -30,6 +30,7 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
       public Map<String, ByteBuffer> data;
 
       public Stored() {
+          timestamp = new Date();
           data = new HashMap<String, ByteBuffer>();
       }
     }
@@ -67,7 +68,7 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
         }
 
         // Translate the file name to a data type that we know about.
-        String fileName = file.getName().toLowerCase();
+        String fileName = file.getFilename().toLowerCase();
         DataType dataType;
         if (fileName.contains("comp")) {
             dataType = DataType.compensationHistory;
@@ -83,6 +84,8 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
         // Update the timestamp to allow us to check later to see if we
         // need to remove this user's data.
         perUser.timestamp = new Date();
+
+        // Store the user's data based on the determined data type.
         perUser.data.put(dataType.name(), file.getByteBuffer());
     }
 
