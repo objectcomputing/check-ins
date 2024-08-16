@@ -8,7 +8,7 @@ import io.micronaut.http.multipart.CompletedFileUpload;
 import java.nio.ByteBuffer;
 import java.io.IOException;
 
-public interface ReportDataUploadServices {
+public interface ReportDataServices {
     public enum DataType {
         compensationHistory, positionHistory, currentInformation
     }

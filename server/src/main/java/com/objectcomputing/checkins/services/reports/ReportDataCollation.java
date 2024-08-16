@@ -23,7 +23,7 @@ public class ReportDataCollation {
     private KudosRepository kudosRepository;
     private KudosRecipientRepository kudosRecipientRepository;
     private MemberProfileRepository memberProfileRepository;
-    private ReportDataUploadServices reportDataUploadServices;
+    private ReportDataServices reportDataServices;
 
     public ReportDataCollation(
                           UUID memberId,
@@ -31,7 +31,7 @@ public class ReportDataCollation {
                           KudosRepository kudosRepository,
                           KudosRecipientRepository kudosRecipientRepository,
                           MemberProfileRepository memberProfileRepository,
-                          ReportDataUploadServices reportDataUploadServices) {
+                          ReportDataServices reportDataServices) {
         this.memberId = memberId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -39,7 +39,7 @@ public class ReportDataCollation {
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.memberProfileRepository = memberProfileRepository;
-        this.reportDataUploadServices = reportDataUploadServices;
+        this.reportDataServices = reportDataServices;
     }
 
     LocalDate getStartDate() {
@@ -69,7 +69,7 @@ public class ReportDataCollation {
     }
 
     /// Get the member name, title, and start date among others.
-    MemberProfile getProfile() {
+    MemberProfile getMemberProfile() {
         return memberProfileRepository.findById(memberId).orElseThrow(() ->
             new NotFoundException("Member not found")
         );
@@ -79,8 +79,8 @@ public class ReportDataCollation {
         List<CompensationHistory.Compensation> history = compensationHistory.getHistory(memberId);
         if (history.isEmpty()) {
             try {
-                ByteBuffer buffer = reportDataUploadServices.get(
-                    ReportDataUploadServices.DataType.compensationHistory);
+                ByteBuffer buffer = reportDataServices.get(
+                    ReportDataServices.DataType.compensationHistory);
                 compensationHistory.load(memberProfileRepository, buffer);
                 history = compensationHistory.getHistory(memberId);
             } catch(Exception ex) {

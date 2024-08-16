@@ -23,7 +23,7 @@ import java.io.IOException;
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
-public class ReportDataUploadServicesImpl extends TimerTask implements ReportDataUploadServices {
+public class ReportDataServicesImpl extends TimerTask implements ReportDataServices {
 
     private class Stored {
       public Date timestamp;
@@ -35,7 +35,7 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
       }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(ReportDataUploadServicesImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReportDataServicesImpl.class);
 
     private final CurrentUserServices currentUserServices;
     private final Map<UUID, Stored> storedUploads = new HashMap<UUID, Stored>();
@@ -43,7 +43,7 @@ public class ReportDataUploadServicesImpl extends TimerTask implements ReportDat
     private final long expireCheck = 10*60*1000;
     private final long expiration = 60*60*1000;
 
-    public ReportDataUploadServicesImpl(
+    public ReportDataServicesImpl(
                                    CurrentUserServices currentUserServices) {
         this.currentUserServices = currentUserServices;
 
