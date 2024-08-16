@@ -24,6 +24,7 @@ import SettingsPage from '../../pages/SettingsPage';
 import SkillReportPage from '../../pages/SkillReportPage';
 import TeamSkillReportPage from '../../pages/TeamSkillReportPage';
 import TeamsPage from '../../pages/TeamsPage';
+import MeritReportPage from '../../pages/MeritReportPage';
 import Users from '../admin/users/Users';
 import VolunteerReportPage from '../../pages/VolunteerReportPage';
 
@@ -159,6 +160,10 @@ export default function Routes() {
           <Route path="/annual-review-reports">
             <Header title="Annual Review Report" />
             <AnnualReviewReportPage />
+          </Route>
+          <Route path="/merit-reports">
+            <Header title="Merit Report" />
+            <MeritReportPage />
           </Route>
           <Route path="/volunteer-reports">
             <Header title="Volunteering Report" />

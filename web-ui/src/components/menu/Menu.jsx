@@ -154,6 +154,7 @@ function Menu({ children }) {
       links.push(['/team-skills-reports', 'Team Skills']);
     }
 
+    links.push(['/merit-reports', 'Merit Report']);
     links.push(['/volunteer-reports', 'Volunteering']);
 
     return links;

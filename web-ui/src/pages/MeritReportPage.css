@@ -1,0 +1,17 @@
+.merit-report-page {
+  margin: 1rem 3rem;
+}
+
+.merit-report-page .search-results {
+  margin: 2rem 0 0 0;
+}
+
+.merit-report-page .search-results .MuiChip-root {
+  margin: 0.25rem;
+}
+
+@media (max-width: 850px) {
+  .merit-report-page {
+    margin: 0.5rem 1rem;
+  }
+}
