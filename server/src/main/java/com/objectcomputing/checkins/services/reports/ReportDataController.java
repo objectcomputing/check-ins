@@ -48,8 +48,8 @@ public class ReportDataController {
         this.memberProfileRepository = memberProfileRepository;
     }
 
-    @Post(uri="/upload" , consumes = MediaType.MULTIPART_FORM_DATA)
-    public Mono<List<String>> upload(@Part("file") Publisher<CompletedFileUpload> file){
+    @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
+    public Mono<List<String>> upload(@Part("file") Publisher<CompletedFileUpload> file) {
         return Flux.from(file)
                 .subscribeOn(Schedulers.boundedElastic())
                 .map(part -> {
@@ -64,7 +64,7 @@ public class ReportDataController {
                 .collectList();
     }
 
-    @Get("/{memberId,startDate,endDate}")
+    @Get(value = "/{memberId,startDate,endDate}", produces = MediaType.APPLICATION_JSON)
     public ReportDataDTO get(@NotNull UUID memberId, @NotNull LocalDate startDate, @NotNull LocalDate endDate) {
         ReportDataCollation data = new ReportDataCollation(
                                            memberId, startDate, endDate,
