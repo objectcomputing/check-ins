@@ -1,5 +1,10 @@
 [
   {
+    "name": "com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
     "name": "com.objectcomputing.checkins.services.permissions.PermissionSerializer",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true
