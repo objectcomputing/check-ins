@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { uploadFile } from '../api/uploadcsv';
+import { uploadFile, downloadJson } from '../api/generic';
 import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import {
@@ -90,6 +90,29 @@ const MeritReportPage = () => {
     }
   };
 
+  const download = async () => {
+    for(let selected of selectedMembers) {
+    console.log("Download for " + selected.id);
+    let res = await downloadJson("/services/report/data",
+                                 csrf, {memberId: selected.id,
+                                        startDate: '2024-01-01',
+                                        endDate: '2024-12-31'});
+    if (res?.error) {
+      let error = res?.error?.response?.data?.message;
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: error
+        }
+      });
+    }
+    const data = res?.payload?.data;
+    if (data) {
+      console.log(data);
+    }
+    }
+  }
 
   return (
     <div className="merit-report-page">
@@ -122,6 +145,12 @@ const MeritReportPage = () => {
         onChange={setSelectedMembers}
         selected={selectedMembers}
       />
+      <Button color="primary"
+              onClick={download}>
+        <label htmlFor="download">
+          <h3>Generate Report</h3>
+        </label>
+      </Button>
     </div>
   );
 };
