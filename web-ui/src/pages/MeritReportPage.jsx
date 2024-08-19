@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { uploadFile, downloadJson } from '../api/generic';
+import { uploadData, downloadData } from '../api/generic';
 import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import {
@@ -66,7 +66,7 @@ const MeritReportPage = () => {
     }
     let formData = new FormData();
     formData.append('file', file);
-    let res = await uploadFile("/services/report/data/upload",
+    let res = await uploadData("/services/report/data/upload",
                                csrf, formData);
     if (res?.error) {
       let error = res?.error?.response?.data?.message;
@@ -92,25 +92,24 @@ const MeritReportPage = () => {
 
   const download = async () => {
     for(let selected of selectedMembers) {
-    console.log("Download for " + selected.id);
-    let res = await downloadJson("/services/report/data",
-                                 csrf, {memberId: selected.id,
-                                        startDate: '2024-01-01',
-                                        endDate: '2024-12-31'});
-    if (res?.error) {
-      let error = res?.error?.response?.data?.message;
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'error',
-          toast: error
-        }
-      });
-    }
-    const data = res?.payload?.data;
-    if (data) {
-      console.log(data);
-    }
+      let res = await downloadData("/services/report/data",
+                                   csrf, {memberId: selected.id,
+                                          startDate: '2024-01-01',
+                                          endDate: '2024-12-31'});
+      if (res?.error) {
+        let error = res?.error?.response?.data?.message;
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: error
+          }
+        });
+      }
+      const data = res?.payload?.data;
+      if (data) {
+        console.log(data);
+      }
     }
   }
 
