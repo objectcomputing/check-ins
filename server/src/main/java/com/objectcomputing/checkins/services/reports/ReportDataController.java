@@ -74,7 +74,9 @@ public class ReportDataController {
                                            reportDataServices);
         ReportDataDTO dto = new ReportDataDTO(memberId, startDate, endDate,
                                     data.getMemberProfile(), data.getKudos(),
-                                    data.getCompensationHistory());
+                                    data.getCompensationHistory(),
+                                    data.getCurrentInformation(),
+                                    data.getPositionHistory());
         return dto;
     }
 }

@@ -33,9 +33,15 @@ public class ReportDataDTO {
     @NotNull
     private MemberProfile memberProfile;
 
-    @Nullable
+    @NotNull
     private List<Kudos> kudos;
 
-    @Nullable
+    @NotNull
     private List<CompensationHistory.Compensation> compensationHistory;
+
+    @NotNull
+    private List<CurrentInformation.Information> currentInformation;
+
+    @NotNull
+    private List<PositionHistory.Position> positionHistory;
 }

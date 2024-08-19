@@ -20,6 +20,8 @@ public class ReportDataCollation {
     private LocalDate startDate;
     private LocalDate endDate;
     private CompensationHistory compensationHistory;
+    private CurrentInformation currentInformation;
+    private PositionHistory positionHistory;
     private KudosRepository kudosRepository;
     private KudosRecipientRepository kudosRecipientRepository;
     private MemberProfileRepository memberProfileRepository;
@@ -36,6 +38,8 @@ public class ReportDataCollation {
         this.startDate = startDate;
         this.endDate = endDate;
         this.compensationHistory = new CompensationHistory();
+        this.currentInformation = new CurrentInformation();
+        this.positionHistory = new PositionHistory();
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.memberProfileRepository = memberProfileRepository;
@@ -83,6 +87,34 @@ public class ReportDataCollation {
                     ReportDataServices.DataType.compensationHistory);
                 compensationHistory.load(memberProfileRepository, buffer);
                 history = compensationHistory.getHistory(memberId);
+            } catch(Exception ex) {
+            }
+        }
+        return history;
+    }
+
+    List<CurrentInformation.Information> getCurrentInformation() {
+        List<CurrentInformation.Information> information = currentInformation.getInformation(memberId);
+        if (information.isEmpty()) {
+            try {
+                ByteBuffer buffer = reportDataServices.get(
+                    ReportDataServices.DataType.currentInformation);
+                currentInformation.load(memberProfileRepository, buffer);
+                information = currentInformation.getInformation(memberId);
+            } catch(Exception ex) {
+            }
+        }
+        return information;
+    }
+
+    List<PositionHistory.Position> getPositionHistory() {
+        List<PositionHistory.Position> history = positionHistory.getHistory(memberId);
+        if (history.isEmpty()) {
+            try {
+                ByteBuffer buffer = reportDataServices.get(
+                    ReportDataServices.DataType.positionHistory);
+                positionHistory.load(memberProfileRepository, buffer);
+                history = positionHistory.getHistory(memberId);
             } catch(Exception ex) {
             }
         }
