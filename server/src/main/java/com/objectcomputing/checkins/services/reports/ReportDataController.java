@@ -64,7 +64,7 @@ public class ReportDataController {
                 .collectList();
     }
 
-    @Get(value = "/{memberId,startDate,endDate}", produces = MediaType.APPLICATION_JSON)
+    @Get
     public ReportDataDTO get(@NotNull UUID memberId, @NotNull LocalDate startDate, @NotNull LocalDate endDate) {
         ReportDataCollation data = new ReportDataCollation(
                                            memberId, startDate, endDate,

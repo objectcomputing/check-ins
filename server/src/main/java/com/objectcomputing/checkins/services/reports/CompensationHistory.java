@@ -86,7 +86,7 @@ public class CompensationHistory {
 
     public List<Compensation> getHistory(UUID memberId) {
         return history.stream()
-               .filter(entry -> entry.getMemberId() == memberId)
+               .filter(entry -> entry.getMemberId().equals(memberId))
                .collect(Collectors.toList());
     }
 }

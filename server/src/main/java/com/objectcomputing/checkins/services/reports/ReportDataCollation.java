@@ -55,7 +55,7 @@ public class ReportDataCollation {
         List<KudosRecipient> recipients = kudosRecipientRepository.findByMemberId(memberId);
         List<Kudos> kudosList = new ArrayList<Kudos>();
         for (KudosRecipient recipient : recipients) {
-            Kudos kudos = kudosRepository.findById(recipient.getId())
+            Kudos kudos = kudosRepository.findById(recipient.getKudosId())
                                          .orElse(null);
             if (kudos != null) {
                 LocalDate created = kudos.getDateCreated();
