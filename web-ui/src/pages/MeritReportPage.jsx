@@ -91,25 +91,28 @@ const MeritReportPage = () => {
   };
 
   const download = async () => {
-    for(let selected of selectedMembers) {
-      let res = await downloadData("/services/report/data",
-                                   csrf, {memberId: selected.id,
-                                          startDate: '2024-01-01',
-                                          endDate: '2024-12-31'});
-      if (res?.error) {
-        let error = res?.error?.response?.data?.message;
-        dispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: error
-          }
-        });
-      }
-      const data = res?.payload?.data;
-      if (data) {
-        console.log(data);
-      }
+    let selected = selectedMembers.reduce((result, item) => {
+                     result.push(item.id);
+                     return result;
+                   }, []);
+
+    let res = await downloadData("/services/report/data",
+                                 csrf, {memberIds: selected,
+                                        startDate: '2024-01-01',
+                                        endDate: '2024-12-31'});
+    if (res?.error) {
+      let error = res?.error?.response?.data?.message;
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: error
+        }
+      });
+    }
+    const data = res?.payload?.data;
+    if (data) {
+      console.log(data);
     }
   }
 

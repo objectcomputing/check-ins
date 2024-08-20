@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.time.LocalDate;
 import java.io.IOException;
@@ -65,18 +66,21 @@ public class ReportDataController {
     }
 
     @Get
-    public ReportDataDTO get(@NotNull UUID memberId, @NotNull LocalDate startDate, @NotNull LocalDate endDate) {
-        ReportDataCollation data = new ReportDataCollation(
+    public List<ReportDataDTO> get(@NotNull List<UUID> memberIds, @NotNull LocalDate startDate, @NotNull LocalDate endDate) {
+        List<ReportDataDTO> list = new ArrayList<ReportDataDTO>();
+        for (UUID memberId : memberIds) {
+            ReportDataCollation data = new ReportDataCollation(
                                            memberId, startDate, endDate,
                                            kudosRepository,
                                            kudosRecipientRepository,
                                            memberProfileRepository,
                                            reportDataServices);
-        ReportDataDTO dto = new ReportDataDTO(memberId, startDate, endDate,
+            list.add(new ReportDataDTO(memberId, startDate, endDate,
                                     data.getMemberProfile(), data.getKudos(),
                                     data.getCompensationHistory(),
                                     data.getCurrentInformation(),
-                                    data.getPositionHistory());
-        return dto;
+                                    data.getPositionHistory()));
+        }
+        return list;
     }
 }
