@@ -30,6 +30,8 @@ public class ReportDataCollation {
     }
 
     private UUID memberId;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private UUID reviewPeriodId;
     private CompensationHistory compensationHistory;
     private CurrentInformation currentInformation;
@@ -57,11 +59,21 @@ public class ReportDataCollation {
         this.memberProfileRepository = memberProfileRepository;
         this.reviewPeriodServices = reviewPeriodServices;
         this.reportDataServices = reportDataServices;
+        LocalDateRange range = getDateRange();
+        startDate = range.start;
+        endDate = range.end;
+    }
+
+    LocalDate getStartDate() {
+        return startDate;
+    }
+
+    LocalDate getEndDate() {
+        return endDate;
     }
 
     /// Get the kudos given to the member during the start and end date range.
     public List<Kudos> getKudos() {
-        LocalDateRange range = getDateRange();
         List<KudosRecipient> recipients = kudosRecipientRepository.findByMemberId(memberId);
         List<Kudos> kudosList = new ArrayList<Kudos>();
         for (KudosRecipient recipient : recipients) {
@@ -69,9 +81,8 @@ public class ReportDataCollation {
                                          .orElse(null);
             if (kudos != null) {
                 LocalDate created = kudos.getDateCreated();
-                if ((created.isEqual(range.start) ||
-                     created.isAfter(range.start)) &&
-                    created.isBefore(range.end)) {
+                if ((created.isEqual(startDate) ||
+                     created.isAfter(startDate)) && created.isBefore(endDate)) {
                     kudosList.add(kudos);
                 }
             }
@@ -96,7 +107,7 @@ public class ReportDataCollation {
         return compensationHistory.getHistory(memberId);
     }
 
-    public List<CurrentInformation.Information> getCurrentInformation() {
+    public CurrentInformation.Information getCurrentInformation() {
         try {
             ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.currentInformation);

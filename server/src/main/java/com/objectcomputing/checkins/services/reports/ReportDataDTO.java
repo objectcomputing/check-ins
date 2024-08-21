@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +28,12 @@ public class ReportDataDTO {
     private UUID reviewPeriodId;
 
     @NotNull
+    private LocalDate startDate;
+
+    @NotNull
+    private LocalDate endDate;
+
+    @NotNull
     private MemberProfile memberProfile;
 
     @NotNull
@@ -36,7 +43,7 @@ public class ReportDataDTO {
     private List<CompensationHistory.Compensation> compensationHistory;
 
     @NotNull
-    private List<CurrentInformation.Information> currentInformation;
+    private CurrentInformation.Information currentInformation;
 
     @NotNull
     private List<PositionHistory.Position> positionHistory;

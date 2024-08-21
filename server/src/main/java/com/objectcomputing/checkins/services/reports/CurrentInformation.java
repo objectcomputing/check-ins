@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.reports;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
@@ -99,9 +100,15 @@ public class CurrentInformation {
         }
     }
 
-    public List<Information> getInformation(UUID memberId) {
-        return information.stream()
+    public Information getInformation(UUID memberId) {
+        // There should only be one entry per member.
+        List<Information> list = information.stream()
                .filter(entry -> entry.getMemberId().equals(memberId))
                .collect(Collectors.toList());
+        if (list.isEmpty()) {
+          throw new NotFoundException("Information not found: " + memberId);
+        } else {
+          return list.get(0);
+        }
     }
 }

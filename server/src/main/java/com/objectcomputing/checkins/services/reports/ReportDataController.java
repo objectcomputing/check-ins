@@ -80,6 +80,7 @@ public class ReportDataController {
                                            reviewPeriodServices,
                                            reportDataServices);
             list.add(new ReportDataDTO(memberId, reviewPeriodId,
+                                    data.getStartDate(), data.getEndDate(),
                                     data.getMemberProfile(), data.getKudos(),
                                     data.getCompensationHistory(),
                                     data.getCurrentInformation(),
