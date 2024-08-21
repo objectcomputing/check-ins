@@ -5,6 +5,11 @@
     "allPublicConstructors" : true
   },
   {
+    "name": "com.objectcomputing.checkins.util.serialize.LocalDateTimeSerializer",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
     "name": "com.objectcomputing.checkins.services.permissions.PermissionSerializer",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true
