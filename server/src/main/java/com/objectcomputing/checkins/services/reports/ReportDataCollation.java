@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.Month;
 import java.nio.ByteBuffer;
+import java.io.IOException;
 
 public class ReportDataCollation {
     private class LocalDateRange {
@@ -86,23 +87,32 @@ public class ReportDataCollation {
     }
 
     public List<CompensationHistory.Compensation> getCompensationHistory() {
-        ByteBuffer buffer = reportDataServices.get(
+        try {
+            ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.compensationHistory);
-        compensationHistory.load(memberProfileRepository, buffer);
+            compensationHistory.load(memberProfileRepository, buffer);
+        } catch(IOException ex) {
+        }
         return compensationHistory.getHistory(memberId);
     }
 
     public List<CurrentInformation.Information> getCurrentInformation() {
-        ByteBuffer buffer = reportDataServices.get(
+        try {
+            ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.currentInformation);
-        currentInformation.load(memberProfileRepository, buffer);
+            currentInformation.load(memberProfileRepository, buffer);
+        } catch(IOException ex) {
+        }
         return currentInformation.getInformation(memberId);
     }
 
     public List<PositionHistory.Position> getPositionHistory() {
-        ByteBuffer buffer = reportDataServices.get(
+        try {
+            ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.positionHistory);
-        positionHistory.load(memberProfileRepository, buffer);
+            positionHistory.load(memberProfileRepository, buffer);
+        } catch(IOException ex) {
+        }
         return positionHistory.getHistory(memberId);
     }
 
