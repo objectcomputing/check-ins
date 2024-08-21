@@ -30,6 +30,7 @@
     "isomorphic-fetch": "^3.0.0",
     "js-file-download": "^0.4.12",
     "lodash": "^4.17.21",
+    "markdown-builder": "^0.9.0",
     "mjml": "^5.0.0-alpha.4",
     "mjml-browser": "^5.0.0-alpha.4",
     "qs": "^6.13.0",

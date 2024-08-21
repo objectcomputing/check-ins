@@ -15,6 +15,8 @@ import './MeritReportPage.css';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { useQueryParameters } from '../helpers/query-parameters';
 
+import markdown from 'markdown-builder';
+
 const MeritReportPage = () => {
   const { state, dispatch } = useContext(AppContext);
 
@@ -139,9 +141,135 @@ const MeritReportPage = () => {
         }
       });
     }
-    const data = res?.payload?.data;
-    if (data) {
-      console.log(data);
+    return res?.payload?.data;
+  };
+
+  const dateFromArray = (parts) => {
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  };
+
+  const formatDate = (date) => {
+    // Wed Oct 05 2011
+    let str = date.toString().slice(4, 15);
+    return str.slice(0, 6) + "," + str.slice(6);
+  };
+
+  const markdownTitle = (data) => {
+    const memberProfile = data.memberProfile;
+    const startDate = dateFromArray(data.startDate);
+    const endDate = dateFromArray(data.endDate);
+    let text = markdown.headers.h1(memberProfile.firstName + " " +
+                                   memberProfile.lastName);
+    text += memberProfile.title + "\n";
+    text += "Review Period: " +
+            formatDate(startDate) + " - " + formatDate(endDate) + "\n\n";
+    return text;
+  };
+
+  const markdownCurrentInformation = (data) => {
+    const memberProfile = data.memberProfile;
+    const currentInfo = data.currentInformation;
+    const startDate = dateFromArray(memberProfile.startDate);
+    const years = (Date.now() - startDate) / (1000 * 60 * 60 * 24 * 365.25);
+    let text = markdown.headers.h1("Current Information");
+    text += years.toFixed(1) + " years\n\n";
+    text += markdown.headers.h2("Biographical Notes");
+    text += currentInfo.biography + "\n\n";
+    return text;
+  };
+
+  const markdownKudos = (data) => {
+    const kudosList = data.kudos;
+    let text = markdown.headers.h1("Kudos");
+    for (let kudos of kudosList) {
+      const date = dateFromArray(kudos.dateCreated);
+      text += kudos.message + "\n";
+      text += markdown.emphasis.i("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                  "Submitted on " + formatDate(date)) + "\n\n";
+    }
+    return text;
+  };
+
+  const markdownReviews = (data) => {
+    // TODO: Add reviews on server side
+    return "";
+  };
+
+  const markdownFeedback = (data) => {
+    // TODO: Add feedback on server side
+    return "";
+  };
+
+  const markdownTitleHistory = (data) => {
+    const posHistory = data.positionHistory.sort((a, b) => {
+      for(let i = 0; i < a.length; i++) {
+        if (a.date[i] != b.date[i]) {
+          return b.date[i] - a.date[i];
+        }
+      }
+      return 0;
+    });
+
+    let text = markdown.headers.h2("Title History");
+    text += markdown.lists.ul(posHistory,
+                              (position) => position.date[0] + " - " +
+                                            position.title);
+    return text;
+  };
+
+  const markdownCompensation = (data) => {
+    const currentInfo = data.currentInformation;
+    let text = markdown.headers.h2("Compensation and Commitments");
+    text += "$" + currentInfo.salary.toFixed(2) + " Base Salary\n";
+    text += "OCI Range for role: " + currentInfo.range + "\n\n";
+    if (currentInfo.commitments) {
+      text += "Commitments: " + currentInfo.commitments + "\n";
+    } else {
+      text += "No current bonus commitments\n";
+    }
+    text += "\n";
+    return text;
+  };
+
+  const markdownCompensationHistory = (data) => {
+    // Sort them latest to oldest and truncate to the first 3.
+    const compHistory = data.compensationHistory.sort((a, b) => {
+      for(let i = 0; i < a.length; i++) {
+        if (a.startDate[i] != b.startDate[i]) {
+          return b.startDate[i] - a.startDate[i];
+        }
+      }
+      return 0;
+    }).slice(0, 3);
+
+    let text = markdown.headers.h2("Compensation History");
+    text += markdown.lists.ul(compHistory,
+                (comp) => formatDate(dateFromArray(comp.startDate)) + " - " +
+                "$" + comp.amount.toFixed(2) + " (base)");
+    return text;
+  };
+
+  const markdownReviewerNotes = (data) => {
+    let text = markdown.headers.h4("Reviewer Notes");
+    return text;
+  };
+
+  const createReportMarkdownDocuments = async () => {
+    const dataSet = await download();
+    for (let data of dataSet) {
+      // Generate markdown
+      let text = markdownTitle(data);
+      text += markdownCurrentInformation(data);
+      text += markdownKudos(data);
+      text += markdownReviews(data);
+      text += markdownFeedback(data);
+      text += markdownTitleHistory(data);
+      text += markdownCompensation(data);
+      text += markdownCompensationHistory(data);
+      text += markdownReviewerNotes(data);
+
+      // TODO: Store the markdown on the google drive.
+      console.log(text);
     }
   };
 
@@ -163,7 +291,6 @@ const MeritReportPage = () => {
           />
         </label>
       </Button>
-
       <div className="buttons">
         {selectedFile && (
           <Button
@@ -174,27 +301,29 @@ const MeritReportPage = () => {
           </Button>
         )}
       </div>
-      <Autocomplete
-        id="reviewPeriodSelect"
-        options={reviewPeriods ? reviewPeriods : []}
-        value={reviewPeriodId}
-        onChange={onReviewPeriodChange}
-        renderInput={params => (
-          <TextField
-            {...params}
-            className="fullWidth"
-            label="ReviewPeriod"
-            placeholder="Choose review period"
-          />
-        )}
-      />
       <MemberSelector
         className="merit-member-selector"
         onChange={setSelectedMembers}
         selected={selectedMembers}
       />
+      <div className="review-period-section">
+        <Autocomplete
+          id="reviewPeriodSelect"
+          options={reviewPeriods ? reviewPeriods : []}
+          value={reviewPeriodId}
+          onChange={onReviewPeriodChange}
+          renderInput={params => (
+            <TextField
+              {...params}
+              className="fullWidth"
+              label="ReviewPeriod"
+              placeholder="Choose review period"
+            />
+          )}
+        />
+      </div>
       <Button color="primary"
-              onClick={download}>
+              onClick={createReportMarkdownDocuments}>
         <label htmlFor="download">
           <h3>Generate Report</h3>
         </label>
