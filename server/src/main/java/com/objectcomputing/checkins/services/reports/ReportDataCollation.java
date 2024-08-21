@@ -8,54 +8,59 @@ import com.objectcomputing.checkins.services.kudos.Kudos;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
 
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.time.Month;
 import java.nio.ByteBuffer;
 
 public class ReportDataCollation {
+    private class LocalDateRange {
+        public LocalDate start;
+        public LocalDate end;
+        public LocalDateRange(LocalDate start, LocalDate end) {
+            this.start = start;
+            this.end = end;
+        }
+    }
+
     private UUID memberId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private UUID reviewPeriodId;
     private CompensationHistory compensationHistory;
     private CurrentInformation currentInformation;
     private PositionHistory positionHistory;
     private KudosRepository kudosRepository;
     private KudosRecipientRepository kudosRecipientRepository;
     private MemberProfileRepository memberProfileRepository;
+    private ReviewPeriodServices reviewPeriodServices;
     private ReportDataServices reportDataServices;
 
     public ReportDataCollation(
-                          UUID memberId,
-                          LocalDate startDate, LocalDate endDate,
+                          UUID memberId, UUID reviewPeriodId,
                           KudosRepository kudosRepository,
                           KudosRecipientRepository kudosRecipientRepository,
                           MemberProfileRepository memberProfileRepository,
+                          ReviewPeriodServices reviewPeriodServices,
                           ReportDataServices reportDataServices) {
         this.memberId = memberId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.reviewPeriodId = reviewPeriodId;
         this.compensationHistory = new CompensationHistory();
         this.currentInformation = new CurrentInformation();
         this.positionHistory = new PositionHistory();
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.memberProfileRepository = memberProfileRepository;
+        this.reviewPeriodServices = reviewPeriodServices;
         this.reportDataServices = reportDataServices;
     }
 
-    LocalDate getStartDate() {
-        return startDate;
-    }
-
-    LocalDate getEndDate() {
-        return endDate;
-    }
-
     /// Get the kudos given to the member during the start and end date range.
-    List<Kudos> getKudos() {
+    public List<Kudos> getKudos() {
+        LocalDateRange range = getDateRange();
         List<KudosRecipient> recipients = kudosRecipientRepository.findByMemberId(memberId);
         List<Kudos> kudosList = new ArrayList<Kudos>();
         for (KudosRecipient recipient : recipients) {
@@ -63,8 +68,9 @@ public class ReportDataCollation {
                                          .orElse(null);
             if (kudos != null) {
                 LocalDate created = kudos.getDateCreated();
-                if ((created.isEqual(startDate) ||
-                     created.isAfter(startDate)) && created.isBefore(endDate)) {
+                if ((created.isEqual(range.start) ||
+                     created.isAfter(range.start)) &&
+                    created.isBefore(range.end)) {
                     kudosList.add(kudos);
                 }
             }
@@ -73,51 +79,48 @@ public class ReportDataCollation {
     }
 
     /// Get the member name, title, and start date among others.
-    MemberProfile getMemberProfile() {
+    public MemberProfile getMemberProfile() {
         return memberProfileRepository.findById(memberId).orElseThrow(() ->
             new NotFoundException("Member not found")
         );
     }
 
-    List<CompensationHistory.Compensation> getCompensationHistory() {
-        List<CompensationHistory.Compensation> history = compensationHistory.getHistory(memberId);
-        if (history.isEmpty()) {
-            try {
-                ByteBuffer buffer = reportDataServices.get(
+    public List<CompensationHistory.Compensation> getCompensationHistory() {
+        ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.compensationHistory);
-                compensationHistory.load(memberProfileRepository, buffer);
-                history = compensationHistory.getHistory(memberId);
-            } catch(Exception ex) {
-            }
-        }
-        return history;
+        compensationHistory.load(memberProfileRepository, buffer);
+        return compensationHistory.getHistory(memberId);
     }
 
-    List<CurrentInformation.Information> getCurrentInformation() {
-        List<CurrentInformation.Information> information = currentInformation.getInformation(memberId);
-        if (information.isEmpty()) {
-            try {
-                ByteBuffer buffer = reportDataServices.get(
+    public List<CurrentInformation.Information> getCurrentInformation() {
+        ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.currentInformation);
-                currentInformation.load(memberProfileRepository, buffer);
-                information = currentInformation.getInformation(memberId);
-            } catch(Exception ex) {
-            }
-        }
-        return information;
+        currentInformation.load(memberProfileRepository, buffer);
+        return currentInformation.getInformation(memberId);
     }
 
-    List<PositionHistory.Position> getPositionHistory() {
-        List<PositionHistory.Position> history = positionHistory.getHistory(memberId);
-        if (history.isEmpty()) {
-            try {
-                ByteBuffer buffer = reportDataServices.get(
+    public List<PositionHistory.Position> getPositionHistory() {
+        ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.positionHistory);
-                positionHistory.load(memberProfileRepository, buffer);
-                history = positionHistory.getHistory(memberId);
-            } catch(Exception ex) {
+        positionHistory.load(memberProfileRepository, buffer);
+        return positionHistory.getHistory(memberId);
+    }
+
+    private LocalDateRange getDateRange() {
+        // Return date range based on reviewPeriodId (defaulting to this year).
+        LocalDate closeDate = LocalDate.now();
+        ReviewPeriod reviewPeriod = reviewPeriodServices.findById(reviewPeriodId);
+        if (reviewPeriod != null) {
+            LocalDate date = reviewPeriod.getCloseDate().toLocalDate();
+            if (date != null) {
+                closeDate = date;
             }
         }
-        return history;
+
+        LocalDate startDate = closeDate.withMonth(Month.JANUARY.getValue())
+                                .withDayOfMonth(1);
+        LocalDate endDate = closeDate.withMonth(Month.DECEMBER.getValue())
+                                .withDayOfMonth(31);
+        return new LocalDateRange(startDate, endDate);
     }
 }

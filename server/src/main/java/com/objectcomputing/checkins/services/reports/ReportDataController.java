@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.reports;
 import com.objectcomputing.checkins.services.kudos.KudosRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -26,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.time.LocalDate;
 import java.io.IOException;
 
 @Controller("/services/report/data")
@@ -35,18 +35,21 @@ import java.io.IOException;
 public class ReportDataController {
     private static final Logger LOG = LoggerFactory.getLogger(ReportDataController.class);
     private final ReportDataServices reportDataServices;
-    private KudosRepository kudosRepository;
-    private KudosRecipientRepository kudosRecipientRepository;
-    private MemberProfileRepository memberProfileRepository;
+    private final KudosRepository kudosRepository;
+    private final KudosRecipientRepository kudosRecipientRepository;
+    private final MemberProfileRepository memberProfileRepository;
+    private final ReviewPeriodServices reviewPeriodServices;
 
     public ReportDataController(ReportDataServices reportDataServices,
                           KudosRepository kudosRepository,
                           KudosRecipientRepository kudosRecipientRepository,
-                          MemberProfileRepository memberProfileRepository) {
+                          MemberProfileRepository memberProfileRepository,
+                          ReviewPeriodServices reviewPeriodServices) {
         this.reportDataServices = reportDataServices;
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.memberProfileRepository = memberProfileRepository;
+        this.reviewPeriodServices = reviewPeriodServices;
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
@@ -66,16 +69,17 @@ public class ReportDataController {
     }
 
     @Get
-    public List<ReportDataDTO> get(@NotNull List<UUID> memberIds, @NotNull LocalDate startDate, @NotNull LocalDate endDate) {
+    public List<ReportDataDTO> get(@NotNull List<UUID> memberIds, @NotNull UUID reviewPeriodId) {
         List<ReportDataDTO> list = new ArrayList<ReportDataDTO>();
         for (UUID memberId : memberIds) {
             ReportDataCollation data = new ReportDataCollation(
-                                           memberId, startDate, endDate,
+                                           memberId, reviewPeriodId,
                                            kudosRepository,
                                            kudosRecipientRepository,
                                            memberProfileRepository,
+                                           reviewPeriodServices,
                                            reportDataServices);
-            list.add(new ReportDataDTO(memberId, startDate, endDate,
+            list.add(new ReportDataDTO(memberId, reviewPeriodId,
                                     data.getMemberProfile(), data.getKudos(),
                                     data.getCompensationHistory(),
                                     data.getCurrentInformation(),

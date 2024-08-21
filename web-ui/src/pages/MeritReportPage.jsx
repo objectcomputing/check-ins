@@ -1,8 +1,9 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 
-import { Button } from '@mui/material';
+import { Autocomplete, Button, TextField } from '@mui/material';
 
 import { uploadData, downloadData } from '../api/generic';
+import { getReviewPeriods } from '../api/reviewperiods';
 import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import {
@@ -25,6 +26,8 @@ const MeritReportPage = () => {
   const [allSearchResults, setAllSearchResults] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [reviewPeriodId, setReviewPeriodId] = useState([]);
+  const [reviewPeriods, setReviewPeriods] = useState([]);
 
   const processedQPs = useRef(false);
   useQueryParameters(
@@ -55,6 +58,33 @@ const MeritReportPage = () => {
       return result.name === member.name;
     });
   });
+
+  useEffect(() => {
+    const getAllReviewPeriods = async () => {
+      const res = await getReviewPeriods(csrf);
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        let periods = data.reduce((result, item) => {
+                         if (item.closeDate) {
+                           result.push({label: item.closeDate, id: item.id});
+                         }
+                         return result;
+                       }, []);
+        setReviewPeriods(periods);
+      }
+    };
+    if (csrf) {
+      getAllReviewPeriods();
+    }
+  }, [csrf, dispatch]);
+
 
   const onFileSelected = e => {
     setSelectedFile(e.target.files[0]);
@@ -98,8 +128,7 @@ const MeritReportPage = () => {
 
     let res = await downloadData("/services/report/data",
                                  csrf, {memberIds: selected,
-                                        startDate: '2024-01-01',
-                                        endDate: '2024-12-31'});
+                                        reviewPeriodId: reviewPeriodId.id});
     if (res?.error) {
       let error = res?.error?.response?.data?.message;
       dispatch({
@@ -114,13 +143,17 @@ const MeritReportPage = () => {
     if (data) {
       console.log(data);
     }
-  }
+  };
+
+  const onReviewPeriodChange = (event, newValue) => {
+    setReviewPeriodId(newValue);
+  };
 
   return (
     <div className="merit-report-page">
       <Button color="primary">
         <label htmlFor="file-upload">
-          <h3>Choose A Compensation History CSV File</h3>
+          <h3>Choose A CSV File</h3>
           <input
             accept=".csv"
             id="file-upload"
@@ -141,7 +174,20 @@ const MeritReportPage = () => {
           </Button>
         )}
       </div>
-
+      <Autocomplete
+        id="reviewPeriodSelect"
+        options={reviewPeriods ? reviewPeriods : []}
+        value={reviewPeriodId}
+        onChange={onReviewPeriodChange}
+        renderInput={params => (
+          <TextField
+            {...params}
+            className="fullWidth"
+            label="ReviewPeriod"
+            placeholder="Choose review period"
+          />
+        )}
+      />
       <MemberSelector
         className="merit-member-selector"
         onChange={setSelectedMembers}
