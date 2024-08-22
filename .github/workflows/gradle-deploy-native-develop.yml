@@ -9,7 +9,7 @@ env:
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop-native
 jobs:
-  build:
+  deploy:
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -30,12 +30,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: '21'
-#      - name: Cache SonarQube packages
-#        uses: actions/cache@v4
-#        with:
-#          path: ~/.sonar/cache
-#          key: ${{ runner.os }}-sonar
-#          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -44,31 +38,16 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-#      - name: Build with Gradle
-#        run: ./gradlew nativeCompile
-#        env:
-#          VITE_APP_API_URL: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app
-#      - name: Run tests with Gradle
-#        run: ./gradlew nativeTest
-#      - name: Do SonarQube checks
-#        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-#        with:
-#          arguments: sonarqube --info
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: Setup python
-        run: |
-          sudo apt-get install python2.7
-      - name: Export gcloud related env variable
-        run: export CLOUDSDK_PYTHON="/usr/bin/python2"
+#      - name: Setup python
+#        run: |
+#          sudo apt-get install python2.7
+#      - name: Export gcloud related env variable
+#        run: export CLOUDSDK_PYTHON="/usr/bin/python2"
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
           project_id: 'oci-intern-2019'
           workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github/providers/my-repo'
-#          service_account: 'sa-github-action@oci-intern-2019.iam.gserviceaccount.com'
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
         with:
@@ -83,7 +62,7 @@ jobs:
       - name: Push the Docker image to Google Container Registry
         run: |-
           cd server
-          docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+          gcloud docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
       - name: Deploy image to Cloud Run
         run: |-
           gcloud run deploy "$SERVICE_NAME" \
@@ -113,3 +92,28 @@ jobs:
             --platform "managed" \
             --max-instances 2 \
             --allow-unauthenticated
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up Node LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Set up GraalVM 21
+        uses: graalvm/setup-graalvm@v1.1.8
+        with:
+          distribution: 'graalvm'
+          java-version: '21'
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Run tests with Gradle
+        run: ./gradlew nativeTest
