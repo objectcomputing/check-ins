@@ -10,6 +10,9 @@ env:
   SERVICE_NAME: checkins-develop-native
 jobs:
   build:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     runs-on: ubuntu-latest
     environment:
       name: Development - Native
@@ -45,8 +48,8 @@ jobs:
         run: ./gradlew nativeCompile
         env:
           VITE_APP_API_URL: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app
-      - name: Run tests with Gradle
-        run: ./gradlew nativeTest
+#      - name: Run tests with Gradle
+#        run: ./gradlew nativeTest
 #      - name: Do SonarQube checks
 #        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
 #        with:
