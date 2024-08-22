@@ -44,10 +44,10 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Build with Gradle
-        run: ./gradlew nativeCompile
-        env:
-          VITE_APP_API_URL: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app
+#      - name: Build with Gradle
+#        run: ./gradlew nativeCompile
+#        env:
+#          VITE_APP_API_URL: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app
 #      - name: Run tests with Gradle
 #        run: ./gradlew nativeTest
 #      - name: Do SonarQube checks
@@ -66,6 +66,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
+          project_id: 'oci-intern-2019'
           workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github-pool/providers/github-oidc-provider'
           service_account: 'sa-github-action@oci-intern-2019.iam.gserviceaccount.com'
       - name: 'Set up Cloud SDK'
@@ -77,6 +78,8 @@ jobs:
           gcloud --quiet auth configure-docker
       - name: Build a native docker image
         run: ./gradlew dockerBuildNative
+        env:
+          VITE_APP_API_URL: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app
       - name: Push the Docker image to Google Container Registry
         run: |-
           cd server
