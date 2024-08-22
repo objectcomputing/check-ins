@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment:
-      name: Development
+      name: Development - Native
       url: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app/
     steps:
       - uses: actions/checkout@v4
@@ -27,30 +27,26 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: '21'
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+#      - name: Cache SonarQube packages
+#        uses: actions/cache@v4
+#        with:
+#          path: ~/.sonar/cache
+#          key: ${{ runner.os }}-sonar
+#          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: nativeCompile
+        run: ./gradlew nativeCompile
         env:
-          VITE_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
-      - name: Gradle runs tests
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: nativeTest
+          VITE_APP_API_URL: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app
+      - name: Run tests with Gradle
+        run: ./gradlew nativeTest
 #      - name: Do SonarQube checks
 #        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
 #        with:
@@ -64,19 +60,20 @@ jobs:
           sudo apt-get install python2.7
       - name: Export gcloud related env variable
         run: export CLOUDSDK_PYTHON="/usr/bin/python2"
-      # Setup gcloud CLI
-      - uses: google-github-actions/setup-gcloud@v0
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          version: "290.0.1"
-          service_account_key: ${{ secrets.RUN_SA_KEY }}
-          project_id: ${{ secrets.RUN_PROJECT }}
-      - name: Auth Configure Docker
+          workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github-pool/providers/github-oidc-provider'
+          service_account: 'sa-github-action@oci-intern-2019.iam.gserviceaccount.com'
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+      - name: 'Auth Configure Docker'
         run: |-
           gcloud --quiet auth configure-docker
       - name: Build a native docker image
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: dockerBuildNative
+        run: ./gradlew dockerBuildNative
       - name: Push the Docker image to Google Container Registry
         run: |-
           cd server
@@ -103,7 +100,7 @@ jobs:
             --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
-            --set-env-vars "WEB_ADDRESS=https://checkins-develop-tuvcfzotpq-uc.a.run.app" \
+            --set-env-vars "WEB_ADDRESS=https://checkins-develop-native-tuvcfzotpq-uc.a.run.app" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
