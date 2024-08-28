@@ -246,7 +246,7 @@ VALUES
 INSERT INTO member_roles
 (roleid, memberid)
 VALUES
-('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '3455c391-c5dd-4c84-8d00-1e345711987f') -- Lucky Bear
+('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '3455c391-c5dd-4c84-8d00-1e345711987f') -- Lucky Bear - 2024-08-28
 ;
 
 -- Teams
