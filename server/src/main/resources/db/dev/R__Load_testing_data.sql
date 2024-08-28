@@ -308,7 +308,13 @@ VALUES
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('7cf7820a-b099-48e5-b630-4f921ee17d16', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '1c813446-c65a-4f49-b980-0193f7bfff8c', false); -- Terrific Yak
+('7cf7820a-b099-48e5-b630-4f921ee17d16', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '1c813446-c65a-4f49-b980-0193f7bfff8c', false) -- Terrific Yak
+;
+INSERT INTO team_member
+(id, teamid, memberid, lead)
+VALUES
+('b7a8ef00-61f2-451d-b80d-0a1d6f574d7a', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '3455c391-c5dd-4c84-8d00-1e345711987f', false) -- Lucky Bear
+;
 
 ---- PMO Superness Members
 INSERT INTO team_member
