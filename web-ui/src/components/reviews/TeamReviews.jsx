@@ -463,6 +463,38 @@ const TeamReviews = ({ onBack, periodId }) => {
     updateReviewPeriodDates(newPeriod);
   };
 
+  const handlePeriodStartDateChange = (val, period) => {
+    /*
+    const newDate = val?.$d;
+    const isoDate = newDate?.toISOString() ?? null;
+    const newPeriod = { ...period, closeDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const launchDate = new Date(period.launchDate);
+    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    if (launchDate >= newDate) newPeriod.launchDate = null;
+    if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+    */
+  };
+
+  const handlePeriodEndDateChange = (val, period) => {
+    /*
+    const newDate = val?.$d;
+    const isoDate = newDate?.toISOString() ?? null;
+    const newPeriod = { ...period, closeDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const launchDate = new Date(period.launchDate);
+    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    if (launchDate >= newDate) newPeriod.launchDate = null;
+    if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+    */
+  };
+
   const loadReviews = useCallback(async () => {
     let newSelfReviews = {};
     let newReviews = {};
@@ -580,15 +612,16 @@ const TeamReviews = ({ onBack, periodId }) => {
   const validateReviewPeriod = period => {
     if (!period) return 'No review period was created.';
     if (!period.launchDate) return 'No launch date was specified.';
-    if (!period.selfReviewCloseDate)
-      return 'No self-review date was specified.';
+    if (!period.selfReviewCloseDate) return 'No self-review date was specified.';
     if (!period.closeDate) return 'No close date was specified.';
+    if (!period.periodStartDate) return 'No period-start-date was specified.';
+    if (!period.periodEndDate) return 'No period-end-date was specified.';
     if (teamMembers.length === 0) return 'No members were added.';
     const haveReviewers = teamMembers.every(
       member => getReviewers(member).length > 0
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
-    return null; // no validtation errors
+    return null; // no validation errors
   };
 
   const updateReviewPeriodStatus = async reviewStatus => {
@@ -896,6 +929,18 @@ const TeamReviews = ({ onBack, periodId }) => {
               setDate={val => handleCloseDateChange(val, period)}
               label="Close Date"
               disabled={!canUpdate}
+            />
+            <DatePickerField
+                date={period.periodStartDate}
+                setDate={val => handlePeriodStartDateChange(val, period)}
+                label="Period Start Date"
+                disabled={!canUpdate}
+            />
+            <DatePickerField
+                date={period.periodEndDate}
+                setDate={val => handlePeriodEndDateChange(val, period)}
+                label="Period End Date"
+                disabled={!canUpdate}
             />
           </div>
           {approvalButton()}
