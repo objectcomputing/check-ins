@@ -249,8 +249,8 @@ class ReviewPeriodControllerTest
         LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS);
         LocalDateTime closeDate = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS);
-        LocalDateTime periodStartDate = LocalDateTime.now().plusDays(-30).truncatedTo(ChronoUnit.MILLIS);
-        LocalDateTime periodEndDate = LocalDateTime.now().plusDays(-1).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodStartDate = LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodEndDate = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS);
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
@@ -284,8 +284,8 @@ class ReviewPeriodControllerTest
         LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS);
         LocalDateTime closeDate = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS);
-        LocalDateTime periodStartDate = LocalDateTime.now().plusDays(-30).truncatedTo(ChronoUnit.MILLIS);
-        LocalDateTime periodEndDate = LocalDateTime.now().plusDays(-1).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodStartDate = LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodEndDate = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS);
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
