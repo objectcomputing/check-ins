@@ -464,35 +464,27 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const handlePeriodStartDateChange = (val, period) => {
-    /*
     const newDate = val?.$d;
     const isoDate = newDate?.toISOString() ?? null;
-    const newPeriod = { ...period, closeDate: isoDate };
+    const newPeriod = { ...period, periodStartDate: isoDate };
 
     // Clear dates that are not correctly ordered.
-    const launchDate = new Date(period.launchDate);
-    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
-    if (launchDate >= newDate) newPeriod.launchDate = null;
-    if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+    const periodEndDate = new Date(period.periodEndDate);
+    if (newDate > periodEndDate) newPeriod.periodEndDate = null;
 
     updateReviewPeriodDates(newPeriod);
-    */
   };
 
   const handlePeriodEndDateChange = (val, period) => {
-    /*
     const newDate = val?.$d;
     const isoDate = newDate?.toISOString() ?? null;
-    const newPeriod = { ...period, closeDate: isoDate };
+    const newPeriod = { ...period, periodEndDate: isoDate };
 
     // Clear dates that are not correctly ordered.
-    const launchDate = new Date(period.launchDate);
-    const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
-    if (launchDate >= newDate) newPeriod.launchDate = null;
-    if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+    const periodStartDate = new Date(period.periodStartDate);
+    if (newDate < periodStartDate) newPeriod.periodStartDate = null;
 
     updateReviewPeriodDates(newPeriod);
-    */
   };
 
   const loadReviews = useCallback(async () => {
