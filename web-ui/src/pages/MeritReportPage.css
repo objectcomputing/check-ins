@@ -18,6 +18,10 @@
   margin: 0.25rem;
 }
 
+.merit-report-page .space-between {
+    margin-bottom: 5px;
+}
+
 @media (max-width: 850px) {
   .merit-report-page {
     margin: 0.5rem 1rem;

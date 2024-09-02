@@ -75,7 +75,8 @@ const MeritReportPage = () => {
       if (data) {
         let periods = data.reduce((result, item) => {
                          if (item.closeDate) {
-                           result.push({label: item.closeDate, id: item.id});
+                           result.push({label: formatReviewDate(item.closeDate),
+                                        id: item.id});
                          }
                          return result;
                        }, []);
@@ -87,6 +88,11 @@ const MeritReportPage = () => {
     }
   }, [csrf, dispatch]);
 
+
+  const formatReviewDate = (str) => {
+    const date = new Date(Date.parse(str));
+    return formatDate(date);
+  };
 
   const onFileSelected = e => {
     setSelectedFile(e.target.files);
@@ -362,7 +368,7 @@ const MeritReportPage = () => {
 
   return (
     <div className="merit-report-page">
-      <Button color="primary">
+      <Button color="primary" className="space-between">
         <label htmlFor="file-upload">
           <h3>Choose CSV Files</h3>
           <input
@@ -375,7 +381,7 @@ const MeritReportPage = () => {
           />
         </label>
       </Button>
-      <div className="buttons">
+      <div className="buttons space-between">
         {selectedFile && (
           <Button
             color="primary"
@@ -386,11 +392,11 @@ const MeritReportPage = () => {
         )}
       </div>
       <MemberSelector
-        className="merit-member-selector"
+        className="merit-member-selector space-between"
         onChange={setSelectedMembers}
         selected={selectedMembers}
       />
-      <div className="review-period-section">
+      <div className="review-period-section space-between">
         <Autocomplete
           id="reviewPeriodSelect"
           options={reviewPeriods ? reviewPeriods : []}
