@@ -106,7 +106,7 @@ public class CurrentInformation {
                .filter(entry -> entry.getMemberId().equals(memberId))
                .collect(Collectors.toList());
         if (list.isEmpty()) {
-          throw new NotFoundException("Information not found: " + memberId);
+          throw new NotFoundException("Current Information not found for member: " + memberId);
         } else {
           return list.get(0);
         }
