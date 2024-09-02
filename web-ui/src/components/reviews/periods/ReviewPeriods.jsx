@@ -109,7 +109,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     reviewStatus: ReviewStatus.PLANNING,
     launchDate: null,
     selfReviewCloseDate: null,
-    closeDate: null
+    closeDate: null,
+    periodStartDate: null,
+    periodEndDate: null
   });
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [selfReviews, setSelfReviews] = useState({});
@@ -178,7 +180,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         reviewStatus: ReviewStatus.OPEN,
         launchDate: null,
         selfReviewCloseDate: null,
-        closeDate: null
+        closeDate: null,
+        periodStartDate: null,
+        periodEndDate: null
       });
     },
     [
