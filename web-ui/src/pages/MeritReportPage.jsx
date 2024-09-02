@@ -89,50 +89,82 @@ const MeritReportPage = () => {
 
 
   const onFileSelected = e => {
-    setSelectedFile(e.target.files[0]);
+    setSelectedFile(e.target.files);
   };
 
-  const upload = async file => {
-    if (!file) {
+  const upload = async files => {
+    if (!files) {
       return;
     }
-    let formData = new FormData();
-    formData.append('file', file);
-    let res = await uploadData("/services/report/data/upload",
-                               csrf, formData);
-    if (res?.error) {
-      let error = res?.error?.response?.data?.message;
+
+    let errors;
+    let success = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      let formData = new FormData();
+      formData.append('file', file);
+      const res = await uploadData("/services/report/data/upload",
+                                   csrf, formData);
+      if (res?.error) {
+        const error = res?.error?.message;
+        if (errors) {
+          errors += "\n" + error;
+        } else {
+          errors = error;
+        }
+      }
+      if (res?.payload?.data) {
+        success++;
+      }
+    }
+
+    if (errors) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'error',
-          toast: error
+          toast: errors
         }
       });
-    }
-    const data = res?.payload?.data;
-    if (data) {
+    } else {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'success',
-          toast: `File was successfully uploaded`
+          toast: success == 1 ? 'File was successfully uploaded' :
+                                'Files were successfully uploaded'
         }
       });
     }
   };
 
   const download = async () => {
+    let data;
+    let error;
+
+    // Get the list of selected member ids.
     let selected = selectedMembers.reduce((result, item) => {
                      result.push(item.id);
                      return result;
                    }, []);
 
-    let res = await downloadData("/services/report/data",
-                                 csrf, {memberIds: selected,
-                                        reviewPeriodId: reviewPeriodId.id});
-    if (res?.error) {
-      let error = res?.error?.response?.data?.message;
+    // Check for required parameters before calling the server.
+    if (selected.length == 0) {
+      error = "Please select one or more members.";
+    } else if (!reviewPeriodId || !reviewPeriodId.id) {
+      error = "Please select a review period.";
+    }
+
+    if (!error) {
+      const res = await downloadData("/services/report/data",
+                                     csrf, {memberIds: selected,
+                                            reviewPeriodId: reviewPeriodId.id});
+      error = res?.error?.message;
+      data = res?.payload?.data;
+    }
+
+    // Display the error, if there was one.
+    if (error) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -141,19 +173,26 @@ const MeritReportPage = () => {
         }
       });
     }
-    return res?.payload?.data;
+
+    return data;
+  };
+
+  const uploadLabel = (files) => {
+    return files.length == 1 ? "Upload File" : "Upload Files";
   };
 
   const uploadDocument = async (directory, name, text) => {
     if (!directory || !name || !text) {
       return;
     }
+
     let formData = new FormData();
     formData.append('directory', directory);
     formData.append('name', name);
     formData.append('text', text);
     let res = await uploadData("/services/files",
                                csrf, formData);
+
     if (res?.error) {
       let error = res?.error?.message;
       dispatch({
@@ -164,13 +203,13 @@ const MeritReportPage = () => {
         }
       });
     }
-    const data = res?.payload?.data;
-    if (data) {
+
+    if (res?.payload?.data) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'success',
-          toast: `File was successfully uploaded`
+          toast: 'Document was successfully uploaded'
         }
       });
     }
@@ -181,7 +220,8 @@ const MeritReportPage = () => {
   };
 
   const formatDate = (date) => {
-    // Wed Oct 05 2011
+    // Date.toString() returns something like this: Wed Oct 05 2011
+    // We will doctor it up to look like an American date.
     let str = date.toString().slice(4, 15);
     return str.slice(0, 6) + "," + str.slice(6);
   };
@@ -295,22 +335,24 @@ const MeritReportPage = () => {
 
   const createReportMarkdownDocuments = async () => {
     const dataSet = await download();
-    for (let data of dataSet) {
-      // Generate markdown
-      let text = markdownTitle(data);
-      text += markdownCurrentInformation(data);
-      text += markdownKudos(data);
-      text += markdownReviews(data);
-      text += markdownFeedback(data);
-      text += markdownTitleHistory(data);
-      text += markdownCompensation(data);
-      text += markdownCompensationHistory(data);
-      text += markdownReviewerNotes(data);
+    if (dataSet) {
+      for (let data of dataSet) {
+        // Generate markdown
+        let text = markdownTitle(data);
+        text += markdownCurrentInformation(data);
+        text += markdownKudos(data);
+        text += markdownReviews(data);
+        text += markdownFeedback(data);
+        text += markdownTitleHistory(data);
+        text += markdownCompensation(data);
+        text += markdownCompensationHistory(data);
+        text += markdownReviewerNotes(data);
 
-      // Store the markdown on the google drive.
-      const directory = "merit-reports";
-      const fileName = data.memberProfile.workEmail;
-      uploadDocument(directory, fileName, text);
+        // Store the markdown on the google drive.
+        const directory = "merit-reports";
+        const fileName = data.memberProfile.workEmail;
+        uploadDocument(directory, fileName, text);
+      }
     }
   };
 
@@ -322,13 +364,14 @@ const MeritReportPage = () => {
     <div className="merit-report-page">
       <Button color="primary">
         <label htmlFor="file-upload">
-          <h3>Choose A CSV File</h3>
+          <h3>Choose CSV Files</h3>
           <input
             accept=".csv"
             id="file-upload"
             onChange={onFileSelected}
             style={{ display: 'none' }}
             type="file"
+            multiple
           />
         </label>
       </Button>
@@ -338,7 +381,7 @@ const MeritReportPage = () => {
             color="primary"
             onClick={() => upload(selectedFile)}
           >
-            Upload &nbsp;<strong>{selectedFile.name}</strong>
+            {uploadLabel(selectedFile)}
           </Button>
         )}
       </div>
