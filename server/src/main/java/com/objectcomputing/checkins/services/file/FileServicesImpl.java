@@ -23,6 +23,9 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -200,6 +203,57 @@ public class FileServicesImpl implements FileServices {
             checkinDocumentServices.save(cd);
 
             return setFileInfo(uploadedFile, cd);
+        } catch (GoogleJsonResponseException e) {
+            LOG.error("Error occurred while accessing Google Drive.", e);
+            throw new FileRetrievalException(e.getMessage());
+        } catch (IOException e) {
+            LOG.error("Unexpected error processing file upload.", e);
+            throw new FileRetrievalException(e.getMessage());
+        }
+    }
+
+    public FileInfoDTO uploadDocument(String directoryName, String name, String text) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
+        validate(!isAdmin, "You are not authorized to perform this operation");
+
+        // create folder for the document
+        try {
+            Drive drive = googleApiAccess.getDrive();
+            validate(drive == null, "Unable to access Google Drive");
+
+            String rootDirId = googleServiceConfiguration.getDirectoryId();
+            validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
+
+            // Check if folder already exists on google drive. If exists, return folderId and name
+            FileList driveIndex = getFoldersInRoot(drive, rootDirId);
+            File folderOnDrive = driveIndex.getFiles().stream()
+                    .filter(s -> directoryName.equalsIgnoreCase(s.getName()))
+                    .findFirst()
+                    .orElse(null);
+
+            // If folder does not exist on Drive, create a new folder in the format name-date
+            if(folderOnDrive == null) {
+                folderOnDrive = createNewDirectoryOnDrive(drive, directoryName, rootDirId);
+            }
+
+            // set file metadata
+            File fileMetadata = new File();
+            fileMetadata.setName(name);
+            fileMetadata.setMimeType("application/vnd.google-apps.document");
+            fileMetadata.setParents(Collections.singletonList(folderOnDrive.getId()));
+
+            //upload file to google drive
+            InputStream is = new ByteArrayInputStream(
+                    StandardCharsets.UTF_8.encode(text).array());
+            InputStreamContent content = new InputStreamContent(
+                    MediaType.TEXT_PLAIN_TYPE.toString(), is);
+            File uploadedFile = drive.files().create(fileMetadata, content)
+                                .setSupportsAllDrives(true)
+                                .setFields("id, size, name")
+                                .execute();
+
+            return setFileInfo(uploadedFile, null);
         } catch (GoogleJsonResponseException e) {
             LOG.error("Error occurred while accessing Google Drive.", e);
             throw new FileRetrievalException(e.getMessage());

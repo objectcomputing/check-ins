@@ -2,6 +2,10 @@
   margin: 1rem 3rem;
 }
 
+.merit-report-page .merit-member-selector {
+  width: 50%;
+}
+
 .merit-report-page .review-period-section {
   width: 50%;
 }

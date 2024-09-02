@@ -144,6 +144,38 @@ const MeritReportPage = () => {
     return res?.payload?.data;
   };
 
+  const uploadDocument = async (directory, name, text) => {
+    if (!directory || !name || !text) {
+      return;
+    }
+    let formData = new FormData();
+    formData.append('directory', directory);
+    formData.append('name', name);
+    formData.append('text', text);
+    let res = await uploadData("/services/files",
+                               csrf, formData);
+    if (res?.error) {
+      let error = res?.error?.message;
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: error
+        }
+      });
+    }
+    const data = res?.payload?.data;
+    if (data) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'success',
+          toast: `File was successfully uploaded`
+        }
+      });
+    }
+  };
+
   const dateFromArray = (parts) => {
     return new Date(parts[0], parts[1] - 1, parts[2]);
   };
@@ -191,16 +223,23 @@ const MeritReportPage = () => {
   };
 
   const markdownReviews = (data) => {
-    // TODO: Add reviews on server side
-    return "";
+    // TODO: Add reviews on server side and fill in here.
+    let text = markdown.headers.h1("Self-Review");
+    text += "\n";
+    text += markdown.headers.h1("Reviews");
+    text += "\n";
+    return text;
   };
 
   const markdownFeedback = (data) => {
-    // TODO: Add feedback on server side
-    return "";
+    // TODO: Add feedback on server side and fill in here.
+    let text = markdown.headers.h1("Feedback");
+    text += "\n";
+    return text;
   };
 
   const markdownTitleHistory = (data) => {
+    // Get the position history sorted latest to earliest
     const posHistory = data.positionHistory.sort((a, b) => {
       for(let i = 0; i < a.length; i++) {
         if (a.date[i] != b.date[i]) {
@@ -268,8 +307,10 @@ const MeritReportPage = () => {
       text += markdownCompensationHistory(data);
       text += markdownReviewerNotes(data);
 
-      // TODO: Store the markdown on the google drive.
-      console.log(text);
+      // Store the markdown on the google drive.
+      const directory = "merit-reports";
+      const fileName = data.memberProfile.workEmail;
+      uploadDocument(directory, fileName, text);
     }
   };
 
