@@ -4,6 +4,10 @@ import com.objectcomputing.checkins.services.kudos.KudosRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServices;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
+import com.objectcomputing.checkins.services.questions.QuestionServices;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -39,17 +43,29 @@ public class ReportDataController {
     private final KudosRecipientRepository kudosRecipientRepository;
     private final MemberProfileRepository memberProfileRepository;
     private final ReviewPeriodServices reviewPeriodServices;
+    private final FeedbackTemplateServices feedbackTemplateServices;
+    private final FeedbackRequestServices feedbackRequestServices;
+    private final FeedbackAnswerServices feedbackAnswerServices;
+    private final QuestionServices questionServices;
 
     public ReportDataController(ReportDataServices reportDataServices,
                           KudosRepository kudosRepository,
                           KudosRecipientRepository kudosRecipientRepository,
                           MemberProfileRepository memberProfileRepository,
-                          ReviewPeriodServices reviewPeriodServices) {
+                          ReviewPeriodServices reviewPeriodServices,
+                          FeedbackTemplateServices feedbackTemplateServices,
+                          FeedbackRequestServices feedbackRequestServices,
+                          FeedbackAnswerServices feedbackAnswerServices,
+                          QuestionServices questionServices) {
         this.reportDataServices = reportDataServices;
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.memberProfileRepository = memberProfileRepository;
         this.reviewPeriodServices = reviewPeriodServices;
+        this.feedbackTemplateServices = feedbackTemplateServices;
+        this.feedbackRequestServices = feedbackRequestServices;
+        this.feedbackAnswerServices = feedbackAnswerServices;
+        this.questionServices = questionServices;
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
@@ -78,13 +94,18 @@ public class ReportDataController {
                                            kudosRecipientRepository,
                                            memberProfileRepository,
                                            reviewPeriodServices,
-                                           reportDataServices);
+                                           reportDataServices,
+                                           feedbackTemplateServices,
+                                           feedbackRequestServices,
+                                           feedbackAnswerServices,
+                                           questionServices);
             list.add(new ReportDataDTO(memberId, reviewPeriodId,
                                     data.getStartDate(), data.getEndDate(),
                                     data.getMemberProfile(), data.getKudos(),
                                     data.getCompensationHistory(),
                                     data.getCurrentInformation(),
-                                    data.getPositionHistory()));
+                                    data.getPositionHistory(),
+                                    data.getFeedback()));
         }
         return list;
     }

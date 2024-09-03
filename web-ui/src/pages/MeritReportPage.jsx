@@ -277,9 +277,51 @@ const MeritReportPage = () => {
     return text;
   };
 
+  const getUniqueMembers = (answers) => {
+    let members = {};
+    for(let answer of answers) {
+      const key = answer.memberName;
+      if (!(key in members)) {
+        // Put in member name and date
+        members[key] = dateFromArray(answer.submitted);
+      }
+    }
+    return members;
+  };
+
+  const getUniqueQuestions = (answers) => {
+    let questions = {};
+    for(let answer of answers) {
+      const key = answer.question;
+      if (!(key in questions)) {
+        // Put in member name and answer
+        questions[key] = [];
+      }
+      questions[key].push([answer.memberName, answer.answer]);
+    }
+    return questions;
+  };
+
   const markdownFeedback = (data) => {
-    // TODO: Add feedback on server side and fill in here.
     let text = markdown.headers.h1("Feedback");
+    const feedbackList = data.feedback;
+    for(let feedback of feedbackList) {
+      text += markdown.headers.h2("Template: " + feedback.name);
+      const members = getUniqueMembers(feedback.answers);
+      for(let member of Object.keys(members)) {
+        text += member + ": " + formatDate(members[member]) + "\n";
+      }
+      text += "\n";
+
+      const questions = getUniqueQuestions(feedback.answers);
+      for(let question of Object.keys(questions)) {
+        text += markdown.headers.h3(question) + "\n";
+        for(let answer of questions[question]) {
+          text += answer[0] + ": " + answer[1] + "\n";
+        }
+        text += "\n";
+      }
+    }
     text += "\n";
     return text;
   };

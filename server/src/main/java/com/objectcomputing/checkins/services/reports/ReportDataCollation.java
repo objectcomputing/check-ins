@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.reports;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipient;
 import com.objectcomputing.checkins.services.kudos.KudosRepository;
@@ -10,16 +11,31 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServices;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
+import com.objectcomputing.checkins.services.questions.QuestionServices;
+import com.objectcomputing.checkins.services.questions.Question;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.time.LocalDate;
 import java.time.Month;
 import java.nio.ByteBuffer;
 import java.io.IOException;
 
 public class ReportDataCollation {
+    private static final Logger LOG = LoggerFactory.getLogger(ReportDataCollation.class);
+
     private class LocalDateRange {
         public LocalDate start;
         public LocalDate end;
@@ -41,6 +57,10 @@ public class ReportDataCollation {
     private MemberProfileRepository memberProfileRepository;
     private ReviewPeriodServices reviewPeriodServices;
     private ReportDataServices reportDataServices;
+    private FeedbackTemplateServices feedbackTemplateServices;
+    private FeedbackRequestServices feedbackRequestServices;
+    private FeedbackAnswerServices feedbackAnswerServices;
+    private QuestionServices questionServices;
 
     public ReportDataCollation(
                           UUID memberId, UUID reviewPeriodId,
@@ -48,7 +68,11 @@ public class ReportDataCollation {
                           KudosRecipientRepository kudosRecipientRepository,
                           MemberProfileRepository memberProfileRepository,
                           ReviewPeriodServices reviewPeriodServices,
-                          ReportDataServices reportDataServices) {
+                          ReportDataServices reportDataServices,
+                          FeedbackTemplateServices feedbackTemplateServices,
+                          FeedbackRequestServices feedbackRequestServices,
+                          FeedbackAnswerServices feedbackAnswerServices,
+                          QuestionServices questionServices) {
         this.memberId = memberId;
         this.reviewPeriodId = reviewPeriodId;
         this.compensationHistory = new CompensationHistory();
@@ -59,6 +83,10 @@ public class ReportDataCollation {
         this.memberProfileRepository = memberProfileRepository;
         this.reviewPeriodServices = reviewPeriodServices;
         this.reportDataServices = reportDataServices;
+        this.feedbackTemplateServices = feedbackTemplateServices;
+        this.feedbackRequestServices = feedbackRequestServices;
+        this.feedbackAnswerServices = feedbackAnswerServices;
+        this.questionServices = questionServices;
         LocalDateRange range = getDateRange();
         startDate = range.start;
         endDate = range.end;
@@ -125,6 +153,69 @@ public class ReportDataCollation {
         } catch(IOException ex) {
         }
         return positionHistory.getHistory(memberId);
+    }
+
+    public List<Feedback> getFeedback() {
+      List<Feedback> feedback = new ArrayList<Feedback>();
+
+      // Get the list of requests for the member and review period.
+      // We will need to cross-reference the templates.
+      List<FeedbackRequest> requests =
+        feedbackRequestServices.findByValues(null, memberId, null,
+                                             null, reviewPeriodId, null, null);
+
+      // Iterate over each request and find the template.  See if the template
+      // can be used for a feedback request.
+      Map<UUID, String> templates =
+                         new HashMap<UUID, String>();
+      for (FeedbackRequest request: requests) {
+        if (!templates.containsKey(request.getTemplateId())) {
+          try {
+            FeedbackTemplate template =
+                   feedbackTemplateServices.getById(request.getTemplateId());
+            if (template.getActive()) {
+              templates.put(template.getId(), template.getTitle());
+            }
+          } catch(NotFoundException ex) {
+            LOG.error(ex.toString());
+          }
+        }
+      }
+
+      // Go through each template, find the request that corresponds to the
+      // template, find the question and answers and put it all together.
+      for (UUID templateId : templates.keySet()) {
+        String templateTitle = templates.get(templateId);
+        List<Feedback.Answer> feedbackAnswers =
+                                   new ArrayList<Feedback.Answer>();
+        for (FeedbackRequest request: requests) {
+          if (request.getTemplateId().equals(templateId)) {
+            UUID recipientId = request.getRecipientId();
+            MemberProfile recipient = memberProfileRepository.findById(
+                                        recipientId).orElse(null);
+            String recipientName = (recipient == null ?
+                recipientId.toString() :
+                MemberProfileUtils.getFullName(recipient));
+            List<FeedbackAnswer> answers =
+                   feedbackAnswerServices.findByValues(null, request.getId());
+            for (FeedbackAnswer answer : answers) {
+              try {
+                Question question = questionServices.findById(
+                                              answer.getQuestionId());
+                String questionText = question.getText();
+                feedbackAnswers.add(
+                    new Feedback.Answer(recipientName, request.getSubmitDate(),
+                                        questionText, answer.getAnswer()));
+              } catch(NotFoundException ex) {
+                LOG.error(ex.toString());
+              }
+            }
+          }
+        }
+        feedback.add(new Feedback(templateTitle, feedbackAnswers));
+      }
+
+      return feedback;
     }
 
     private LocalDateRange getDateRange() {
