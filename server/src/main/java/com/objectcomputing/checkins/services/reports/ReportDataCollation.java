@@ -17,8 +17,8 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
-import com.objectcomputing.checkins.services.questions.QuestionServices;
-import com.objectcomputing.checkins.services.questions.Question;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,7 @@ public class ReportDataCollation {
     private FeedbackTemplateServices feedbackTemplateServices;
     private FeedbackRequestServices feedbackRequestServices;
     private FeedbackAnswerServices feedbackAnswerServices;
-    private QuestionServices questionServices;
+    private TemplateQuestionServices templateQuestionServices;
 
     public ReportDataCollation(
                           UUID memberId, UUID reviewPeriodId,
@@ -72,7 +72,7 @@ public class ReportDataCollation {
                           FeedbackTemplateServices feedbackTemplateServices,
                           FeedbackRequestServices feedbackRequestServices,
                           FeedbackAnswerServices feedbackAnswerServices,
-                          QuestionServices questionServices) {
+                          TemplateQuestionServices templateQuestionServices) {
         this.memberId = memberId;
         this.reviewPeriodId = reviewPeriodId;
         this.compensationHistory = new CompensationHistory();
@@ -86,7 +86,7 @@ public class ReportDataCollation {
         this.feedbackTemplateServices = feedbackTemplateServices;
         this.feedbackRequestServices = feedbackRequestServices;
         this.feedbackAnswerServices = feedbackAnswerServices;
-        this.questionServices = questionServices;
+        this.templateQuestionServices = templateQuestionServices;
         LocalDateRange range = getDateRange();
         startDate = range.start;
         endDate = range.end;
@@ -160,16 +160,18 @@ public class ReportDataCollation {
 
       // Get the list of requests for the member and review period.
       // We will need to cross-reference the templates.
+      LocalDateRange dateRange = getDateRange();
       List<FeedbackRequest> requests =
         feedbackRequestServices.findByValues(null, memberId, null,
-                                             null, reviewPeriodId, null, null);
+                                             dateRange.start, null, null, null);
 
       // Iterate over each request and find the template.  See if the template
       // can be used for a feedback request.
       Map<UUID, String> templates =
                          new HashMap<UUID, String>();
       for (FeedbackRequest request: requests) {
-        if (!templates.containsKey(request.getTemplateId())) {
+        if (request.getReviewPeriodId() == null &&
+            !templates.containsKey(request.getTemplateId())) {
           try {
             FeedbackTemplate template =
                    feedbackTemplateServices.getById(request.getTemplateId());
@@ -199,16 +201,18 @@ public class ReportDataCollation {
             List<FeedbackAnswer> answers =
                    feedbackAnswerServices.findByValues(null, request.getId());
             for (FeedbackAnswer answer : answers) {
+              String questionText;
               try {
-                Question question = questionServices.findById(
-                                              answer.getQuestionId());
-                String questionText = question.getText();
-                feedbackAnswers.add(
-                    new Feedback.Answer(recipientName, request.getSubmitDate(),
-                                        questionText, answer.getAnswer()));
+                TemplateQuestion question =
+                    templateQuestionServices.getById(answer.getQuestionId());
+                questionText = question.getQuestion();
               } catch(NotFoundException ex) {
                 LOG.error(ex.toString());
+                questionText = answer.getQuestionId().toString();
               }
+              feedbackAnswers.add(
+                  new Feedback.Answer(recipientName, request.getSubmitDate(),
+                                      questionText, answer.getAnswer()));
             }
           }
         }

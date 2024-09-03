@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServices;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
-import com.objectcomputing.checkins.services.questions.QuestionServices;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -46,7 +46,7 @@ public class ReportDataController {
     private final FeedbackTemplateServices feedbackTemplateServices;
     private final FeedbackRequestServices feedbackRequestServices;
     private final FeedbackAnswerServices feedbackAnswerServices;
-    private final QuestionServices questionServices;
+    private final TemplateQuestionServices templateQuestionServices;
 
     public ReportDataController(ReportDataServices reportDataServices,
                           KudosRepository kudosRepository,
@@ -56,7 +56,7 @@ public class ReportDataController {
                           FeedbackTemplateServices feedbackTemplateServices,
                           FeedbackRequestServices feedbackRequestServices,
                           FeedbackAnswerServices feedbackAnswerServices,
-                          QuestionServices questionServices) {
+                          TemplateQuestionServices templateQuestionServices) {
         this.reportDataServices = reportDataServices;
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
@@ -65,7 +65,7 @@ public class ReportDataController {
         this.feedbackTemplateServices = feedbackTemplateServices;
         this.feedbackRequestServices = feedbackRequestServices;
         this.feedbackAnswerServices = feedbackAnswerServices;
-        this.questionServices = questionServices;
+        this.templateQuestionServices = templateQuestionServices;
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
@@ -98,7 +98,7 @@ public class ReportDataController {
                                            feedbackTemplateServices,
                                            feedbackRequestServices,
                                            feedbackAnswerServices,
-                                           questionServices);
+                                           templateQuestionServices);
             list.add(new ReportDataDTO(memberId, reviewPeriodId,
                                     data.getStartDate(), data.getEndDate(),
                                     data.getMemberProfile(), data.getKudos(),
