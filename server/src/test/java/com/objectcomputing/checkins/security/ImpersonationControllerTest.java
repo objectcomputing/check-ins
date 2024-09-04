@@ -107,7 +107,7 @@ class ImpersonationControllerTest extends TestContainersSuite implements MemberP
             assertThrows(HttpClientResponseException.class,
                          () -> client.toBlocking().retrieve(request));
         assertNotNull(response);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
     }
 
     @Test
