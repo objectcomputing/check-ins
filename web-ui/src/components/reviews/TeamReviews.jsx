@@ -124,6 +124,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [canUpdate, setCanUpdate] = useState(false);
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+  const [confirmRevieweesWithNoSupervisorOpen, setConfirmRevieweesWithNoSupervisorOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
@@ -652,6 +653,18 @@ const TeamReviews = ({ onBack, periodId }) => {
     setValidationMessage(msg);
     if (msg) return;
 
+    const uniqueNamesWithNoSupervisor = [...new Set(
+        visibleTeamMembers()
+            .filter(member => member.supervisorid === null)  // Filter by null supervisorid
+            .map(member => member.name)                      // Map to the name property
+    )].join(', ');
+    console.log("TeamReviews, requestApproval, uniqueNamesWithNoSupervisor.trim().length", uniqueNamesWithNoSupervisor.trim().length);
+    console.log("TeamReviews, requestApproval, uniqueNamesWithNoSupervisor", uniqueNamesWithNoSupervisor);
+
+    if (uniqueNamesWithNoSupervisor.trim().length > 0) {
+
+    }
+
     if (period.reviewStatus === ReviewStatus.PLANNING) {
       updateReviewPeriodStatus(ReviewStatus.AWAITING_APPROVAL);
     } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
@@ -1053,6 +1066,13 @@ const TeamReviews = ({ onBack, periodId }) => {
         question={confirmationText}
         setOpen={setConfirmationDialogOpen}
         title="Approve and Launch"
+      />
+      <ConfirmationDialog
+          open={confirmRevieweesWithNoSupervisorOpen}
+          onYes={confirmRevieweesWithNoSupervisorYes}
+          question={confirmRevieweesWithNoSupervisorQuestion}
+          setOpen={setConfirmRevieweesWithNoSupervisorOpen}
+          title="These reviewees have no supervisor. Continue?"
       />
     </Root>
   );
