@@ -139,6 +139,8 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [toDelete, setToDelete] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
+  const [confirmRevieweesWithNoSupervisorOpen, setConfirmRevieweesWithNoSupervisorOpen] = useState(false);
+  const [confirmRevieweesWithNoSupervisorQuestion, setConfirmRevieweesWithNoSupervisorQuestionText] = useState('');
 
   const loadedReviews = useRef(false);
   const loadingReviews = useRef(false);
@@ -652,25 +654,16 @@ const TeamReviews = ({ onBack, periodId }) => {
     setValidationMessage(msg);
     if (msg) return;
 
-    if (period.reviewStatus === ReviewStatus.PLANNING) {
-      updateReviewPeriodStatus(ReviewStatus.AWAITING_APPROVAL);
-    } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
-      const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
-      const unapproved = assignments.filter(
-        a => !a.approved && visibleIds.has(a.revieweeId)
-      );
-      // logAssignments(unapproved); // for debugging
-      setUnapproved(unapproved);
-      setConfirmationText(
-        unapproved.length === 0
-          ? 'Are you sure you want to launch the review period?'
-          : unapproved.length === 1
-            ? 'There is one visible, unapproved review assignment. ' +
-              'Would you like to approve it and launch this review period?'
-            : `There are ${unapproved.length} visible, unapproved review assignments. ` +
-              'Would you like to approve all of them and launch this review period?'
-      );
-      setConfirmationDialogOpen(true);
+    const uniqueNamesWithNoSupervisor = [...new Set(
+        visibleTeamMembers()
+            .filter(member => member.supervisorid === null)  // Filter by null supervisorid
+            .map(member => member.name)                      // Map to the name property
+    )].join(', ');
+    if (uniqueNamesWithNoSupervisor.trim().length > 0) {
+      setConfirmRevieweesWithNoSupervisorQuestionText(uniqueNamesWithNoSupervisor);
+      setConfirmRevieweesWithNoSupervisorOpen(true);
+    } else {
+      return requestApprovalPost();
     }
   };
 
@@ -783,6 +776,29 @@ const TeamReviews = ({ onBack, periodId }) => {
     setConfirmationDialogOpen(false);
     onBack();
   };
+
+  const requestApprovalPost = async () => {
+    if (period.reviewStatus === ReviewStatus.PLANNING) {
+      updateReviewPeriodStatus(ReviewStatus.AWAITING_APPROVAL);
+    } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
+      const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
+      const unapproved = assignments.filter(
+          a => !a.approved && visibleIds.has(a.revieweeId)
+      );
+      // logAssignments(unapproved); // for debugging
+      setUnapproved(unapproved);
+      setConfirmationText(
+          unapproved.length === 0
+              ? 'Are you sure you want to launch the review period?'
+              : unapproved.length === 1
+                  ? 'There is one visible, unapproved review assignment. ' +
+                  'Would you like to approve it and launch this review period?'
+                  : `There are ${unapproved.length} visible, unapproved review assignments. ` +
+                  'Would you like to approve all of them and launch this review period?'
+      );
+      setConfirmationDialogOpen(true);
+    }
+  }
 
   const unapproveAll = () => {
     visibleTeamMembers().map(member => approveMember(member, false));
@@ -1053,6 +1069,13 @@ const TeamReviews = ({ onBack, periodId }) => {
         question={confirmationText}
         setOpen={setConfirmationDialogOpen}
         title="Approve and Launch"
+      />
+      <ConfirmationDialog
+          open={confirmRevieweesWithNoSupervisorOpen}
+          onYes={requestApprovalPost}
+          question={confirmRevieweesWithNoSupervisorQuestion}
+          setOpen={setConfirmRevieweesWithNoSupervisorOpen}
+          title="These reviewees have no supervisor. Continue?"
       />
     </Root>
   );

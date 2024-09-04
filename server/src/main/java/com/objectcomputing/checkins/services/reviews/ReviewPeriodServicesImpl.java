@@ -14,7 +14,6 @@ import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -139,6 +138,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         Set<ReviewAssignment> reviewAssignments = reviewAssignmentRepository.findByReviewPeriodId(reviewPeriodId);
         Set<UUID> revieweeIds = reviewAssignments.stream().map(ReviewAssignment::getRevieweeId).collect(Collectors.toSet());
         Set<UUID> supervisorIds = new HashSet<>(memberProfileRepository.findSupervisoridByIdIn(revieweeIds));
+        supervisorIds.removeIf(Objects::isNull);
         if (supervisorIds.isEmpty()) {
             LOG.info(String.format("Supervisors not found for Reviewees %s", revieweeIds));
             return;
