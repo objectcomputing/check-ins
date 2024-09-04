@@ -105,6 +105,8 @@ public class ReportDataController {
                                     data.getCompensationHistory(),
                                     data.getCurrentInformation(),
                                     data.getPositionHistory(),
+                                    data.getSelfReviews(),
+                                    data.getReviews(),
                                     data.getFeedback()));
         }
         return list;

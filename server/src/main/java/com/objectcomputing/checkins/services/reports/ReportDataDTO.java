@@ -49,5 +49,11 @@ public class ReportDataDTO {
     private List<PositionHistory.Position> positionHistory;
 
     @NotNull
+    private List<Feedback> selfReviews;
+
+    @NotNull
+    private List<Feedback> reviews;
+
+    @NotNull
     private List<Feedback> feedback;
 }

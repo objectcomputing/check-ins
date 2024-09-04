@@ -106,7 +106,8 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
                 return perUser.data.get(name);
             }
         }
-        throw new NotFoundException("Document does not exist");
+        throw new NotFoundException(dataType.toString() +
+                                    " Document does not exist");
     }
 
     /// Check periodically to see if any data has expired.  If it has, remove

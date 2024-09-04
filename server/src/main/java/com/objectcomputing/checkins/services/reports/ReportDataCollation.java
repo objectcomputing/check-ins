@@ -45,6 +45,10 @@ public class ReportDataCollation {
         }
     }
 
+    private enum FeedbackType {
+      selfReviews, reviews, feedback
+    }
+
     private UUID memberId;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -155,7 +159,19 @@ public class ReportDataCollation {
         return positionHistory.getHistory(memberId);
     }
 
+    public List<Feedback> getSelfReviews() {
+      return getFeedbackType(FeedbackType.selfReviews);
+    }
+
+    public List<Feedback> getReviews() {
+      return getFeedbackType(FeedbackType.reviews);
+    }
+
     public List<Feedback> getFeedback() {
+      return getFeedbackType(FeedbackType.feedback);
+    }
+
+    private List<Feedback> getFeedbackType(FeedbackType type) {
       List<Feedback> feedback = new ArrayList<Feedback>();
 
       // Get the list of requests for the member and review period.
@@ -163,19 +179,38 @@ public class ReportDataCollation {
       LocalDateRange dateRange = getDateRange();
       List<FeedbackRequest> requests =
         feedbackRequestServices.findByValues(null, memberId, null,
-                                             dateRange.start, null, null, null);
+                                             dateRange.start,
+                                             type == FeedbackType.feedback ?
+                                               null : reviewPeriodId,
+                                             null, null);
 
-      // Iterate over each request and find the template.  See if the template
-      // can be used for a feedback request.
-      Map<UUID, String> templates =
-                         new HashMap<UUID, String>();
+      // Iterate over each request and find the template.  Determine the purpose
+      // of the template.
+      ReviewPeriod reviewPeriod = reviewPeriodServices.findById(reviewPeriodId);
+      Map<UUID, String> templates = new HashMap<UUID, String>();
       for (FeedbackRequest request: requests) {
         if (request.getReviewPeriodId() == null &&
             !templates.containsKey(request.getTemplateId())) {
           try {
             FeedbackTemplate template =
                    feedbackTemplateServices.getById(request.getTemplateId());
-            if (template.getActive()) {
+            boolean use = true;
+            switch(type) {
+              case FeedbackType.selfReviews:
+                use = template.getIsReview() &&
+                      template.getId().equals(
+                        reviewPeriod.getSelfReviewTemplateId());
+                break;
+              case FeedbackType.reviews:
+                use = template.getIsReview() &&
+                      template.getId().equals(
+                        reviewPeriod.getReviewTemplateId());
+                break;
+              case FeedbackType.feedback:
+                use = !template.getIsReview();
+                break;
+            }
+            if (use) {
               templates.put(template.getId(), template.getTitle());
             }
           } catch(NotFoundException ex) {

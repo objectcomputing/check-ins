@@ -268,13 +268,40 @@ const MeritReportPage = () => {
     return text;
   };
 
-  const markdownReviews = (data) => {
-    // TODO: Add reviews on server side and fill in here.
-    let text = markdown.headers.h1("Self-Review");
-    text += "\n";
-    text += markdown.headers.h1("Reviews");
+  const markdownReviewsImpl = (title, feedbackList, listMembers) => {
+    let text = markdown.headers.h1(title);
+    for(let feedback of feedbackList) {
+      const members = getUniqueMembers(feedback.answers);
+      for(let member of Object.keys(members)) {
+        if (listMembers) {
+          text += member + ": ";
+        }
+        text += "Submitted - " + formatDate(members[member]) + "\n";
+      }
+      text += "\n";
+
+      const questions = getUniqueQuestions(feedback.answers);
+      for(let question of Object.keys(questions)) {
+        text += markdown.headers.h3(question) + "\n";
+        for(let answer of questions[question]) {
+          if (listMembers) {
+            text += answer[0] + ": ";
+          }
+          text += answer[1] + "\n";
+        }
+        text += "\n";
+      }
+    }
     text += "\n";
     return text;
+  }
+
+  const markdownSelfReviews = (data) => {
+    return markdownReviewsImpl("Self-Review", data.selfReviews, false);
+  }
+
+  const markdownReviews = (data) => {
+    return markdownReviewsImpl("Reviews", data.reviews, true);
   };
 
   const getUniqueMembers = (answers) => {
@@ -389,6 +416,7 @@ const MeritReportPage = () => {
         let text = markdownTitle(data);
         text += markdownCurrentInformation(data);
         text += markdownKudos(data);
+        text += markdownSelfReviews(data);
         text += markdownReviews(data);
         text += markdownFeedback(data);
         text += markdownTitleHistory(data);
