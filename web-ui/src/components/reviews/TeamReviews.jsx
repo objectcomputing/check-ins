@@ -659,16 +659,12 @@ const TeamReviews = ({ onBack, periodId }) => {
             .filter(member => member.supervisorid === null)  // Filter by null supervisorid
             .map(member => member.name)                      // Map to the name property
     )].join(', ');
-    console.log("TeamReviews, requestApproval, uniqueNamesWithNoSupervisor.trim().length", uniqueNamesWithNoSupervisor.trim().length);
-    console.log("TeamReviews, requestApproval, uniqueNamesWithNoSupervisor", uniqueNamesWithNoSupervisor);
-
     if (uniqueNamesWithNoSupervisor.trim().length > 0) {
       setConfirmRevieweesWithNoSupervisorQuestionText(uniqueNamesWithNoSupervisor);
       setConfirmRevieweesWithNoSupervisorOpen(true);
     } else {
       return requestApprovalPost();
     }
-
   };
 
   const compareStrings = (s1, s2) => (s1 || '').localeCompare(s2 || '');
