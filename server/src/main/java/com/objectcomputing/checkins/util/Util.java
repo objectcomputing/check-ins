@@ -31,4 +31,11 @@ public class Util {
         }
         return stringsList;
     }
+
+    public static int floatCompareNullSafeAndEqualWhenBothNull(Float f1, Float f2) {
+        if (f1 == null && f2 == null) return 0;
+        if (f1 == null || f2 == null) return 1;
+        return Float.compare(f1, f2);
+    }
+
 }

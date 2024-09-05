@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
 import com.objectcomputing.checkins.converter.LocalDateConverter;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -117,8 +118,8 @@ public class EmployeeHours {
                 updatedDate.equals(that.updatedDate) &&
                 Float.compare(that.targetHours, targetHours) == 0 &&
                 asOfDate.equals(that.asOfDate) &&
-                Float.compare(that.billableUtilization, this.billableUtilization) == 0 &&
-                Float.compare(that.overtimeWorked, this.overtimeWorked) == 0
+                Util.floatCompareNullSafeAndEqualWhenBothNull(that.billableUtilization, this.billableUtilization) == 0 &&
+                Util.floatCompareNullSafeAndEqualWhenBothNull(that.overtimeWorked, this.overtimeWorked) == 0
                 ;
     }
 

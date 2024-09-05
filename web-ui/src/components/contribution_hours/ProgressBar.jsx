@@ -44,8 +44,8 @@ const LinearBuffer = ({
     contributionHours = 925,
     targetHours = 1850,
     ptoHours = 0,
-    billableUtilization = 0,
-    overtimeWorked = 0,
+    billableUtilization,
+    overtimeWorked,
 }) => {
   return (
     <Root className={classes.root}>
@@ -67,10 +67,7 @@ const LinearBuffer = ({
         style={{ display: 'block' }}
       >
         Billable Hours: {billableHours} - Contribution Hours:{' '}
-        {contributionHours} - Target Hours: {targetHours} - PTO Hours:{' '}
-          {ptoHours} - Billable Utilization:{' '}
-          {billableUtilization} - Overtime Worked:{' '}
-          {overtimeWorked}
+        {contributionHours} - Target Hours: {targetHours} - PTO Hours:{' '} {ptoHours} - Billable Utilization:{' '} {(billableUtilization) ? billableUtilization : '(none)'} - Overtime Worked:{' '} {(overtimeWorked) ? overtimeWorked : '(none)'}
       </Typography>
     </Root>
   );
