@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.employee_hours;
 
 import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -74,19 +75,19 @@ public class EmployeeHours {
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate asOfDate;
 
-    @NotNull
-    @Column(name="billableUtilization")
+    @Column(name="billable_utilization")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="Billable utilization hours")
+    @Nullable
     private Float billableUtilization;
 
-    @NotNull
-    @Column(name="overtimeWorked")
+    @Column(name="overtime_worked")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="Number of hours of overtime worked")
+    @Nullable
     private Float overtimeWorked;
 
-    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate, Float billableUtilization, Float overtimeWorked) {
+    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate, @Nullable Float billableUtilization, @Nullable Float overtimeWorked) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
@@ -99,7 +100,7 @@ public class EmployeeHours {
         this.overtimeWorked = overtimeWorked;
     }
 
-    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate, Float billableUtilization, Float overtimeWorked) {
+    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate, @Nullable Float billableUtilization, @Nullable Float overtimeWorked) {
         this(null, employeeId, contributionHours, billableHours, ptoHours, updatedDate, targetHours, asOfDate, billableUtilization, overtimeWorked);
     }
 

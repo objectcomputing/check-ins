@@ -31,6 +31,10 @@ public class EmployeeHoursCSVHelper {
                     .parse(input);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
             for (CSVRecord csvRecord : csvParser) {
+                String billableUtilizationString = csvRecord.get("billableUtilization");
+                Float billableUtilization = (billableUtilizationString == null) ? null : Float.parseFloat(billableUtilizationString);
+                String overtimeWorkedString = csvRecord.get("overtimeWorked");
+                Float overtimeWorked = (overtimeWorkedString == null) ? null : Float.parseFloat(overtimeWorkedString);
                 EmployeeHours employeeHours = new EmployeeHours
                         (
                             csvRecord.get("employeeId"),
@@ -40,8 +44,8 @@ public class EmployeeHoursCSVHelper {
                             LocalDate.now(),
                             Float.parseFloat(csvRecord.get("targetHours")),
                             LocalDate.parse(csvRecord.get("asOfDate"), formatter),
-                            Float.parseFloat(csvRecord.get("billableUtilization")),
-                            Float.parseFloat(csvRecord.get("overtimeWorked"))
+                            billableUtilization,
+                            overtimeWorked
                         );
                 employeeHoursList.add(employeeHours);
             }
