@@ -1267,6 +1267,24 @@ INSERT INTO feedback_requests
 VALUES
 ('e2af1c96-a593-48c2-b9e0-a00193a070c7', '8d75c07e-6adc-437a-8659-7dd953ce6600', '1c813446-c65a-4f49-b980-0193f7bfff8c', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-01', '2021-08-05', '2021-08-02', 'submitted');
 
+-- CAE - Self-Review feedback request, Creator: Big Boss
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7ef', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'c7406157-a38f-4d48-aaed-04018d846727', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-04', '2024-09-30', '2024-09-05', 'sent');
+
+-- CAE - Review feedback request, Creator: Big Boss
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'sent');
+
+-- CAE - Feedback request, Creator: Big Boss
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f1', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'sent');
+
 ---- Creator: Big Boss
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Faux Freddy, recipient: Unreal Ulysses
@@ -1390,6 +1408,137 @@ INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
 ('8c13ffa2-fad0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('They are very good at working on a team--all of us is better than any one of us', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', 'e238dd00-fac4-11eb-9a03-0242ac130003', 0.8);
+
+-- CAE - Self-review 926a37a4-4ded-4633-8900-715b0383aecc answers
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121110', PGP_SYM_ENCRYPT('', '${aeskey}'), 'f4a394de-bcc0-40ad-9b86-3fa7bd6c09fe', '98390c09-7121-110a-bfee-9380a470a7ef', 0.6);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121111', PGP_SYM_ENCRYPT('', '${aeskey}'), '6ea9ea69-62ba-4835-b2b3-43d565df209f', '98390c09-7121-110a-bfee-9380a470a7ef', 0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121112', PGP_SYM_ENCRYPT('', '${aeskey}'), 'aa58579c-3d6c-4238-a3bd-e3f904584f3f', '98390c09-7121-110a-bfee-9380a470a7ef', 0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121113', PGP_SYM_ENCRYPT('', '${aeskey}'), '611536b3-2275-4509-92db-0372bac60aff', '98390c09-7121-110a-bfee-9380a470a7ef', 0.6);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121114', PGP_SYM_ENCRYPT('', '${aeskey}'), '68549286-76f3-49f6-9de6-5f96abfa0b0e', '98390c09-7121-110a-bfee-9380a470a7ef', 0.4);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121115', PGP_SYM_ENCRYPT('', '${aeskey}'), 'd77848f3-cb94-4161-b558-7aa230dcc92c', '98390c09-7121-110a-bfee-9380a470a7ef', 0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121116', PGP_SYM_ENCRYPT('', '${aeskey}'), 'b07d06b6-8d6c-4c39-88f9-b3ccc7a691c4', '98390c09-7121-110a-bfee-9380a470a7ef', 0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121117', PGP_SYM_ENCRYPT('Some text for this question.', '${aeskey}'), '82be76a8-0cf8-427d-9d6a-763c23c05db2', '98390c09-7121-110a-bfee-9380a470a7ef', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121118', PGP_SYM_ENCRYPT('Some text for this question.', '${aeskey}'), 'f9e5878c-6c4d-4249-8f1a-c3508d8c1597', '98390c09-7121-110a-bfee-9380a470a7ef', 0);
+
+-- CAE - Review d1e94b60-47c4-4945-87d1-4dc88f088e57 answers
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121119', PGP_SYM_ENCRYPT('', '${aeskey}'), '6eff224d-d690-4d25-a44f-08b8ec03fbbe', '98390c09-7121-110a-bfee-9380a470a7f0', 0.4);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121120', PGP_SYM_ENCRYPT('', '${aeskey}'), '47758dfb-64ca-4203-a5ba-b5fa3ef254dd', '98390c09-7121-110a-bfee-9380a470a7f0', .8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121121', PGP_SYM_ENCRYPT('', '${aeskey}'), '4ab44c4f-bd8f-4e8d-89b7-940ada1a45c0', '98390c09-7121-110a-bfee-9380a470a7f0', .2);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121122', PGP_SYM_ENCRYPT('', '${aeskey}'), '1fe655dc-9c37-4e55-9bd9-455059832531', '98390c09-7121-110a-bfee-9380a470a7f0', .6);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121123', PGP_SYM_ENCRYPT('', '${aeskey}'), 'cf00f422-0b8a-4219-bc3a-8092732f2ef5', '98390c09-7121-110a-bfee-9380a470a7f0', .4);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121124', PGP_SYM_ENCRYPT('', '${aeskey}'), '3f74c7fe-74fe-4a4d-96c3-aaa35d0cbe70', '98390c09-7121-110a-bfee-9380a470a7f0', .6);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121125', PGP_SYM_ENCRYPT('', '${aeskey}'), '40448b19-7d3a-4862-aa97-506e768ca4f9', '98390c09-7121-110a-bfee-9380a470a7f0', .8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121126', PGP_SYM_ENCRYPT('', '${aeskey}'), '7fad2952-fa1a-43eb-86e6-9a715674c884', '98390c09-7121-110a-bfee-9380a470a7f0', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121127', PGP_SYM_ENCRYPT('Text for this question.', '${aeskey}'), '93424f36-64a3-4f10-b78a-00de58060177', '98390c09-7121-110a-bfee-9380a470a7f0', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121128', PGP_SYM_ENCRYPT('Yes', '${aeskey}'), '8c13c1a5-f1ef-43cc-9f9a-858b01bff930', '98390c09-7121-110a-bfee-9380a470a7f0', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121129', PGP_SYM_ENCRYPT('No', '${aeskey}'), 'c2ff8a0d-358f-438b-86f4-59da10bddbe5', '98390c09-7121-110a-bfee-9380a470a7f0', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121130', PGP_SYM_ENCRYPT('No', '${aeskey}'), '46cf546a-acbe-48e5-8c8d-1b1ca484af8d', '98390c09-7121-110a-bfee-9380a470a7f0', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121131', PGP_SYM_ENCRYPT('Text for the last question.', '${aeskey}'), '174e5851-cb24-4a0f-890c-e6f041db4127', '98390c09-7121-110a-bfee-9380a470a7f0', 0);
+
+-- CAE - Feedback 1c8bc142-c447-4889-986e-42ab177da683 answers
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121132', PGP_SYM_ENCRYPT('No', '${aeskey}'), '22113310-04dd-4931-96f2-37303a2515a4', '98390c09-7121-110a-bfee-9380a470a7f1', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121133', PGP_SYM_ENCRYPT('', '${aeskey}'), '11d7b14c-2eee-4f72-a2b6-8c57a094207e', '98390c09-7121-110a-bfee-9380a470a7f1', 0.4);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121134', PGP_SYM_ENCRYPT('Feeback answer.', '${aeskey}'), 'bf328e35-e486-4ec8-b3e8-acc2c09419fa', '98390c09-7121-110a-bfee-9380a470a7f1', 0);
 
 -- Skills
 INSERT INTO skills -- React
@@ -1715,3 +1864,10 @@ INSERT INTO role_documentation
 (role_id, document_id, display_order)
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'b553d4c0-9b7a-4691-8fe0-e3bdda4f67ae', 3);
+
+-- CAE - Review Periods
+INSERT INTO review_periods
+(id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
+VALUES
+    ('12345678-e29c-4cf4-9ea4-6baa09405c57', 'Review Period 1', 'CLOSED', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-01', '2024-09-02', '2024-09-03', '2024-01-01', '2024-12-31');
+

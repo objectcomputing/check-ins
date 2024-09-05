@@ -18,6 +18,7 @@ class Feedback {
     private final LocalDate submitted;
     private final String question;
     private final String answer;
+    private final String type;
   }
 
   private String name;

@@ -18,6 +18,21 @@ import { useQueryParameters } from '../helpers/query-parameters';
 import markdown from 'markdown-builder';
 
 const MeritReportPage = () => {
+  const agreeMarks = [
+    'Strongly Disagree',
+    'Disagree',
+    'Neither Agree nor Disagree',
+    'Agree',
+    'Strongly Agree'
+  ];
+  const frequencyMarks = [
+    'Very Infrequently',
+    'Infrequently',
+    'Neither Frequently nor Infrequently',
+    'Frequently',
+    'Very Frequently'
+  ];
+
   const { state, dispatch } = useContext(AppContext);
 
   const csrf = selectCsrfToken(state);
@@ -222,14 +237,18 @@ const MeritReportPage = () => {
   };
 
   const dateFromArray = (parts) => {
-    return new Date(parts[0], parts[1] - 1, parts[2]);
+    return (parts ? new Date(parts[0], parts[1] - 1, parts[2]) : null);
   };
 
   const formatDate = (date) => {
-    // Date.toString() returns something like this: Wed Oct 05 2011
-    // We will doctor it up to look like an American date.
-    let str = date.toString().slice(4, 15);
-    return str.slice(0, 6) + "," + str.slice(6);
+    if (date) {
+      // Date.toString() returns something like this: Wed Oct 05 2011
+      // We will doctor it up to look like an American date.
+      let str = date.toString().slice(4, 15);
+      return str.slice(0, 6) + "," + str.slice(6);
+    } else {
+      return "";
+    }
   };
 
   const markdownTitle = (data) => {
@@ -316,6 +335,26 @@ const MeritReportPage = () => {
     return members;
   };
 
+  const getAnswerText = (answer) => {
+    if (answer.type == "SLIDER" || answer.type == "FREQ") {
+      const sentiment = parseFloat(answer.answer);
+      if (!isNaN(sentiment)) {
+        if (answer.type == "SLIDER") {
+          const index = sentiment * agreeMarks.length;
+          if (index >= 0 && index < agreeMarks.length) {
+            return agreeMarks[index];
+          }
+        } else if (answer.type == "FREQ") {
+          const index = sentiment * frequencyMarks.length;
+          if (index >= 0 && index < frequencyMarks.length) {
+            return frequencyMarks[index];
+          }
+        }
+      }
+    }
+    return answer.answer;
+  };
+
   const getUniqueQuestions = (answers) => {
     let questions = {};
     for(let answer of answers) {
@@ -324,7 +363,8 @@ const MeritReportPage = () => {
         // Put in member name and answer
         questions[key] = [];
       }
-      questions[key].push([answer.memberName, answer.answer]);
+      const text = getAnswerText(answer);
+      questions[key].push([answer.memberName, text]);
     }
     return questions;
   };

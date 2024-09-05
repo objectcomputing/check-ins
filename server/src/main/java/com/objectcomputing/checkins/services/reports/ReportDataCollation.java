@@ -49,6 +49,8 @@ public class ReportDataCollation {
       selfReviews, reviews, feedback
     }
 
+    private static final String textQuestion = "TEXT";
+    private static final String radioQuestion = "RADIO";
     private UUID memberId;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -180,9 +182,7 @@ public class ReportDataCollation {
       List<FeedbackRequest> requests =
         feedbackRequestServices.findByValues(null, memberId, null,
                                              dateRange.start,
-                                             type == FeedbackType.feedback ?
-                                               null : reviewPeriodId,
-                                             null, null);
+                                             null, null, null);
 
       // Iterate over each request and find the template.  Determine the purpose
       // of the template.
@@ -237,17 +237,25 @@ public class ReportDataCollation {
                    feedbackAnswerServices.findByValues(null, request.getId());
             for (FeedbackAnswer answer : answers) {
               String questionText;
+              String questionType = textQuestion;
               try {
                 TemplateQuestion question =
                     templateQuestionServices.getById(answer.getQuestionId());
                 questionText = question.getQuestion();
+                questionType = question.getInputType();
               } catch(NotFoundException ex) {
                 LOG.error(ex.toString());
                 questionText = answer.getQuestionId().toString();
               }
+
               feedbackAnswers.add(
-                  new Feedback.Answer(recipientName, request.getSubmitDate(),
-                                      questionText, answer.getAnswer()));
+                  new Feedback.Answer(
+                        recipientName, request.getSubmitDate(), questionText,
+                        questionType.equals(textQuestion) ||
+                        questionType.equals(radioQuestion) ?
+                               answer.getAnswer() :
+                               String.valueOf(answer.getSentiment()),
+                        questionType));
             }
           }
         }
@@ -258,20 +266,19 @@ public class ReportDataCollation {
     }
 
     private LocalDateRange getDateRange() {
-        // Return date range based on reviewPeriodId (defaulting to this year).
+      // Return date range based on reviewPeriodId (defaulting to this year).
+      ReviewPeriod reviewPeriod = reviewPeriodServices.findById(reviewPeriodId);
+      if (reviewPeriod == null) {
         LocalDate closeDate = LocalDate.now();
-        ReviewPeriod reviewPeriod = reviewPeriodServices.findById(reviewPeriodId);
-        if (reviewPeriod != null) {
-            LocalDate date = reviewPeriod.getCloseDate().toLocalDate();
-            if (date != null) {
-                closeDate = date;
-            }
-        }
-
         LocalDate startDate = closeDate.withMonth(Month.JANUARY.getValue())
                                 .withDayOfMonth(1);
         LocalDate endDate = closeDate.withMonth(Month.DECEMBER.getValue())
                                 .withDayOfMonth(31);
         return new LocalDateRange(startDate, endDate);
+      } else {
+        LocalDate startDate = reviewPeriod.getPeriodStartDate().toLocalDate();
+        LocalDate endDate = reviewPeriod.getPeriodEndDate().toLocalDate();
+        return new LocalDateRange(startDate, endDate);
+      }
     }
 }
