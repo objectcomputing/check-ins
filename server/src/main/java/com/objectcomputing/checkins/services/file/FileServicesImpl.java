@@ -217,7 +217,6 @@ public class FileServicesImpl implements FileServices {
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, "You are not authorized to perform this operation");
 
-        // create folder for the document
         try {
             Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
@@ -233,27 +232,66 @@ public class FileServicesImpl implements FileServices {
                     .orElse(null);
 
             // If folder does not exist on Drive, create a new folder in the format name-date
-            if(folderOnDrive == null) {
+            if (folderOnDrive == null) {
                 folderOnDrive = createNewDirectoryOnDrive(drive, directoryName, rootDirId);
             }
 
-            // set file metadata
+            // Set the file metadata
             File fileMetadata = new File();
             fileMetadata.setName(name);
-            fileMetadata.setMimeType("application/vnd.google-apps.document");
+            fileMetadata.setMimeType(MediaType.TEXT_MARKDOWN_TYPE.toString());
             fileMetadata.setParents(Collections.singletonList(folderOnDrive.getId()));
 
-            //upload file to google drive
+            // Upload file to google drive
             InputStream is = new ByteArrayInputStream(
                     StandardCharsets.UTF_8.encode(text).array());
             InputStreamContent content = new InputStreamContent(
-                    MediaType.TEXT_PLAIN_TYPE.toString(), is);
+                    MediaType.TEXT_MARKDOWN_TYPE.toString(), is);
             File uploadedFile = drive.files().create(fileMetadata, content)
                                 .setSupportsAllDrives(true)
                                 .setFields("id, size, name")
                                 .execute();
 
-            return setFileInfo(uploadedFile, null);
+            // See if the Google doc already exists.  If it does, trash it.
+            FileList fileList = drive.files().list()
+                                .setSupportsAllDrives(true)
+                                .setIncludeItemsFromAllDrives(true)
+                                .setQ(String.format("'%s' in parents and mimeType = 'application/vnd.google-apps.document' and trashed != true", folderOnDrive.getId()))
+                                .setSpaces("drive")
+                                .setFields("files(id, name, parents, size)")
+                                .execute();
+            for (File file : fileList.getFiles()) {
+              if (file.getName().equals(name)) {
+                try {
+                  File trash = new File();
+                  trash.setTrashed(true);
+                  drive.files().update(file.getId(), trash)
+                                  .setSupportsAllDrives(true)
+                                  .execute();
+                } catch (GoogleJsonResponseException e) {
+                } catch (IOException e) {
+                }
+              }
+            }
+
+            // Copy the file to a Google doc
+            File docFile = new File();
+            docFile.setName(name);
+            docFile.setMimeType("application/vnd.google-apps.document");
+            docFile.setParents(Collections.singletonList(folderOnDrive.getId()));
+            File copiedFile = drive.files().copy(uploadedFile.getId(), docFile)
+                                .setSupportsAllDrives(true)
+                                .setFields("id, size, name")
+                                .execute();
+
+            // Delete the original mark-down file after copying it.
+            File trash = new File();
+            trash.setTrashed(true);
+            drive.files().update(uploadedFile.getId(), trash)
+                                .setSupportsAllDrives(true)
+                                .execute();
+
+            return setFileInfo(copiedFile, null);
         } catch (GoogleJsonResponseException e) {
             LOG.error("Error occurred while accessing Google Drive.", e);
             throw new FileRetrievalException(e.getMessage());
