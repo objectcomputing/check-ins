@@ -193,6 +193,8 @@ class ReviewPeriodControllerTest
         reviewPeriodCreateDTO.setLaunchDate(LocalDateTime.now());
         reviewPeriodCreateDTO.setSelfReviewCloseDate(LocalDateTime.now());
         reviewPeriodCreateDTO.setCloseDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setPeriodStartDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setPeriodEndDate(LocalDateTime.now());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         String expectedLaunchDateFormat = formatter.format(reviewPeriodCreateDTO.getLaunchDate());
@@ -217,6 +219,14 @@ class ReviewPeriodControllerTest
 
         String actualCloseDateFormat = objectMapper.readTree(actualJson).get("closeDate").asText();
         assertEquals(expectedCloseDateFormat, actualCloseDateFormat);
+
+        String expectedPeriodStartDateFormat = objectMapper.readTree(expectedJson).get("periodStartDate").asText();
+        String actualPeriodStartDateFormat = objectMapper.readTree(actualJson).get("periodStartDate").asText();
+        assertEquals(expectedPeriodStartDateFormat, actualPeriodStartDateFormat);
+
+        String expectedPeriodEndDateFormat = objectMapper.readTree(expectedJson).get("periodEndDate").asText();
+        String actualPeriodEndDateFormat = objectMapper.readTree(actualJson).get("periodEndDate").asText();
+        assertEquals(expectedPeriodEndDateFormat, actualPeriodEndDateFormat);
     }
 
     @Test
@@ -227,6 +237,8 @@ class ReviewPeriodControllerTest
         reviewPeriodCreateDTO.setLaunchDate(LocalDateTime.now());
         reviewPeriodCreateDTO.setSelfReviewCloseDate(LocalDateTime.now());
         reviewPeriodCreateDTO.setCloseDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setPeriodStartDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setPeriodEndDate(LocalDateTime.now());
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -242,6 +254,8 @@ class ReviewPeriodControllerTest
         LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS);
         LocalDateTime closeDate = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodStartDate = LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodEndDate = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS);
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
@@ -249,6 +263,8 @@ class ReviewPeriodControllerTest
         reviewPeriodCreateDTO.setLaunchDate(launchDate);
         reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
         reviewPeriodCreateDTO.setCloseDate(closeDate);
+        reviewPeriodCreateDTO.setPeriodStartDate(periodStartDate);
+        reviewPeriodCreateDTO.setPeriodEndDate(periodEndDate);
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -264,6 +280,8 @@ class ReviewPeriodControllerTest
         assertEquals(reviewPeriodCreateDTO.getLaunchDate(), body.getLaunchDate());
         assertEquals(reviewPeriodCreateDTO.getSelfReviewCloseDate(), body.getSelfReviewCloseDate());
         assertEquals(reviewPeriodCreateDTO.getCloseDate(), body.getCloseDate());
+        assertEquals(reviewPeriodCreateDTO.getPeriodStartDate(), body.getPeriodStartDate());
+        assertEquals(reviewPeriodCreateDTO.getPeriodEndDate(), body.getPeriodEndDate());
     }
 
     @Test
@@ -271,6 +289,8 @@ class ReviewPeriodControllerTest
         LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS);
         LocalDateTime closeDate = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodStartDate = LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodEndDate = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS);
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
@@ -278,6 +298,8 @@ class ReviewPeriodControllerTest
         reviewPeriodCreateDTO.setLaunchDate(launchDate);
         reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
         reviewPeriodCreateDTO.setCloseDate(closeDate);
+        reviewPeriodCreateDTO.setPeriodStartDate(periodStartDate);
+        reviewPeriodCreateDTO.setPeriodEndDate(periodEndDate);
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -516,6 +538,14 @@ class ReviewPeriodControllerTest
         String expectedCloseDateFormat = objectMapper.readTree(expectedJson).get("closeDate").asText();
         String actualCloseDateFormat = objectMapper.readTree(actualJson).get("closeDate").asText();
         assertEquals(expectedCloseDateFormat, actualCloseDateFormat);
+
+        String expectedPeriodStartDateFormat = objectMapper.readTree(expectedJson).get("periodStartDate").asText();
+        String actualPeriodStartDateFormat = objectMapper.readTree(actualJson).get("periodStartDate").asText();
+        assertEquals(expectedPeriodStartDateFormat, actualPeriodStartDateFormat);
+
+        String expectedPeriodEndDateFormat = objectMapper.readTree(expectedJson).get("periodEndDate").asText();
+        String actualPeriodEndDateFormat = objectMapper.readTree(actualJson).get("periodEndDate").asText();
+        assertEquals(expectedPeriodEndDateFormat, actualPeriodEndDateFormat);
     }
 
     @Test

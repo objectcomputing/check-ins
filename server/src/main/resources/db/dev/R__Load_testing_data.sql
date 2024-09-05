@@ -99,7 +99,13 @@ VALUES
 INSERT INTO member_profile -- Revolver Ocelot
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Head of Sales, HR, Management','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29');
+('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Head of Sales, HR, Management','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29')
+;
+INSERT INTO member_profile -- Lucky Bear
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+VALUES
+('3455c391-c5dd-4c84-8d00-1e345711987f', PGP_SYM_ENCRYPT('Lucky','${aeskey}'),  PGP_SYM_ENCRYPT('Bear','${aeskey}'), PGP_SYM_ENCRYPT('Developer','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('South FL','${aeskey}'), PGP_SYM_ENCRYPT('belottol@objectcomputing.com','${aeskey}'), '728364519', '2021-09-07', PGP_SYM_ENCRYPT('You make your own luck','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1950-12-01', '2024-08-28')
+;
 
 -- Roles
 INSERT INTO role
@@ -233,9 +239,15 @@ VALUES
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'a90be358-aa3d-49c8-945a-879a93646e45'); -- Kazuhira Miller
 
 INSERT INTO member_roles
-    (roleid, memberid)
+(roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '105f2968-a182-45a3-892c-eeff76383fe0'); -- Revolver Ocelot
+('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '105f2968-a182-45a3-892c-eeff76383fe0') -- Revolver Ocelot
+;
+INSERT INTO member_roles
+(roleid, memberid)
+VALUES
+('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '3455c391-c5dd-4c84-8d00-1e345711987f') -- Lucky Bear - 2024-08-28
+;
 
 -- Teams
 INSERT INTO team -- Checkins Experts
@@ -296,7 +308,13 @@ VALUES
 INSERT INTO team_member
 (id, teamid, memberid, lead)
 VALUES
-('7cf7820a-b099-48e5-b630-4f921ee17d16', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '1c813446-c65a-4f49-b980-0193f7bfff8c', false); -- Terrific Yak
+('7cf7820a-b099-48e5-b630-4f921ee17d16', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '1c813446-c65a-4f49-b980-0193f7bfff8c', false) -- Terrific Yak
+;
+INSERT INTO team_member
+(id, teamid, memberid, lead)
+VALUES
+('b7a8ef00-61f2-451d-b80d-0a1d6f574d7a', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '3455c391-c5dd-4c84-8d00-1e345711987f', false) -- Lucky Bear
+;
 
 ---- PMO Superness Members
 INSERT INTO team_member

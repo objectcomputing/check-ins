@@ -139,6 +139,8 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [toDelete, setToDelete] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
+  const [confirmRevieweesWithNoSupervisorOpen, setConfirmRevieweesWithNoSupervisorOpen] = useState(false);
+  const [confirmRevieweesWithNoSupervisorQuestion, setConfirmRevieweesWithNoSupervisorQuestionText] = useState('');
 
   const loadedReviews = useRef(false);
   const loadingReviews = useRef(false);
@@ -463,6 +465,30 @@ const TeamReviews = ({ onBack, periodId }) => {
     updateReviewPeriodDates(newPeriod);
   };
 
+  const handlePeriodStartDateChange = (val, period) => {
+    const newDate = val?.$d;
+    const isoDate = newDate?.toISOString() ?? null;
+    const newPeriod = { ...period, periodStartDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const periodEndDate = new Date(period.periodEndDate);
+    if (newDate > periodEndDate) newPeriod.periodEndDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+  };
+
+  const handlePeriodEndDateChange = (val, period) => {
+    const newDate = val?.$d;
+    const isoDate = newDate?.toISOString() ?? null;
+    const newPeriod = { ...period, periodEndDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const periodStartDate = new Date(period.periodStartDate);
+    if (newDate < periodStartDate) newPeriod.periodStartDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+  };
+
   const loadReviews = useCallback(async () => {
     let newSelfReviews = {};
     let newReviews = {};
@@ -580,15 +606,16 @@ const TeamReviews = ({ onBack, periodId }) => {
   const validateReviewPeriod = period => {
     if (!period) return 'No review period was created.';
     if (!period.launchDate) return 'No launch date was specified.';
-    if (!period.selfReviewCloseDate)
-      return 'No self-review date was specified.';
+    if (!period.selfReviewCloseDate) return 'No self-review date was specified.';
     if (!period.closeDate) return 'No close date was specified.';
+    if (!period.periodStartDate) return 'No period-start-date was specified.';
+    if (!period.periodEndDate) return 'No period-end-date was specified.';
     if (teamMembers.length === 0) return 'No members were added.';
     const haveReviewers = teamMembers.every(
       member => getReviewers(member).length > 0
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
-    return null; // no validtation errors
+    return null; // no validation errors
   };
 
   const updateReviewPeriodStatus = async reviewStatus => {
@@ -627,25 +654,16 @@ const TeamReviews = ({ onBack, periodId }) => {
     setValidationMessage(msg);
     if (msg) return;
 
-    if (period.reviewStatus === ReviewStatus.PLANNING) {
-      updateReviewPeriodStatus(ReviewStatus.AWAITING_APPROVAL);
-    } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
-      const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
-      const unapproved = assignments.filter(
-        a => !a.approved && visibleIds.has(a.revieweeId)
-      );
-      // logAssignments(unapproved); // for debugging
-      setUnapproved(unapproved);
-      setConfirmationText(
-        unapproved.length === 0
-          ? 'Are you sure you want to launch the review period?'
-          : unapproved.length === 1
-            ? 'There is one visible, unapproved review assignment. ' +
-              'Would you like to approve it and launch this review period?'
-            : `There are ${unapproved.length} visible, unapproved review assignments. ` +
-              'Would you like to approve all of them and launch this review period?'
-      );
-      setConfirmationDialogOpen(true);
+    const uniqueNamesWithNoSupervisor = [...new Set(
+        visibleTeamMembers()
+            .filter(member => member.supervisorid === null)  // Filter by null supervisorid
+            .map(member => member.name)                      // Map to the name property
+    )].join(', ');
+    if (uniqueNamesWithNoSupervisor.trim().length > 0) {
+      setConfirmRevieweesWithNoSupervisorQuestionText(uniqueNamesWithNoSupervisor);
+      setConfirmRevieweesWithNoSupervisorOpen(true);
+    } else {
+      return requestApprovalPost();
     }
   };
 
@@ -758,6 +776,29 @@ const TeamReviews = ({ onBack, periodId }) => {
     setConfirmationDialogOpen(false);
     onBack();
   };
+
+  const requestApprovalPost = async () => {
+    if (period.reviewStatus === ReviewStatus.PLANNING) {
+      updateReviewPeriodStatus(ReviewStatus.AWAITING_APPROVAL);
+    } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
+      const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
+      const unapproved = assignments.filter(
+          a => !a.approved && visibleIds.has(a.revieweeId)
+      );
+      // logAssignments(unapproved); // for debugging
+      setUnapproved(unapproved);
+      setConfirmationText(
+          unapproved.length === 0
+              ? 'Are you sure you want to launch the review period?'
+              : unapproved.length === 1
+                  ? 'There is one visible, unapproved review assignment. ' +
+                  'Would you like to approve it and launch this review period?'
+                  : `There are ${unapproved.length} visible, unapproved review assignments. ` +
+                  'Would you like to approve all of them and launch this review period?'
+      );
+      setConfirmationDialogOpen(true);
+    }
+  }
 
   const unapproveAll = () => {
     visibleTeamMembers().map(member => approveMember(member, false));
@@ -897,6 +938,18 @@ const TeamReviews = ({ onBack, periodId }) => {
               label="Close Date"
               disabled={!canUpdate}
             />
+            <DatePickerField
+                date={period.periodStartDate}
+                setDate={val => handlePeriodStartDateChange(val, period)}
+                label="Period Start Date"
+                disabled={!canUpdate}
+            />
+            <DatePickerField
+                date={period.periodEndDate}
+                setDate={val => handlePeriodEndDateChange(val, period)}
+                label="Period End Date"
+                disabled={!canUpdate}
+            />
           </div>
           {approvalButton()}
         </div>
@@ -1016,6 +1069,13 @@ const TeamReviews = ({ onBack, periodId }) => {
         question={confirmationText}
         setOpen={setConfirmationDialogOpen}
         title="Approve and Launch"
+      />
+      <ConfirmationDialog
+          open={confirmRevieweesWithNoSupervisorOpen}
+          onYes={requestApprovalPost}
+          question={confirmRevieweesWithNoSupervisorQuestion}
+          setOpen={setConfirmRevieweesWithNoSupervisorOpen}
+          title="These reviewees have no supervisor. Continue?"
       />
     </Root>
   );

@@ -76,9 +76,22 @@ public class ReviewPeriod {
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime closeDate;
 
+    @Nullable
+    @Column(name = "period_start_date")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime periodStartDate;
+
+    @Nullable
+    @Column(name = "period_end_date")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime periodEndDate;
+
     public ReviewPeriod(String name, ReviewStatus reviewStatus, @Nullable UUID reviewTemplateId,
                         @Nullable UUID selfReviewTemplateId, @Nullable LocalDateTime launchDate,
-                        @Nullable LocalDateTime selfReviewCloseDate, @Nullable LocalDateTime closeDate) {
+                        @Nullable LocalDateTime selfReviewCloseDate, @Nullable LocalDateTime closeDate,
+                        @Nullable LocalDateTime periodStartDate, @Nullable LocalDateTime periodEndDate) {
         this.name = name;
         this.reviewStatus = reviewStatus;
         this.reviewTemplateId = reviewTemplateId;
@@ -86,11 +99,13 @@ public class ReviewPeriod {
         this.launchDate = launchDate;
         this.selfReviewCloseDate = selfReviewCloseDate;
         this.closeDate = closeDate;
+        this.periodStartDate = periodStartDate;
+        this.periodEndDate = periodEndDate;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, reviewStatus, reviewTemplateId, selfReviewTemplateId, launchDate, selfReviewCloseDate, closeDate);
+        return Objects.hash(id, name, reviewStatus, reviewTemplateId, selfReviewTemplateId, launchDate, selfReviewCloseDate, closeDate, this.periodStartDate, this.periodEndDate);
     }
 
     @Override
@@ -103,6 +118,8 @@ public class ReviewPeriod {
                 ", launchDate=" + launchDate +
                 ", selfReviewCloseDate=" + selfReviewCloseDate +
                 ", closeDate=" + closeDate +
+                ", periodStartDate=" + periodStartDate +
+                ", periodEndDate=" + periodEndDate +
                 '}';
     }
 
@@ -114,6 +131,7 @@ public class ReviewPeriod {
         return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(reviewStatus, that.reviewStatus) &&
                 Objects.equals(reviewTemplateId, that.reviewTemplateId) && Objects.equals(selfReviewTemplateId, that.selfReviewTemplateId) &&
                 Objects.equals(launchDate, that.launchDate) && Objects.equals(selfReviewCloseDate, that.selfReviewCloseDate) &&
-                Objects.equals(closeDate, that.closeDate);
+                Objects.equals(closeDate, that.closeDate) && Objects.equals(periodStartDate, that.periodStartDate) && Objects.equals(periodEndDate, that.periodEndDate)
+                ;
     }
 }

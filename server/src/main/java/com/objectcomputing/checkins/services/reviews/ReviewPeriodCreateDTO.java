@@ -49,8 +49,19 @@ public class ReviewPeriodCreateDTO {
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime closeDate;
 
+    @Nullable
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime periodStartDate;
+
+    @Nullable
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime periodEndDate;
+
     public ReviewPeriod convertToEntity(){
         return new ReviewPeriod(this.name, this.reviewStatus, this.reviewTemplateId,
-                this.selfReviewTemplateId, this.launchDate, this.selfReviewCloseDate, this.closeDate);
+                this.selfReviewTemplateId, this.launchDate, this.selfReviewCloseDate, this.closeDate,
+                this.periodStartDate, this.periodEndDate);
     }
 }
