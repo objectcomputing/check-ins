@@ -414,8 +414,9 @@ const MeritReportPage = () => {
   const markdownCompensation = (data) => {
     const currentInfo = data.currentInformation;
     let text = markdown.headers.h2("Compensation and Commitments");
-    text += "$" + currentInfo.salary.toFixed(2) + " Base Salary\n";
+    text += "$" + currentInfo.salary.toFixed(2) + " Base Salary\n\n";
     text += "OCI Range for role: " + currentInfo.range + "\n\n";
+    text += "National Range for role: " + currentInfo.nationalRange + "\n\n";
     if (currentInfo.commitments) {
       text += "Commitments: " + currentInfo.commitments + "\n";
     } else {

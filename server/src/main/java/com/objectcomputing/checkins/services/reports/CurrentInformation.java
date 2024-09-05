@@ -8,6 +8,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,40 +28,15 @@ import java.util.stream.Collectors;
 
 public class CurrentInformation {
 
+    @AllArgsConstructor
+    @Getter
     public class Information {
       private UUID memberId;
       private float salary;
       private String range;
+      private String nationalRange;
       private String biography;
       private String commitments;
-
-      public Information(UUID memberId, float salary, String range, String biography, String commitments) {
-      	  this.memberId = memberId;
-          this.salary = salary;
-          this.range = range;
-          this.biography = biography;
-          this.commitments = commitments;
-      }
-
-      public UUID getMemberId() {
-          return memberId;
-      }
-
-      public float getSalary() {
-          return salary;
-      }
-
-      public String getRange() {
-          return range;
-      }
-
-      public String getBiography() {
-          return biography;
-      }
-
-      public String getCommitments() {
-          return commitments;
-      }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CurrentInformation.class);
@@ -90,6 +68,7 @@ public class CurrentInformation {
                     memberProfile.get().getId(),
                     Float.parseFloat(csvRecord.get("salary")),
                     csvRecord.get("range"),
+                    csvRecord.get("nationalRange"),
                     csvRecord.get("biography"),
                     csvRecord.get("commitments")
                 );
