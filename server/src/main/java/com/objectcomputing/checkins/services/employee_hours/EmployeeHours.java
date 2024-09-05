@@ -74,7 +74,19 @@ public class EmployeeHours {
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate asOfDate;
 
-    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate) {
+    @NotNull
+    @Column(name="billableUtilization")
+    @TypeDef(type = DataType.FLOAT)
+    @Schema(description ="Billable utilization hours")
+    private Float billableUtilization;
+
+    @NotNull
+    @Column(name="overtimeWorked")
+    @TypeDef(type = DataType.FLOAT)
+    @Schema(description ="Number of hours of overtime worked")
+    private Float overtimeWorked;
+
+    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate, Float billableUtilization, Float overtimeWorked) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
@@ -83,10 +95,12 @@ public class EmployeeHours {
         this.updatedDate = updatedDate;
         this.targetHours = targetHours;
         this.asOfDate = asOfDate;
+        this.billableUtilization = billableUtilization;
+        this.overtimeWorked = overtimeWorked;
     }
 
-    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate) {
-        this(null, employeeId, contributionHours, billableHours, ptoHours, updatedDate, targetHours, asOfDate);
+    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate, Float billableUtilization, Float overtimeWorked) {
+        this(null, employeeId, contributionHours, billableHours, ptoHours, updatedDate, targetHours, asOfDate, billableUtilization, overtimeWorked);
     }
 
     @Override
@@ -101,12 +115,15 @@ public class EmployeeHours {
                 employeeId.equals(that.employeeId) &&
                 updatedDate.equals(that.updatedDate) &&
                 Float.compare(that.targetHours, targetHours) == 0 &&
-                asOfDate.equals(that.asOfDate) ;
+                asOfDate.equals(that.asOfDate) &&
+                Float.compare(that.billableUtilization, this.billableUtilization) == 0 &&
+                Float.compare(that.overtimeWorked, this.overtimeWorked) == 0
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours, asOfDate);
+        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours, asOfDate, billableUtilization, overtimeWorked);
     }
 
     @Override
@@ -120,6 +137,8 @@ public class EmployeeHours {
                 ", updatedDate=" + updatedDate +
                 ", targetHours=" + targetHours +
                 ", asOfDate=" + asOfDate +
+                ", billableUtilization=" + this.billableUtilization +
+                ", overtimeWorked=" + this.overtimeWorked +
                 '}';
     }
 }
