@@ -1538,7 +1538,7 @@ VALUES
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
-('8c13ffa2-fad0-11eb-9a03-0242ac121134', PGP_SYM_ENCRYPT('Feeback answer.', '${aeskey}'), 'bf328e35-e486-4ec8-b3e8-acc2c09419fa', '98390c09-7121-110a-bfee-9380a470a7f1', 0);
+('8c13ffa2-fad0-11eb-9a03-0242ac121134', PGP_SYM_ENCRYPT('Feedback answer.', '${aeskey}'), 'bf328e35-e486-4ec8-b3e8-acc2c09419fa', '98390c09-7121-110a-bfee-9380a470a7f1', 0);
 
 -- Skills
 INSERT INTO skills -- React
