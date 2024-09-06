@@ -200,6 +200,8 @@ class ReviewPeriodControllerTest
         String expectedLaunchDateFormat = formatter.format(reviewPeriodCreateDTO.getLaunchDate());
         String expectedSelfReviewCloseDateFormat = formatter.format(reviewPeriodCreateDTO.getSelfReviewCloseDate());
         String expectedCloseDateFormat = formatter.format(reviewPeriodCreateDTO.getCloseDate());
+        String expectedPeriodStartDateFormat = formatter.format(reviewPeriodCreateDTO.getPeriodStartDate());
+        String expectedPeriodEndDateFormat = formatter.format(reviewPeriodCreateDTO.getPeriodEndDate());
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -220,11 +222,9 @@ class ReviewPeriodControllerTest
         String actualCloseDateFormat = objectMapper.readTree(actualJson).get("closeDate").asText();
         assertEquals(expectedCloseDateFormat, actualCloseDateFormat);
 
-        String expectedPeriodStartDateFormat = objectMapper.readTree(expectedJson).get("periodStartDate").asText();
         String actualPeriodStartDateFormat = objectMapper.readTree(actualJson).get("periodStartDate").asText();
         assertEquals(expectedPeriodStartDateFormat, actualPeriodStartDateFormat);
 
-        String expectedPeriodEndDateFormat = objectMapper.readTree(expectedJson).get("periodEndDate").asText();
         String actualPeriodEndDateFormat = objectMapper.readTree(actualJson).get("periodEndDate").asText();
         assertEquals(expectedPeriodEndDateFormat, actualPeriodEndDateFormat);
     }
