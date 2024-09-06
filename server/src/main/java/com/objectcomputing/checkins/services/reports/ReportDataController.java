@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.reports;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.kudos.KudosRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
@@ -69,6 +71,7 @@ public class ReportDataController {
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
+    @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
     public Mono<List<List<String>>> upload(
                           @Part("comp") Publisher<CompletedFileUpload> comp,
                           @Part("curr") Publisher<CompletedFileUpload> curr,
@@ -109,7 +112,9 @@ public class ReportDataController {
     }
 
     @Get
-    public List<ReportDataDTO> get(@NotNull List<UUID> memberIds, @NotNull UUID reviewPeriodId) {
+    @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
+    public List<ReportDataDTO> get(@NotNull List<UUID> memberIds,
+                                   @NotNull UUID reviewPeriodId) {
         List<ReportDataDTO> list = new ArrayList<ReportDataDTO>();
         for (UUID memberId : memberIds) {
             ReportDataCollation data = new ReportDataCollation(
