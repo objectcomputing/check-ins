@@ -42,7 +42,9 @@ const MeritReportPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [allSearchResults, setAllSearchResults] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedCompHist, setSelectedCompHist] = useState(null);
+  const [selectedCurrInfo, setSelectedCurrInfo] = useState(null);
+  const [selectedPosHist, setSelectedPosHist] = useState(null);
   const [reviewPeriodId, setReviewPeriodId] = useState([]);
   const [reviewPeriods, setReviewPeriods] = useState([]);
 
@@ -109,51 +111,51 @@ const MeritReportPage = () => {
     return formatDate(date);
   };
 
-  const onFileSelected = e => {
-    setSelectedFile(e.target.files);
+  const onCompHistSelected = e => {
+    setSelectedCompHist(e.target.files[0]);
   };
 
-  const upload = async files => {
-    if (!files) {
+  const onCurrInfoSelected = e => {
+    setSelectedCurrInfo(e.target.files[0]);
+  };
+
+  const onPosHistSelected = e => {
+    setSelectedPosHist(e.target.files[0]);
+  };
+
+  const upload = async () => {
+    if (!selectedCompHist || !selectedCurrInfo || !selectedPosHist) {
       return;
     }
 
-    let errors;
-    let success = 0;
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      let formData = new FormData();
-      formData.append('file', file);
-      const res = await uploadData("/services/report/data/upload",
-                                   csrf, formData);
-      if (res?.error) {
-        const error = res?.error?.message;
-        if (errors) {
-          errors += "\n" + error;
-        } else {
-          errors = error;
-        }
-      }
-      if (res?.payload?.data) {
-        success++;
-      }
-    }
+    const files = [
+      {label: 'comp', file: selectedCompHist },
+      {label: 'curr', file: selectedCurrInfo },
+      {label: 'pos',  file: selectedPosHist  },
+    ];
 
-    if (errors) {
+    let formData = new FormData();
+    for (let file of files) {
+      formData.append(file.label, file.file);
+    }
+    const res = await uploadData("/services/report/data/upload",
+                                 csrf, formData);
+    if (res?.error) {
+      const error = res?.error?.message;
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'error',
-          toast: errors
+          toast: error
         }
       });
-    } else {
+    }
+    if (res?.payload?.data) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'success',
-          toast: success == 1 ? 'File was successfully uploaded' :
-                                'Files were successfully uploaded'
+          toast: 'Files were successfully uploaded'
         }
       });
     }
@@ -196,10 +198,6 @@ const MeritReportPage = () => {
     }
 
     return data;
-  };
-
-  const uploadLabel = (files) => {
-    return files.length == 1 ? "Upload File" : "Upload Files";
   };
 
   const uploadDocument = async (directory, name, text) => {
@@ -477,30 +475,54 @@ const MeritReportPage = () => {
     setReviewPeriodId(newValue);
   };
 
+  const checkMark = "✓";
+
   return (
     <div className="merit-report-page">
       <Button color="primary" className="space-between">
-        <label htmlFor="file-upload">
-          <h3>Choose CSV Files</h3>
+        <label htmlFor="file-upload-comp">
+          <h3>Compenstion History File {selectedCompHist && checkMark}</h3>
           <input
             accept=".csv"
-            id="file-upload"
-            onChange={onFileSelected}
+            id="file-upload-comp"
+            onChange={onCompHistSelected}
             style={{ display: 'none' }}
             type="file"
-            multiple
+          />
+        </label>
+      </Button>
+      <Button color="primary" className="space-between">
+        <label htmlFor="file-upload-curr">
+          <h3>Current Information File {selectedCurrInfo && checkMark}</h3>
+          <input
+            accept=".csv"
+            id="file-upload-curr"
+            onChange={onCurrInfoSelected}
+            style={{ display: 'none' }}
+            type="file"
+          />
+        </label>
+      </Button>
+      <Button color="primary" className="space-between">
+        <label htmlFor="file-upload-pos">
+          <h3>Position History File {selectedPosHist && checkMark}</h3>
+          <input
+            accept=".csv"
+            id="file-upload-pos"
+            onChange={onPosHistSelected}
+            style={{ display: 'none' }}
+            type="file"
           />
         </label>
       </Button>
       <div className="buttons space-between">
-        {selectedFile && (
-          <Button
-            color="primary"
-            onClick={() => upload(selectedFile)}
-          >
-            {uploadLabel(selectedFile)}
-          </Button>
-        )}
+        <Button
+          color="primary"
+          onClick={() => upload()}
+          disabled={!selectedCompHist || !selectedCurrInfo || !selectedPosHist}
+        >
+          Upload Files
+        </Button>
       </div>
       <MemberSelector
         className="merit-member-selector space-between"

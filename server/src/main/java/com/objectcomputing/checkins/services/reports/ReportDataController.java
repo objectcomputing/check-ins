@@ -69,19 +69,43 @@ public class ReportDataController {
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
-    public Mono<List<String>> upload(@Part("file") Publisher<CompletedFileUpload> file) {
-        return Flux.from(file)
-                .subscribeOn(Schedulers.boundedElastic())
-                .map(part -> {
-                    try {
-                        reportDataServices.store(part);
-                        return part.getFilename();
-                    } catch(IOException ex) {
-                        LOG.error(ex.toString());
-                        return "";
-                    }
-                })
-                .collectList();
+    public Mono<List<List<String>>> upload(
+                          @Part("comp") Publisher<CompletedFileUpload> comp,
+                          @Part("curr") Publisher<CompletedFileUpload> curr,
+                          @Part("pos") Publisher<CompletedFileUpload> pos) {
+        // There is probably an easier and better way to do this!
+        Mono<List<String>> compHist = Flux.from(comp)
+          .subscribeOn(Schedulers.boundedElastic())
+          .map(part -> uploadHelper(
+                         ReportDataServices.DataType.compensationHistory, part)
+          ).collectList();
+        Mono<List<String>> currInfo = Flux.from(curr)
+          .subscribeOn(Schedulers.boundedElastic())
+          .map(part -> uploadHelper(
+                         ReportDataServices.DataType.currentInformation, part)
+          ).collectList();
+        Mono<List<String>> posHist = Flux.from(pos)
+          .subscribeOn(Schedulers.boundedElastic())
+          .map(part -> uploadHelper(
+                ReportDataServices.DataType.positionHistory, part)
+          ).collectList();
+
+        Flux<List<String>> merged = Flux.empty();
+        merged = merged.mergeWith(compHist);
+        merged = merged.mergeWith(currInfo);
+        merged = merged.mergeWith(posHist);
+        return merged.collectList();
+    }
+
+    private String uploadHelper(ReportDataServices.DataType dataType,
+                                CompletedFileUpload file) {
+      try {
+        reportDataServices.store(dataType, file);
+        return file.getFilename();
+      } catch(IOException ex) {
+        LOG.error(ex.toString());
+        return "";
+      }
     }
 
     @Get

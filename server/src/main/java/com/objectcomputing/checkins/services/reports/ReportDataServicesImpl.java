@@ -52,7 +52,7 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
 
 
     @Override
-    public void store(CompletedFileUpload file) throws IOException, BadArgException {
+    public void store(DataType dataType, CompletedFileUpload file) throws IOException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, NOT_AUTHORIZED_MSG);
@@ -65,20 +65,6 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
         } else {
             perUser = new Stored();
             storedUploads.put(id, perUser);
-        }
-
-        // Translate the file name to a data type that we know about.
-        String fileName = file.getFilename().toLowerCase();
-        DataType dataType;
-        if (fileName.contains("comp")) {
-            dataType = DataType.compensationHistory;
-        } else if (fileName.contains("position")) {
-            dataType = DataType.positionHistory;
-        } else if (fileName.contains("current") ||
-                   fileName.contains("information")) {
-            dataType = DataType.currentInformation;
-        } else {
-            throw new BadArgException("Unable to determine data type: " + fileName);
         }
 
         // Update the timestamp to allow us to check later to see if we
