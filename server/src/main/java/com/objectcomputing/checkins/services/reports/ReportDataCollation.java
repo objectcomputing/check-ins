@@ -107,9 +107,9 @@ public class ReportDataCollation {
     }
 
     /// Get the kudos given to the member during the start and end date range.
-    public List<Kudos> getKudos() {
+    public List<ReportKudos> getKudos() {
         List<KudosRecipient> recipients = kudosRecipientRepository.findByMemberId(memberId);
-        List<Kudos> kudosList = new ArrayList<Kudos>();
+        List<ReportKudos> kudosList = new ArrayList<ReportKudos>();
         for (KudosRecipient recipient : recipients) {
             Kudos kudos = kudosRepository.findById(recipient.getKudosId())
                                          .orElse(null);
@@ -117,7 +117,13 @@ public class ReportDataCollation {
                 LocalDate created = kudos.getDateCreated();
                 if ((created.isEqual(startDate) ||
                      created.isAfter(startDate)) && created.isBefore(endDate)) {
-                    kudosList.add(kudos);
+                    MemberProfile senderProfile =
+                      memberProfileRepository.findById(kudos.getSenderId()).orElse(null);
+                    String sender = senderProfile == null ?
+                              "Unknown" :
+                              MemberProfileUtils.getFullName(senderProfile);
+                    kudosList.add(new ReportKudos(created,
+                                                  kudos.getMessage(), sender));
                 }
             }
         }

@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.reports;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.kudos.Kudos;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
@@ -37,7 +36,7 @@ public class ReportDataDTO {
     private MemberProfile memberProfile;
 
     @NotNull
-    private List<Kudos> kudos;
+    private List<ReportKudos> kudos;
 
     @NotNull
     private List<CompensationHistory.Compensation> compensationHistory;

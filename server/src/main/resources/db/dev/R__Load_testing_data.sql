@@ -1687,6 +1687,26 @@ INSERT INTO kudos_recipient
 VALUES
 ('f792056b-22ce-4e3d-a442-0fdc3cb35e7b', '9cdce399-4c02-41ed-a63f-35beb6ecb622', '105f2968-a182-45a3-892c-eeff76383fe0');
 
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('39dfd284-d0bf-4017-848c-8156dfef2b93', PGP_SYM_ENCRYPT('Kudos are tasty.', '${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', null, '2024-09-04', '2022-09-04');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('ebc023e2-b578-4b03-a2fc-fc9472a8474b', '39dfd284-d0bf-4017-848c-8156dfef2b93', 'c7406157-a38f-4d48-aaed-04018d846727');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved)
+VALUES
+('39dfd284-d0bf-4017-848c-8156dfef2b94', PGP_SYM_ENCRYPT('Kudos are covered in chocolate.', '${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', null, '2024-09-04', '2022-09-04');
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('ebc023e2-b578-4b03-a2fc-fc9472a8474c', '39dfd284-d0bf-4017-848c-8156dfef2b94', 'c7406157-a38f-4d48-aaed-04018d846727');
+
 -- Skill Categories
 INSERT INTO skillcategories
 (id, name, description)

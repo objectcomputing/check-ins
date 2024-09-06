@@ -278,9 +278,11 @@ const MeritReportPage = () => {
     let text = markdown.headers.h1("Kudos");
     for (let kudos of kudosList) {
       const date = dateFromArray(kudos.dateCreated);
-      text += kudos.message + "\n";
-      text += markdown.emphasis.i("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                  "Submitted on " + formatDate(date)) + "\n\n";
+      text += kudos.message + "\n\n";
+      text += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+              markdown.emphasis.i("Submitted on " + formatDate(date) +
+                                  ", by " + kudos.sender) +
+              "\n\n\n";
     }
     return text;
   };
