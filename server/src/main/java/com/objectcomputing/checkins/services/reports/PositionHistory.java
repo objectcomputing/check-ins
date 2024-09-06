@@ -7,6 +7,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,28 +30,12 @@ import java.time.format.DateTimeParseException;
 
 public class PositionHistory {
 
+    @AllArgsConstructor
+    @Getter
     public class Position {
       private UUID memberId;
       private LocalDate date;
       private String title;
-
-      public Position(UUID memberId, LocalDate date, String title) {
-      	  this.memberId = memberId;
-          this.date = date;
-          this.title = title;
-      }
-
-      public UUID getMemberId() {
-          return memberId;
-      }
-
-      public LocalDate getDate() {
-          return date;
-      }
-
-      public String getTitle() {
-          return title;
-      }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(PositionHistory.class);

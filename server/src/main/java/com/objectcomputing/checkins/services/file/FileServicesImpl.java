@@ -213,6 +213,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     public FileInfoDTO uploadDocument(String directoryName, String name, String text) {
+        final String GOOGLE_DOC_TYPE = "application/vnd.google-apps.document";
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, "You are not authorized to perform this operation");
@@ -256,7 +257,7 @@ public class FileServicesImpl implements FileServices {
             FileList fileList = drive.files().list()
                                 .setSupportsAllDrives(true)
                                 .setIncludeItemsFromAllDrives(true)
-                                .setQ(String.format("'%s' in parents and mimeType = 'application/vnd.google-apps.document' and trashed != true", folderOnDrive.getId()))
+                                .setQ(String.format("'%s' in parents and mimeType = '%s' and trashed != true", folderOnDrive.getId(), GOOGLE_DOC_TYPE))
                                 .setSpaces("drive")
                                 .setFields("files(id, name, parents, size)")
                                 .execute();
@@ -277,7 +278,7 @@ public class FileServicesImpl implements FileServices {
             // Copy the file to a Google doc
             File docFile = new File();
             docFile.setName(name);
-            docFile.setMimeType("application/vnd.google-apps.document");
+            docFile.setMimeType(GOOGLE_DOC_TYPE);
             docFile.setParents(Collections.singletonList(folderOnDrive.getId()));
             File copiedFile = drive.files().copy(uploadedFile.getId(), docFile)
                                 .setSupportsAllDrives(true)
