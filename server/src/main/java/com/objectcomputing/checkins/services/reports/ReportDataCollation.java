@@ -19,6 +19,8 @@ import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServi
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursServices;
+import com.objectcomputing.checkins.services.employee_hours.EmployeeHours;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
 import java.time.LocalDate;
 import java.time.Month;
@@ -67,6 +70,7 @@ public class ReportDataCollation {
     private FeedbackRequestServices feedbackRequestServices;
     private FeedbackAnswerServices feedbackAnswerServices;
     private TemplateQuestionServices templateQuestionServices;
+    private EmployeeHoursServices employeeHoursServices;
 
     public ReportDataCollation(
                           UUID memberId, UUID reviewPeriodId,
@@ -78,7 +82,8 @@ public class ReportDataCollation {
                           FeedbackTemplateServices feedbackTemplateServices,
                           FeedbackRequestServices feedbackRequestServices,
                           FeedbackAnswerServices feedbackAnswerServices,
-                          TemplateQuestionServices templateQuestionServices) {
+                          TemplateQuestionServices templateQuestionServices,
+                          EmployeeHoursServices employeeHoursServices) {
         this.memberId = memberId;
         this.reviewPeriodId = reviewPeriodId;
         this.compensationHistory = new CompensationHistory();
@@ -93,6 +98,7 @@ public class ReportDataCollation {
         this.feedbackRequestServices = feedbackRequestServices;
         this.feedbackAnswerServices = feedbackAnswerServices;
         this.templateQuestionServices = templateQuestionServices;
+        this.employeeHoursServices = employeeHoursServices;
         LocalDateRange range = getDateRange();
         startDate = range.start;
         endDate = range.end;
@@ -177,6 +183,31 @@ public class ReportDataCollation {
 
     public List<Feedback> getFeedback() {
       return getFeedbackType(FeedbackType.feedback);
+    }
+
+    public ReportHours getReportHours() {
+      MemberProfile memberProfile = getMemberProfile();
+      Set<EmployeeHours> employeeHours =
+        employeeHoursServices.findByFields(memberProfile.getEmployeeId());
+      float contributionHours = 0;
+      float ptoHours = 0;
+      float overtimeHours = 0;
+      float billableUtilization = 0;
+      for (EmployeeHours hours: employeeHours) {
+        contributionHours += hours.getContributionHours();
+        ptoHours += hours.getPtoHours();
+        // Waiting for Feature 2584 to be merged.
+        //Float otw = hours.getOvertimeWorked();
+        //if (otw != null) {
+        //  overtimeHours += otw;
+        //}
+        //Float bu = hours.getBillableUtilization();
+        //if (bu != null) {
+        //  billableUtilization += bu;
+        //}
+      }
+      return new ReportHours(contributionHours, ptoHours,
+                             overtimeHours, billableUtilization);
     }
 
     private List<Feedback> getFeedbackType(FeedbackType type) {

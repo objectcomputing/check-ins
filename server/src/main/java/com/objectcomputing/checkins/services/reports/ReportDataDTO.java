@@ -55,4 +55,7 @@ public class ReportDataDTO {
 
     @NotNull
     private List<Feedback> feedback;
+
+    @NotNull
+    private ReportHours hours;
 }

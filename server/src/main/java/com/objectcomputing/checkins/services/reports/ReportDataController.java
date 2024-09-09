@@ -10,6 +10,7 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateS
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
+import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursServices;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -49,6 +50,7 @@ public class ReportDataController {
     private final FeedbackRequestServices feedbackRequestServices;
     private final FeedbackAnswerServices feedbackAnswerServices;
     private final TemplateQuestionServices templateQuestionServices;
+    private final EmployeeHoursServices employeeHoursServices;
 
     public ReportDataController(ReportDataServices reportDataServices,
                           KudosRepository kudosRepository,
@@ -58,7 +60,8 @@ public class ReportDataController {
                           FeedbackTemplateServices feedbackTemplateServices,
                           FeedbackRequestServices feedbackRequestServices,
                           FeedbackAnswerServices feedbackAnswerServices,
-                          TemplateQuestionServices templateQuestionServices) {
+                          TemplateQuestionServices templateQuestionServices,
+                          EmployeeHoursServices employeeHoursServices) {
         this.reportDataServices = reportDataServices;
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
@@ -68,6 +71,7 @@ public class ReportDataController {
         this.feedbackRequestServices = feedbackRequestServices;
         this.feedbackAnswerServices = feedbackAnswerServices;
         this.templateQuestionServices = templateQuestionServices;
+        this.employeeHoursServices = employeeHoursServices;
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
@@ -127,7 +131,8 @@ public class ReportDataController {
                                            feedbackTemplateServices,
                                            feedbackRequestServices,
                                            feedbackAnswerServices,
-                                           templateQuestionServices);
+                                           templateQuestionServices,
+                                           employeeHoursServices);
             list.add(new ReportDataDTO(memberId, reviewPeriodId,
                                     data.getStartDate(), data.getEndDate(),
                                     data.getMemberProfile(), data.getKudos(),
@@ -136,7 +141,8 @@ public class ReportDataController {
                                     data.getPositionHistory(),
                                     data.getSelfReviews(),
                                     data.getReviews(),
-                                    data.getFeedback()));
+                                    data.getFeedback(),
+                                    data.getReportHours()));
         }
         return list;
     }

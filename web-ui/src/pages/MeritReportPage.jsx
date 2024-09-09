@@ -448,6 +448,19 @@ const MeritReportPage = () => {
     return text;
   };
 
+  const markdownEmployeeHours = (data) => {
+    let text = markdown.headers.h2("Employee Hours");
+    let hours = {
+      'Contribution Hours': data.hours.contributionHours,
+      'PTO Hours': data.hours.ptoHours,
+      'Overtime Hours': data.hours.overtimeHours,
+      'Billable Utilization': data.hours.billableUtilization,
+    };
+    text += markdown.lists.ul(Object.keys(hours),
+                (key) => key + ": " + hours[key]);
+    return text;
+  };
+
   const markdownReviewerNotes = (data) => {
     let text = markdown.headers.h4("Reviewer Notes");
     return text;
@@ -465,6 +478,7 @@ const MeritReportPage = () => {
         text += markdownReviews(data);
         text += markdownFeedback(data);
         text += markdownTitleHistory(data);
+        text += markdownEmployeeHours(data);
         text += markdownCompensation(data);
         text += markdownCompensationHistory(data);
         text += markdownReviewerNotes(data);
