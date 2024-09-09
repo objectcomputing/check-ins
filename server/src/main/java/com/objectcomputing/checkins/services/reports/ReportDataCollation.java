@@ -193,21 +193,18 @@ public class ReportDataCollation {
       float ptoHours = 0;
       float overtimeHours = 0;
       float billableUtilization = 0;
-      for (EmployeeHours hours: employeeHours) {
-        LocalDate date = hours.getAsOfDate();
-        if ((date.isEqual(startDate) ||
-             date.isAfter(startDate)) && date.isBefore(endDate)) {
-          contributionHours += hours.getContributionHours();
-          ptoHours += hours.getPtoHours();
+      if (!employeeHours.isEmpty()) {
+        EmployeeHours hours = employeeHours.iterator().next();
+        contributionHours = hours.getContributionHours();
+        ptoHours = hours.getPtoHours();
 
-          Float otw = hours.getOvertimeWorked();
-          if (otw != null) {
-            overtimeHours += otw;
-          }
-          Float bu = hours.getBillableUtilization();
-          if (bu != null) {
-            billableUtilization += bu;
-          }
+        Float otw = hours.getOvertimeWorked();
+        if (otw != null) {
+          overtimeHours = otw;
+        }
+        Float bu = hours.getBillableUtilization();
+        if (bu != null) {
+          billableUtilization = bu;
         }
       }
       return new ReportHours(contributionHours, ptoHours,
