@@ -19,6 +19,9 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -60,11 +63,17 @@ public class CompensationHistory {
             Optional<MemberProfile> memberProfile =
                 memberProfileRepository.findByWorkEmail(emailAddress);
             if (memberProfile.isPresent()) {
-                Compensation comp = new Compensation(
-                    memberProfile.get().getId(),
-                    LocalDate.parse(csvRecord.get("startDate"), formatter),
-                    Float.parseFloat(csvRecord.get("compensation")));
-                history.add(comp);
+                LocalDate date = parseDate(csvRecord.get("startDate"));
+                if (date == null) {
+                    LOG.error("Unable to parse date: " + csvRecord.get("startDate"));
+                } else {
+                  Compensation comp = new Compensation(
+                      memberProfile.get().getId(),
+                      date,
+                      Float.parseFloat(csvRecord.get("compensation")
+                                                .replaceAll("[^\\d\\.,]", "")));
+                  history.add(comp);
+               }
             } else {
                 LOG.error("Unable to find a profile for " + emailAddress);
             }
@@ -75,5 +84,21 @@ public class CompensationHistory {
         return history.stream()
                .filter(entry -> entry.getMemberId().equals(memberId))
                .collect(Collectors.toList());
+    }
+
+    private LocalDate parseDate(String date) {
+      List<String> formatStrings = List.of("yyyy", "M/d/yyyy");
+      for(String format: formatStrings) {
+        try {
+          return LocalDate.parse(date,
+                                 new DateTimeFormatterBuilder()
+                                 .appendPattern(format)
+                                 .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
+                                 .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                                 .toFormatter());
+        } catch(DateTimeParseException ex) {
+        }
+      }
+      return null;
     }
 }

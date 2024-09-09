@@ -66,7 +66,8 @@ public class CurrentInformation {
             if (memberProfile.isPresent()) {
                 Information comp = new Information(
                     memberProfile.get().getId(),
-                    Float.parseFloat(csvRecord.get("salary")),
+                    Float.parseFloat(csvRecord.get("salary")
+                                              .replaceAll("[^\\d\\.,]", "")),
                     csvRecord.get("range"),
                     csvRecord.get("nationalRange"),
                     csvRecord.get("biography"),
