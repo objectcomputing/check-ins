@@ -194,17 +194,21 @@ public class ReportDataCollation {
       float overtimeHours = 0;
       float billableUtilization = 0;
       for (EmployeeHours hours: employeeHours) {
-        contributionHours += hours.getContributionHours();
-        ptoHours += hours.getPtoHours();
-        // Waiting for Feature 2584 to be merged.
-        //Float otw = hours.getOvertimeWorked();
-        //if (otw != null) {
-        //  overtimeHours += otw;
-        //}
-        //Float bu = hours.getBillableUtilization();
-        //if (bu != null) {
-        //  billableUtilization += bu;
-        //}
+        LocalDate date = hours.getAsOfDate();
+        if ((date.isEqual(startDate) ||
+             date.isAfter(startDate)) && date.isBefore(endDate)) {
+          contributionHours += hours.getContributionHours();
+          ptoHours += hours.getPtoHours();
+
+          Float otw = hours.getOvertimeWorked();
+          if (otw != null) {
+            overtimeHours += otw;
+          }
+          Float bu = hours.getBillableUtilization();
+          if (bu != null) {
+            billableUtilization += bu;
+          }
+        }
       }
       return new ReportHours(contributionHours, ptoHours,
                              overtimeHours, billableUtilization);
