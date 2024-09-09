@@ -924,7 +924,6 @@ const TeamReviews = ({ onBack, periodId }) => {
               setDate={val => handleLaunchDateChange(val, period)}
               label="Launch Date"
               disabled={!canUpdate}
-              open={period?.reviewStatus === ReviewStatus?.PLANNING}
             />
             <DatePickerField
               date={period.selfReviewCloseDate}
