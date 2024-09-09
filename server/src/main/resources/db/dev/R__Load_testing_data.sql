@@ -1284,11 +1284,21 @@ INSERT INTO feedback_requests
 VALUES
 ('98390c09-7121-110a-bfee-9380a470a7f0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'sent');
 
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f3', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'sent');
+
 -- CAE - Feedback request, Creator: Big Boss
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
 ('98390c09-7121-110a-bfee-9380a470a7f1', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'sent');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f2', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'sent');
 
 ---- Creator: Big Boss
 INSERT INTO feedback_requests
@@ -1528,6 +1538,26 @@ INSERT INTO feedback_answers
 VALUES
 ('8c13ffa2-fad0-11eb-9a03-0242ac121131', PGP_SYM_ENCRYPT('Text for the last question.', '${aeskey}'), '174e5851-cb24-4a0f-890c-e6f041db4127', '98390c09-7121-110a-bfee-9380a470a7f0', 0);
 
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121138', PGP_SYM_ENCRYPT('', '${aeskey}'), '6eff224d-d690-4d25-a44f-08b8ec03fbbe', '98390c09-7121-110a-bfee-9380a470a7f3', 0.6);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121139', PGP_SYM_ENCRYPT('', '${aeskey}'), '47758dfb-64ca-4203-a5ba-b5fa3ef254dd', '98390c09-7121-110a-bfee-9380a470a7f3', .4);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac12113a', PGP_SYM_ENCRYPT('', '${aeskey}'), '4ab44c4f-bd8f-4e8d-89b7-940ada1a45c0', '98390c09-7121-110a-bfee-9380a470a7f3', .4);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac12113b', PGP_SYM_ENCRYPT('Other text for this question.', '${aeskey}'), '93424f36-64a3-4f10-b78a-00de58060177', '98390c09-7121-110a-bfee-9380a470a7f3', 0);
+
 -- CAE - Feedback 1c8bc142-c447-4889-986e-42ab177da683 answers
 
 INSERT INTO feedback_answers
@@ -1544,6 +1574,21 @@ INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
 ('8c13ffa2-fad0-11eb-9a03-0242ac121134', PGP_SYM_ENCRYPT('Feedback answer.', '${aeskey}'), 'bf328e35-e486-4ec8-b3e8-acc2c09419fa', '98390c09-7121-110a-bfee-9380a470a7f1', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121135', PGP_SYM_ENCRYPT('Yes', '${aeskey}'), '22113310-04dd-4931-96f2-37303a2515a4', '98390c09-7121-110a-bfee-9380a470a7f2', 0);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121136', PGP_SYM_ENCRYPT('', '${aeskey}'), '11d7b14c-2eee-4f72-a2b6-8c57a094207e', '98390c09-7121-110a-bfee-9380a470a7f2', 0.6);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac121137', PGP_SYM_ENCRYPT('Different feedback answer.', '${aeskey}'), 'bf328e35-e486-4ec8-b3e8-acc2c09419fa', '98390c09-7121-110a-bfee-9380a470a7f2', 0);
 
 -- Skills
 INSERT INTO skills -- React

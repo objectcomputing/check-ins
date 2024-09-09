@@ -244,11 +244,13 @@ public class ReportDataCollation {
             for (FeedbackAnswer answer : answers) {
               String questionText;
               String questionType = textQuestion;
+              int questionNumber = 0;
               try {
                 TemplateQuestion question =
                     templateQuestionServices.getById(answer.getQuestionId());
                 questionText = question.getQuestion();
                 questionType = question.getInputType();
+                questionNumber = question.getQuestionNumber();
               } catch(NotFoundException ex) {
                 LOG.error(ex.toString());
                 questionText = answer.getQuestionId().toString();
@@ -261,7 +263,8 @@ public class ReportDataCollation {
                         questionType.equals(radioQuestion) ?
                                answer.getAnswer() :
                                String.valueOf(answer.getSentiment()),
-                        questionType));
+                        questionType,
+                        questionNumber));
             }
           }
         }

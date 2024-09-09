@@ -255,7 +255,7 @@ const MeritReportPage = () => {
     const endDate = dateFromArray(data.endDate);
     let text = markdown.headers.h1(memberProfile.firstName + " " +
                                    memberProfile.lastName);
-    text += memberProfile.title + "\n";
+    text += memberProfile.title + "\n\n";
     text += "Review Period: " +
             formatDate(startDate) + " - " + formatDate(endDate) + "\n\n";
     return text;
@@ -295,7 +295,7 @@ const MeritReportPage = () => {
         if (listMembers) {
           text += member + ": ";
         }
-        text += "Submitted - " + formatDate(members[member]) + "\n";
+        text += "Submitted - " + formatDate(members[member]) + "\n\n";
       }
       text += "\n";
 
@@ -306,7 +306,7 @@ const MeritReportPage = () => {
           if (listMembers) {
             text += answer[0] + ": ";
           }
-          text += answer[1] + "\n";
+          text += answer[1] + "\n\n";
         }
         text += "\n";
       }
@@ -357,6 +357,10 @@ const MeritReportPage = () => {
 
   const getUniqueQuestions = (answers) => {
     let questions = {};
+    answers = answers.sort((a, b) => {
+      return a.number - b.number;
+    });
+
     for(let answer of answers) {
       const key = answer.question;
       if (!(key in questions)) {
@@ -376,7 +380,7 @@ const MeritReportPage = () => {
       text += markdown.headers.h2("Template: " + feedback.name);
       const members = getUniqueMembers(feedback.answers);
       for(let member of Object.keys(members)) {
-        text += member + ": " + formatDate(members[member]) + "\n";
+        text += member + ": " + formatDate(members[member]) + "\n\n";
       }
       text += "\n";
 
@@ -384,7 +388,7 @@ const MeritReportPage = () => {
       for(let question of Object.keys(questions)) {
         text += markdown.headers.h3(question) + "\n";
         for(let answer of questions[question]) {
-          text += answer[0] + ": " + answer[1] + "\n";
+          text += answer[0] + ": " + answer[1] + "\n\n";
         }
         text += "\n";
       }

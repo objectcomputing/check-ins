@@ -19,6 +19,7 @@ class Feedback {
     private final String question;
     private final String answer;
     private final String type;
+    private final int number;
   }
 
   private String name;
