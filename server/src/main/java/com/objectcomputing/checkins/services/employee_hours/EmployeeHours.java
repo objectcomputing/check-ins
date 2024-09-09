@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
 import com.objectcomputing.checkins.converter.LocalDateConverter;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -74,7 +76,19 @@ public class EmployeeHours {
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate asOfDate;
 
-    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate) {
+    @Column(name="billable_utilization")
+    @TypeDef(type = DataType.FLOAT)
+    @Schema(description ="Billable utilization hours")
+    @Nullable
+    private Float billableUtilization;
+
+    @Column(name="overtime_worked")
+    @TypeDef(type = DataType.FLOAT)
+    @Schema(description ="Number of hours of overtime worked")
+    @Nullable
+    private Float overtimeWorked;
+
+    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate, @Nullable Float billableUtilization, @Nullable Float overtimeWorked) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
@@ -83,10 +97,12 @@ public class EmployeeHours {
         this.updatedDate = updatedDate;
         this.targetHours = targetHours;
         this.asOfDate = asOfDate;
+        this.billableUtilization = billableUtilization;
+        this.overtimeWorked = overtimeWorked;
     }
 
-    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate) {
-        this(null, employeeId, contributionHours, billableHours, ptoHours, updatedDate, targetHours, asOfDate);
+    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate, @Nullable Float billableUtilization, @Nullable Float overtimeWorked) {
+        this(null, employeeId, contributionHours, billableHours, ptoHours, updatedDate, targetHours, asOfDate, billableUtilization, overtimeWorked);
     }
 
     @Override
@@ -101,12 +117,15 @@ public class EmployeeHours {
                 employeeId.equals(that.employeeId) &&
                 updatedDate.equals(that.updatedDate) &&
                 Float.compare(that.targetHours, targetHours) == 0 &&
-                asOfDate.equals(that.asOfDate) ;
+                asOfDate.equals(that.asOfDate) &&
+                Util.floatCompareNullSafeAndEqualWhenBothNull(that.billableUtilization, this.billableUtilization) == 0 &&
+                Util.floatCompareNullSafeAndEqualWhenBothNull(that.overtimeWorked, this.overtimeWorked) == 0
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours, asOfDate);
+        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours, asOfDate, billableUtilization, overtimeWorked);
     }
 
     @Override
@@ -120,6 +139,8 @@ public class EmployeeHours {
                 ", updatedDate=" + updatedDate +
                 ", targetHours=" + targetHours +
                 ", asOfDate=" + asOfDate +
+                ", billableUtilization=" + this.billableUtilization +
+                ", overtimeWorked=" + this.overtimeWorked +
                 '}';
     }
 }
