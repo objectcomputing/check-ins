@@ -104,6 +104,7 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
         for (Map.Entry<UUID, Stored> entry : storedUploads.entrySet()) {
             Stored value = entry.getValue();
             if (current >= (value.timestamp.getTime() + expiration)) {
+                LOG.warn("Removing stored data for " + entry.getKey().toString());
                 storedUploads.remove(entry.getKey());
             }
         }
