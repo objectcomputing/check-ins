@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.reports;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -45,7 +46,7 @@ public class CompensationHistory {
     }
 
     public void load(MemberProfileRepository memberProfileRepository,
-                     ByteBuffer dataSource) throws IOException {
+                     ByteBuffer dataSource) throws IOException, BadArgException {
         ByteArrayInputStream stream = new ByteArrayInputStream(dataSource.array());
         InputStreamReader input = new InputStreamReader(stream);
         CSVParser csvParser = CSVFormat.RFC4180
@@ -57,8 +58,8 @@ public class CompensationHistory {
                     .parse(input);
 
         history.clear();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
         for (CSVRecord csvRecord : csvParser) {
+          try {
             String emailAddress = csvRecord.get("emailAddress");
             Optional<MemberProfile> memberProfile =
                 memberProfileRepository.findByWorkEmail(emailAddress);
@@ -77,6 +78,9 @@ public class CompensationHistory {
             } else {
                 LOG.error("Unable to find a profile for " + emailAddress);
             }
+          } catch(IllegalArgumentException ex) {
+            throw new BadArgException("Unable to parse the compensation history");
+          }
         }
     }
 
