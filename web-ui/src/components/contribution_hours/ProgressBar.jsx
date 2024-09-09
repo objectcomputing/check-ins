@@ -31,17 +31,21 @@ const propTypes = {
    * The value of the progress indicator for the determinate and buffer variants.
    * Value between 0 and 100.
    */
-  billableHours: PropTypes.number,
-  contributionHours: PropTypes.number.isRequired,
-  targetHours: PropTypes.number.isRequired,
-  ptoHours: PropTypes.number
+    billableHours: PropTypes.number,
+    contributionHours: PropTypes.number.isRequired,
+    targetHours: PropTypes.number.isRequired,
+    ptoHours: PropTypes.number,
+    billableUtilization: PropTypes.number,
+    overtimeWorked: PropTypes.number,
 };
 
 const LinearBuffer = ({
-  billableHours,
-  contributionHours = 925,
-  targetHours = 1850,
-  ptoHours = 0
+    billableHours,
+    contributionHours = 925,
+    targetHours = 1850,
+    ptoHours = 0,
+    billableUtilization,
+    overtimeWorked,
 }) => {
   return (
     <Root className={classes.root}>
@@ -63,8 +67,7 @@ const LinearBuffer = ({
         style={{ display: 'block' }}
       >
         Billable Hours: {billableHours} - Contribution Hours:{' '}
-        {contributionHours} - Target Hours: {targetHours} - PTO Hours:{' '}
-        {ptoHours}
+        {contributionHours} - Target Hours: {targetHours} - PTO Hours:{' '} {ptoHours} - Billable Utilization:{' '} {(billableUtilization) ? billableUtilization : '(none)'} - Overtime Worked:{' '} {(overtimeWorked) ? overtimeWorked : '(none)'}
       </Typography>
     </Root>
   );
