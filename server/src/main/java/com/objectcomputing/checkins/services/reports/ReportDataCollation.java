@@ -36,6 +36,8 @@ import java.time.Month;
 import java.nio.ByteBuffer;
 import java.io.IOException;
 
+/// Collates all of the data necessary to generate a Merit Report.  It uses
+/// files uploaded by the user, as well as data stored in the database.
 public class ReportDataCollation {
     private static final Logger LOG = LoggerFactory.getLogger(ReportDataCollation.class);
 
@@ -143,6 +145,7 @@ public class ReportDataCollation {
         );
     }
 
+    /// Get the compensation history for the designated member.
     public List<CompensationHistory.Compensation> getCompensationHistory() {
         try {
             ByteBuffer buffer = reportDataServices.get(
@@ -153,6 +156,7 @@ public class ReportDataCollation {
         return compensationHistory.getHistory(memberId);
     }
 
+    /// Get the current information for the designated member.
     public CurrentInformation.Information getCurrentInformation() {
         try {
             ByteBuffer buffer = reportDataServices.get(
@@ -163,6 +167,7 @@ public class ReportDataCollation {
         return currentInformation.getInformation(memberId);
     }
 
+    /// Get the position history for the designated member.
     public List<PositionHistory.Position> getPositionHistory() {
         try {
             ByteBuffer buffer = reportDataServices.get(
@@ -173,18 +178,23 @@ public class ReportDataCollation {
         return positionHistory.getHistory(memberId);
     }
 
+    /// Get the self reviews for the designated member.
     public List<Feedback> getSelfReviews() {
       return getFeedbackType(FeedbackType.selfReviews);
     }
 
+    /// Get the reviews for the designated member.
     public List<Feedback> getReviews() {
       return getFeedbackType(FeedbackType.reviews);
     }
 
+    /// Get the feedback for the designated member.
     public List<Feedback> getFeedback() {
       return getFeedbackType(FeedbackType.feedback);
     }
 
+    /// Get the employee hours for the designated member.  This only returns
+    /// the first entry found for the member.
     public ReportHours getReportHours() {
       MemberProfile memberProfile = getMemberProfile();
       Set<EmployeeHours> employeeHours =

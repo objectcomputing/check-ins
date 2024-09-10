@@ -43,8 +43,7 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
     private final long expireCheck = 10*60*1000;
     private final long expiration = 60*60*1000;
 
-    public ReportDataServicesImpl(
-                                   CurrentUserServices currentUserServices) {
+    public ReportDataServicesImpl(CurrentUserServices currentUserServices) {
         this.currentUserServices = currentUserServices;
 
         timer.scheduleAtFixedRate(this, new Date(), expireCheck);

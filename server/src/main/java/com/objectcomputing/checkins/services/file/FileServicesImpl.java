@@ -212,6 +212,9 @@ public class FileServicesImpl implements FileServices {
         }
     }
 
+    /// Upload a Markdown document to the specified directory and copy it to
+    /// a Google document, which results in an automatic conversion from
+    /// Markdown to the Google Doc format.
     public FileInfoDTO uploadDocument(String directoryName, String name, String text) {
         final String GOOGLE_DOC_TYPE = "application/vnd.google-apps.document";
         MemberProfile currentUser = currentUserServices.getCurrentUser();

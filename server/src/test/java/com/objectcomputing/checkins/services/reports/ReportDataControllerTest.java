@@ -101,6 +101,7 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
     assertNotNull(first.get("selfReviews"));
     assertNotNull(first.get("reviews"));
     assertNotNull(first.get("feedback"));
+    assertNotNull(first.get("hours"));
   }
 
   @Test
