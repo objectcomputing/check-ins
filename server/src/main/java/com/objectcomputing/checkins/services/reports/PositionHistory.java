@@ -36,6 +36,7 @@ public class PositionHistory extends CSVProcessor {
   public PositionHistory() {
   }
 
+  @Override
   protected void loadImpl(MemberProfileRepository memberProfileRepository,
                           CSVParser csvParser) throws BadArgException {
     history.clear();

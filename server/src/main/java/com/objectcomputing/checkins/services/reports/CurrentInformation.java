@@ -40,6 +40,7 @@ public class CurrentInformation extends CSVProcessor {
   public CurrentInformation() {
   }
 
+  @Override
   protected void loadImpl(MemberProfileRepository memberProfileRepository,
                           CSVParser csvParser) throws BadArgException {
     information.clear();
