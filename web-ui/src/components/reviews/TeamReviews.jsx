@@ -241,7 +241,20 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (res.error) return;
 
     setTeamMembers(teamMembers);
+    addAssignmentForMemberWithNone(teamMembers);
   };
+
+  const addAssignmentForMemberWithNone = async (members) => {
+    members.forEach(member => {
+      const exists = assignments.some(
+          a => a.revieweeId === member.id
+      );
+      if (!!!exists && member.reviewerId) {
+        const reviewers = [{ id: member.reviewerId }];
+        updateReviewers(member, reviewers);
+      }
+    });
+  }
 
   const getReviewStatus = useCallback(
     teamMemberId => {
