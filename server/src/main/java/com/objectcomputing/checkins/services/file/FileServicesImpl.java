@@ -273,7 +273,9 @@ public class FileServicesImpl implements FileServices {
                                   .setSupportsAllDrives(true)
                                   .execute();
                 } catch (GoogleJsonResponseException e) {
+                  LOG.error("Error while trashing " + file.getName(), e);
                 } catch (IOException e) {
+                  LOG.error("Error while trashing " + file.getName(), e);
                 }
               }
             }
