@@ -51,8 +51,10 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
     }
 
 
+    // Synchronized since we can upload multiple files at one time and there
+    // is an expiration timer modifying the map too.
     @Override
-    public void store(DataType dataType, CompletedFileUpload file) throws IOException {
+    public synchronized void store(DataType dataType, CompletedFileUpload file) throws IOException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(!isAdmin, NOT_AUTHORIZED_MSG);
@@ -96,10 +98,12 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
                                     " Document does not exist");
     }
 
-    /// Check periodically to see if any data has expired.  If it has, remove
-    /// it.
+    // Synchronized since we can upload multiple files at one time and data
+    // could expire symultaneously as well.
+    // Check periodically to see if any data has expired.  If it has, remove
+    // it.
     @Override
-    public void run() {
+    public synchronized void run() {
         long current = (new Date()).getTime();
         for (Map.Entry<UUID, Stored> entry : storedUploads.entrySet()) {
             Stored value = entry.getValue();

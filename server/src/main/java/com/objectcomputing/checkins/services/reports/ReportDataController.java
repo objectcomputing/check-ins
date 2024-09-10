@@ -76,7 +76,7 @@ public class ReportDataController {
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
     @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
-    public Mono<List<List<String>>> upload(
+    public Mono<List<List<String>>> uploadDataFiles(
                           @Part("comp") Publisher<CompletedFileUpload> comp,
                           @Part("curr") Publisher<CompletedFileUpload> curr,
                           @Part("pos") Publisher<CompletedFileUpload> pos) {
