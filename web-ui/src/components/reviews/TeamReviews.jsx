@@ -249,9 +249,9 @@ const TeamReviews = ({ onBack, periodId }) => {
       const exists = assignments.some(
           a => a.revieweeId === member.id
       );
-      if (!!!exists && member.reviewerId) {
-        const reviewers = [{ id: member.reviewerId }];
-        updateReviewers(member, reviewers);
+      if (!!!exists && member.supervisorid) {
+        const reviewers = [{ id: member.supervisorid }];
+        updateReviewers(member, reviewers, true);
       }
     });
   }
@@ -689,7 +689,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       return compare;
     });
 
-  const updateReviewers = async (member, reviewers) => {
+  const updateReviewers = async (member, reviewers, addAsApproved) => {
     const memberId = member.id;
 
     let newAssignments = [...assignments];
@@ -707,7 +707,8 @@ const TeamReviews = ({ onBack, periodId }) => {
         newAssignments.push({
           reviewPeriodId: periodId,
           reviewerId: reviewer.id,
-          revieweeId: member.id
+          revieweeId: member.id,
+          approved: addAsApproved,
         });
       }
     }
@@ -1057,7 +1058,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         selectedMembers={selectedReviewers}
         onClose={closeReviewerDialog}
         onSubmit={reviewers => {
-          updateReviewers(selectedMember, reviewers);
+          updateReviewers(selectedMember, reviewers, null);
           closeReviewerDialog();
         }}
       />
