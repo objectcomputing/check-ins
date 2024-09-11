@@ -124,7 +124,7 @@ const PulsePage = () => {
             score={externalScore}
             setComment={setExternalComment}
             setScore={setExternalScore}
-            title="How you feeling about life outside of work?"
+            title="How are you feeling about life outside of work?"
           />
           <Button onClick={submit} variant="contained">
             Submit
