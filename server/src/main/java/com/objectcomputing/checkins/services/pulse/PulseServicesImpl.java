@@ -59,11 +59,11 @@ public class PulseServicesImpl implements PulseServices {
   }
 
   public void sendPendingEmail(LocalDate check) {
-    if (check.getDayOfWeek() == DayOfWeek.THURSDAY) {
+    if (check.getDayOfWeek() == DayOfWeek.MONDAY) {
       LOG.info("Checking for pending Pulse email");
       final LocalDate now = LocalDate.now();
       LocalDate start = now.with(
-                          TemporalAdjusters.firstInMonth(DayOfWeek.THURSDAY));
+                          TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
 
       try {
         Setting freq = settingsServices.findByName("PULSE_EMAIL_FREQUENCY");
