@@ -4,6 +4,12 @@ import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.settings.SettingsServices;
+import com.objectcomputing.checkins.services.settings.Setting;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+
+import lombok.Getter;
+import lombok.AllArgsConstructor;
 
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -20,43 +26,76 @@ import java.time.temporal.TemporalAdjusters;
 
 @Singleton
 public class PulseServicesImpl implements PulseServices {
+  @Getter
+  @AllArgsConstructor
+  private class Frequency {
+    private final int count;
+    private final ChronoUnit units;
+  }
+
   private static final Logger LOG = LoggerFactory.getLogger(PulseServicesImpl.class);
   private final EmailSender emailSender;
   private final CheckInsConfiguration checkInsConfiguration;
   private final MemberProfileServices memberProfileServices;
+  private final SettingsServices settingsServices;
   private final Map<String, Boolean> sent = new HashMap<String, Boolean>();
+
+  private String setting = "bi-weekly";
+  private final Map<String, Frequency> frequency = Map.of(
+    "weekly", new Frequency(1, ChronoUnit.WEEKS),
+    "bi-weekly", new Frequency(2, ChronoUnit.WEEKS),
+    "monthly", new Frequency(1, ChronoUnit.MONTHS)
+  );
 
   public PulseServicesImpl(
                     @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                     CheckInsConfiguration checkInsConfiguration,
-                    MemberProfileServices memberProfileServices) {
+                    MemberProfileServices memberProfileServices,
+                    SettingsServices settingsServices) {
     this.emailSender = emailSender;
     this.checkInsConfiguration = checkInsConfiguration;
     this.memberProfileServices = memberProfileServices;
-
+    this.settingsServices = settingsServices;
   }
 
   public void sendPendingEmail(LocalDate check) {
-    if (check.getDayOfWeek() == DayOfWeek.MONDAY) {
+    if (check.getDayOfWeek() == DayOfWeek.THURSDAY) {
       LOG.info("Checking for pending Pulse email");
-      LocalDate now = LocalDate.now();
-      LocalDate start = now.with(TemporalAdjusters.firstInMonth(
-                                                         DayOfWeek.MONDAY));
+      final LocalDate now = LocalDate.now();
+      LocalDate start = now.with(
+                          TemporalAdjusters.firstInMonth(DayOfWeek.THURSDAY));
+
+      try {
+        Setting freq = settingsServices.findByName("PULSE_EMAIL_FREQUENCY");
+        if (frequency.containsKey(freq.getValue())) {
+          setting = freq.getValue();
+        } else {
+          LOG.error("Invalid Pulse Email Frequency Setting: " + freq.getValue());
+        }
+      } catch(NotFoundException ex) {
+        // Use the default setting.
+        LOG.error("Pulse Frequency Error: " + ex.toString());
+      }
+
+      LOG.info("Using Pulse Frequency: " + setting);
+      final Frequency freq = frequency.get(setting);
       do {
         if (start.getDayOfMonth() == check.getDayOfMonth()) {
-          LOG.info("Check day of month matches interval day");
-          String key = new StringBuilder(start.getMonth().toString())
+          LOG.info("Check day of month matches frequency day");
+          final String key = new StringBuilder(start.getMonth().toString())
                              .append("_")
                              .append(String.valueOf(start.getDayOfMonth()))
                              .toString();
-          if (!sent.containsKey(key)) {
+          if (sent.containsKey(key)) {
+            LOG.info("The Pulse Email has already been sent today");
+          } else {
             LOG.info("Sending Pulse Email");
             send();
             sent.put(key, true);
           }
           break;
         }
-        start = start.plus(2, ChronoUnit.WEEKS);
+        start = start.plus(freq.getCount(), freq.getUnits());
       } while(start.getMonth() == now.getMonth());
     }
   }

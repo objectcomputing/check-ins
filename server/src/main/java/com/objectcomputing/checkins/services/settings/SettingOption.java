@@ -15,7 +15,8 @@ import java.util.stream.Stream;
 @JsonSerialize(using = SettingOptionSerializer.class)
 @JsonDeserialize(using = SettingOptionDeserializer.class)
 public enum SettingOption {
-    LOGO_URL("The logo url", Category.THEME, Type.FILE);
+    LOGO_URL("The logo url", Category.THEME, Type.FILE),
+    PULSE_EMAIL_FREQUENCY("The Pulse Email Frequency (weekly, bi-weekly, monthly)", Category.CHECK_INS, Type.STRING);
 
     private final String description;
     private final Category category;
@@ -25,6 +26,18 @@ public enum SettingOption {
         this.description = description;
         this.category = category;
         this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public static List<SettingOption> getOptions(){
