@@ -37,7 +37,16 @@ exports[`has billable hours 1`] = `
       1850
        - PTO Hours:
        
+       
       0
+       - Billable Utilization:
+       
+       
+      (none)
+       - Overtime Worked:
+       
+       
+      (none)
     </p>
   </div>
 </div>
@@ -80,7 +89,16 @@ exports[`has no billable hours 1`] = `
       1850
        - PTO Hours:
        
+       
       0
+       - Billable Utilization:
+       
+       
+      (none)
+       - Overtime Worked:
+       
+       
+      (none)
     </p>
   </div>
 </div>
