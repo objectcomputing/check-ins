@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Development - Native
-      url: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app/
+      url: https://checkins-develop-native-832140020593.us-central1.run.app
     steps:
       - uses: actions/checkout@v4
         with:
@@ -58,7 +58,7 @@ jobs:
       - name: Build a native docker image
         run: ./gradlew dockerBuildNative
         env:
-          VITE_APP_API_URL: https://checkins-develop-native-tuvcfzotpq-uc.a.run.app
+          VITE_APP_API_URL: https://checkins-develop-native-832140020593.us-central1.run.app
       - name: Push the Docker image to Google Container Registry
         run: |-
           cd server
@@ -85,7 +85,7 @@ jobs:
             --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
-            --set-env-vars "WEB_ADDRESS=https://checkins-develop-native-tuvcfzotpq-uc.a.run.app" \
+            --set-env-vars "WEB_ADDRESS=https://checkins-develop-native-832140020593.us-central1.run.app" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
