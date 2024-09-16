@@ -15,7 +15,7 @@ class CheckInsConfigurationTest {
     @Test
     void checkConfigurationGetsParsed() {
         try (var ctx = ApplicationContext.run(Map.of(
-                "datasources.enabled", false,
+                "datasources.default.enabled", false,
                 "check-ins.web-address", "http://google.com",
                 "check-ins.application.name", "Fancy app"
         ))) {
@@ -28,7 +28,7 @@ class CheckInsConfigurationTest {
     @Test
     void checkWebAddressGetsValidated() {
         try (var ctx = ApplicationContext.run(Map.of(
-                "datasources.enabled", false,
+                "datasources.default.enabled", false,
                 "check-ins.web-address", "",
                 "check-ins.application.name", "Fancy app"
         ))) {
@@ -40,7 +40,7 @@ class CheckInsConfigurationTest {
     @Test
     void checkApplicationNameGetsValidated() {
         try (var ctx = ApplicationContext.run(Map.of(
-                "datasources.enabled", false,
+                "datasources.default.enabled", false,
                 "check-ins.web-address", "http://google.com",
                 "check-ins.application.name", ""
         ))) {
