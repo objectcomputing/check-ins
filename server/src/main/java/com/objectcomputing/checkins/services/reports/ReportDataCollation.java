@@ -123,8 +123,7 @@ public class ReportDataCollation {
                                          .orElse(null);
             if (kudos != null) {
                 LocalDate created = kudos.getDateCreated();
-                if ((created.isEqual(startDate) ||
-                     created.isAfter(startDate)) && created.isBefore(endDate)) {
+                if (dateInRange(created, startDate, endDate)) {
                     MemberProfile senderProfile =
                       memberProfileRepository.findById(kudos.getSenderId()).orElse(null);
                     String sender = senderProfile == null ?
@@ -229,16 +228,23 @@ public class ReportDataCollation {
       LocalDateRange dateRange = getDateRange();
       List<FeedbackRequest> requests =
         feedbackRequestServices.findByValues(null, memberId, null,
-                                             dateRange.start,
-                                             null, null, null);
+                                             null, null, null, null);
 
       // Iterate over each request and find the template.  Determine the purpose
       // of the template.
       ReviewPeriod reviewPeriod = reviewPeriodServices.findById(reviewPeriodId);
       Map<UUID, String> templates = new HashMap<UUID, String>();
       for (FeedbackRequest request: requests) {
-        if (request.getReviewPeriodId() == null &&
-            !templates.containsKey(request.getTemplateId())) {
+        // Make sure we haven't already considered this template.
+        // Also, require that the request either be directly associated with
+        // our review period or that the request was submitted within the time
+        // range of our review period.
+        if (!templates.containsKey(request.getTemplateId()) &&
+            ((request.getReviewPeriodId() != null &&
+              request.getReviewPeriodId().equals(reviewPeriod.getId())) ||
+             (request.getSubmitDate() != null &&
+              dateInRange(request.getSubmitDate(), dateRange.start,
+                          dateRange.end)))) {
           try {
             FeedbackTemplate template =
                    feedbackTemplateServices.getById(request.getTemplateId());
@@ -331,5 +337,11 @@ public class ReportDataCollation {
         LocalDate endDate = reviewPeriod.getPeriodEndDate().toLocalDate();
         return new LocalDateRange(startDate, endDate);
       }
+    }
+
+    private boolean dateInRange(LocalDate date,
+                                LocalDate startDate, LocalDate endDate) {
+      return (date.isEqual(startDate) ||
+              date.isAfter(startDate)) && date.isBefore(endDate);
     }
 }
