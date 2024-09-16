@@ -8,9 +8,6 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,26 +16,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class CurrentInformation extends CSVProcessor {
 
-  @AllArgsConstructor
-  @Getter
-  public class Information {
-    private UUID memberId;
-    private float salary;
-    private String range;
-    private String nationalRange;
-    private String biography;
-    private String commitments;
+  public record Information(
+    UUID memberId,
+    float salary,
+    String range,
+    String nationalRange,
+    String biography,
+    String commitments
+  ) {
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(CurrentInformation.class);
-  private List<Information> information = new ArrayList<Information>();
-
-  public CurrentInformation() {
-  }
+  private List<Information> information = new ArrayList<>();
 
   @Override
   protected void loadImpl(MemberProfileRepository memberProfileRepository,
@@ -71,13 +63,9 @@ public class CurrentInformation extends CSVProcessor {
 
   public Information getInformation(UUID memberId) {
     // There should only be one entry per member.
-    List<Information> list = information.stream()
-             .filter(entry -> entry.getMemberId().equals(memberId))
-             .collect(Collectors.toList());
-    if (list.isEmpty()) {
-      throw new NotFoundException("Current Information not found for member: " + memberId);
-    } else {
-      return list.get(0);
-    }
+    return information.stream()
+             .filter(entry -> entry.memberId().equals(memberId))
+             .findFirst()
+             .orElseThrow(() -> new NotFoundException("Current Information not found for member: " + memberId));
   }
 }
