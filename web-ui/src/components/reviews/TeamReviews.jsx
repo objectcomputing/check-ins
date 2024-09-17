@@ -225,7 +225,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
       reviewPeriodId: periodId,
-      approved: true
+      approved: false
     }));
 
     const res = await resolve({
@@ -241,7 +241,20 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (res.error) return;
 
     setTeamMembers(teamMembers);
+    addAssignmentForMemberWithNone(teamMembers);
   };
+
+  const addAssignmentForMemberWithNone = async (members) => {
+    members.forEach(member => {
+      const exists = assignments.some(
+          a => a.revieweeId === member.id
+      );
+      if (!!!exists && member.supervisorid) {
+        const reviewers = [{ id: member.supervisorid }];
+        updateReviewers(member, reviewers);
+      }
+    });
+  }
 
   const getReviewStatus = useCallback(
     teamMemberId => {
