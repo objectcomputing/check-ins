@@ -15,7 +15,7 @@ public enum Permission {
   CAN_VIEW_FEEDBACK_ANSWER("View feedback answers", "Feedback"),
   CAN_DELETE_ORGANIZATION_MEMBERS("Delete organization members", "User Management"),
   CAN_CREATE_ORGANIZATION_MEMBERS("Create organization members", "User Management"),
-  CAN_IMPERSONATE_MEMBERS("Impersonate organization members", "User Management"),
+  CAN_IMPERSONATE_MEMBERS("Impersonate organization members", "Security"),
   CAN_VIEW_ROLE_PERMISSIONS("View role permissions", "Security"),
   CAN_ASSIGN_ROLE_PERMISSIONS("Assign role permissions", "Security"),
   CAN_VIEW_PERMISSIONS("View all permissions", "Security"),
