@@ -2,7 +2,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'maven-publish'
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.1"
     id("io.micronaut.application") version "4.4.0"
     id "jacoco"
     id("org.openrewrite.rewrite") version "latest.release"
