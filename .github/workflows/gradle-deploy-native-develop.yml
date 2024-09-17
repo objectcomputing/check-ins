@@ -56,7 +56,7 @@ jobs:
         run: |-
           gcloud --quiet auth configure-docker
       - name: Build a native docker image
-        run: ./gradlew optimizedDockerBuildNative
+        run: ./gradlew dockerBuildNative
         env:
           VITE_APP_API_URL: https://checkins-develop-native-832140020593.us-central1.run.app
       - name: Push the Docker image to Google Container Registry
