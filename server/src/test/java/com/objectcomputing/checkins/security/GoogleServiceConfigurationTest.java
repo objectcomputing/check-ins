@@ -69,7 +69,7 @@ class GoogleServiceConfigurationTest extends TestContainersSuite {
                 Map.entry("encoded-gcp-credentials", ENCODED_EXAMPLE_GOOGLE_SERVICE_CONFIGURATION)
         );
         try (var ctx = ApplicationContext.run(Map.ofEntries(
-                Map.entry("datasources.enabled", false),
+                Map.entry("datasources.default.enabled", false),
                 Map.entry("service-account-credentials.directory-id", values.get("directory")),
                 Map.entry("service-account-credentials.encoded-value", values.get("encoded-gcp-credentials"))
         ))) {
