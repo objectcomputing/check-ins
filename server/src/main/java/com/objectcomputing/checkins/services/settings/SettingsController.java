@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.settings;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
@@ -18,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller(SettingsController.PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -66,8 +68,24 @@ public class SettingsController {
      */
     @Get("/options")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
-    public List<SettingOption> getOptions() {
-        return SettingOption.getOptions();
+    public List<SettingsResponseDTO> getOptions() {
+        List<SettingOption> options = SettingOption.getOptions();
+        return options.stream().map(option -> {
+                   // Default to an empty value and "invalid" UUID.
+                   // This can be used by the client to determine pre-existance.
+                   String value = "";
+                   UUID uuid = new UUID(0, 0);
+                   try {
+                       Setting s = settingsServices.findByName(option.name());
+                       uuid = s.getId();
+                       value = s.getValue();
+                   } catch(NotFoundException ex) {
+                   }
+                   return new SettingsResponseDTO(
+                                  uuid, option.name(), option.getDescription(),
+                                  option.getCategory(), option.getType(),
+                                  value);
+               }).collect(Collectors.toList());
     }
 
     /**
