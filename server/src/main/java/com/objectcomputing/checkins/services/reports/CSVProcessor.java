@@ -16,10 +16,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.util.List;
 
-public class CSVProcessor {
-
-  protected CSVProcessor() {
-  }
+abstract class CSVProcessor {
 
   public void load(MemberProfileRepository memberProfileRepository,
                    ByteBuffer dataSource) throws IOException,
@@ -36,8 +33,7 @@ public class CSVProcessor {
     loadImpl(memberProfileRepository, csvParser);
   }
 
-  protected void loadImpl(MemberProfileRepository memberProfileRepository,
-                          CSVParser csvParser) throws BadArgException {}
+  protected abstract void loadImpl(MemberProfileRepository memberProfileRepository, CSVParser csvParser) throws BadArgException;
 
   protected LocalDate parseDate(String date) {
     List<String> formatStrings = List.of("yyyy", "M/d/yyyy");
