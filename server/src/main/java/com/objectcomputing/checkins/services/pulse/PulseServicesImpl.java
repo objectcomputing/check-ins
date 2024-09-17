@@ -40,6 +40,8 @@ public class PulseServicesImpl implements PulseServices {
   private final SettingsServices settingsServices;
   private final Map<String, Boolean> sent = new HashMap<String, Boolean>();
 
+  private final DayOfWeek emailDay = DayOfWeek.MONDAY;
+
   private String setting = "bi-weekly";
   private final Map<String, Frequency> frequency = Map.of(
     "weekly", new Frequency(1, ChronoUnit.WEEKS),
@@ -59,11 +61,12 @@ public class PulseServicesImpl implements PulseServices {
   }
 
   public void sendPendingEmail(LocalDate check) {
-    if (check.getDayOfWeek() == DayOfWeek.MONDAY) {
+    if (check.getDayOfWeek() == emailDay) {
       LOG.info("Checking for pending Pulse email");
-      final LocalDate now = LocalDate.now();
-      LocalDate start = now.with(
-                          TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
+      // Start from the first of the year and move forward to ensure that we
+      // are sending email during the correct week.
+      LocalDate start = check.with(TemporalAdjusters.firstDayOfYear())
+                             .with(TemporalAdjusters.firstInMonth(emailDay));
 
       try {
         Setting freq = settingsServices.findByName("PULSE_EMAIL_FREQUENCY");
@@ -96,7 +99,15 @@ public class PulseServicesImpl implements PulseServices {
           break;
         }
         start = start.plus(freq.getCount(), freq.getUnits());
-      } while(start.getMonth() == now.getMonth());
+
+        // Apply firstInMonth(emailDay) to support adding one month to the start
+        // date.  When adding weeks, it remains on the original day.  But, when
+        // adding months, it can move away from the first of the month and we
+        // need the day specified by emailDay.
+        if (freq.getUnits() == ChronoUnit.MONTHS) {
+          start = start.with(TemporalAdjusters.firstInMonth(emailDay));
+        }
+      } while(start.isBefore(check) || start.isEqual(check));
     }
   }
 
