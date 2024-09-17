@@ -39,6 +39,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static io.micronaut.http.MediaType.MULTIPART_FORM_DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -122,8 +123,8 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
 
     // Perform minimal validation of returned data
     JsonNode root = objectMapper.readTree(data);
-    assertEquals(root.isArray(), true);
-    assertEquals(root.isEmpty(), false);
+    assertTrue(root.isArray());
+    assertFalse(root.isEmpty());
 
     ArrayNode arrayNode = (ArrayNode)root;
     JsonNode first = arrayNode.get(0);
@@ -211,13 +212,9 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
 
     // Hours
     JsonNode hours = node.get("hours");
-    assertTrue(employeeHours.getContributionHours() ==
-               hours.get("contributionHours").asDouble());
-    assertTrue(employeeHours.getPtoHours() ==
-               hours.get("ptoHours").asDouble());
-    assertTrue(employeeHours.getOvertimeWorked() ==
-               hours.get("overtimeHours").asDouble());
-    assertTrue(employeeHours.getBillableUtilization() ==
-               hours.get("billableUtilization").asDouble());
+    assertEquals(employeeHours.getContributionHours(), hours.get("contributionHours").asDouble(), 0.0);
+    assertEquals(employeeHours.getPtoHours(), hours.get("ptoHours").asDouble(), 0.0);
+    assertEquals(employeeHours.getOvertimeWorked(), hours.get("overtimeHours").asDouble(), 0.0);
+    assertEquals(employeeHours.getBillableUtilization(), hours.get("billableUtilization").asDouble(), 0.0);
   }
 }
