@@ -44,7 +44,7 @@ class GithubControllerTest extends TestContainersSuite {
     void startClient() {
         // Make a GitHub mock application (with no datasource, and security turned off)
         mockGithub = ApplicationContext.run(EmbeddedServer.class, Map.of(
-                "datasources.enabled", StringUtils.FALSE,
+                "datasources.default.enabled", StringUtils.FALSE,
                 "micronaut.security.enabled", StringUtils.FALSE,
                 "spec.name", "GithubControllerTest"
         ));
