@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.0"
+    id("io.micronaut.aot") version "4.4.0"
     id "jacoco"
     id("org.openrewrite.rewrite") version "latest.release"
 }
@@ -26,9 +27,31 @@ micronaut {
         incremental(true)
         annotations("com.objectcomputing.checkins.*")
     }
+    aot {
+        // Please review carefully the optimizations enabled below
+        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = true
+        replaceLogbackXml = true
+        configurationProperties.put("micronaut.security.jwks.enabled","false")
+        configurationProperties.put("micronaut.security.openid-configuration.enabled","false")
+    }
 }
 
 dockerBuildNative {
+    def imageNameFromGithub = []
+    if (System.getenv('PROJECT_ID') != null && System.getenv('SERVICE_NAME') && System.getenv('GITHUB_SHA')) {
+        imageNameFromGithub = ["gcr.io/${System.getenv('PROJECT_ID')}/${System.getenv('SERVICE_NAME')}:${System.getenv("GITHUB_SHA")}".toString()]
+    }
+    images = ["checkins:latest"] + imageNameFromGithub
+}
+
+optimizedDockerBuildNative {
     def imageNameFromGithub = []
     if (System.getenv('PROJECT_ID') != null && System.getenv('SERVICE_NAME') && System.getenv('GITHUB_SHA')) {
         imageNameFromGithub = ["gcr.io/${System.getenv('PROJECT_ID')}/${System.getenv('SERVICE_NAME')}:${System.getenv("GITHUB_SHA")}".toString()]
