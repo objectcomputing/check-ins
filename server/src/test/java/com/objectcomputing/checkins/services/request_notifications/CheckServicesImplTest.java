@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
+import com.objectcomputing.checkins.services.pulse.PulseServices;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class CheckServicesImplTest extends TestContainersSuite {
 
     @Mock
     private FeedbackRequestRepository feedbackRequestRepository;
+
+    @Mock
+    private PulseServices pulseServices;
 
     @InjectMocks
     private CheckServicesImpl checkServices;
