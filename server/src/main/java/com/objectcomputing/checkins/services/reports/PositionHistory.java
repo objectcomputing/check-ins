@@ -22,19 +22,15 @@ import java.util.stream.Collectors;
 
 public class PositionHistory extends CSVProcessor {
 
-  @AllArgsConstructor
-  @Getter
-  public class Position {
-    private UUID memberId;
-    private LocalDate date;
-    private String title;
+  public record Position(
+          UUID memberId,
+          LocalDate date,
+          String title
+  ) {
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(PositionHistory.class);
-  private List<Position> history = new ArrayList<Position>();
-
-  public PositionHistory() {
-  }
+  private final List<Position> history = new ArrayList<>();
 
   @Override
   protected void loadImpl(MemberProfileRepository memberProfileRepository,
@@ -67,7 +63,7 @@ public class PositionHistory extends CSVProcessor {
 
   public List<Position> getHistory(UUID memberId) {
     return history.stream()
-             .filter(entry -> entry.getMemberId().equals(memberId))
-             .collect(Collectors.toList());
+            .filter(entry -> entry.memberId().equals(memberId))
+            .toList();
   }
 }

@@ -22,19 +22,15 @@ import java.util.stream.Collectors;
 
 public class CompensationHistory extends CSVProcessor {
 
-    @AllArgsConstructor
-    @Getter
-    public class Compensation {
-      private UUID memberId;
-      private LocalDate startDate;
-      private float amount;
+    public record Compensation(
+            UUID memberId,
+            LocalDate startDate,
+            float amount
+    ) {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CompensationHistory.class);
-    private List<Compensation> history = new ArrayList<Compensation>();
-
-    public CompensationHistory() {
-    }
+    private final List<Compensation> history = new ArrayList<>();
 
     @Override
     protected void loadImpl(MemberProfileRepository memberProfileRepository,
@@ -68,7 +64,7 @@ public class CompensationHistory extends CSVProcessor {
 
     public List<Compensation> getHistory(UUID memberId) {
       return history.stream()
-               .filter(entry -> entry.getMemberId().equals(memberId))
-               .collect(Collectors.toList());
+              .filter(entry -> entry.memberId().equals(memberId))
+              .toList();
     }
 }

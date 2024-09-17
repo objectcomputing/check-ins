@@ -29,7 +29,7 @@ public class CurrentInformation extends CSVProcessor {
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(CurrentInformation.class);
-  private List<Information> information = new ArrayList<>();
+  private final List<Information> information = new ArrayList<>();
 
   @Override
   protected void loadImpl(MemberProfileRepository memberProfileRepository,
