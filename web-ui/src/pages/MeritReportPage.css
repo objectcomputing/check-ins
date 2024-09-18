@@ -1,0 +1,29 @@
+.merit-report-page {
+  margin: 1rem 3rem;
+}
+
+.merit-report-page .merit-member-selector {
+  width: 50%;
+}
+
+.merit-report-page .review-period-section {
+  width: 50%;
+}
+
+.merit-report-page .search-results {
+  margin: 2rem 0 0 0;
+}
+
+.merit-report-page .search-results .MuiChip-root {
+  margin: 0.25rem;
+}
+
+.merit-report-page .space-between {
+    margin-bottom: 5px;
+}
+
+@media (max-width: 850px) {
+  .merit-report-page {
+    margin: 0.5rem 1rem;
+  }
+}

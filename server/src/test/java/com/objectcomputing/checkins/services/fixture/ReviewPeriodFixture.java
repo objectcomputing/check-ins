@@ -35,4 +35,15 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
                 LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS)
                 , LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS), LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS)));
     }
+
+    default ReviewPeriod createAClosedReviewPeriod(
+                           LocalDateTime periodStart, LocalDateTime periodEnd) {
+        return getReviewPeriodRepository().save(
+          new ReviewPeriod(
+                 "Period of Closure", ReviewStatus.CLOSED, null, null,
+                 LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                 LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS),
+                 LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS),
+                 periodStart, periodEnd));
+    }
 }

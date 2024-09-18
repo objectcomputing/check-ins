@@ -1,0 +1,19 @@
+FeedbackTemplate
+  - id  <----------------------------------+
+  - is_review                              |
+                                           |
+FeedbackRequest (one or more)              |
+  - id  <-------------------------+        |
+  - recipientId (supervisor)      |        |
+  - requesteeId (target person)   |        |
+  - templateId  <-----------------C--------+
+  - submitDate                    |
+                                  |
+FeedbackAnswer                    |
+  - id                            |
+  - requestId  <------------------+
+  - questionId  <------+
+                       |
+TemplateQuestion       |
+  - id  <--------------+
+  - question
