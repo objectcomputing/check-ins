@@ -9,18 +9,12 @@ env:
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop-native
 jobs:
-  deploy:
-    permissions:
-      contents: 'read'
-      id-token: 'write'
+  test:
     runs-on: ubuntu-latest
-    environment:
-      name: Development - Native
-      url: https://checkins-develop-native-832140020593.us-central1.run.app
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
@@ -38,18 +32,44 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-#      - name: Setup python
-#        run: |
-#          sudo apt-get install python2.7
-#      - name: Export gcloud related env variable
-#        run: export CLOUDSDK_PYTHON="/usr/bin/python2"
+      - name: Run tests with Gradle
+        run: ./gradlew nativeTest
+  deploy:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    environment:
+      name: Development - Native
+      url: https://checkins-develop-native-832140020593.us-central1.run.app
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Set up GraalVM 21
+        uses: graalvm/setup-graalvm@v1.1.8
+        with:
+          distribution: 'graalvm'
+          java-version: '21'
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
           project_id: 'oci-intern-2019'
           workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github/providers/my-repo'
       - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+        uses: google-github-actions/setup-gcloud@v2
         with:
           version: '>= 363.0.0'
       - name: 'Auth Configure Docker'
@@ -92,28 +112,3 @@ jobs:
             --platform "managed" \
             --max-instances 2 \
             --allow-unauthenticated
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up Node LTS
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Set up GraalVM 21
-        uses: graalvm/setup-graalvm@v1.1.8
-        with:
-          distribution: 'graalvm'
-          java-version: '21'
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Run tests with Gradle
-        run: ./gradlew nativeTest
