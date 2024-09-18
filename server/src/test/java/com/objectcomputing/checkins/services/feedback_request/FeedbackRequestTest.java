@@ -23,9 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -176,7 +174,88 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmail() {
+    void testSendSelfReviewCompletionEmailToReviewers() {
+        UUID reviewAssignmentId;
+        ReviewAssignment reviewAssignment;
+        UUID creatorId = UUID.randomUUID();
+        MemberProfile currentUser = new MemberProfile();
+        currentUser.setId(creatorId);
+
+        MemberProfile pdlProfile = new MemberProfile();
+        pdlProfile.setId(UUID.randomUUID());
+        pdlProfile.setFirstName("PDL");
+        pdlProfile.setLastName("Profile");
+        pdlProfile.setWorkEmail("pdl@example.com");
+
+        MemberProfile supervisorProfile = new MemberProfile();
+        supervisorProfile.setId(UUID.randomUUID());
+        supervisorProfile.setFirstName("Supervisor");
+        supervisorProfile.setLastName("Profile");
+        supervisorProfile.setWorkEmail("supervisor@example.com");
+
+        currentUser.setPdlId(pdlProfile.getId());
+        currentUser.setSupervisorid(supervisorProfile.getId());
+
+        MemberProfile reviewer01 = new MemberProfile();
+        reviewer01.setId(UUID.randomUUID());
+        reviewer01.setFirstName("Reviewer01");
+        reviewer01.setLastName("Profile");
+        reviewer01.setWorkEmail("reviewer01@example.com");
+
+        MemberProfile reviewer02 = new MemberProfile();
+        reviewer02.setId(UUID.randomUUID());
+        reviewer02.setFirstName("Reviewer02");
+        reviewer02.setLastName("Profile");
+        reviewer02.setWorkEmail("reviewer02@example.com");
+
+        ReviewPeriod reviewPeriod = new ReviewPeriod();
+        reviewPeriod.setName("Self-Review Test");
+
+        String firstName = "firstName";
+        String lastName = "lastName";
+
+        currentUser.setFirstName(firstName);
+        currentUser.setLastName(lastName);
+
+        UUID reviewPeriodId = UUID.randomUUID();
+        FeedbackRequest feedbackRequest = new FeedbackRequest();
+        feedbackRequest.setReviewPeriodId(reviewPeriodId);
+
+        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
+        when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
+        when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
+        when(memberProfileServices.getById(reviewer01.getId())).thenReturn(reviewer01);
+        when(memberProfileServices.getById(reviewer02.getId())).thenReturn(reviewer02);
+        when(reviewPeriodRepository.findById(reviewPeriodId)).thenReturn(Optional.of(reviewPeriod));
+
+        Set<ReviewAssignment> reviewAssignmentsSet = new HashSet<ReviewAssignment>();
+        reviewAssignmentId = UUID.randomUUID();
+        reviewAssignment= new ReviewAssignment();
+        reviewAssignment.setId(reviewAssignmentId);
+        reviewAssignment.setReviewPeriodId(reviewPeriodId);
+        reviewAssignment.setReviewerId(reviewer01.getId());
+        reviewAssignment.setRevieweeId(currentUser.getId());
+        reviewAssignmentsSet.add(reviewAssignment);
+        reviewAssignmentId = UUID.randomUUID();
+        reviewAssignment= new ReviewAssignment();
+        reviewAssignment.setId(reviewAssignmentId);
+        reviewAssignment.setReviewPeriodId(reviewPeriodId);
+        reviewAssignment.setReviewerId(reviewer02.getId());
+        reviewAssignment.setRevieweeId(currentUser.getId());
+        reviewAssignmentsSet.add(reviewAssignment);
+
+        feedbackRequestServices.sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);
+
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner.", reviewer01.getWorkEmail() + "," + reviewer02.getWorkEmail()),
+                emailSender.events.getFirst()
+        );
+    }
+
+    @Test
+    @Tag("mocked")
+    void testSendSelfReviewCompletionEmailToPdlAndSupervisor() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);
@@ -225,7 +304,7 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_MissingPdl() {
+    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_MissingPdl() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);
@@ -257,7 +336,7 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_MissingSupervisor() {
+    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_MissingSupervisor() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);
@@ -289,7 +368,7 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_MissingPdlAndSupervisor() {
+    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_MissingPdlAndSupervisor() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);
@@ -309,7 +388,7 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_EmailSenderException() {
+    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_EmailSenderException() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);

@@ -346,6 +346,24 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public void sendSelfReviewCompletionEmailToReviewers(FeedbackRequest feedbackRequest, Set<ReviewAssignment> reviewAssignmentSet) {
         MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
+        MemberProfile pdlProfile = null;
+        MemberProfile supervisorProfile = null;
+
+        try {
+            if (currentUserProfile.getPdlId() != null) {
+                pdlProfile = memberProfileServices.getById(currentUserProfile.getPdlId());
+            }
+        } catch (NullPointerException e) {
+            LOG.error("PDL could not be found for self-review completion email");
+        }
+
+        try {
+            if (currentUserProfile.getSupervisorid() != null) {
+                supervisorProfile = memberProfileServices.getById(currentUserProfile.getSupervisorid());
+            }
+        } catch (NullPointerException e) {
+            LOG.error("Supervisor could not be found for self-review completion email");
+        }
 
         String reviewPeriodString = "";
         if (feedbackRequest.getReviewPeriodId() != null) {
@@ -359,8 +377,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         String subject = String.format("%s %s has finished their self-review%s.", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString);
         StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
 
-        Set<String> recipients = new HashSet<>();
+        if (pdlProfile != null) {
+            bodyBuilder.append(String.format("PDL: %s %s<br>", pdlProfile.getFirstName(), pdlProfile.getLastName()));
+        }
 
+        if (supervisorProfile != null) {
+            bodyBuilder.append(String.format("Supervisor: %s %s<br>", supervisorProfile.getFirstName(), supervisorProfile.getLastName()));
+        }
+
+        Set<String> recipients = new HashSet<>();
         reviewAssignmentSet.forEach(reviewAssignment -> {
             MemberProfile memberProfileReviewer = memberProfileServices.getById(reviewAssignment.getReviewerId());
             if (memberProfileReviewer != null && memberProfileReviewer.getWorkEmail() != null) {
@@ -411,11 +436,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             }
         }
 
-        String subject = String.format("%s %s has finished their self-review%s.",
-                currentUserProfile.getFirstName(), currentUserProfile.getLastName(),
-                reviewPeriodString);
-        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>",
-                currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
+        String subject = String.format("%s %s has finished their self-review%s.", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString);
+        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
 
         Set<String> recipients = new HashSet<>();
         if (pdlProfile != null) {
