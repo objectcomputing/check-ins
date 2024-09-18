@@ -1941,3 +1941,13 @@ INSERT INTO role_documentation
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'b553d4c0-9b7a-4691-8fe0-e3bdda4f67ae', 3);
 
+-- CAE - Review Periods
+INSERT INTO review_periods
+(id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
+VALUES
+    ('12345678-e29c-4cf4-9ea4-6baa09405c57', 'Review Period 1', 'CLOSED', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-01', '2024-09-02', '2024-09-03', '2024-01-01', '2024-12-31');
+
+INSERT INTO review_periods
+(id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
+VALUES
+    ('12345678-e29c-4cf4-9ea4-6baa09405c58', 'Review Period 2', 'PLANNING', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-10', '2024-09-11', '2024-09-12', '2024-01-01', '2024-12-31');
