@@ -77,6 +77,7 @@ jobs:
           gcloud --quiet auth configure-docker
       - name: Build the Docker image
         run: |-
+          ./gradlew assemble
           cd server
           docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
       - name: Push the Docker image to Google Container Registry
