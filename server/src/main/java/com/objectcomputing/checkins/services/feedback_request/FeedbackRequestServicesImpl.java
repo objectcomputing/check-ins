@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
+import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.util.Util;
@@ -38,6 +40,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final ReviewPeriodRepository reviewPeriodRepository;
+    private final ReviewAssignmentRepository reviewAssignmentRepository;
     private final EmailSender emailSender;
     private final String notificationSubject;
     private final String webURL;
@@ -45,7 +48,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices,
-                                       ReviewPeriodRepository reviewPeriodRepository,
+                                       ReviewPeriodRepository reviewPeriodRepository, ReviewAssignmentRepository reviewAssignmentRepository,
                                        @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                                        CheckInsConfiguration checkInsConfiguration
     ) {
@@ -53,6 +56,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.reviewPeriodRepository = reviewPeriodRepository;
+        this.reviewAssignmentRepository = reviewAssignmentRepository;
         this.emailSender = emailSender;
         this.notificationSubject = checkInsConfiguration.getApplication().getFeedback().getRequestSubject();
         this.webURL = checkInsConfiguration.getWebAddress();
@@ -140,6 +144,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         validateMembers(originalFeedback);
 
+        Set<ReviewAssignment> reviewAssignmentsSet = Set.of();
+        if (feedbackRequest != null && feedbackRequest.getReviewPeriodId() != null && feedbackRequest.getRequesteeId() != null) {
+            reviewAssignmentsSet = reviewAssignmentRepository.findByReviewPeriodIdAndRevieweeId(feedbackRequest.getReviewPeriodId(), feedbackRequest.getRequesteeId());
+        }        
+
         boolean reassignAttempted = !Objects.equals(originalFeedback.getRecipientId(), feedbackRequest.getRecipientId());
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
@@ -202,8 +211,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // Send self-review completion email to supervisor and pdl if appropriate
         if (currentUserServices.getCurrentUser().getId().equals(requestee.getId())) {
-            sendSelfReviewCompletionEmail(feedbackRequest);
+            sendSelfReviewCompletionEmailToPdlAndSupervisor(feedbackRequest);
         }
+
+        if (reviewAssignmentsSet != null && reviewAssignmentsSet.size() > 0) {
+            this.sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);    
+        }        
 
         return storedRequest;
     }
@@ -331,7 +344,44 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return feedbackRequest;
     }
 
-    public void sendSelfReviewCompletionEmail(FeedbackRequest feedbackRequest) {
+    public void sendSelfReviewCompletionEmailToReviewers(FeedbackRequest feedbackRequest, Set<ReviewAssignment> reviewAssignmentSet) {
+        MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
+
+        String reviewPeriodString = "";
+        if (feedbackRequest.getReviewPeriodId() != null) {
+            Optional<ReviewPeriod> reviewPeriodOpt = reviewPeriodRepository.findById(feedbackRequest.getReviewPeriodId());
+            if (reviewPeriodOpt.isPresent()) {
+                ReviewPeriod reviewPeriod = reviewPeriodOpt.get();
+                reviewPeriodString = String.format(" for %s", reviewPeriod.getName());
+            }
+        }
+
+        String subject = String.format("%s %s has finished their self-review%s.", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString);
+        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
+
+        Set<String> recipients = new HashSet<>();
+
+        reviewAssignmentSet.forEach(reviewAssignment -> {
+            MemberProfile memberProfileReviewer = memberProfileServices.getById(reviewAssignment.getReviewerId());
+            if (memberProfileReviewer != null && memberProfileReviewer.getWorkEmail() != null) {
+                recipients.add(memberProfileReviewer.getWorkEmail());
+            }
+        });
+
+        bodyBuilder.append("<br>It is now your turn in their review process. Please complete your portion in a timely manner.");
+
+        String body = bodyBuilder.toString();
+
+        if (recipients.size() > 0) {
+            try {
+                emailSender.sendEmail(null, null, subject, body, recipients.toArray(new String[0]));
+            } catch (Exception e) {
+                LOG.error("Unable to send self-review completion email to reviewers", e);
+            }
+        }
+    }
+
+    public void sendSelfReviewCompletionEmailToPdlAndSupervisor(FeedbackRequest feedbackRequest) {
         MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
         MemberProfile pdlProfile = null;
         MemberProfile supervisorProfile = null;
@@ -378,8 +428,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             recipients.add(supervisorProfile.getWorkEmail());
         }
 
-        bodyBuilder.append("<br>It is now your turn in their review process. Please complete your portion in a timely manner.");
-
         String body = bodyBuilder.toString();
 
         if (pdlProfile != null || supervisorProfile != null) {
@@ -390,4 +438,5 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             }
         }
     }
+
 }

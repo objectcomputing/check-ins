@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
+import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import io.micronaut.context.annotation.Property;
@@ -47,6 +49,8 @@ class FeedbackRequestTest extends TestContainersSuite {
 
     private ReviewPeriodRepository reviewPeriodRepository;
 
+    private ReviewAssignmentRepository reviewAssignmentRepository;
+
     private FeedbackRequestServicesImpl feedbackRequestServices;
 
     @Inject
@@ -65,9 +69,8 @@ class FeedbackRequestTest extends TestContainersSuite {
         currentUserServices = Mockito.mock(CurrentUserServices.class);
         memberProfileServices = Mockito.mock(MemberProfileServices.class);
         reviewPeriodRepository = Mockito.mock(ReviewPeriodRepository.class);
-
-        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices,
-                memberProfileServices, reviewPeriodRepository, emailSender, checkInsConfiguration);
+        reviewAssignmentRepository = Mockito.mock(ReviewAssignmentRepository.class);
+        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices, memberProfileServices, reviewPeriodRepository, reviewAssignmentRepository, emailSender, checkInsConfiguration);
     }
 
     @Test
@@ -211,11 +214,11 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
         when(reviewPeriodRepository.findById(reviewPeriodId)).thenReturn(Optional.of(reviewPeriod));
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail(feedbackRequest);
+        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(feedbackRequest);
 
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner.", supervisorProfile.getWorkEmail() + "," + pdlProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br>", supervisorProfile.getWorkEmail() + "," + pdlProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
@@ -244,10 +247,10 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
         when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
+        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest());
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner.", supervisorProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>Supervisor: Supervisor Profile<br>", supervisorProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
@@ -276,10 +279,10 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
         when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
+        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest());
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner.", pdlProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br>", pdlProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
@@ -299,7 +302,7 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
+        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest());
 
         assertEquals(0, emailSender.events.size());
     }
@@ -338,10 +341,10 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         emailSender.setException(new RuntimeException("Email sending failed"));
 
-        assertDoesNotThrow(() -> feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest()));
+        assertDoesNotThrow(() -> feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest()));
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner.", supervisorProfile.getWorkEmail() + "," + pdlProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br>", supervisorProfile.getWorkEmail() + "," + pdlProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
