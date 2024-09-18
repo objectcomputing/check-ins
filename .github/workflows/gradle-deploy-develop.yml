@@ -80,6 +80,8 @@ jobs:
           ./gradlew assemble
           cd server
           docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
+        env:
+          VITE_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
       - name: Push the Docker image to Google Container Registry
         run: docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
       - name: Deploy image to Cloud Run
