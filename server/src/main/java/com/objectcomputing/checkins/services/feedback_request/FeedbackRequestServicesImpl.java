@@ -214,6 +214,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             sendSelfReviewCompletionEmailToPdlAndSupervisor(feedbackRequest);
         }
 
+        // Send email to reviewers
         if (reviewAssignmentsSet != null && reviewAssignmentsSet.size() > 0) {
             this.sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);    
         }        
