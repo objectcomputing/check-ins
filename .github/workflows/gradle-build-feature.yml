@@ -25,12 +25,6 @@ jobs:
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: 21
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -39,19 +33,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-        with:
-          arguments: assemble
       - name: Gradle runs tests
         uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
         with:
           arguments: check
-#      - name: Do SonarQube checks
-#        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-#        with:
-#          arguments: sonarqube --info
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
