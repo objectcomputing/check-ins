@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
+import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Setter
 @Getter
+@Introspected
 public class RetentionReportResponseDTO {
 
     @Schema(description = "Total retention rate for specified period")

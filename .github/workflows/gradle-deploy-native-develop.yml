@@ -1,82 +1,84 @@
-name: Gradle Build & Deploy - Develop
+name: Gradle Build & Deploy - Native - Develop
 on:
   push:
     branches:
       - 'develop'
-
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
-  SERVICE_NAME: checkins-develop
+  SERVICE_NAME: checkins-develop-native
+  TARGET_URL: https://checkins-develop-native-832140020593.us-central1.run.app
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    environment:
-      name: Development
-      url: https://checkins-develop-tuvcfzotpq-uc.a.run.app/
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Set up GraalVM 21
+        uses: graalvm/setup-graalvm@v1.1.8
         with:
-          distribution: 'temurin' # See 'Supported distributions' for available options
-          java-version: 21
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+          distribution: 'graalvm'
+          java-version: '21'
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Run tests with Gradle
+        run: ./gradlew nativeTest
+  deploy:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    environment:
+      name: Development - Native
+      url: ${{ env.TARGET_URL }}
+    steps:
+      - uses: actions/checkout@v4
         with:
-          arguments: assemble
-        env:
-          VITE_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
-      - name: Gradle runs tests
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+          fetch-depth: 0
+      - name: Set up Node LTS
+        uses: actions/setup-node@v4
         with:
-          arguments: check
-#      - name: Do SonarQube checks
-#        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-#        with:
-#          arguments: sonarqube --info
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: Setup python
-        run: |
-          sudo apt-get install python2.7
-      - name: Export gcloud related env variable
-        run: export CLOUDSDK_PYTHON="/usr/bin/python2"
-      # Setup gcloud CLI
-      - uses: google-github-actions/setup-gcloud@v0
+          node-version: '20'
+      - name: Set up GraalVM 21
+        uses: graalvm/setup-graalvm@v1.1.8
         with:
-          version: "290.0.1"
-          service_account_key: ${{ secrets.RUN_SA_KEY }}
-          project_id: ${{ secrets.RUN_PROJECT }}
-      - name: Auth Configure Docker
+          distribution: 'graalvm'
+          java-version: '21'
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: 'oci-intern-2019'
+          workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github/providers/my-repo'
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 363.0.0'
+      - name: 'Auth Configure Docker'
         run: |-
           gcloud --quiet auth configure-docker
-      - name: Build the Docker image
-        run: |-
-          cd server
-          docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
+      - name: Build a native docker image
+        run: ./gradlew dockerBuildNative
+        env:
+          VITE_APP_API_URL: ${{ env.TARGET_URL }}
       - name: Push the Docker image to Google Container Registry
         run: |-
           cd server
@@ -103,7 +105,7 @@ jobs:
             --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
-            --set-env-vars "WEB_ADDRESS=https://checkins-develop-tuvcfzotpq-uc.a.run.app" \
+            --set-env-vars "WEB_ADDRESS=${{ env.TARGET_URL }}" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \

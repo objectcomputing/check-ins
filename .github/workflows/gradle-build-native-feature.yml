@@ -1,4 +1,4 @@
-name: Gradle Build - Feature / Bug
+name: Gradle Build - Native - Feature / Bug
 on:
   push:
     branches:
@@ -15,16 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Set up GraalVM 21
+        uses: graalvm/setup-graalvm@v1.1.8
         with:
-          distribution: 'temurin' # See 'Supported distributions' for available options
-          java-version: 21
+          distribution: 'graalvm'
+          java-version: '21'
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -36,4 +36,4 @@ jobs:
       - name: Gradle runs tests
         uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
         with:
-          arguments: check
+          arguments: nativeTest

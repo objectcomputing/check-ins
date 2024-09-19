@@ -20,6 +20,7 @@ import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
@@ -37,6 +38,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+// Disabled in nativeTest, as we get an exception from Mockito
+//     => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
+@DisabledInNativeImage
 class FeedbackRequestTest extends TestContainersSuite {
 
     private FeedbackRequestRepository feedbackReqRepository;

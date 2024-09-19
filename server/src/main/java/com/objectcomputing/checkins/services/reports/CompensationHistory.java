@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
+import io.micronaut.core.annotation.Introspected;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 public class CompensationHistory extends CSVProcessor {
 
+    @Introspected
     public record Compensation(
             UUID memberId,
             LocalDate startDate,
