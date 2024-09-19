@@ -11,7 +11,9 @@ import java.time.LocalDate;
 @Getter
 @Introspected
 class Feedback {
+
   @AllArgsConstructor
+  @Introspected
   @Getter
   public static class Answer {
     private final String memberName;
