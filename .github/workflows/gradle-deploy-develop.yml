@@ -8,6 +8,7 @@ env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop
+  TARGET_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -41,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Development
-      url: https://checkins-develop-tuvcfzotpq-uc.a.run.app/
+      url: ${{ env.TARGET_URL }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -81,7 +82,7 @@ jobs:
           cd server
           docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
         env:
-          VITE_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
+          VITE_APP_API_URL: ${{ env.TARGET_URL }}
       - name: Push the Docker image to Google Container Registry
         run: docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
       - name: Deploy image to Cloud Run
@@ -106,7 +107,7 @@ jobs:
             --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
-            --set-env-vars "WEB_ADDRESS=https://checkins-develop-tuvcfzotpq-uc.a.run.app" \
+            --set-env-vars "WEB_ADDRESS=${{ env.TARGET_URL }}" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
