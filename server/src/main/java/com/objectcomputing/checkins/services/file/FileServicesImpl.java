@@ -23,6 +23,9 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -200,6 +203,101 @@ public class FileServicesImpl implements FileServices {
             checkinDocumentServices.save(cd);
 
             return setFileInfo(uploadedFile, cd);
+        } catch (GoogleJsonResponseException e) {
+            LOG.error("Error occurred while accessing Google Drive.", e);
+            throw new FileRetrievalException(e.getMessage());
+        } catch (IOException e) {
+            LOG.error("Unexpected error processing file upload.", e);
+            throw new FileRetrievalException(e.getMessage());
+        }
+    }
+
+    /// Upload a Markdown document to the specified directory and copy it to
+    /// a Google document, which results in an automatic conversion from
+    /// Markdown to the Google Doc format.
+    public FileInfoDTO uploadDocument(String directoryName, String name, String text) {
+        final String GOOGLE_DOC_TYPE = "application/vnd.google-apps.document";
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
+        validate(!isAdmin, "You are not authorized to perform this operation");
+
+        try {
+            Drive drive = googleApiAccess.getDrive();
+            validate(drive == null, "Unable to access Google Drive");
+
+            String rootDirId = googleServiceConfiguration.getDirectoryId();
+            validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
+
+            // Check if folder already exists on google drive. If exists, return folderId and name
+            FileList driveIndex = getFoldersInRoot(drive, rootDirId);
+            File folderOnDrive = driveIndex.getFiles().stream()
+                    .filter(s -> directoryName.equalsIgnoreCase(s.getName()))
+                    .findFirst()
+                    .orElse(null);
+
+            // If folder does not exist on Drive, create a new folder in the format name-date
+            if (folderOnDrive == null) {
+                folderOnDrive = createNewDirectoryOnDrive(drive, directoryName, rootDirId);
+            }
+
+            // Set the file metadata
+            File fileMetadata = new File();
+            fileMetadata.setName(name);
+            fileMetadata.setMimeType(MediaType.TEXT_MARKDOWN_TYPE.toString());
+            fileMetadata.setParents(Collections.singletonList(folderOnDrive.getId()));
+
+            // Upload file to google drive
+            InputStream is = new ByteArrayInputStream(
+                    StandardCharsets.UTF_8.encode(text).array());
+            InputStreamContent content = new InputStreamContent(
+                    MediaType.TEXT_MARKDOWN_TYPE.toString(), is);
+            File uploadedFile = drive.files().create(fileMetadata, content)
+                                .setSupportsAllDrives(true)
+                                .setFields("id, size, name")
+                                .execute();
+
+            // See if the Google doc already exists.  If it does, trash it.
+            FileList fileList = drive.files().list()
+                                .setSupportsAllDrives(true)
+                                .setIncludeItemsFromAllDrives(true)
+                                .setQ(String.format("'%s' in parents and mimeType = '%s' and trashed != true", folderOnDrive.getId(), GOOGLE_DOC_TYPE))
+                                .setSpaces("drive")
+                                .setFields("files(id, name, parents, size)")
+                                .execute();
+            for (File file : fileList.getFiles()) {
+              if (file.getName().equals(name)) {
+                try {
+                  File trash = new File();
+                  trash.setTrashed(true);
+                  drive.files().update(file.getId(), trash)
+                                  .setSupportsAllDrives(true)
+                                  .execute();
+                } catch (GoogleJsonResponseException e) {
+                  LOG.error("Error while trashing " + file.getName(), e);
+                } catch (IOException e) {
+                  LOG.error("Error while trashing " + file.getName(), e);
+                }
+              }
+            }
+
+            // Copy the file to a Google doc
+            File docFile = new File();
+            docFile.setName(name);
+            docFile.setMimeType(GOOGLE_DOC_TYPE);
+            docFile.setParents(Collections.singletonList(folderOnDrive.getId()));
+            File copiedFile = drive.files().copy(uploadedFile.getId(), docFile)
+                                .setSupportsAllDrives(true)
+                                .setFields("id, size, name")
+                                .execute();
+
+            // Delete the original mark-down file after copying it.
+            File trash = new File();
+            trash.setTrashed(true);
+            drive.files().update(uploadedFile.getId(), trash)
+                                .setSupportsAllDrives(true)
+                                .execute();
+
+            return setFileInfo(copiedFile, null);
         } catch (GoogleJsonResponseException e) {
             LOG.error("Error occurred while accessing Google Drive.", e);
             throw new FileRetrievalException(e.getMessage());
