@@ -23,8 +23,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 
 @Controller("/services/member-profiles/current")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -70,7 +68,7 @@ public class CurrentUserController {
         List<Permission> permissions = rolePermissionServices.findUserPermissions(user.getId());
 
         Set<Role> roles = roleServices.findUserRoles(user.getId());
-        List<String> rolesAsString = roles.stream().map(Role::getRole).collect(Collectors.toList());
+        List<String> rolesAsString = roles.stream().map(Role::getRole).toList();
 
         return HttpResponse
                 .ok()

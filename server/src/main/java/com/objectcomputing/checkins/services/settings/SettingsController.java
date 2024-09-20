@@ -1,11 +1,17 @@
 package com.objectcomputing.checkins.services.settings;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
-import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -19,7 +25,6 @@ import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Controller(SettingsController.PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -85,7 +90,7 @@ public class SettingsController {
                                   uuid, option.name(), option.getDescription(),
                                   option.getCategory(), option.getType(),
                                   value);
-               }).collect(Collectors.toList());
+               }).toList();
     }
 
     /**
