@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.kudos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;

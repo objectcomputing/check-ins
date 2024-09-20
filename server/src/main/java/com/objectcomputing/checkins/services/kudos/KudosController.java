@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.kudos;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
