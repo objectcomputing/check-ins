@@ -6,8 +6,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -18,7 +16,7 @@ import java.util.Set;
 
 @Singleton
 public class AnniversaryReportServicesImpl implements AnniversaryServices {
-    private static final Logger LOG = LoggerFactory.getLogger(AnniversaryReportServicesImpl.class);
+
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
 
