@@ -1,12 +1,19 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -16,7 +23,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -52,7 +58,7 @@ class AgendaItemController {
      * Update a agenda item
      *
      * @param agendaItem, {@link AgendaItem}
-     * @return {@link HttpResponse< AgendaItem >}
+     * @return {@link HttpResponse<AgendaItem>}
      */
     @Put("/")
     @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
@@ -72,7 +78,7 @@ class AgendaItemController {
      *
      * @param checkinid   {@link UUID} of checkin
      * @param createdbyid {@link UUID} of member	
-     * @return {@link List <CheckIn > list of checkins
+     * @return a Set of {@link CheckIn}
      */
     @Get("/{?checkinid,createdbyid}")
     @RequiredPermission(Permission.CAN_VIEW_CHECKINS)

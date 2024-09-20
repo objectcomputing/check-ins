@@ -27,7 +27,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
@@ -278,7 +277,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                 if (currentUserId.equals(request.getRecipientId())) visible = true;
             }
             return visible;
-        }).collect(Collectors.toList());
+        }).toList();
 
         return feedbackReqList;
     }

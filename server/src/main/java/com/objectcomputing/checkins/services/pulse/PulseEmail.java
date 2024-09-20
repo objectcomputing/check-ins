@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 
 import jakarta.inject.Named;
 
-import java.util.stream.Collectors;
 import java.util.List;
 
 class PulseEmail {
@@ -29,7 +28,7 @@ class PulseEmail {
     List<String> profiles = memberProfileServices.findAll().stream()
                                 .filter(p -> p.getTerminationDate() == null)
                                 .map(p -> p.getWorkEmail())
-                                .collect(Collectors.toList());
+                                .toList();
     return profiles;
   }
 

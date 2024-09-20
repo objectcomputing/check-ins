@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.kudos.kudos_recipient;
 
-import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.exceptions.BadArgException;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,20 +30,17 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
     private final KudosRepository kudosRepository;
     private final MemberProfileRetrievalServices memberProfileRetrievalServices;
     private final EmailSender emailSender;
-    private final CheckInsConfiguration checkInsConfiguration;
 
     public KudosRecipientServicesImpl(KudosRecipientRepository kudosRecipientRepository,
                                       CurrentUserServices currentUserServices,
                                       KudosRepository kudosRepository,
                                       MemberProfileRetrievalServices memberProfileRetrievalServices,
-                                      @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
-                                      CheckInsConfiguration checkInsConfiguration) {
+                                      @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender) {
         this.kudosRecipientRepository = kudosRecipientRepository;
         this.currentUserServices = currentUserServices;
         this.kudosRepository = kudosRepository;
         this.memberProfileRetrievalServices = memberProfileRetrievalServices;
         this.emailSender = emailSender;
-        this.checkInsConfiguration = checkInsConfiguration;
     }
 
     @Override
@@ -87,7 +82,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
                 // This is a private kudos, so notify the receiver directly.
                 MemberProfile sender = memberProfileRetrievalServices.getById(kudos.getSenderId()).orElse(null);
                 if (sender == null) {
-                    LOG.error(String.format("Unable to locate member %s.", kudos.getSenderId().toString()));
+                    LOG.error("Unable to locate member {}", kudos.getSenderId());
                 } else {
                     String fromEmail = sender.getWorkEmail();
                     String fromName = sender.getFirstName() + " " + sender.getLastName();

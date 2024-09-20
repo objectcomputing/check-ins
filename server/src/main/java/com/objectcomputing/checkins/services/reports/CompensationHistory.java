@@ -8,9 +8,6 @@ import io.micronaut.core.annotation.Introspected;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class CompensationHistory extends CSVProcessor {
 
@@ -44,9 +40,10 @@ public class CompensationHistory extends CSVProcessor {
           Optional<MemberProfile> memberProfile =
               memberProfileRepository.findByWorkEmail(emailAddress);
           if (memberProfile.isPresent()) {
-            LocalDate date = parseDate(csvRecord.get("startDate"));
+              String startDate = csvRecord.get("startDate");
+              LocalDate date = parseDate(startDate);
             if (date == null) {
-              LOG.error("Unable to parse date: " + csvRecord.get("startDate"));
+              LOG.error("Unable to parse date: {}", startDate);
             } else {
               Compensation comp = new Compensation(
                       memberProfile.get().getId(),
@@ -56,7 +53,7 @@ public class CompensationHistory extends CSVProcessor {
               history.add(comp);
             }
           } else {
-            LOG.error("Unable to find a profile for " + emailAddress);
+            LOG.error("Unable to find a profile for {}", emailAddress);
           }
         } catch(IllegalArgumentException ex) {
           throw new BadArgException("Unable to parse the compensation history");

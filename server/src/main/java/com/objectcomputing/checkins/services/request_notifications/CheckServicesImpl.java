@@ -31,7 +31,7 @@ public class CheckServicesImpl implements CheckServices {
     public boolean sendScheduledEmails() {
         LocalDate today = LocalDate.now();
         List<FeedbackRequest> feedbackRequests = feedbackRequestRepository.findBySendDateNotAfterAndStatusEqual(today, "pending");
-        LOG.info("About to send emails: " + feedbackRequests.size());
+        LOG.info("About to send {} emails", feedbackRequests.size());
         for (FeedbackRequest req: feedbackRequests) {
             feedbackRequestServices.sendNewRequestEmail(req);
             req.setStatus("sent");

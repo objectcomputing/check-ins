@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import com.objectcomputing.checkins.util.Util;
 import jakarta.inject.Singleton;
@@ -32,17 +31,15 @@ public class CheckInServicesImpl implements CheckInServices {
     private final CheckInRepository checkinRepo;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
-    private final RoleServices roleServices;
     private final RolePermissionServices rolePermissionServices;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
                                MemberProfileRepository memberRepo,
                                CurrentUserServices currentUserServices,
-                               RoleServices roleServices, RolePermissionServices rolePermissionServices) {
+                               RolePermissionServices rolePermissionServices) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
-        this.roleServices = roleServices;
         this.rolePermissionServices = rolePermissionServices;
     }
 
