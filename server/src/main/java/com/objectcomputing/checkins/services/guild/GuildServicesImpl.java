@@ -181,7 +181,7 @@ public class GuildServicesImpl implements GuildServices {
 
                     //delete any removed members from guild
                     existingGuildMembers.forEach(existingMember -> {
-                        if(!guildDTO.getGuildMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
+                        if(guildDTO.getGuildMembers().stream().noneMatch(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId()))) {
                             guildMemberServices.delete(existingMember.getId(), false);
                             removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
                         }

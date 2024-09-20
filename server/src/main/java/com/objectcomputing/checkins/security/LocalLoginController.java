@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.security;
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.security.ImpersonationController;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.netty.cookies.NettyCookie;
 import io.micronaut.context.annotation.Requires;

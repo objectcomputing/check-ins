@@ -324,7 +324,7 @@ class KudosServicesImpl implements KudosServices {
                     // Send email to receivers of kudos that they have new kudos...
                     MemberProfile sender = memberProfileRetrievalServices.getById(kudos.getSenderId()).orElse(null);
                     if (sender == null) {
-                        LOG.error(String.format("Unable to locate member %s.", kudos.getSenderId().toString()));
+                        LOG.error("Unable to locate member {}", kudos.getSenderId());
                     } else {
                         String fromEmail = sender.getWorkEmail();
                         String fromName = sender.getFirstName() + " " + sender.getLastName();
@@ -336,7 +336,7 @@ class KudosServicesImpl implements KudosServices {
                             for (KudosRecipient kudosRecipient : recipients) {
                                 MemberProfile member = memberProfileRetrievalServices.getById(kudosRecipient.getMemberId()).orElse(null);
                                 if (member == null) {
-                                    LOG.error(String.format("Unable to locate member %s.", kudosRecipient.getMemberId().toString()));
+                                    LOG.error("Unable to locate member {}", kudosRecipient.getMemberId());
                                 } else {
                                     recipientAddresses.add(member.getWorkEmail());
                                 }

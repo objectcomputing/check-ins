@@ -104,7 +104,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         Optional<MemberProfile> existingProfileOpt = memberProfileRepository.findById(memberProfile.getId());
         MemberProfile updatedMemberProfile = memberProfileRepository.update(memberProfile);
         if (existingProfileOpt.isEmpty()) {
-            LOG.error(String.format("MemberProfile with id %s not found", memberProfile.getId()));
+            LOG.error("MemberProfile with id {} not found", memberProfile.getId());
         } else {
             MemberProfile existingProfile = existingProfileOpt.get();
 

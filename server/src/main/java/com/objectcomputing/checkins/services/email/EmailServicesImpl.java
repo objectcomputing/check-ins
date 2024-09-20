@@ -76,7 +76,7 @@ public class EmailServicesImpl implements EmailServices {
                         Email savedEmail = emailRepository.save(email);
                         sentEmails.add(savedEmail);
                     } else {
-                        LOG.warn(String.format("Prevented sending email to terminated member: %s", recipientEmail));
+                        LOG.warn("Prevented sending email to terminated member: {}", recipientEmail);
                     }
                 }
             }

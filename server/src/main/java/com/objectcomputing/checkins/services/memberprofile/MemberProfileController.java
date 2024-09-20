@@ -20,8 +20,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
@@ -33,7 +31,6 @@ import java.util.UUID;
 @Tag(name = "member profiles")
 public class MemberProfileController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MemberProfileController.class);
     private final MemberProfileServices memberProfileServices;
 
     public MemberProfileController(MemberProfileServices memberProfileServices) {

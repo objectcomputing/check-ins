@@ -115,7 +115,7 @@ public class TeamServicesImpl implements TeamServices {
 
                     //delete any removed members
                     existingTeamMembers.forEach(existingMember -> {
-                        if (!teamDTO.getTeamMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
+                        if (teamDTO.getTeamMembers().stream().noneMatch(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId()))) {
                             teamMemberServices.delete(existingMember.getId());
                         }
                     });

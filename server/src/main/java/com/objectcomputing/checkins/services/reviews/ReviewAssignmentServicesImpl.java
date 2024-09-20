@@ -47,7 +47,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     public List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, boolean deleteExisting) {
 
         if(deleteExisting) {
-            LOG.warn(String.format("Deleting all review assignments for review period %s", reviewPeriodId));
+            LOG.warn("Deleting all review assignments for review period {}", reviewPeriodId);
             reviewAssignmentRepository.deleteByReviewPeriodId(reviewPeriodId);
         }
 
@@ -92,7 +92,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
 
     @Override
     public ReviewAssignment update(ReviewAssignment reviewAssignment) {
-        LOG.info(String.format("Updating entity %s", reviewAssignment));
+        LOG.info("Updating entity {}", reviewAssignment);
         if (reviewAssignment.getId() != null && reviewAssignmentRepository.findById(reviewAssignment.getId()).isPresent()) {
             return reviewAssignmentRepository.update(reviewAssignment);
         } else {

@@ -54,7 +54,7 @@ public class CurrentInformation extends CSVProcessor {
           );
           information.add(comp);
         } else {
-          LOG.error("Unable to find a profile for " + emailAddress);
+          LOG.error("Unable to find a profile for {}", emailAddress);
         }
       } catch(IllegalArgumentException ex) {
         throw new BadArgException("Unable to parse the current information");
