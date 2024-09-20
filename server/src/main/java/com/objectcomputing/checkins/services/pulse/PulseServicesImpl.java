@@ -73,14 +73,14 @@ public class PulseServicesImpl implements PulseServices {
         if (frequency.containsKey(freq.getValue())) {
           setting = freq.getValue();
         } else {
-          LOG.error("Invalid Pulse Email Frequency Setting: " + freq.getValue());
+          LOG.error("Invalid Pulse Email Frequency Setting: {}", freq);
         }
       } catch(NotFoundException ex) {
         // Use the default setting.
-        LOG.error("Pulse Frequency Error: " + ex.toString());
+        LOG.error("Pulse Frequency Error", ex);
       }
 
-      LOG.info("Using Pulse Frequency: " + setting);
+      LOG.info("Using Pulse Frequency: {}", setting);
       final Frequency freq = frequency.get(setting);
       do {
         if (start.getDayOfMonth() == check.getDayOfMonth()) {

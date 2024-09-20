@@ -44,9 +44,10 @@ public class PositionHistory extends CSVProcessor {
         Optional<MemberProfile> memberProfile =
               memberProfileRepository.findByWorkEmail(emailAddress);
         if (memberProfile.isPresent()) {
-          LocalDate date = parseDate(csvRecord.get("date"));
+          String csvDate = csvRecord.get("date");
+          LocalDate date = parseDate(csvDate);
           if (date == null) {
-            LOG.error("Unable to parse date: " + csvRecord.get("date"));
+            LOG.error("Unable to parse date: {}", csvDate);
           } else {
             Position position = new Position(
                        memberProfile.get().getId(),
@@ -55,7 +56,7 @@ public class PositionHistory extends CSVProcessor {
             history.add(position);
           }
         } else {
-          LOG.error("Unable to find a profile for " + emailAddress);
+          LOG.error("Unable to find a profile for {}", emailAddress);
         }
       } catch(IllegalArgumentException ex) {
         throw new BadArgException("Unable to parse the position history");
