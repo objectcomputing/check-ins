@@ -206,16 +206,21 @@ const TeamReviews = ({ onBack, periodId }) => {
   const loadTeamMembers = () => {
     let members = [];
 
+    let source;
     if (!approvalMode || (isAdmin && showAll)) {
-      const memberIds = assignments.map(a => a.revieweeId);
-      members = currentMembers.filter(m => memberIds.includes(m.id));
+      source = currentMembers;
     } else {
       // Get the direct reports of the current user who is a manager.
       const myId = currentUser?.id;
-      members = showAll
+      source = showAll
         ? selectCurrentUserSubordinates(state)
         : selectTeamMembersBySupervisorId(state, myId);
     }
+
+    // Always filter the members down to existing selected assignments.
+    // We do not want to add members that were not already selected.
+    const memberIds = assignments.map(a => a.revieweeId);
+    members = source.filter(m => memberIds.includes(m.id));
 
     setTeamMembers(members);
   };
@@ -242,6 +247,11 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     setTeamMembers(teamMembers);
     addAssignmentForMemberWithNone(teamMembers);
+
+    // Now that teamMembers has been updated, we need to make sure that the
+    // assignments reflects the set of team members.
+    const ids = teamMembers.map(m => m.id);
+    setAssignments(assignments.filter(a => a.revieweeId && ids.includes(a.revieweeId)));
   };
 
   const addAssignmentForMemberWithNone = async (members) => {
@@ -605,15 +615,21 @@ const TeamReviews = ({ onBack, periodId }) => {
     );
     if (!assignment) return;
 
-    const { id } = assignment;
-    const res = await resolve({
-      method: 'DELETE',
-      url: `${reviewAssignmentsUrl}/${id}`,
-      headers: { 'X-CSRF-Header': csrf }
-    });
-    if (res.error) return;
-
-    setAssignments(assignments.filter(a => a.id !== id));
+    const { id, revieweeId, reviewerId } = assignment;
+    if (id) {
+      const res = await resolve({
+        method: 'DELETE',
+        url: `${reviewAssignmentsUrl}/${id}`,
+        headers: { 'X-CSRF-Header': csrf }
+      });
+      if (res.error) return;
+      setAssignments(assignments.filter(a => a.id !== id));
+    } else {
+      // This reviewer does not have an assignment id.  Therefore, we just
+      // need to remove the reviewer from the assignment list.
+      setAssignments(assignments.filter(a =>
+        !(a.revieweeId === revieweeId && a.reviewerId === reviewerId)));
+    }
   };
 
   const validateReviewPeriod = period => {
