@@ -5,6 +5,7 @@ import FeedbackSubmitForm from '../components/feedback_submit_form/FeedbackSubmi
 import TeamMemberReview from '../components/reviews/TeamMemberReview';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
+  selectSupervisors,
   selectCsrfToken,
   selectCurrentUser,
   selectProfile
@@ -60,6 +61,7 @@ const FeedbackSubmitPage = () => {
         }
       });
     }
+
     async function getFeedbackRequest(cookie) {
       if (!currentUserId || !cookie || feedbackRequestFetched.current) {
         return null;
@@ -75,6 +77,13 @@ const FeedbackSubmitPage = () => {
         : null;
     }
 
+    function isManager(recipientId) {
+      // See if currentUserId is manager of recipientId.
+      const supervisors = selectSupervisors(state);
+      return supervisors.some(s => s.id === recipientId &&
+                                   s.supervisorid === currentUserId);
+    }
+
     if (
       csrf &&
       currentUserId &&
@@ -83,7 +92,8 @@ const FeedbackSubmitPage = () => {
     ) {
       getFeedbackRequest(csrf).then(request => {
         if (request) {
-          if (request.recipientId !== currentUserId) {
+          if (request.recipientId !== currentUserId &&
+              !isManager(request.recipientId)) {
             history.push('/checkins');
             window.snackDispatch({
               type: UPDATE_TOAST,

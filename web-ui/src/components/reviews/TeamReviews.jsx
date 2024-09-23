@@ -163,9 +163,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     loadAssignments();
   }, [currentMembers]);
 
+  const supervisors = selectSupervisors(state);
+
   useEffect(() => {
     const myId = currentUser?.id;
-    const supervisors = selectSupervisors(state);
     const isManager = supervisors.some(s => s.id === myId);
     const period = selectReviewPeriod(state, periodId);
     if (period) {
@@ -750,8 +751,12 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
 
     const statusLabel = reviewer.name + ": " + getReviewStatus(request);
+    const submitted = request?.status == 'submitted';
+    const manages = supervisors.some(s => s.id === request?.recipientId &&
+                                          s.supervisorid == currentUser?.id);
     const variant = "outlined";
-    return (openMode && reviewer.id == currentUser?.id && request ?
+    return (openMode && request &&
+            (reviewer.id == currentUser?.id || (submitted && manages)) ?
             <Link to={`/feedback/submit?request=${request.id}`}>
             <Chip
               key={reviewer.id}
