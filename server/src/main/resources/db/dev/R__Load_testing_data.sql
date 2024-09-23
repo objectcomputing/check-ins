@@ -32,6 +32,7 @@ delete from emails;
 delete from member_history;
 delete from earned_certification;
 delete from certification;
+delete from employee_hours;
 delete from member_profile;
 delete from skillcategory_skills;
 delete from skills;
