@@ -107,7 +107,7 @@ INSERT INTO member_profile -- Lucky Bear
 VALUES
 ('3455c391-c5dd-4c84-8d00-1e345711987f', PGP_SYM_ENCRYPT('Lucky','${aeskey}'),  PGP_SYM_ENCRYPT('Bear','${aeskey}'), PGP_SYM_ENCRYPT('Developer','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('South FL','${aeskey}'), PGP_SYM_ENCRYPT('belottol@objectcomputing.com','${aeskey}'), '728364519', '2021-09-07', PGP_SYM_ENCRYPT('You make your own luck','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1950-12-01', '2024-08-28')
 ;
-INSERT INTO member_profile -- Lucky Bear
+INSERT INTO member_profile -- Wiley Tiger
 (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
 ('a44fc66a-86b0-4f15-8459-e7d4b4ecc330', PGP_SYM_ENCRYPT('Wiley','${aeskey}'),  PGP_SYM_ENCRYPT('Tiger','${aeskey}'), PGP_SYM_ENCRYPT('Developer','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('thelenw@objectcomputing.com','${aeskey}'), '728364510', '2024-09-23', PGP_SYM_ENCRYPT('You make your own luck','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1950-12-01', '2024-09-23')
@@ -159,6 +159,11 @@ INSERT INTO member_roles
     (roleid, memberid)
 VALUES
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '5b90beb2-0e96-438b-bfd6-1487a89b339b'); -- Alice Admin
+
+INSERT INTO member_roles
+    (roleid, memberid)
+VALUES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'a44fc66a-86b0-4f15-8459-e7d4b4ecc330'); -- Wiley Tiger
 
 -- PDL Role Assigning
 INSERT INTO member_roles
