@@ -22,6 +22,20 @@ export const findReviewRequestsByPeriodAndTeamMembers = async (
   });
 };
 
+export const findReviewRequestsByPeriod = async (
+  period,
+  cookie
+) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      reviewPeriodId: period?.id,
+      templateId: period?.reviewTemplateId,
+    },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
 export const findSelfReviewRequestsByPeriodAndTeamMembers = async (
   period,
   teamMemberIds,

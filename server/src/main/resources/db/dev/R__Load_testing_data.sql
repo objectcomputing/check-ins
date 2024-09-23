@@ -1300,6 +1300,16 @@ INSERT INTO feedback_requests
 VALUES
 ('98390c09-7121-110a-bfee-9380a470a7f3', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
 
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f4', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', null, 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f5', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', null, 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+
 -- CAE - Feedback request, Creator: Big Boss
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)

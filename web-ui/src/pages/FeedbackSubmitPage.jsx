@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import FeedbackSubmissionTips from '../components/feedback_submission_tips/FeedbackSubmissionTips';
 import FeedbackSubmitForm from '../components/feedback_submit_form/FeedbackSubmitForm';
+import TeamMemberReview from '../components/reviews/TeamMemberReview';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
   selectCsrfToken,
@@ -43,6 +44,7 @@ const FeedbackSubmitPage = () => {
   const [showTips, setShowTips] = useState(true);
   const [feedbackRequest, setFeedbackRequest] = useState(null);
   const [requestee, setRequestee] = useState(null);
+  const [recipient, setRecipient] = useState(null);
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
@@ -95,6 +97,7 @@ const FeedbackSubmitPage = () => {
             request.submitDate
           ) {
             setRequestSubmitted(true);
+            setFeedbackRequest(request);
           } else if (request.status.toLowerCase() === 'canceled') {
             setRequestCanceled(true);
           } else {
@@ -125,6 +128,12 @@ const FeedbackSubmitPage = () => {
         feedbackRequest?.requesteeId
       );
       setRequestee(requesteeProfile);
+
+      const recipientProfile = selectProfile(
+        state,
+        feedbackRequest?.recipientId
+      );
+      setRecipient(recipientProfile);
     }
   }, [feedbackRequest, state]);
 
@@ -135,9 +144,10 @@ const FeedbackSubmitPage = () => {
           This feedback request has been canceled.
         </Typography>
       ) : requestSubmitted ? (
-        <Typography className={classes.announcement} variant="h3">
-          You have already submitted this feedback form. Thank you!
-        </Typography>
+        <TeamMemberReview
+          reviews={[feedbackRequest]}
+          memberProfile={recipient}
+        />
       ) : (
         <>
           {feedbackRequestFetched.current &&

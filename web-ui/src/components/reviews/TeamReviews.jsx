@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 import {
   AddCircle,
@@ -37,6 +37,7 @@ import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { resolve } from '../../api/api.js';
 import {
   findReviewRequestsByPeriodAndTeamMembers,
+  findReviewRequestsByPeriod,
   findSelfReviewRequestsByPeriodAndTeamMembers
 } from '../../api/feedback.js';
 import {
@@ -119,6 +120,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const location = useLocation();
 
+  const [openMode, setOpenMode] = useState(false);
   const [approvalMode, setApprovalMode] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const [canUpdate, setCanUpdate] = useState(false);
@@ -170,8 +172,11 @@ const TeamReviews = ({ onBack, periodId }) => {
       setApprovalMode(
         isManager && period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
       );
+      setOpenMode(isManager && period.reviewStatus === ReviewStatus.OPEN);
     }
-    setCanUpdate(selectHasUpdateReviewPeriodPermission(state));
+
+    setCanUpdate(selectHasUpdateReviewPeriodPermission(state) &&
+                 period?.reviewStatus !== ReviewStatus.OPEN);
   }, [state]);
 
   useEffect(() => {
@@ -267,39 +272,21 @@ const TeamReviews = ({ onBack, periodId }) => {
   }
 
   const getReviewStatus = useCallback(
-    teamMemberId => {
-      let reviewStates = { submitted: false, inProgress: false };
-      if (reviews && reviews[teamMemberId]) {
-        reviewStates = reviews[teamMemberId].reduce((states, review) => {
-          switch (review?.status) {
-            case 'submitted':
-              states.submitted = true;
-              break;
-            case 'sent':
-            case 'pending':
-              states.inProgress = true;
-              break;
-            case 'cancelled':
-            case 'canceled':
-            default:
-              break;
-          }
-          return states;
-        }, reviewStates);
-        if (reviewStates.inProgress) {
-          if (reviews[teamMemberId]?.length > 1) {
-            return 'Reviews in progress';
-          }
-          return 'Review in progress';
-        } else if (reviewStates.submitted) {
-          if (reviews[teamMemberId]?.length > 1) {
-            return 'All reviews submitted';
-          }
-          return 'Review submitted';
-        } else return 'No reviews started';
-      } else {
-        return 'No reviews started';
+    review => {
+      if (review) {
+        switch (review?.status) {
+          case 'submitted':
+            return 'Review submitted';
+          case 'sent':
+          case 'pending':
+            return 'Review in progress';
+          case 'cancelled':
+          case 'canceled':
+          default:
+            break;
+        }
       }
+      return 'No review started';
     },
     [reviews]
   );
@@ -541,32 +528,29 @@ const TeamReviews = ({ onBack, periodId }) => {
       }
     };
 
-    const getReviewRequests = async teamMemberIdBatches => {
-      for (const teamMemberIds of teamMemberIdBatches) {
-        const res = await findReviewRequestsByPeriodAndTeamMembers(
-          period,
-          teamMemberIds,
-          csrf
+    const getReviewRequests = async () => {
+      const res = await findReviewRequestsByPeriod(
+        period,
+        csrf
+      );
+      let data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data && data.length > 0) {
+        data = data.filter(
+          review => 'CANCELED' !== review?.status?.toUpperCase()
         );
-        let data =
-          res &&
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-            ? res.payload.data
-            : null;
-        if (data && data.length > 0) {
-          data = data.filter(
-            review => 'canceled'.toUpperCase() !== review?.status?.toUpperCase()
-          );
-          data.forEach(review => {
-            if (!newReviews[review.requesteeId]) {
-              newReviews[review.requesteeId] = [];
-            }
-            newReviews[review.requesteeId].push(review);
-          });
-        }
+        data.forEach(request => {
+          if (!newReviews[request.recipientId]) {
+            newReviews[request.recipientId] = [];
+          }
+          newReviews[request.recipientId].push(request);
+        });
       }
     };
 
@@ -594,7 +578,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       setSelfReviews({});
       setReviews(null);
       await getSelfReviewRequests(teamMemberIdBatches);
-      await getReviewRequests(teamMemberIdBatches);
+      await getReviewRequests();
       loadingReviews.current = false;
       loadedReviews.current = true;
       setSelfReviews({ ...newSelfReviews });
@@ -755,6 +739,37 @@ const TeamReviews = ({ onBack, periodId }) => {
     return reviewer && reviewer.approved;
   };
 
+  const renderReviewer = (member, reviewer) => {
+    const backgroundColor = reviewer.approved ?
+                              'var(--checkins-palette-action-green)' :
+                              'var(--checkins-palette-action-yellow)';
+
+    let request;
+    if (reviews && reviews[reviewer.id]) {
+      request = reviews[reviewer.id].find((r) => r.requesteeId === member.id);
+    }
+
+    const statusLabel = reviewer.name + ": " + getReviewStatus(request);
+    const variant = "outlined";
+    return (openMode && reviewer.id == currentUser?.id && request ?
+            <Link to={`/feedback/submit?request=${request.id}`}>
+            <Chip
+              key={reviewer.id}
+              label={statusLabel}
+              variant={variant}
+              style={{backgroundColor: backgroundColor}}
+            />
+          </Link> :
+          <Chip
+            key={reviewer.id}
+            label={openMode ? statusLabel : reviewer.name}
+            variant={variant}
+            onDelete={canUpdate && !openMode ?
+                          () => deleteReviewer(member, reviewer) : null}
+            style={{backgroundColor: backgroundColor}}
+          />);
+  };
+
   const REVIEWER_LIMIT = 2;
   const renderReviewers = member => {
     let reviewers = getReviewers(member);
@@ -763,19 +778,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (excess > 0) reviewers = reviewers.slice(0, REVIEWER_LIMIT);
     return (
       <>
-        {reviewers.map(reviewer => (
-          <Chip
-            key={reviewer.id}
-            label={reviewer.name}
-            variant="outlined"
-            onDelete={canUpdate ? () => deleteReviewer(member, reviewer) : null}
-            style={{
-              backgroundColor: reviewer.approved
-                ? 'var(--checkins-palette-action-green)'
-                : 'var(--checkins-palette-action-yellow)'
-            }}
-          />
-        ))}
+        {reviewers.map(reviewer => renderReviewer(member, reviewer))}
         {excess > 0 && <div>and {excess} more </div>}
       </>
     );

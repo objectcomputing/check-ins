@@ -208,7 +208,7 @@ const TeamMemberReview = ({
   );
 
   let selfReviewIcon = <HourglassEmptyIcon />;
-  if (selfReview?.status.toUpperCase() === 'SUBMITTED') {
+  if (selfReview && selfReview.status?.toUpperCase() === 'SUBMITTED') {
     selfReviewIcon = <CheckCircleIcon />;
   }
 
@@ -223,18 +223,11 @@ const TeamMemberReview = ({
             textColor="inherit"
             variant="fullWidth"
           >
-            <Tab
-              icon={selfReviewIcon}
-              label={
-                memberProfile?.firstName
-                  ? memberProfile?.firstName + "'s Self-Review"
-                  : 'Self-Review'
-              }
-              {...a11yProps(0)}
-            />
             {reviews &&
               reviews.map((review, index) => {
-                const reviewer = selectProfile(state, review?.recipientId);
+                const reviewer = review?.recipientId == memberProfile?.id ?
+                                 memberProfile :
+                                 selectProfile(state, review?.recipientId);
                 let label = reviewer?.firstName + "'s Review";
 
                 if (reviewer?.id === currentUser?.id) {
@@ -242,12 +235,12 @@ const TeamMemberReview = ({
                 }
 
                 let icon = <HourglassEmptyIcon />;
-                if (review?.status.toUpperCase() === 'SUBMITTED') {
+                if (review && review.status?.toUpperCase() === 'SUBMITTED') {
                   icon = <CheckCircleIcon />;
                 }
 
                 return (
-                  <Tab icon={icon} label={label} {...a11yProps(index + 1)} />
+                  <Tab icon={icon} label={label} {...a11yProps(index)} />
                 );
               })}
           </Tabs>
@@ -257,38 +250,23 @@ const TeamMemberReview = ({
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          <TabPanel value={value} index={0} dir={theme.direction}>
-            {selfReview && selfReview.id ? (
-              <FeedbackSubmitForm
-                requesteeName={
-                  memberProfile?.firstName + ' ' + memberProfile?.lastName
-                }
-                requestId={selfReview?.id}
-                request={selfReview}
-                reviewOnly={true}
-              />
-            ) : (
-              <Typography variant="h5">
-                {memberProfile?.firstName} has not started their self-review.
-              </Typography>
-            )}
-          </TabPanel>
           {reviews &&
             reviews.map((review, index) => {
               const reviewer = selectProfile(state, review?.recipientId);
-              const requesteeName = memberProfile?.name;
+              const requestee = selectProfile(state, review?.requesteeId);
+              const requesteeName = requestee?.name;
 
               let readOnly = true;
               if (
-                reviewer?.id === currentUser?.id &&
-                'SUBMITTED' !== review?.status?.toUpperCase()
+                reviewer?.id === currentUser?.id && review &&
+                'SUBMITTED' !== review.status?.toUpperCase()
               ) {
                 readOnly = false;
               }
 
               return (
-                <TabPanel value={value} index={index + 1} dir={theme.direction}>
-                  {review?.status.toUpperCase() !== 'SUBMITTED' && (
+                <TabPanel value={value} index={index} dir={theme.direction}>
+                  {review && review.status?.toUpperCase() !== 'SUBMITTED' && (
                     <div className={classes.buttonRow}>
                       <Button
                         onClick={handleOpenCancel}
