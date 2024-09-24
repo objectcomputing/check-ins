@@ -371,37 +371,33 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   };
 
   const saveEvent = useCallback(async () => {
-    const { id, relationshipId, eventDate, hours, notes } = selectedEvent;
-  
-    // Check if the organization already exists, otherwise create it
-    const org = organizationMap[relationshipId];
-    if (!org) {
-      const newOrgRes = await resolve({
-        method: 'POST',
-        url: organizationBaseUrl,
-        headers: { 'X-CSRF-Header': csrf },
-        data: { name: selectedOrganization.name, description: selectedOrganization.description }
-      });
-      if (newOrgRes.error) return;
-      const newOrg = newOrgRes.payload.data;
-      setOrganizationMap({ ...organizationMap, [newOrg.id]: newOrg });
-      setSelectedEvent({ ...selectedEvent, relationshipId: newOrg.id });
-    }
-  
-    const eventRes = await resolve({
+    const { id } = selectedEvent;
+    const res = await resolve({
       method: id ? 'PUT' : 'POST',
       url: id ? `${eventBaseUrl}/${id}` : eventBaseUrl,
-      headers: { 'X-CSRF-Header': csrf },
-      data: { relationshipId, eventDate, hours, notes }
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: selectedEvent
     });
-  
-    if (eventRes.error) return;
-  
-    const newEvent = eventRes.payload.data;
-    setEvents(events => (id ? events.map(e => (e.id === id ? newEvent : e)) : [...events, newEvent]));
+    if (res.error) return;
+
+    const newRel = res.payload.data;
+
+    if (id) {
+      const index = events.findIndex(rel => rel.id === id);
+      events[index] = newRel;
+    } else {
+      events.push(newRel);
+    }
+    sortEvents(events);
+    setEvents(events);
+
+    setSelectedEvent(null);
     setEventDialogOpen(false);
-  }, [selectedEvent, organizationMap]);
-  
+  }, [relationshipMap, selectedEvent]);
 
   const sortEvents = useCallback(
     events => {
