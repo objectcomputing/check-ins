@@ -158,6 +158,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                          " does not have a self-review template.");
             }
 
+            Set<UUID> selfRevieweeIds = new HashSet();
             for (ReviewAssignment assignment : assignments) {
                 // Determine the creator of this feedback request
                 List<MemberProfile> profile =
@@ -166,15 +167,30 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                 UUID creatorId = profile.isEmpty() ?
                     assignment.getReviewerId() : profile.get(0).getId();
 
+                // This person is being reviewed and will need a self-review
+                // request.
+                selfRevieweeIds.add(assignment.getRevieweeId());
+
                 // Create the review feedback request.
                 if (reviewTemplateId != null) {
-                    createReviewRequest(assignment, period, creatorId,
+                    createReviewRequest(period, creatorId,
+                                        assignment.getRevieweeId(),
+                                        assignment.getReviewerId(),
                                         reviewTemplateId, closeDate);
                 }
+            }
+
+            for(UUID memberId : selfRevieweeIds) {
+                // Determine the creator of this feedback request
+                List<MemberProfile> profile =
+                    memberProfileRepository.findSupervisorsForId(memberId);
+                UUID creatorId = profile.isEmpty() ?
+                    memberId : profile.get(0).getId();
 
                 // Create the self-review feedback request.
                 if (selfReviewTemplateId != null) {
-                    createReviewRequest(assignment, period, creatorId,
+                    createReviewRequest(period, creatorId,
+                                        memberId, memberId,
                                         selfReviewTemplateId,
                                         selfReviewCloseDate);
                 }
@@ -209,16 +225,16 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                 <a href="%s/feedback/reviews?period=%s">Click here</a> to review and approve reviewer assignments in the Check-Ins app.""".formatted(reviewPeriodName, webAddress, reviewPeriodId);
     }
 
-    private void createReviewRequest(ReviewAssignment assignment,
-                                     ReviewPeriod period,
+    private void createReviewRequest(ReviewPeriod period,
                                      UUID creatorId,
+                                     UUID revieweeId,
+                                     UUID reviewerId,
                                      UUID templateId,
                                      LocalDate dueDate) {
         try {
             LocalDate sendDate = LocalDate.now();
             FeedbackRequest request = new FeedbackRequest(
-                creatorId, assignment.getRevieweeId(),
-                assignment.getReviewerId(), templateId, sendDate,
+                creatorId, revieweeId, reviewerId, templateId, sendDate,
                 dueDate.isAfter(sendDate) ? dueDate : sendDate.plusDays(1),
                 "sent", null, period.getId());
             feedbackRequestServices.save(request);
