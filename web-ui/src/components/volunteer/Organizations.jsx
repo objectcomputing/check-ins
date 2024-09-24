@@ -268,8 +268,9 @@ const Organizations = ({ onlyMe = false }) => {
   );
 
   const saveOrganization = useCallback(async () => {
-    const { id } = selectedOrganization;
+    const { id, name, description, website } = selectedOrganization;
     const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
+  
     const res = await resolve({
       method: id ? 'PUT' : 'POST',
       url,
@@ -278,22 +279,24 @@ const Organizations = ({ onlyMe = false }) => {
         Accept: 'application/json',
         'Content-Type': 'application/json;charset=UTF-8'
       },
-      data: selectedOrganization
+      data: { name, description, website }
     });
+  
     if (res.error) return;
-
+  
     const newOrg = res.payload.data;
-    if (id) {
+  
+    // Add the organization to both global and user's list
+    if (!id) {
+      organizations.push(newOrg);
+    } else {
       const index = organizations.findIndex(org => org.id === id);
       organizations[index] = newOrg;
-    } else {
-      organizations.push(newOrg);
     }
-    sortOrganizations(organizations);
-    setOrganizations(organizations);
-    setSelectedOrganization(null);
+    setOrganizations([...organizations]);
     setOrganizationDialogOpen(false);
   }, [selectedOrganization]);
+  
 
   const sortOrganizations = useCallback(
     orgs => {

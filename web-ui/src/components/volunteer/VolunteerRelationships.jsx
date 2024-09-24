@@ -38,6 +38,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [organizationMap, setOrganizationMap] = useState({});
   const [organizations, setOrganizations] = useState([]);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
+  const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false); // New dialog for adding an organization
+  const [newOrganization, setNewOrganization] = useState({ name: '', description: '', website: '' });
   const [relationshipMap, setRelationshipMap] = useState({});
   const [relationships, setRelationships] = useState([]);
   const [selectedRelationship, setSelectedRelationship] = useState(null);
@@ -161,6 +163,81 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     return new Date(Number(year), Number(month) - 1, Number(day));
   };
 
+  const handleCreateNewOrganization = async () => {
+    // Add check for empty name or description
+    if (!newOrganization.name || !newOrganization.description) {
+      console.error('Organization name and description are required.');
+      return;
+    }
+    
+    const res = await resolve({
+      method: 'POST',
+      url: organizationBaseUrl,
+      headers: {
+        'X-CSRF-Header': csrf,
+        'Content-Type': 'application/json'
+      },
+      data: newOrganization
+    });
+
+    if (res.error) {
+      console.error("Error saving new organization", res.error);
+      return;
+    }
+
+    const newOrg = res.payload.data;
+    
+    // Defensive check to ensure newOrg is defined
+    if (newOrg && newOrg.name) {
+      setOrganizations([...organizations, newOrg]); // Add new organization to the list
+      setOrganizationMap({ ...organizationMap, [newOrg.id]: newOrg });
+      setSelectedRelationship({
+        ...selectedRelationship,
+        organizationId: newOrg.id
+      });
+      setOrganizationDialogOpen(false); // Close the organization creation dialog
+    } else {
+      console.error('Invalid organization data received');
+    }
+  };
+
+  const relationshipRow = useCallback(
+    relationship => {
+      const org = organizationMap[relationship.organizationId];
+      if (!org) {
+        console.error('Organization not found for relationship:', relationship);
+        return null;
+      }
+      return (
+        <tr key={relationship.id}>
+          {!onlyMe && <td>{profileMap[relationship.memberId]?.name ?? ''}</td>}
+          <td>{org.name ?? 'N/A'}</td> {/* Defensive check */}
+          <td>{relationship.startDate}</td>
+          <td>{relationship.endDate}</td>
+          <td>
+            <Tooltip title="Edit">
+              <IconButton
+                aria-label="Edit"
+                onClick={() => editRelationship(relationship)}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                aria-label="Delete"
+                onClick={() => confirmDelete(relationship)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </td>
+        </tr>
+      );
+    },
+    [organizationMap, profileMap, editRelationship, confirmDelete, onlyMe]
+  );
+
   const relationshipDialog = useCallback(
     () => (
       <Dialog
@@ -203,12 +280,16 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
             getOptionLabel={organization => organization.name ?? ''}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, organization) => {
-              setSelectedRelationship({
-                ...selectedRelationship,
-                organizationId: organization.id
-              });
+              if (organization && organization.inputValue === 'Add new organization') {
+                setOrganizationDialogOpen(true); // Open the dialog to create a new organization
+              } else {
+                setSelectedRelationship({
+                  ...selectedRelationship,
+                  organizationId: organization.id
+                });
+              }
             }}
-            options={organizations}
+            options={[...organizations, { name: 'Add new organization', inputValue: 'Add new organization' }]}
             renderInput={params => (
               <TextField
                 {...params}
@@ -261,40 +342,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         </DialogActions>
       </Dialog>
     ),
-    [relationshipDialogOpen, selectedRelationship]
-  );
-
-  const relationshipRow = useCallback(
-    relationship => {
-      const org = organizationMap[relationship.organizationId];
-      return (
-        <tr key={relationship.id}>
-          {!onlyMe && <td>{profileMap[relationship.memberId].name}</td>}
-          <td>{org.name}</td>
-          <td>{relationship.startDate}</td>
-          <td>{relationship.endDate}</td>
-          <td>
-            <Tooltip title="Edit">
-              <IconButton
-                aria-label="Edit"
-                onClick={() => editRelationship(relationship)}
-              >
-                <Edit />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                aria-label="Delete"
-                onClick={() => confirmDelete(relationship)}
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
-          </td>
-        </tr>
-      );
-    },
-    [organizationMap, profileMap]
+    [relationshipDialogOpen, selectedRelationship, onlyMe, profiles, profileMap, organizationMap, organizations]
   );
 
   const relationshipsTable = useCallback(
@@ -338,7 +386,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         </CardContent>
       </Card>
     ),
-    [relationships, sortAscending, sortColumn]
+    [relationships, sortAscending, sortColumn, relationshipRow]
   );
 
   const relationshipValue = useCallback(
@@ -369,7 +417,10 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       },
       data: selectedRelationship
     });
-    if (res.error) return;
+    if (res.error) {
+      console.error("Error saving relationship", res.error);
+      return;
+    }
 
     const newRel = res.payload.data;
 
@@ -427,6 +478,38 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       {relationshipsTable()}
 
       {relationshipDialog()}
+
+      {/* New Organization Creation Dialog */}
+      <Dialog open={organizationDialogOpen} onClose={() => setOrganizationDialogOpen(false)}>
+        <DialogTitle>Create New Organization</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            fullWidth
+            margin="dense"
+            value={newOrganization.name}
+            onChange={e => setNewOrganization({ ...newOrganization, name: e.target.value })}
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            margin="dense"
+            value={newOrganization.description}
+            onChange={e => setNewOrganization({ ...newOrganization, description: e.target.value })}
+          />
+          <TextField
+            label="Website"
+            fullWidth
+            margin="dense"
+            value={newOrganization.website}
+            onChange={e => setNewOrganization({ ...newOrganization, website: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOrganizationDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleCreateNewOrganization}>Save</Button>
+        </DialogActions>
+      </Dialog>
 
       <ConfirmationDialog
         open={confirmDeleteOpen}

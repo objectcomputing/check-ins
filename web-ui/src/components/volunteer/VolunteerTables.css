@@ -1,3 +1,20 @@
+#organizations {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.volunteer-dialog .MuiDialogContent-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 1rem !important;
+}
+
+.volunteer-dialog .MuiTextField-root {
+  width: 100%;
+}
+
 .volunteer-tables {
   display: flex;
   flex-direction: column;
