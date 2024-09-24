@@ -30,24 +30,28 @@
   td,
   th {
     padding: 0.5rem;
+    color: black; /* Ensures text color remains black */
   }
 
   th {
     background-color: var(--oci-orange);
     border-right: 1px solid var(--oci-light-blue);
   }
+
   th:last-child {
     border-right: none;
-  }
-  .actions-th {
-    width: 6rem;
   }
 
   tr:nth-child(even) {
     background-color: #eee;
   }
+
   tr:nth-child(odd) {
     background-color: #ffffff;
+  }
+
+  .actions-th {
+    width: 6rem;
   }
 
   .warning {
