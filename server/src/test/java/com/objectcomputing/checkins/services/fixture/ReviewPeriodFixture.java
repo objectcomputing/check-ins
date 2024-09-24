@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewStatus;
 
+import java.util.UUID;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -16,7 +17,11 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
     }
 
     default ReviewPeriod createADefaultReviewPeriod(ReviewStatus reviewStatus) {
-        return getReviewPeriodRepository().save(new ReviewPeriod("Period of Time", reviewStatus, null, null,
+        return createADefaultReviewPeriod(reviewStatus, null);
+    }
+
+    default ReviewPeriod createADefaultReviewPeriod(ReviewStatus reviewStatus, UUID templateId) {
+        return getReviewPeriodRepository().save(new ReviewPeriod("Period of Time", reviewStatus, templateId, null,
                 LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS), LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS),
                 LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS)
                 , LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS), LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS)));

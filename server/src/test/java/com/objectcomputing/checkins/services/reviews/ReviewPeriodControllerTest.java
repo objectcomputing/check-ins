@@ -6,11 +6,14 @@ import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.StringUtils;
@@ -52,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class ReviewPeriodControllerTest
         extends TestContainersSuite
-        implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture {
+        implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture {
 
     public static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodControllerTest.class);
 
@@ -506,6 +509,34 @@ class ReviewPeriodControllerTest
                 List.of("SEND_EMAIL", "null", "null", "Review Assignments Awaiting Approval", "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3><a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.", supervisor.getWorkEmail()),
                 emailSender.events.getFirst()
         );
+    }
+
+    @Test
+    void testPUTReviewPeriodOpen() {
+        MemberProfile supervisor = createADefaultSupervisor();
+        FeedbackTemplate template = saveReviewFeedbackTemplate(supervisor.getId());
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(ReviewStatus.AWAITING_APPROVAL, template.getId());
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        reviewPeriod.setReviewStatus(ReviewStatus.OPEN);
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(reviewPeriod, response.body());
+
+        // Check for the feedback request.  There should only be one because
+        // there was a review template, but no self-review template.
+        List<FeedbackRequest> requests = getFeedbackRequests(supervisor);
+        assertEquals(1, requests.size());
+
+        FeedbackRequest feedbackRequest = requests.get(0);
+        assertEquals(member.getId(), feedbackRequest.getRequesteeId());
+        assertEquals(reviewPeriod.getId(), feedbackRequest.getReviewPeriodId());
     }
 
     @Test
