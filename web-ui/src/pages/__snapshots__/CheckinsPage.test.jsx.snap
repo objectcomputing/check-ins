@@ -65,6 +65,30 @@ exports[`renders correctly 1`] = `
                 Current PDL: 
                 <br />
               </p>
+              <button
+                aria-label="Add New Organization"
+                class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+                style="margin-top: 20px;"
+                tabindex="0"
+                type="button"
+              >
+                Add New Organization
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+              <button
+                aria-label="Add New Event"
+                class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+                style="margin-top: 20px; margin-left: 10px;"
+                tabindex="0"
+                type="button"
+              >
+                Add New Event
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -101,8 +125,8 @@ exports[`renders correctly 1`] = `
               <label
                 class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
                 data-shrink="true"
-                for=":r1:"
-                id=":r1:-label"
+                for=":r3:"
+                id=":r3:-label"
               >
                 Check-In Date
               </label>
@@ -114,7 +138,7 @@ exports[`renders correctly 1`] = `
                   aria-label="Choose date, selected date is Oct 21, 2020"
                   autocomplete="off"
                   class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd Mui-readOnly MuiInputBase-readOnly css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
-                  id=":r1:"
+                  id=":r3:"
                   inputmode="text"
                   placeholder="MMMM DD, YYYY @hh:mm aa"
                   readonly=""
