@@ -118,6 +118,7 @@ const Organizations = ({ onlyMe = false }) => {
               <IconButton
                 aria-label="Edit"
                 onClick={() => editOrganization(organization)}
+                style={{ color: 'black' }} // Default for light mode
               >
                 <Edit />
               </IconButton>
@@ -126,6 +127,7 @@ const Organizations = ({ onlyMe = false }) => {
               <IconButton
                 aria-label="Delete"
                 onClick={() => confirmDelete(organization)}
+                style={{ color: 'black' }} // Default for light mode
               >
                 <Delete />
               </IconButton>
@@ -237,6 +239,7 @@ const Organizations = ({ onlyMe = false }) => {
               aria-label="Add Organization"
               classes={{ root: 'add-button' }}
               onClick={addOrganization}
+              style={{ color: 'black' }} // Default for light mode
             >
               <AddCircleOutline />
             </IconButton>
@@ -270,7 +273,7 @@ const Organizations = ({ onlyMe = false }) => {
   const saveOrganization = useCallback(async () => {
     const { id, name, description, website } = selectedOrganization;
     const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
-  
+
     const res = await resolve({
       method: id ? 'PUT' : 'POST',
       url,
@@ -281,11 +284,11 @@ const Organizations = ({ onlyMe = false }) => {
       },
       data: { name, description, website }
     });
-  
+
     if (res.error) return;
-  
+
     const newOrg = res.payload.data;
-  
+
     // Add the organization to both global and user's list
     if (!id) {
       organizations.push(newOrg);
@@ -296,7 +299,6 @@ const Organizations = ({ onlyMe = false }) => {
     setOrganizations([...organizations]);
     setOrganizationDialogOpen(false);
   }, [selectedOrganization]);
-  
 
   const sortOrganizations = useCallback(
     orgs => {

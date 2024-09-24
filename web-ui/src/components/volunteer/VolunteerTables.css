@@ -76,6 +76,17 @@
   }
 }
 
+
+.volunteer-tables .MuiIconButton-root {
+  color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  .volunteer-tables .MuiIconButton-root {
+    color: black;
+  }
+}
+
 .volunteer-dialog {
   [role='dialog'] {
     width: 30rem;
