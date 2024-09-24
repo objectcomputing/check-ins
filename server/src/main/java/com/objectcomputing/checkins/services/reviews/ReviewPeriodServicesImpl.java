@@ -7,13 +7,16 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -130,7 +133,55 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             notifyRevieweeSupervisorsByReviewPeriod(reviewPeriod.getId(), reviewPeriod.getName());
         }
 
-        return reviewPeriodRepository.update(reviewPeriod);
+        // Update the review period and get the updated period.
+        ReviewPeriod period = reviewPeriodRepository.update(reviewPeriod);
+
+        if (period.getReviewStatus() == ReviewStatus.OPEN) {
+            // If the review period has been updated and is now open, we need
+            // to create feedback requests for all involved in the review period
+            Set<ReviewAssignment> assignments =
+                reviewAssignmentRepository.findByReviewPeriodId(period.getId());
+            UUID reviewTemplateId = period.getReviewTemplateId();
+            UUID selfReviewTemplateId = period.getSelfReviewTemplateId();
+            LocalDate closeDate = period.getCloseDate().toLocalDate();
+            LocalDate selfReviewCloseDate =
+                period.getSelfReviewCloseDate().toLocalDate();
+
+            // Log template id's that were not provided to the review period.
+            // This is the reason a feedback request will not be created.
+            if (reviewTemplateId == null) {
+                LOG.warn("Review Period: " + period.getId().toString() +
+                         " does not have a review template.");
+            }
+            if (selfReviewTemplateId == null) {
+                LOG.warn("Review Period: " + period.getId().toString() +
+                         " does not have a self-review template.");
+            }
+
+            for (ReviewAssignment assignment : assignments) {
+                // Determine the creator of this feedback request
+                List<MemberProfile> profile =
+                    memberProfileRepository.findSupervisorsForId(
+                        assignment.getReviewerId());
+                UUID creatorId = profile.isEmpty() ?
+                    assignment.getReviewerId() : profile.get(0).getId();
+
+                // Create the review feedback request.
+                if (reviewTemplateId != null) {
+                    createReviewRequest(assignment, period, creatorId,
+                                        reviewTemplateId, closeDate);
+                }
+
+                // Create the self-review feedback request.
+                if (selfReviewTemplateId != null) {
+                    createReviewRequest(assignment, period, creatorId,
+                                        selfReviewTemplateId,
+                                        selfReviewCloseDate);
+                }
+            }
+        }
+
+        return period;
     }
 
     private void notifyRevieweeSupervisorsByReviewPeriod(UUID reviewPeriodId, String reviewPeriodName) {
@@ -158,4 +209,21 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                 <a href="%s/feedback/reviews?period=%s">Click here</a> to review and approve reviewer assignments in the Check-Ins app.""".formatted(reviewPeriodName, webAddress, reviewPeriodId);
     }
 
+    private void createReviewRequest(ReviewAssignment assignment,
+                                     ReviewPeriod period,
+                                     UUID creatorId,
+                                     UUID templateId,
+                                     LocalDate dueDate) {
+        try {
+            LocalDate sendDate = LocalDate.now();
+            FeedbackRequest request = new FeedbackRequest(
+                creatorId, assignment.getRevieweeId(),
+                assignment.getReviewerId(), templateId, sendDate,
+                dueDate.isAfter(sendDate) ? dueDate : sendDate.plusDays(1),
+                "sent", null, period.getId());
+            feedbackRequestServices.save(request);
+        } catch(Exception ex) {
+            LOG.error(ex.toString());
+        }
+    }
 }
