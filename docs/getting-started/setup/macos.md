@@ -93,15 +93,7 @@ If you haven't already, you will want to [configure git to use ssh for connectin
 
 # Install JDK
 
-JDK is required to build and run the Check-Ins project. You can install JDK in a number of ways, including via Homebrew, SDKMAN, or by downloading the JDK from the [AdoptOpenJDK](https://adoptopenjdk.net/) website.
-
-Intel Macs can install the latest OpenJDK using Homebrew:
-
-```shell
-brew install --cask adoptopenjdk
-```
-
-If you are using an M1 Mac, you can install a specific version of the JDK using SDKMAN. First, install SDKMAN by running the following command:
+JDK is required to build and run the Check-Ins project. You can install a specific version of the JDK using SDKMAN. First, install SDKMAN by running the following command:
 
 ```shell
 curl -s "https://get.sdkman.io" | bash
@@ -112,98 +104,24 @@ Before running the above command, it's recommended you review the script content
 Then, install the JDK with:
 
 ```shell
-sdk install java 21.0.3-tem
-sdk use java 21.0.3-tem
-sdk default java 21.0.3-tem
+sdk install java 21.0.4-tem
+sdk use java 21.0.4-tem
+sdk default java 21.0.4-tem
+```
+
+We also support using [GraalVM Community Edition](https://github.com/oracle/graal/) to build native executables. In order to test the GraalVM-built native executables, you will need to install GraalVM as well:
+
+```shell
+sdk install java 21.0.2-graalce
+```
+
+You can switch to the GraalVM compiler by running:
+
+```shell
+sdk use java 21.0.2-graalce
 ```
 
 Please note JDK `21` is the latest version at the time of writing. See the `.java-version` file in the project root for the version of the JDK required for this project. You will also find versions in `server/Dockerfile`.
-
-# Install jEnv
-
-> Note: If you are using SDKMAN to manage your JDKs, you can skip this section.
-
-jEnv is a version manager for the JDK. It can be installed with Homebrew by running the following on the command line:
-
-```shell
-brew install jenv
-```
-
-As instructed in the `==> Caveats` section of the Homebrew installation output, if your default shell is zsh
-(macOS default) then add the following lines to your `~/.zshrc` file. For bash, add the lines to your `.bash_profile` or
-`.bashrc` file.
-
-```shell
-export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
-```
-
-## Plugins
-
-> Note: If you are using SDKMAN to manage your JDKs, you can skip this section.
-
-If your default shell is zsh (macOS default) then add the following lines to your `~/.zshrc` file. For bash, add the lines
-to your `.bash_profile` or `.bashrc` file.
-
-```shell
-jenv enable-plugin export
-jenv enable-plugin gradle
-jenv enable-plugin maven
-```
-
-## Register JDKs
-
-List your JDKs using:
-
-```shell
-/usr/libexec/java_home -V
-```
-
-This will produce output similar to:
-
-```shell
-Matching Java Virtual Machines (1):
-    14.0.2, x86_64:     "AdoptOpenJDK 14"       /Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home
-```
-
-Create your `.jenv` directories with:
-
-```shell
-mkdir ~/.jenv
-mkdir ~/.jenv/versions
-```
-
-You can register each JDK with `jenv add <your_jdk_path>`. For example:
-
-```shell
-jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home
-```
-
-## Using jEnv
-
-You can list all registered JDKS with:
-
-```shell
-jenv versions
-```
-
-Set the system-wide Java version by doing:
-
-```shell
-jenv global 21.0
-```
-
-Set a project-wide Java version by doing:
-
-```shell
-jenv local 21.0
-```
-
-Set a shell instance Java version by doing:
-
-```shell
-jenv shell 21.0
-```
 
 # Install NVM
 
@@ -212,10 +130,10 @@ jenv shell 21.0
 To install or update NVM, run the following from the command line:
 
 ```shell
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 ```
 
-Where `v0.37.0` is the latest version of NVM at the time of writing. You can find the latest version on the [NVM Releases page](https://github.com/nvm-sh/nvm/releases) on GitHub.
+Where `v0.40.1` is the latest version of NVM at the time of writing. You can find the latest version on the [NVM Releases page](https://github.com/nvm-sh/nvm/releases) on GitHub.
 
 After installing NVM, you will need to restart your terminal or run the following command to start using NVM:
 
@@ -240,15 +158,15 @@ export NVM_DIR="$HOME/.nvm"
 Install and use the correct node version for the project.
 
 ```shell
-nvm install 20.11 #this will download the latest patch version
-nvm use 20.11 #this will use the latest patch version
+nvm install 22.9 #this will download the latest patch version
+nvm use 22.9 #this will use the latest patch version
 ```
 
 If you are not working on other node projects, you may want to set this as your default. Otherwise, you will need to make sure you are using the correct version everytime you restart your terminal.
 To set your default, please use the following:
 
 ```shell
-nvm alias default 20.11 #this will set the latest patch version to default
+nvm alias default 22.9 #this will set the latest patch version to default
 ```
 
 # Install Yarn
