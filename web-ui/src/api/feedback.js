@@ -30,7 +30,6 @@ export const findReviewRequestsByPeriod = async (
     url: feedbackRequestURL,
     params: {
       reviewPeriodId: period?.id,
-      templateId: period?.reviewTemplateId,
     },
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
