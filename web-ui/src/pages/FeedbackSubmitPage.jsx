@@ -5,7 +5,6 @@ import FeedbackSubmitForm from '../components/feedback_submit_form/FeedbackSubmi
 import TeamMemberReview from '../components/reviews/TeamMemberReview';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
-  selectSupervisors,
   selectCsrfToken,
   selectCurrentUser,
   selectProfile
@@ -42,13 +41,20 @@ const FeedbackSubmitPage = () => {
   const history = useHistory();
   const query = queryString.parse(location?.search);
   const requestQuery = query.request?.toString();
+  const selfRequestQuery = query.selfrequest?.toString();
   const [showTips, setShowTips] = useState(true);
   const [feedbackRequest, setFeedbackRequest] = useState(null);
+  const [selfReviewRequest, setSelfReviewRequest] = useState(null);
   const [requestee, setRequestee] = useState(null);
   const [recipient, setRecipient] = useState(null);
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
+
+  function isManager(revieweeProfile) {
+    const supervisorId = revieweeProfile?.supervisorid;
+    return supervisorId === currentUserId;
+  }
 
   useEffect(() => {
     if (!requestQuery) {
@@ -62,13 +68,13 @@ const FeedbackSubmitPage = () => {
       });
     }
 
-    async function getFeedbackRequest(cookie) {
+    async function getFeedbackRequest(query, cookie) {
       if (!currentUserId || !cookie || feedbackRequestFetched.current) {
         return null;
       }
 
       // make call to the API
-      let res = await getFeedbackRequestById(requestQuery, cookie);
+      let res = await getFeedbackRequestById(query, cookie);
       return res.payload &&
         res.payload.data &&
         res.payload.status === 200 &&
@@ -77,32 +83,16 @@ const FeedbackSubmitPage = () => {
         : null;
     }
 
-    function isManager(recipientId) {
-      // See if currentUserId is manager of recipientId.
-      const supervisors = selectSupervisors(state);
-      return supervisors.some(s => s.id === recipientId &&
-                                   s.supervisorid === currentUserId);
-    }
-
     if (
       csrf &&
       currentUserId &&
       requestQuery &&
       !feedbackRequestFetched.current
     ) {
-      getFeedbackRequest(csrf).then(request => {
+      getFeedbackRequest(requestQuery, csrf).then(request => {
         if (request) {
-          if (request.recipientId !== currentUserId &&
-              !isManager(request.recipientId)) {
-            history.push('/checkins');
-            window.snackDispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: 'error',
-                toast: 'You are not authorized to perform this operation.'
-              }
-            });
-          } else if (
+          // Permission to view this feedback request will be checked later.
+          if (
             request.status.toLowerCase() === 'submitted' ||
             request.submitDate
           ) {
@@ -125,6 +115,19 @@ const FeedbackSubmitPage = () => {
         }
       });
     }
+
+    if (
+      csrf &&
+      currentUserId &&
+      selfRequestQuery
+    ) {
+      getFeedbackRequest(selfRequestQuery, csrf).then(request => {
+        if (request) {
+          // Permission to view this feedback request will be checked later.
+          setSelfReviewRequest(request);
+        }
+      });
+    }
   }, [csrf, currentUserId, requestQuery, history]);
 
   useEffect(() => {
@@ -143,9 +146,38 @@ const FeedbackSubmitPage = () => {
         state,
         feedbackRequest?.recipientId
       );
-      setRecipient(recipientProfile);
+
+      // If this is our review or we are the manager of the reviewer we are
+      // allowed to view this review.
+      if (recipientProfile.id != currentUserId &&
+          !isManager(recipientProfile)) {
+        // The current user is not the recipients's manager, we need to leave.
+        history.push('/checkins');
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'You are not authorized to perform this operation.'
+          }
+        });
+      }
     }
-  }, [feedbackRequest, state]);
+
+    if (selfReviewRequest) {
+      const recipientProfile = selectProfile(
+        state,
+        selfReviewRequest?.recipientId
+      );
+      setRecipient(recipientProfile);
+
+      if (!isManager(recipientProfile)) {
+        // The current user is not the recipient's manager, we need to clear
+        // out the self review request so that we do not display something that
+        // we shouldn't, on the next page.
+        setSelfReviewRequest(null);
+      }
+    }
+  }, [feedbackRequest, selfReviewRequest, state]);
 
   return (
     <Root className="feedback-submit-page">
@@ -156,11 +188,12 @@ const FeedbackSubmitPage = () => {
       ) : requestSubmitted ? (
         <TeamMemberReview
           reviews={[feedbackRequest]}
-          memberProfile={recipient}
+          selfReview={selfReviewRequest}
+          memberProfile={recipient ?? requestee}
         />
       ) : (
         <>
-          {feedbackRequestFetched.current &&
+          {feedbackRequest &&
             (showTips ? (
               <FeedbackSubmissionTips onNextClick={() => setShowTips(false)} />
             ) : (

@@ -98,6 +98,7 @@ const TeamMemberReview = ({
   const currentUser = selectCurrentUser(state);
   const theme = useTheme();
   const [value, setValue] = useState(0);
+  const [init, setInit] = useState(true);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
@@ -210,15 +211,10 @@ const TeamMemberReview = ({
   let selfReviewIcon = <HourglassEmptyIcon />;
   if (selfReview && selfReview.status?.toUpperCase() === 'SUBMITTED') {
     selfReviewIcon = <CheckCircleIcon />;
-  }
-
-  function noSelfReviewTitle(memberProfile) {
-    if (memberProfile) {
-      return (<Typography variant="h5">
-                {memberProfile.firstName} has not started their self-review.
-              </Typography>);
-    }
-    return (<Typography variant="h5">No self-review available.</Typography>);
+  } else if (init) {
+    // If there is no self-review, switch to the next tab.
+    setInit(false);
+    setValue(1);
   }
 
   return (
@@ -278,7 +274,8 @@ const TeamMemberReview = ({
                 request={selfReview}
                 reviewOnly={true}
               />
-            ) : ( <>{noSelfReviewTitle(memberProfile)}</>
+            ) : (
+              <Typography variant="h5">No self-review available.</Typography>
             )}
           </TabPanel>
           {reviews &&

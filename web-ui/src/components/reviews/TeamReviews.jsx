@@ -36,7 +36,6 @@ import { styled } from '@mui/material/styles';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { resolve } from '../../api/api.js';
 import {
-  findReviewRequestsByPeriodAndTeamMembers,
   findReviewRequestsByPeriod,
   findSelfReviewRequestsByPeriodAndTeamMembers
 } from '../../api/feedback.js';
@@ -63,6 +62,7 @@ import {
   selectIsAdmin,
   selectReviewPeriod,
   selectSupervisors,
+  selectProfile,
   selectTeamMembersBySupervisorId
 } from '../../context/selectors';
 
@@ -163,10 +163,9 @@ const TeamReviews = ({ onBack, periodId }) => {
     loadAssignments();
   }, [currentMembers]);
 
-  const supervisors = selectSupervisors(state);
-
   useEffect(() => {
     const myId = currentUser?.id;
+    const supervisors = selectSupervisors(state);
     const isManager = supervisors.some(s => s.id === myId);
     const period = selectReviewPeriod(state, periodId);
     if (period) {
@@ -749,15 +748,40 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (reviews && reviews[reviewer.id]) {
       request = reviews[reviewer.id].find((r) => r.requesteeId === member.id);
     }
+    let selfReviewRequest;
+    if (reviews && reviews[member.id]) {
+      selfReviewRequest = reviews[member.id]
+                            .find((r) => r.recipientId === member.id &&
+                                         r.requesteeId === member.id);
+    }
 
-    const statusLabel = reviewer.name + ": " + getReviewStatus(request);
-    const submitted = request?.status == 'submitted';
-    const manages = supervisors.some(s => s.id === request?.recipientId &&
-                                          s.supervisorid == currentUser?.id);
     const variant = "outlined";
-    return (openMode && request &&
-            (reviewer.id == currentUser?.id || (submitted && manages)) ?
-            <Link to={`/feedback/submit?request=${request.id}`}>
+    const statusLabel = reviewer.name + ": " + getReviewStatus(request);
+
+    let url;
+    if (openMode && (request || selfReviewRequest)) {
+      const recipientProfile = selectProfile(state, request?.recipientId);
+      const manages = recipientProfile.supervisorid == currentUser?.id;
+
+      const submitted = request?.status == 'submitted';
+      const selfSubmitted = selfReviewRequest?.status == 'submitted';
+      if (reviewer.id == currentUser?.id ||
+          (manages && (submitted || selfSubmitted))) {
+        let separator = '?';
+        url = "/feedback/submit";
+        if (reviewer.id == currentUser?.id || submitted) {
+          url += `${separator}request=${request.id}`;
+          separator = '&';
+        }
+        if (selfSubmitted) {
+          url += `${separator}selfrequest=${selfReviewRequest.id}`;
+          separator = '&';
+        }
+      }
+    }
+
+    return (url ?
+            <Link to={url}>
             <Chip
               key={reviewer.id}
               label={statusLabel}
@@ -787,6 +811,28 @@ const TeamReviews = ({ onBack, periodId }) => {
         {excess > 0 && <div>and {excess} more </div>}
       </>
     );
+  };
+
+  const renderSelfReviewStatus = member => {
+    const recipientProfile = selectProfile(state, member.id);
+    const manages = recipientProfile.supervisorid == currentUser?.id;
+    if (manages) {
+      let selfReviewRequest;
+      if (reviews && reviews[member.id]) {
+        selfReviewRequest = reviews[member.id]
+                              .find((r) => r.recipientId === member.id &&
+                                           r.requesteeId === member.id);
+      }
+
+      return (
+        <Chip
+          key={member.id}
+          label={"Self-Review: " + getReviewStatus(selfReviewRequest)}
+          variant="outlined"
+        />);
+    } else {
+      return (<></>);
+    }
   };
 
   const approvalButton = () => {
@@ -1046,6 +1092,8 @@ const TeamReviews = ({ onBack, periodId }) => {
               }
             />
             <div className="chip-row">
+              {openMode && renderSelfReviewStatus(member)}
+
               <Typography>Reviewers:</Typography>
               {renderReviewers(member)}
 
