@@ -3,8 +3,9 @@ import { styled } from '@mui/material/styles';
 import { Avatar, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { AppContext } from '../../context/AppContext';
 import { selectProfileMap } from '../../context/selectors';
-import { getAvatarURL, resolve } from '../../api/api.js';
+import { getAvatarURL } from '../../api/api.js';
 import { getMember } from '../../api/member';
+import { saveNewOrganization, saveNewEvent } from '../../api/volunteer'; // Importing the functions from volunteer.js
 
 const PREFIX = 'Profile';
 
@@ -113,44 +114,21 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
   }, [csrf, supervisorid]);
 
   const handleSaveNewOrganization = async () => {
-    const res = await resolve({
-      method: 'POST',
-      url: '/services/volunteer/organization',
-      headers: {
-        'X-CSRF-Header': csrf,
-        'Content-Type': 'application/json'
-      },
-      data: newOrganization
-    });
-
-    if (res.error) {
+    const result = await saveNewOrganization(csrf, newOrganization); // Use the imported API call
+    if (result.error) {
       // Handle error
       return;
     }
-
-    const newOrg = res.payload.data;
     setOrganizationDialogOpen(false);
-    // Optionally, reset newOrganization fields or update the local state
   };
 
   const handleSaveNewEvent = async () => {
-    const res = await resolve({
-      method: 'POST',
-      url: '/services/volunteer/event',
-      headers: {
-        'X-CSRF-Header': csrf,
-        'Content-Type': 'application/json'
-      },
-      data: newEvent
-    });
-
-    if (res.error) {
+    const result = await saveNewEvent(csrf, newEvent); // Use the imported API call
+    if (result.error) {
       // Handle error
       return;
     }
-
     setEventDialogOpen(false);
-    // Optionally, reset newEvent fields or update the local state
   };
 
   // Update to prevent focus/scroll to "Add New" buttons when switching tabs
@@ -210,7 +188,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
             variant="contained"
             onClick={() => setOrganizationDialogOpen(true)}
             style={{ marginTop: '20px' }}
-            aria-label="Add New Organization" // Added aria-label for easy querying
+            aria-label="Add New Organization"
           >
             Add New Organization
           </Button>
@@ -220,7 +198,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
             variant="contained"
             onClick={() => setEventDialogOpen(true)}
             style={{ marginTop: '20px', marginLeft: '10px' }}
-            aria-label="Add New Event" // Added aria-label for easy querying
+            aria-label="Add New Event"
           >
             Add New Event
           </Button>
@@ -271,7 +249,9 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
             onChange={e => setNewEvent({ ...newEvent, eventDate: e.target.value })}
           />
           <TextField
-            label="Hours"
+           
+
+ label="Hours"
             fullWidth
             margin="dense"
             type="number"

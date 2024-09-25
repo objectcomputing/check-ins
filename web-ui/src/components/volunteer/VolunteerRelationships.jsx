@@ -8,18 +8,20 @@ import {
   Card,
   CardContent,
   CardHeader,
+  IconButton,
+  TextField,
+  Tooltip,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Tooltip
+  DialogTitle
 } from '@mui/material';
 
-import { resolve } from '../../api/api.js';
+import { resolve } from '../../api/api';
+import { createNewOrganization } from '../../api/volunteer';  // Importing the new API function
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
+import OrganizationDialog from '../dialogs/OrganizationDialog';  // Importing the new reusable component
 import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
@@ -28,7 +30,6 @@ import {
 } from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 
-const organizationBaseUrl = '/services/volunteer/organization';
 const relationshipBaseUrl = '/services/volunteer/relationship';
 
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
@@ -50,7 +51,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
   const profileMap = selectProfileMap(state);
-  const profiles = Object.values(profileMap);
+  const profiles = Object.values(profileMap).filter(profile => profile && profile.name); // Filter out undefined profiles
   profiles.sort((a, b) => a.name.localeCompare(b.name));
 
   const sortableTableColumns = ['Organization', 'Start Date', 'End Date'];
@@ -59,7 +60,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const loadOrganizations = useCallback(async () => {
     const res = await resolve({
       method: 'GET',
-      url: organizationBaseUrl,
+      url: '/services/volunteer/organization',
       headers: {
         'X-CSRF-Header': csrf,
         Accept: 'application/json',
@@ -68,8 +69,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     });
     if (res.error) return;
 
-    const organizations = res.payload.data;
-    organizations.sort((org1, org2) => org1.name.localeCompare(org2.name));
+    const organizations = res.payload.data || [];
+    organizations.sort((org1, org2) => (org1.name || '').localeCompare(org2.name || ''));
     setOrganizations(organizations);
     setOrganizationMap(
       organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
@@ -90,11 +91,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     });
     if (res.error) return;
 
-    const relationships = res.payload.data;
+    const relationships = res.payload.data || [];
     relationships.sort((rel1, rel2) => {
       const member1 = profileMap[rel1.memberId];
       const member2 = profileMap[rel2.memberId];
-      return member1.name.localeCompare(member2.name);
+      return (member1?.name || '').localeCompare(member2?.name || '');
     });
     setRelationships(relationships);
   }, [organizationMap]);
@@ -133,6 +134,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteRelationship = useCallback(async relationship => {
+    if (!relationship) return;
     relationship.active = false;
     const res = await resolve({
       method: 'PUT',
@@ -164,30 +166,20 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   };
 
   const handleCreateNewOrganization = async () => {
-    // Add check for empty name or description
     if (!newOrganization.name || !newOrganization.description) {
       console.error('Organization name and description are required.');
       return;
     }
-    
-    const res = await resolve({
-      method: 'POST',
-      url: organizationBaseUrl,
-      headers: {
-        'X-CSRF-Header': csrf,
-        'Content-Type': 'application/json'
-      },
-      data: newOrganization
-    });
+
+    const res = await createNewOrganization(csrf, newOrganization);  // Call the API function
 
     if (res.error) {
-      console.error("Error saving new organization", res.error);
+      console.error('Error saving new organization', res.error);
       return;
     }
 
     const newOrg = res.payload.data;
-    
-    // Defensive check to ensure newOrg is defined
+
     if (newOrg && newOrg.name) {
       setOrganizations([...organizations, newOrg]); // Add new organization to the list
       setOrganizationMap({ ...organizationMap, [newOrg.id]: newOrg });
@@ -252,7 +244,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           {!onlyMe && (
             <Autocomplete
               disableClearable
-              getOptionLabel={profile => profile.name ?? ''}
+              getOptionLabel={profile => profile?.name ?? ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(event, profile) => {
                 setSelectedRelationship({
@@ -277,7 +269,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           )}
           <Autocomplete
             disableClearable
-            getOptionLabel={organization => organization.name ?? ''}
+            getOptionLabel={organization => organization?.name ?? ''}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, organization) => {
               if (organization && organization.inputValue === 'Add new organization') {
@@ -479,37 +471,13 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
       {relationshipDialog()}
 
-      {/* New Organization Creation Dialog */}
-      <Dialog open={organizationDialogOpen} onClose={() => setOrganizationDialogOpen(false)}>
-        <DialogTitle>Create New Organization</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Name"
-            fullWidth
-            margin="dense"
-            value={newOrganization.name}
-            onChange={e => setNewOrganization({ ...newOrganization, name: e.target.value })}
-          />
-          <TextField
-            label="Description"
-            fullWidth
-            margin="dense"
-            value={newOrganization.description}
-            onChange={e => setNewOrganization({ ...newOrganization, description: e.target.value })}
-          />
-          <TextField
-            label="Website"
-            fullWidth
-            margin="dense"
-            value={newOrganization.website}
-            onChange={e => setNewOrganization({ ...newOrganization, website: e.target.value })}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOrganizationDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleCreateNewOrganization}>Save</Button>
-        </DialogActions>
-      </Dialog>
+      <OrganizationDialog
+        open={organizationDialogOpen}
+        onClose={() => setOrganizationDialogOpen(false)}
+        onSave={handleCreateNewOrganization}
+        organization={newOrganization}
+        setOrganization={setNewOrganization}
+      />
 
       <ConfirmationDialog
         open={confirmDeleteOpen}
