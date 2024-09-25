@@ -44,7 +44,7 @@ export default function SkeletonLoader({ type, delay = 300 }) {
   }, [delay]);
 
   if (!showSkeleton) {
-    return null; // Do not render the skeleton if the delay hasn't passed
+    return null; // Do not render the skeleton if the delay has not passed
   }
 
   if (type === 'team' || type === 'guild') {
