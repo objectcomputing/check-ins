@@ -246,8 +246,7 @@ const Organizations = ({ onlyMe = false }) => {
           </div>
           {onlyMe && (
             <p className="warning">
-              You can add organizations, but they can only be edited and deleted
-              by an admin user.
+              The administrator will edit and delete organizations to ensure accuracy.
             </p>
           )}
         </CardContent>
