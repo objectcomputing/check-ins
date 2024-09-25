@@ -199,7 +199,7 @@ const FeedbackSubmitForm = ({
           </Typography>
         </div>
       )}
-      {isReviewing && (
+      {!isReviewing && (
         <Alert className={classes.warning} severity="warning">
           <AlertTitle>Notice!</AlertTitle>
           Feedback is not anonymous, and can be seen by more than just the
