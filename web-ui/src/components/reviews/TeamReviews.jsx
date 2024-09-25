@@ -761,8 +761,8 @@ const TeamReviews = ({ onBack, periodId }) => {
     let url;
     if (openMode && (request || selfReviewRequest)) {
       const recipientProfile = selectProfile(state, request?.recipientId);
-      const manages = recipientProfile.id === currentUser?.id ||
-                      recipientProfile.supervisorid === currentUser?.id;
+      const manages = recipientProfile?.id === currentUser?.id ||
+                      recipientProfile?.supervisorid === currentUser?.id;
 
       const submitted = request?.status == 'submitted';
       const selfSubmitted = selfReviewRequest?.status == 'submitted';
@@ -801,7 +801,13 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const REVIEWER_LIMIT = 2;
   const renderReviewers = member => {
-    let reviewers = getReviewers(member);
+    // Sort the list of reviewers such that the current user comes first.
+    // In the event that the number of reviewers exceeds the limit, we need
+    // to ensure that the current user is still visible so that the chip
+    // link can be created (if in the open mode) in renderReviewer().
+    let reviewers = getReviewers(member).sort((l, r) =>
+      (l.id === currentUser?.id ? -1 : (r.id === currentUser?.id ? 1 : 0))
+    );
     const count = reviewers.length;
     const excess = count - REVIEWER_LIMIT;
     if (excess > 0) reviewers = reviewers.slice(0, REVIEWER_LIMIT);
