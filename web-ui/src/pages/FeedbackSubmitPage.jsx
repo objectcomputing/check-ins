@@ -57,7 +57,7 @@ const FeedbackSubmitPage = () => {
   }
 
   useEffect(() => {
-    if (!requestQuery) {
+    if (!requestQuery && !selfRequestQuery) {
       history.push('/checkins');
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -149,7 +149,7 @@ const FeedbackSubmitPage = () => {
 
       // If this is our review or we are the manager of the reviewer we are
       // allowed to view this review.
-      if (recipientProfile.id != currentUserId &&
+      if (recipientProfile?.id != currentUserId &&
           !isManager(recipientProfile)) {
         // The current user is not the recipients's manager, we need to leave.
         history.push('/checkins');
@@ -185,7 +185,7 @@ const FeedbackSubmitPage = () => {
         <Typography className={classes.announcement} variant="h3">
           This feedback request has been canceled.
         </Typography>
-      ) : requestSubmitted ? (
+      ) : requestSubmitted || selfReviewRequest ? (
         <TeamMemberReview
           reviews={[feedbackRequest]}
           selfReview={selfReviewRequest}

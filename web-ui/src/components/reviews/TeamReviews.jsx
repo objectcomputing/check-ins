@@ -761,15 +761,15 @@ const TeamReviews = ({ onBack, periodId }) => {
     let url;
     if (openMode && (request || selfReviewRequest)) {
       const recipientProfile = selectProfile(state, request?.recipientId);
-      const manages = recipientProfile.supervisorid == currentUser?.id;
+      const manages = recipientProfile.id === currentUser?.id ||
+                      recipientProfile.supervisorid === currentUser?.id;
 
       const submitted = request?.status == 'submitted';
       const selfSubmitted = selfReviewRequest?.status == 'submitted';
-      if (reviewer.id == currentUser?.id ||
-          (manages && (submitted || selfSubmitted))) {
+      if (manages && (submitted || selfSubmitted)) {
         let separator = '?';
         url = "/feedback/submit";
-        if (reviewer.id == currentUser?.id || submitted) {
+        if (submitted) {
           url += `${separator}request=${request.id}`;
           separator = '&';
         }
