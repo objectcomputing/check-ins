@@ -212,6 +212,15 @@ const TeamMemberReview = ({
     selfReviewIcon = <CheckCircleIcon />;
   }
 
+  function noSelfReviewTitle(memberProfile) {
+    if (memberProfile) {
+      return (<Typography variant="h5">
+                {memberProfile.firstName} has not started their self-review.
+              </Typography>);
+    }
+    return (<Typography variant="h5">No self-review available.</Typography>);
+  }
+
   return (
     <Root>
       <Box sx={{ bgcolor: 'background.paper', width: '100%' }}>
@@ -223,6 +232,15 @@ const TeamMemberReview = ({
             textColor="inherit"
             variant="fullWidth"
           >
+            <Tab
+              icon={selfReviewIcon}
+              label={
+                memberProfile?.firstName
+                  ? memberProfile?.firstName + "'s Self-Review"
+                  : 'Self-Review'
+              }
+              {...a11yProps(0)}
+            />
             {reviews &&
               reviews.map((review, index) => {
                 const reviewer = review?.recipientId == memberProfile?.id ?
@@ -240,7 +258,7 @@ const TeamMemberReview = ({
                 }
 
                 return (
-                  <Tab icon={icon} label={label} {...a11yProps(index)} />
+                  <Tab icon={icon} label={label} {...a11yProps(index + 1)} />
                 );
               })}
           </Tabs>
@@ -250,6 +268,19 @@ const TeamMemberReview = ({
           index={value}
           onChangeIndex={handleChangeIndex}
         >
+          <TabPanel value={value} index={0} dir={theme.direction}>
+            {selfReview && selfReview.id ? (
+              <FeedbackSubmitForm
+                requesteeName={
+                  memberProfile?.firstName + ' ' + memberProfile?.lastName
+                }
+                requestId={selfReview?.id}
+                request={selfReview}
+                reviewOnly={true}
+              />
+            ) : ( <>{noSelfReviewTitle(memberProfile)}</>
+            )}
+          </TabPanel>
           {reviews &&
             reviews.map((review, index) => {
               const reviewer = selectProfile(state, review?.recipientId);
@@ -265,7 +296,7 @@ const TeamMemberReview = ({
               }
 
               return (
-                <TabPanel value={value} index={index} dir={theme.direction}>
+                <TabPanel value={value} index={index + 1} dir={theme.direction}>
                   {review && review.status?.toUpperCase() !== 'SUBMITTED' && (
                     <div className={classes.buttonRow}>
                       <Button
