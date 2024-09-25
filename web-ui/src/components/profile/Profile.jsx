@@ -53,7 +53,7 @@ const Root = styled('div')(() => ({
   }
 }));
 
-const Profile = ({ memberId, pdlId, checkinPdlId }) => {
+const Profile = ({ memberId, pdlId, checkinPdlId, showButtons = true }) => { // Add showButtons prop with default as true
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const userProfile = selectProfileMap(state)[memberId];
@@ -131,19 +131,6 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
     setEventDialogOpen(false);
   };
 
-  // Update to prevent focus/scroll to "Add New" buttons when switching tabs
-  useEffect(() => {
-    const addNewOrgButton = document.querySelector('button[aria-label="Add New Organization"]');
-    if (addNewOrgButton) {
-      addNewOrgButton.blur(); // Ensure the button isn't focused
-    }
-
-    const addNewEventButton = document.querySelector('button[aria-label="Add New Event"]');
-    if (addNewEventButton) {
-      addNewEventButton.blur(); // Ensure the button isn't focused
-    }
-  }, [organizationDialogOpen, eventDialogOpen]); // Run this effect when opening/closing dialogs
-
   return (
     <Root className={classes.flexRow}>
       <Avatar
@@ -183,25 +170,28 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
             {checkinPdl && !areSamePdls && `PDL @ Time of Check-In: ${checkinPdl}`}
           </Typography>
 
-          {/* Button to Add Organization */}
-          <Button
-            variant="contained"
-            onClick={() => setOrganizationDialogOpen(true)}
-            style={{ marginTop: '20px' }}
-            aria-label="Add New Organization"
-          >
-            Add New Organization
-          </Button>
+          {/* Conditionally render the buttons based on showButtons prop */}
+          {showButtons && (
+            <>
+              <Button
+                variant="contained"
+                onClick={() => setOrganizationDialogOpen(true)}
+                style={{ marginTop: '20px' }}
+                aria-label="Add New Organization"
+              >
+                Add New Organization
+              </Button>
 
-          {/* Button to Add Event */}
-          <Button
-            variant="contained"
-            onClick={() => setEventDialogOpen(true)}
-            style={{ marginTop: '20px', marginLeft: '10px' }}
-            aria-label="Add New Event"
-          >
-            Add New Event
-          </Button>
+              <Button
+                variant="contained"
+                onClick={() => setEventDialogOpen(true)}
+                style={{ marginTop: '20px', marginLeft: '10px' }}
+                aria-label="Add New Event"
+              >
+                Add New Event
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -249,9 +239,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
             onChange={e => setNewEvent({ ...newEvent, eventDate: e.target.value })}
           />
           <TextField
-           
-
- label="Hours"
+            label="Hours"
             fullWidth
             margin="dense"
             type="number"

@@ -123,7 +123,16 @@ const Personnel = () => {
         createEntry(person, selectMostRecentCheckin(state, person.id), null)
       );
     } else {
-      return [];
+      // If no personnel, show the filler message
+      return (
+        <ListItem>
+          <ListItemText
+            primary={
+              <em>Your assigned development partners are shown here.</em>
+            }
+          />
+        </ListItem>
+      );
     }
   };
 
