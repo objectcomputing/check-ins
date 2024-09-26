@@ -425,7 +425,7 @@ const TeamReviews = ({ onBack, periodId }) => {
           type: UPDATE_TOAST,
           payload: {
             severity: 'error',
-            toast: 'Error updating review period'
+            toast: res?.error?.message ?? 'Error updating review period'
           }
         });
       }
@@ -441,8 +441,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Clear dates that are not correctly ordered.
     const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
     const closeDate = new Date(period.closeDate);
+    const periodStartDate = new Date(period.periodStartDate);
     if (selfReviewCloseDate <= newDate) newPeriod.selfReviewCloseDate = null;
     if (closeDate <= newDate) newPeriod.closeDate = null;
+    if (periodStartDate >= newDate) newPeriod.periodStartDate = null;
 
     updateReviewPeriodDates(newPeriod);
   };
@@ -469,8 +471,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Clear dates that are not correctly ordered.
     const launchDate = new Date(period.launchDate);
     const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    const periodEndDate = new Date(period.periodEndDate);
     if (launchDate >= newDate) newPeriod.launchDate = null;
     if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+    if (periodEndDate > newDate) newPeriod.periodEndDate = null;
 
     updateReviewPeriodDates(newPeriod);
   };
@@ -494,7 +498,9 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     // Clear dates that are not correctly ordered.
     const periodStartDate = new Date(period.periodStartDate);
+    const closeDate = new Date(period.closeDate);
     if (newDate < periodStartDate) newPeriod.periodStartDate = null;
+    if (newDate > closeDate) newPeriod.closeDate = null;
 
     updateReviewPeriodDates(newPeriod);
   };
@@ -529,23 +535,13 @@ const TeamReviews = ({ onBack, periodId }) => {
     };
 
     const getReviewRequests = async () => {
-      const res = await findReviewRequestsByPeriod(
-        period,
-        csrf
-      );
-      let data =
-        res &&
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
-      if (data && data.length > 0) {
-        data = data.filter(
-          review => 'CANCELED' !== review?.status?.toUpperCase()
-        );
-        data.forEach(request => {
+      const res = await findReviewRequestsByPeriod(period, csrf);
+      const data = res?.payload?.status === 200 && !res.error ?
+                          res.payload.data : null;
+
+      if (data?.length) {
+        data.filter(review => review?.status?.toUpperCase() !== 'CANCELED')
+            .forEach(request => {
           if (!newReviews[request.recipientId]) {
             newReviews[request.recipientId] = [];
           }
@@ -606,7 +602,12 @@ const TeamReviews = ({ onBack, periodId }) => {
         url: `${reviewAssignmentsUrl}/${id}`,
         headers: { 'X-CSRF-Header': csrf }
       });
-      if (res.error) return;
+
+      if (res.error) {
+        console.error('Error deleting assignment:', res.error);
+        return;
+      }
+
       setAssignments(assignments.filter(a => a.id !== id));
     } else {
       // This reviewer does not have an assignment id.  Therefore, we just
@@ -739,25 +740,22 @@ const TeamReviews = ({ onBack, periodId }) => {
     return reviewer && reviewer.approved;
   };
 
-  const renderReviewer = (member, reviewer) => {
-    const backgroundColor = reviewer.approved ?
-                              'var(--checkins-palette-action-green)' :
-                              'var(--checkins-palette-action-yellow)';
-
-    let request;
+  const getReviewRequest = (member, reviewer) => {
     if (reviews && reviews[reviewer.id]) {
-      request = reviews[reviewer.id].find((r) => r.requesteeId === member.id);
+      return reviews[reviewer.id].find((r) => r.requesteeId === member.id);
     }
-    let selfReviewRequest;
+    return null;
+  };
+
+  const getSelfReviewRequest = (member) => {
     if (reviews && reviews[member.id]) {
-      selfReviewRequest = reviews[member.id]
-                            .find((r) => r.recipientId === member.id &&
-                                         r.requesteeId === member.id);
+      return reviews[member.id].find((r) => r.recipientId === member.id &&
+                                            r.requesteeId === member.id);
     }
+    return null;
+  };
 
-    const variant = "outlined";
-    const statusLabel = reviewer.name + ": " + getReviewStatus(request);
-
+  const getReviewerURL = (request, selfReviewRequest) => {
     let url;
     if (openMode && (request || selfReviewRequest)) {
       const recipientProfile = selectProfile(state, request?.recipientId);
@@ -779,6 +777,18 @@ const TeamReviews = ({ onBack, periodId }) => {
         }
       }
     }
+    return url;
+  };
+
+  const renderReviewer = (member, reviewer) => {
+    const backgroundColor = reviewer.approved ?
+                              'var(--checkins-palette-action-green)' :
+                              'var(--checkins-palette-action-yellow)';
+    const request = getReviewRequest(member, reviewer);
+    const selfReviewRequest = getSelfReviewRequest(member);
+    const variant = 'outlined';
+    const statusLabel = `${reviewer.name}: ${getReviewStatus(request)}`;
+    const url = getReviewerURL(request, selfReviewRequest);
 
     return (url ?
             <Link to={url}>
@@ -823,13 +833,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     const recipientProfile = selectProfile(state, member.id);
     const manages = recipientProfile.supervisorid == currentUser?.id;
     if (manages) {
-      let selfReviewRequest;
-      if (reviews && reviews[member.id]) {
-        selfReviewRequest = reviews[member.id]
-                              .find((r) => r.recipientId === member.id &&
-                                           r.requesteeId === member.id);
-      }
-
+      const selfReviewRequest = getSelfReviewRequest(member);
       return (
         <Chip
           key={member.id}
