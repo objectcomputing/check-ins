@@ -7,13 +7,17 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -69,6 +73,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                 throw new AlreadyExistsException(String.format("Review Period \"%s\" already exists.", reviewPeriod.getName()));
             }
 
+            validateDates(reviewPeriod);
             newPeriod = reviewPeriodRepository.save(reviewPeriod);
         }
         return newPeriod;
@@ -126,11 +131,75 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             throw new BadArgException(String.format("Invalid status transition from %s to %s", currentStatus, newStatus));
         }
 
+        if (newStatus == ReviewStatus.OPEN) {
+            // Ensure that the launch date is in the future.
+            LocalDateTime launchDate = reviewPeriod.getLaunchDate();
+            if (launchDate == null) {
+                throw new BadArgException("Cannot open a review period without a launch date.");
+            }
+            if (launchDate.isBefore(LocalDateTime.now())) {
+                throw new BadArgException("Cannot open a review period with a launch date in the past.");
+            }
+        }
+
+        validateDates(reviewPeriod);
+
         if (newStatus == ReviewStatus.AWAITING_APPROVAL) {
             notifyRevieweeSupervisorsByReviewPeriod(reviewPeriod.getId(), reviewPeriod.getName());
         }
 
-        return reviewPeriodRepository.update(reviewPeriod);
+        // Update the review period and get the updated period.
+        ReviewPeriod period = reviewPeriodRepository.update(reviewPeriod);
+
+        if (period.getReviewStatus() == ReviewStatus.OPEN) {
+            // If the review period has been updated and is now open, we need
+            // to create feedback requests for all involved in the review period
+            Set<ReviewAssignment> assignments =
+                reviewAssignmentRepository.findByReviewPeriodId(period.getId());
+            UUID reviewTemplateId = period.getReviewTemplateId();
+            UUID selfReviewTemplateId = period.getSelfReviewTemplateId();
+            LocalDate closeDate = period.getCloseDate().toLocalDate();
+            LocalDate selfReviewCloseDate =
+                period.getSelfReviewCloseDate().toLocalDate();
+
+            // Log template id's that were not provided to the review period.
+            // This is the reason a feedback request will not be created.
+            if (reviewTemplateId == null) {
+                LOG.warn("Review Period: " + period.getId().toString() +
+                         " does not have a review template.");
+            }
+            if (selfReviewTemplateId == null) {
+                LOG.warn("Review Period: " + period.getId().toString() +
+                         " does not have a self-review template.");
+            }
+
+            Set<UUID> selfRevieweeIds = new HashSet<>();
+            for (ReviewAssignment assignment : assignments) {
+                // This person is being reviewed and will need a self-review
+                // request.
+                selfRevieweeIds.add(assignment.getRevieweeId());
+
+                // Create the review feedback request.
+                if (reviewTemplateId != null) {
+                    createReviewRequest(
+                        period, findCreatorId(assignment.getReviewerId()),
+                        assignment.getRevieweeId(), assignment.getReviewerId(),
+                        reviewTemplateId, closeDate);
+                }
+            }
+
+            if (selfReviewTemplateId != null) {
+                for(UUID memberId : selfRevieweeIds) {
+                    // Create the self-review feedback request.
+                    createReviewRequest(period, findCreatorId(memberId),
+                                        memberId, memberId,
+                                        selfReviewTemplateId,
+                                        selfReviewCloseDate);
+                }
+            }
+        }
+
+        return period;
     }
 
     private void notifyRevieweeSupervisorsByReviewPeriod(UUID reviewPeriodId, String reviewPeriodName) {
@@ -158,4 +227,61 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                 <a href="%s/feedback/reviews?period=%s">Click here</a> to review and approve reviewer assignments in the Check-Ins app.""".formatted(reviewPeriodName, webAddress, reviewPeriodId);
     }
 
+    private void validateDates(ReviewPeriod period) {
+        // Check the self-review close date.
+        LocalDateTime launchDate = period.getLaunchDate();
+        LocalDateTime selfReviewCloseDate = period.getSelfReviewCloseDate();
+        if (launchDate != null && selfReviewCloseDate != null &&
+            !selfReviewCloseDate.isAfter(launchDate)) {
+            throw new BadArgException("The review period self-review close date must be after the launch date.");
+        }
+
+        // Check the close date.
+        LocalDateTime closeDate = period.getCloseDate();
+        if (closeDate != null && selfReviewCloseDate != null &&
+            !closeDate.isAfter(selfReviewCloseDate)) {
+            throw new BadArgException("The review period close date must be after the self-review close date.");
+        }
+
+        // Check the period start date.
+        LocalDateTime startDate = period.getPeriodStartDate();
+        if (startDate != null && launchDate != null &&
+            !startDate.isBefore(launchDate)) {
+            throw new BadArgException("The review period start date must be before the launch date.");
+        }
+
+        // Check the period end date.
+        LocalDateTime endDate = period.getPeriodEndDate();
+        if (endDate != null && startDate != null &&
+            !endDate.isAfter(startDate)) {
+            throw new BadArgException("The review period end date must be after the start date.");
+        }
+        if (endDate != null && closeDate != null &&
+            endDate.isAfter(closeDate)) {
+            throw new BadArgException("The review period end date must be on or before the close date.");
+        }
+    }
+
+    private UUID findCreatorId(UUID memberId) {
+        List<MemberProfile> profile =
+            memberProfileRepository.findSupervisorsForId(memberId);
+        return profile.isEmpty() ? memberId : profile.get(0).getId();
+    }
+
+    private void createReviewRequest(ReviewPeriod period,
+                                     UUID creatorId,
+                                     UUID revieweeId,
+                                     UUID reviewerId,
+                                     UUID templateId,
+                                     LocalDate dueDate) {
+        try {
+            LocalDate sendDate = LocalDate.now();
+            FeedbackRequest request = new FeedbackRequest(
+                creatorId, revieweeId, reviewerId, templateId, sendDate,
+                dueDate, "sent", null, period.getId());
+            feedbackRequestServices.save(request);
+        } catch(Exception ex) {
+            LOG.error(ex.toString());
+        }
+    }
 }

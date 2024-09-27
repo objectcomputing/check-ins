@@ -6,11 +6,15 @@ import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.StringUtils;
@@ -52,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class ReviewPeriodControllerTest
         extends TestContainersSuite
-        implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture {
+        implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture {
 
     public static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodControllerTest.class);
 
@@ -187,14 +191,20 @@ class ReviewPeriodControllerTest
 
     @Test
     void testReviewPeriodCreateDTOSerialization() throws JsonProcessingException {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
         reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
-        reviewPeriodCreateDTO.setLaunchDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setSelfReviewCloseDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setCloseDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setPeriodStartDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setPeriodEndDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setLaunchDate(launchDate);
+        reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
+        reviewPeriodCreateDTO.setCloseDate(closeDate);
+        reviewPeriodCreateDTO.setPeriodStartDate(startDate);
+        reviewPeriodCreateDTO.setPeriodEndDate(endDate);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         String expectedLaunchDateFormat = formatter.format(reviewPeriodCreateDTO.getLaunchDate());
@@ -509,6 +519,34 @@ class ReviewPeriodControllerTest
     }
 
     @Test
+    void testPUTReviewPeriodOpen() {
+        MemberProfile supervisor = createADefaultSupervisor();
+        FeedbackTemplate template = saveReviewFeedbackTemplate(supervisor.getId());
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(ReviewStatus.AWAITING_APPROVAL, template.getId());
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        reviewPeriod.setReviewStatus(ReviewStatus.OPEN);
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(reviewPeriod, response.body());
+
+        // Check for the feedback request.  There should only be one because
+        // there was a review template, but no self-review template.
+        List<FeedbackRequest> requests = getFeedbackRequests(supervisor);
+        assertEquals(1, requests.size());
+
+        FeedbackRequest feedbackRequest = requests.get(0);
+        assertEquals(member.getId(), feedbackRequest.getRequesteeId());
+        assertEquals(reviewPeriod.getId(), feedbackRequest.getReviewPeriodId());
+    }
+
+    @Test
     void testReviewPeriodSerialization() throws JsonProcessingException {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
@@ -647,5 +685,126 @@ class ReviewPeriodControllerTest
                 "Review Period %s has associated feedback requests and cannot be deleted".formatted(reviewPeriod.getId()),
                 responseException.getMessage()
         );
+    }
+
+    @Test
+    void testOpenAReviewPeriodWithBadLaunchTime() {
+        LocalDateTime launchDate = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+        ReviewPeriod period = getReviewPeriodRepository().save(
+            new ReviewPeriod("Good Times, Bad Times",
+                             ReviewStatus.AWAITING_APPROVAL, null, null,
+                             launchDate, selfReviewCloseDate, closeDate,
+                             startDate, endDate));
+
+        period.setReviewStatus(ReviewStatus.OPEN);
+        assertThrows(
+            BadArgException.class,
+            () -> reviewPeriodServices.update(period),
+            "Expected ReviewPeriodServices.update() to throw, but it didn't"
+        );
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadSelfReviewCloseDate() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.minusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+        BadArgException exception = assertThrows(
+            BadArgException.class,
+            () -> reviewPeriodServices.save(
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate)),
+           "Expected ReviewPeriodServices.save() to throw, but it didn't"
+        );
+        assertTrue(exception.getMessage()
+                            .contains("self-review close date must be after"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadCloseDate() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = launchDate.minusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+        BadArgException exception = assertThrows(
+            BadArgException.class,
+            () -> reviewPeriodServices.save(
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate)),
+           "Expected ReviewPeriodServices.save() to throw, but it didn't"
+        );
+        assertTrue(exception.getMessage()
+                            .contains("close date must be after"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadStartDate() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate;
+        LocalDateTime endDate = closeDate.minusDays(1);
+        BadArgException exception = assertThrows(
+            BadArgException.class,
+            () -> reviewPeriodServices.save(
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate)),
+           "Expected ReviewPeriodServices.save() to throw, but it didn't"
+        );
+        assertTrue(exception.getMessage()
+                            .contains("start date must be before"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadEndDate1() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = startDate;
+        BadArgException exception = assertThrows(
+            BadArgException.class,
+            () -> reviewPeriodServices.save(
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate)),
+           "Expected ReviewPeriodServices.save() to throw, but it didn't"
+        );
+        assertTrue(exception.getMessage()
+                            .contains("end date must be after"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadEndDate2() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.plusDays(1);
+        BadArgException exception = assertThrows(
+            BadArgException.class,
+            () -> reviewPeriodServices.save(
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate)),
+           "Expected ReviewPeriodServices.save() to throw, but it didn't"
+        );
+        assertTrue(exception.getMessage()
+                            .contains("end date must be on or before"));
     }
 }
