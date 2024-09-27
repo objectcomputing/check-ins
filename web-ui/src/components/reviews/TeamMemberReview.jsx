@@ -98,6 +98,7 @@ const TeamMemberReview = ({
   const currentUser = selectCurrentUser(state);
   const theme = useTheme();
   const [value, setValue] = useState(0);
+  const [init, setInit] = useState(true);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
@@ -208,8 +209,12 @@ const TeamMemberReview = ({
   );
 
   let selfReviewIcon = <HourglassEmptyIcon />;
-  if (selfReview?.status.toUpperCase() === 'SUBMITTED') {
+  if (selfReview && selfReview.status?.toUpperCase() === 'SUBMITTED') {
     selfReviewIcon = <CheckCircleIcon />;
+  } else if (init) {
+    // If there is no self-review, switch to the next tab.
+    setInit(false);
+    setValue(1);
   }
 
   return (
@@ -223,7 +228,7 @@ const TeamMemberReview = ({
             textColor="inherit"
             variant="fullWidth"
           >
-            <Tab
+            {selfReview && selfReview.id && (<Tab
               icon={selfReviewIcon}
               label={
                 memberProfile?.firstName
@@ -231,10 +236,15 @@ const TeamMemberReview = ({
                   : 'Self-Review'
               }
               {...a11yProps(0)}
-            />
+            />)}
             {reviews &&
               reviews.map((review, index) => {
-                const reviewer = selectProfile(state, review?.recipientId);
+                if (!review) {
+                  return (<></>);
+                }
+                const reviewer = review.recipientId == memberProfile?.id ?
+                                 memberProfile :
+                                 selectProfile(state, review.recipientId);
                 let label = reviewer?.firstName + "'s Review";
 
                 if (reviewer?.id === currentUser?.id) {
@@ -242,7 +252,7 @@ const TeamMemberReview = ({
                 }
 
                 let icon = <HourglassEmptyIcon />;
-                if (review?.status.toUpperCase() === 'SUBMITTED') {
+                if (review.status.toUpperCase() === 'SUBMITTED') {
                   icon = <CheckCircleIcon />;
                 }
 
@@ -257,38 +267,33 @@ const TeamMemberReview = ({
           index={value}
           onChangeIndex={handleChangeIndex}
         >
+          {selfReview && selfReview.id && (
           <TabPanel value={value} index={0} dir={theme.direction}>
-            {selfReview && selfReview.id ? (
-              <FeedbackSubmitForm
-                requesteeName={
-                  memberProfile?.firstName + ' ' + memberProfile?.lastName
-                }
-                requestId={selfReview?.id}
-                request={selfReview}
-                reviewOnly={true}
-              />
-            ) : (
-              <Typography variant="h5">
-                {memberProfile?.firstName} has not started their self-review.
-              </Typography>
-            )}
+            <FeedbackSubmitForm
+              requesteeName={
+                memberProfile?.firstName + ' ' + memberProfile?.lastName
+              }
+              requestId={selfReview?.id}
+              request={selfReview}
+              reviewOnly={true}
+            />
           </TabPanel>
+          )}
           {reviews &&
             reviews.map((review, index) => {
-              const reviewer = selectProfile(state, review?.recipientId);
-              const requesteeName = memberProfile?.name;
-
-              let readOnly = true;
-              if (
-                reviewer?.id === currentUser?.id &&
-                'SUBMITTED' !== review?.status?.toUpperCase()
-              ) {
-                readOnly = false;
+              if (!review) {
+                return (<></>);
               }
+
+              const reviewer = selectProfile(state, review.recipientId);
+              const requestee = selectProfile(state, review.requesteeId);
+              const requesteeName = requestee?.name;
+              const readOnly = (reviewer?.id !== currentUser?.id ||
+                                review.status?.toUpperCase() === 'SUBMITTED');
 
               return (
                 <TabPanel value={value} index={index + 1} dir={theme.direction}>
-                  {review?.status.toUpperCase() !== 'SUBMITTED' && (
+                  {review && review.status?.toUpperCase() !== 'SUBMITTED' && (
                     <div className={classes.buttonRow}>
                       <Button
                         onClick={handleOpenCancel}
@@ -310,7 +315,7 @@ const TeamMemberReview = ({
                   )}
                   <FeedbackSubmitForm
                     requesteeName={requesteeName}
-                    requestId={review?.id}
+                    requestId={review.id}
                     request={review}
                     reviewOnly={readOnly}
                   />
