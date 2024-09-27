@@ -47,7 +47,7 @@
   td,
   th {
     padding: 0.5rem;
-    color: black; /* Ensures text color remains black */
+    color: var(--checkins-palette-text-primary);
   }
 
   th {
@@ -78,12 +78,12 @@
 
 
 .volunteer-tables .MuiIconButton-root {
-  color: black;
+  color: var(--checkins-palette-text-primary);
 }
 
 @media (prefers-color-scheme: dark) {
   .volunteer-tables .MuiIconButton-root {
-    color: black;
+    color: var(--checkins-palette-text-primary);
   }
 }
 
