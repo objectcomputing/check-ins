@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import FeedbackSubmissionTips from '../components/feedback_submission_tips/FeedbackSubmissionTips';
 import FeedbackSubmitForm from '../components/feedback_submit_form/FeedbackSubmitForm';
+import TeamMemberReview from '../components/reviews/TeamMemberReview';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
   selectCsrfToken,
@@ -40,15 +41,23 @@ const FeedbackSubmitPage = () => {
   const history = useHistory();
   const query = queryString.parse(location?.search);
   const requestQuery = query.request?.toString();
+  const selfRequestQuery = query.selfrequest?.toString();
   const [showTips, setShowTips] = useState(true);
   const [feedbackRequest, setFeedbackRequest] = useState(null);
+  const [selfReviewRequest, setSelfReviewRequest] = useState(null);
   const [requestee, setRequestee] = useState(null);
+  const [recipient, setRecipient] = useState(null);
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
 
+  function isManager(revieweeProfile) {
+    const supervisorId = revieweeProfile?.supervisorid;
+    return supervisorId === currentUserId;
+  }
+
   useEffect(() => {
-    if (!requestQuery) {
+    if (!requestQuery && !selfRequestQuery) {
       history.push('/checkins');
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -58,13 +67,14 @@ const FeedbackSubmitPage = () => {
         }
       });
     }
-    async function getFeedbackRequest(cookie) {
+
+    async function getFeedbackRequest(query, cookie) {
       if (!currentUserId || !cookie || feedbackRequestFetched.current) {
         return null;
       }
 
       // make call to the API
-      let res = await getFeedbackRequestById(requestQuery, cookie);
+      let res = await getFeedbackRequestById(query, cookie);
       return res.payload &&
         res.payload.data &&
         res.payload.status === 200 &&
@@ -79,22 +89,15 @@ const FeedbackSubmitPage = () => {
       requestQuery &&
       !feedbackRequestFetched.current
     ) {
-      getFeedbackRequest(csrf).then(request => {
+      getFeedbackRequest(requestQuery, csrf).then(request => {
         if (request) {
-          if (request.recipientId !== currentUserId) {
-            history.push('/checkins');
-            window.snackDispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: 'error',
-                toast: 'You are not authorized to perform this operation.'
-              }
-            });
-          } else if (
+          // Permission to view this feedback request will be checked later.
+          if (
             request.status.toLowerCase() === 'submitted' ||
             request.submitDate
           ) {
             setRequestSubmitted(true);
+            setFeedbackRequest(request);
           } else if (request.status.toLowerCase() === 'canceled') {
             setRequestCanceled(true);
           } else {
@@ -112,6 +115,19 @@ const FeedbackSubmitPage = () => {
         }
       });
     }
+
+    if (
+      csrf &&
+      currentUserId &&
+      selfRequestQuery
+    ) {
+      getFeedbackRequest(selfRequestQuery, csrf).then(request => {
+        if (request) {
+          // Permission to view this feedback request will be checked later.
+          setSelfReviewRequest(request);
+        }
+      });
+    }
   }, [csrf, currentUserId, requestQuery, history]);
 
   useEffect(() => {
@@ -125,8 +141,43 @@ const FeedbackSubmitPage = () => {
         feedbackRequest?.requesteeId
       );
       setRequestee(requesteeProfile);
+
+      const recipientProfile = selectProfile(
+        state,
+        feedbackRequest?.recipientId
+      );
+
+      // If this is our review or we are the manager of the reviewer we are
+      // allowed to view this review.
+      if (recipientProfile?.id != currentUserId &&
+          !isManager(recipientProfile)) {
+        // The current user is not the recipients's manager, we need to leave.
+        history.push('/checkins');
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'You are not authorized to perform this operation.'
+          }
+        });
+      }
     }
-  }, [feedbackRequest, state]);
+
+    if (selfReviewRequest) {
+      const recipientProfile = selectProfile(
+        state,
+        selfReviewRequest?.recipientId
+      );
+      setRecipient(recipientProfile);
+
+      if (!isManager(recipientProfile)) {
+        // The current user is not the recipient's manager, we need to clear
+        // out the self review request so that we do not display something that
+        // we shouldn't, on the next page.
+        setSelfReviewRequest(null);
+      }
+    }
+  }, [feedbackRequest, selfReviewRequest, state]);
 
   return (
     <Root className="feedback-submit-page">
@@ -134,13 +185,15 @@ const FeedbackSubmitPage = () => {
         <Typography className={classes.announcement} variant="h3">
           This feedback request has been canceled.
         </Typography>
-      ) : requestSubmitted ? (
-        <Typography className={classes.announcement} variant="h3">
-          You have already submitted this feedback form. Thank you!
-        </Typography>
+      ) : requestSubmitted || selfReviewRequest ? (
+        <TeamMemberReview
+          reviews={[feedbackRequest]}
+          selfReview={selfReviewRequest}
+          memberProfile={recipient ?? requestee}
+        />
       ) : (
         <>
-          {feedbackRequestFetched.current &&
+          {feedbackRequest &&
             (showTips ? (
               <FeedbackSubmissionTips onNextClick={() => setShowTips(false)} />
             ) : (

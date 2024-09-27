@@ -306,9 +306,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           onPeriodSelected(id);
           break;
         case ReviewStatus.OPEN:
-          alert(
-            'The page for viewing review periods in the OPEN state has not been created yet.'
-          );
+          onPeriodSelected(id);
           break;
         default:
           // We do nothing if the status is CLOSED or UNKNOWN.

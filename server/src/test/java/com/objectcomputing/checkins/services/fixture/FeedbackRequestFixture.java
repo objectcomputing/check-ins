@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import java.time.LocalDate;
 
 import java.util.UUID;
+import java.util.List;
 
 public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTemplateFixture {
 
@@ -110,5 +111,10 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
         final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
         feedbackRequest.setSendDate(sendDate);
         return getFeedbackRequestRepository().save(feedbackRequest);
+    }
+
+    default List<FeedbackRequest> getFeedbackRequests(MemberProfile recipient) {
+        return getFeedbackRequestRepository()
+                 .findByValues(null, null, recipient.getId().toString(), null, null, null);
     }
 }
