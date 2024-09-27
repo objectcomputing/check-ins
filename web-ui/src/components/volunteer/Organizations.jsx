@@ -239,7 +239,6 @@ const Organizations = ({ onlyMe = false }) => {
               aria-label="Add Organization"
               classes={{ root: 'add-button' }}
               onClick={addOrganization}
-              style={{ color: 'black' }} // Default for light mode
             >
               <AddCircleOutline />
             </IconButton>

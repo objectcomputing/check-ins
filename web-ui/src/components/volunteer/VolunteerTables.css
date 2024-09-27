@@ -60,11 +60,12 @@
   }
 
   tr:nth-child(even) {
-    background-color: #eee;
+    background-color: var(--checkins-palette-background-default);
+    background-image: var(--checkins-palette-alternate-row-overlay);
   }
 
   tr:nth-child(odd) {
-    background-color: #ffffff;
+    background-color: var(--checkins-palette-background-default);
   }
 
   .actions-th {
