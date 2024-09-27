@@ -190,14 +190,20 @@ class ReviewPeriodControllerTest
 
     @Test
     void testReviewPeriodCreateDTOSerialization() throws JsonProcessingException {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
         reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
-        reviewPeriodCreateDTO.setLaunchDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setSelfReviewCloseDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setCloseDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setPeriodStartDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setPeriodEndDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setLaunchDate(launchDate);
+        reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
+        reviewPeriodCreateDTO.setCloseDate(closeDate);
+        reviewPeriodCreateDTO.setPeriodStartDate(startDate);
+        reviewPeriodCreateDTO.setPeriodEndDate(endDate);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         String expectedLaunchDateFormat = formatter.format(reviewPeriodCreateDTO.getLaunchDate());
