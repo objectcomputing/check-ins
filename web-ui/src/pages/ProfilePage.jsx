@@ -241,11 +241,11 @@ const ProfilePage = () => {
           </Card>
         </div>
       </div>
+      <VolunteerTables onlyMe />
+      <EarnedCertificationsTable onlyMe />
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
-      <EarnedCertificationsTable onlyMe />
-      <VolunteerTables onlyMe />
     </div>
   );
 };

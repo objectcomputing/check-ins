@@ -1,4 +1,7 @@
 #earned-certifications-table {
+  display: flex;
+  justify-content: center;
+
   .MuiCardHeader-root {
     padding-bottom: 0;
   }
@@ -9,6 +12,7 @@
   }
 
   table {
+    margin: 0 auto;
     border-collapse: collapse;
 
     img {
@@ -19,12 +23,15 @@
   td,
   th {
     padding: 0.5rem;
+    text-align: center;
+    color: black;
   }
 
   th {
     background-color: var(--oci-orange);
     border-right: 1px solid var(--oci-light-blue);
   }
+
   th:last-child {
     border-right: none;
   }
@@ -32,6 +39,7 @@
   tr:nth-child(even) {
     background-color: #eee;
   }
+
   tr:nth-child(odd) {
     background-color: #ffffff;
   }

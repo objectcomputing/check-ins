@@ -1828,31 +1828,31 @@ values
 --- CERTIFICATIONS
 
 INSERT INTO certification
-(certification_id, name, badge_url)
+(certification_id, name, description, badge_url)
 VALUES
-    ('23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java', 'https://images.credly.com/images/235d5b25-d41e-48c2-9c0e-63b373e78fc8/image.png');
+    ('23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java', 'Java Certification', 'https://images.credly.com/images/235d5b25-d41e-48c2-9c0e-63b373e78fc8/image.png');
 
 INSERT INTO certification
-(certification_id, name, badge_url)
+(certification_id, name, description, badge_url)
 VALUES
-    ('68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python', 'https://pythoninstitute.org/assets/61f11f7719dd3800707549.png');
+    ('68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python', 'Python Certification', 'https://pythoninstitute.org/assets/61f11f7719dd3800707549.png');
 
 --- MEMBER CERTIFICATIONS
 
 INSERT INTO earned_certification
-(earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, earned_date)
 VALUES -- Michael Kimberlin, Java
-       ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2024-04-01');
+       ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', '2024-04-01');
 
 INSERT INTO earned_certification
-(earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, earned_date)
 VALUES -- Revolver Ocelot, Java
-       ('42471a8c-8851-42a0-8cc2-bc42cb1020cc', '105f2968-a182-45a3-892c-eeff76383fe0', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2022-06-01');
+       ('42471a8c-8851-42a0-8cc2-bc42cb1020cc', '105f2968-a182-45a3-892c-eeff76383fe0', '23b248e1-40f3-4477-b1b6-544b743e6ee3', '2022-06-01');
 
 INSERT INTO earned_certification
-(earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, earned_date)
 VALUES -- Revolver Ocelot, Python
-       ('1f4272da-6ecb-4c15-b4a8-28739405bd1c', '105f2968-a182-45a3-892c-eeff76383fe0', '68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python certification', '2024-03-01');
+       ('1f4272da-6ecb-4c15-b4a8-28739405bd1c', '105f2968-a182-45a3-892c-eeff76383fe0', '68343978-4072-4b48-aa9c-01f7ec910c9b', '2024-03-01');
 
 -- Volunteering
 
