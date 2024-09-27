@@ -98,6 +98,20 @@ yarn --cwd web-ui test -u # or simply `yarn test` followed by `u`
 
 Testing Library is installed in the UI project. You can find more information about Testing Library [here](https://testing-library.com/docs/react-testing-library/intro/).
 
+## Testing the Native Executable
+
+If you wish to test the native executables built with GraalVM, you will need to switch over to that Java compiler using the following command:
+
+```shell
+nvm use java 21.0.2-graalce
+```
+
+You can then run the native tests like so:
+
+```shell
+./gradlew nativeTest
+```
+
 # Running the Server
 
 ## Running Tests
