@@ -326,6 +326,11 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
               <AddCircleOutline />
             </IconButton>
           </div>
+          {onlyMe && (
+            <p className="warning">
+              Create events for your organizations.
+            </p>
+          )}
         </CardContent>
       </Card>
     );
