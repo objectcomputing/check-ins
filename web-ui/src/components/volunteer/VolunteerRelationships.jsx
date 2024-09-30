@@ -8,18 +8,20 @@ import {
   Card,
   CardContent,
   CardHeader,
+  IconButton,
+  TextField,
+  Tooltip,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Tooltip
+  DialogTitle
 } from '@mui/material';
 
-import { resolve } from '../../api/api.js';
+import { resolve } from '../../api/api';
+import { createNewOrganization } from '../../api/volunteer';  // Importing the new API function
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
+import OrganizationDialog from '../dialogs/OrganizationDialog';  // Importing the new reusable component
 import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
@@ -28,7 +30,6 @@ import {
 } from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 
-const organizationBaseUrl = '/services/volunteer/organization';
 const relationshipBaseUrl = '/services/volunteer/relationship';
 
 const propTypes = { forceUpdate: PropTypes.func, onlyMe: PropTypes.bool };
@@ -38,6 +39,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [organizationMap, setOrganizationMap] = useState({});
   const [organizations, setOrganizations] = useState([]);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
+  const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false); // New dialog for adding an organization
+  const [newOrganization, setNewOrganization] = useState({ name: '', description: '', website: '' });
   const [relationshipMap, setRelationshipMap] = useState({});
   const [relationships, setRelationships] = useState([]);
   const [selectedRelationship, setSelectedRelationship] = useState(null);
@@ -48,7 +51,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
   const profileMap = selectProfileMap(state);
-  const profiles = Object.values(profileMap);
+  const profiles = Object.values(profileMap).filter(profile => profile && profile.name); // Filter out undefined profiles
   profiles.sort((a, b) => a.name.localeCompare(b.name));
 
   const sortableTableColumns = ['Organization', 'Start Date', 'End Date'];
@@ -57,7 +60,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const loadOrganizations = useCallback(async () => {
     const res = await resolve({
       method: 'GET',
-      url: organizationBaseUrl,
+      url: '/services/volunteer/organization',
       headers: {
         'X-CSRF-Header': csrf,
         Accept: 'application/json',
@@ -66,8 +69,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     });
     if (res.error) return;
 
-    const organizations = res.payload.data;
-    organizations.sort((org1, org2) => org1.name.localeCompare(org2.name));
+    const organizations = res.payload.data || [];
+    organizations.sort((org1, org2) => (org1.name || '').localeCompare(org2.name || ''));
     setOrganizations(organizations);
     setOrganizationMap(
       organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
@@ -88,11 +91,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     });
     if (res.error) return;
 
-    const relationships = res.payload.data;
+    const relationships = res.payload.data || [];
     relationships.sort((rel1, rel2) => {
       const member1 = profileMap[rel1.memberId];
       const member2 = profileMap[rel2.memberId];
-      return member1.name.localeCompare(member2.name);
+      return (member1?.name || '').localeCompare(member2?.name || '');
     });
     setRelationships(relationships);
   }, [organizationMap]);
@@ -131,6 +134,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   }, []);
 
   const deleteRelationship = useCallback(async relationship => {
+    if (!relationship) return;
     relationship.active = false;
     const res = await resolve({
       method: 'PUT',
@@ -161,6 +165,71 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     return new Date(Number(year), Number(month) - 1, Number(day));
   };
 
+  const handleCreateNewOrganization = async () => {
+    if (!newOrganization.name || !newOrganization.description) {
+      console.error('Organization name and description are required.');
+      return;
+    }
+
+    const res = await createNewOrganization(csrf, newOrganization);  // Call the API function
+
+    if (res.error) {
+      console.error('Error saving new organization', res.error);
+      return;
+    }
+
+    const newOrg = res.payload.data;
+
+    if (newOrg && newOrg.name) {
+      setOrganizations([...organizations, newOrg]); // Add new organization to the list
+      setOrganizationMap({ ...organizationMap, [newOrg.id]: newOrg });
+      setSelectedRelationship({
+        ...selectedRelationship,
+        organizationId: newOrg.id
+      });
+      setOrganizationDialogOpen(false); // Close the organization creation dialog
+    } else {
+      console.error('Invalid organization data received');
+    }
+  };
+
+  const relationshipRow = useCallback(
+    relationship => {
+      const org = organizationMap[relationship.organizationId];
+      if (!org) {
+        console.error('Organization not found for relationship:', relationship);
+        return null;
+      }
+      return (
+        <tr key={relationship.id}>
+          {!onlyMe && <td>{profileMap[relationship.memberId]?.name ?? ''}</td>}
+          <td>{org.name ?? 'N/A'}</td> {/* Defensive check */}
+          <td>{relationship.startDate}</td>
+          <td>{relationship.endDate}</td>
+          <td>
+            <Tooltip title="Edit">
+              <IconButton
+                aria-label="Edit"
+                onClick={() => editRelationship(relationship)}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                aria-label="Delete"
+                onClick={() => confirmDelete(relationship)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </td>
+        </tr>
+      );
+    },
+    [organizationMap, profileMap, editRelationship, confirmDelete, onlyMe]
+  );
+
   const relationshipDialog = useCallback(
     () => (
       <Dialog
@@ -175,7 +244,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           {!onlyMe && (
             <Autocomplete
               disableClearable
-              getOptionLabel={profile => profile.name ?? ''}
+              getOptionLabel={profile => profile?.name ?? ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(event, profile) => {
                 setSelectedRelationship({
@@ -200,15 +269,19 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           )}
           <Autocomplete
             disableClearable
-            getOptionLabel={organization => organization.name ?? ''}
+            getOptionLabel={organization => organization?.name ?? ''}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, organization) => {
-              setSelectedRelationship({
-                ...selectedRelationship,
-                organizationId: organization.id
-              });
+              if (organization && organization.inputValue === 'Add new organization') {
+                setOrganizationDialogOpen(true); // Open the dialog to create a new organization
+              } else {
+                setSelectedRelationship({
+                  ...selectedRelationship,
+                  organizationId: organization.id
+                });
+              }
             }}
-            options={organizations}
+            options={[...organizations, { name: 'Add new organization', inputValue: 'Add new organization' }]}
             renderInput={params => (
               <TextField
                 {...params}
@@ -261,40 +334,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         </DialogActions>
       </Dialog>
     ),
-    [relationshipDialogOpen, selectedRelationship]
-  );
-
-  const relationshipRow = useCallback(
-    relationship => {
-      const org = organizationMap[relationship.organizationId];
-      return (
-        <tr key={relationship.id}>
-          {!onlyMe && <td>{profileMap[relationship.memberId].name}</td>}
-          <td>{org.name}</td>
-          <td>{relationship.startDate}</td>
-          <td>{relationship.endDate}</td>
-          <td>
-            <Tooltip title="Edit">
-              <IconButton
-                aria-label="Edit"
-                onClick={() => editRelationship(relationship)}
-              >
-                <Edit />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton
-                aria-label="Delete"
-                onClick={() => confirmDelete(relationship)}
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
-          </td>
-        </tr>
-      );
-    },
-    [organizationMap, profileMap]
+    [relationshipDialogOpen, selectedRelationship, onlyMe, profiles, profileMap, organizationMap, organizations]
   );
 
   const relationshipsTable = useCallback(
@@ -338,7 +378,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         </CardContent>
       </Card>
     ),
-    [relationships, sortAscending, sortColumn]
+    [relationships, sortAscending, sortColumn, relationshipRow]
   );
 
   const relationshipValue = useCallback(
@@ -369,7 +409,10 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       },
       data: selectedRelationship
     });
-    if (res.error) return;
+    if (res.error) {
+      console.error("Error saving relationship", res.error);
+      return;
+    }
 
     const newRel = res.payload.data;
 
@@ -427,6 +470,14 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       {relationshipsTable()}
 
       {relationshipDialog()}
+
+      <OrganizationDialog
+        open={organizationDialogOpen}
+        onClose={() => setOrganizationDialogOpen(false)}
+        onSave={handleCreateNewOrganization}
+        organization={newOrganization}
+        setOrganization={setNewOrganization}
+      />
 
       <ConfirmationDialog
         open={confirmDeleteOpen}

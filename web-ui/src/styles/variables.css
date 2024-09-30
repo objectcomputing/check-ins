@@ -54,6 +54,7 @@
   --checkins-palette-secondary-mainChannel: 240 184 125;
   --checkins-palette-background-paper: var(--white);
   --checkins-palette-background-default: #f5f5f5;
+  --checkins-palette-alternate-row-overlay: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05));
   --checkins-palette-content-color: var(--checkins-palette-primary-menuItem);
   --checkins-palette-gray-light: var(--gray-light);
   --checkins-palette-gray-dark: var(--gray-dark);
@@ -86,6 +87,7 @@
     --checkins-palette-AppBar-darkBg: var(--checkins-palette-primary-main);
     --checkins-palette-background-paper: #121212;
     --checkins-palette-background-default: #121212;
+    --checkins-palette-alternate-row-overlay: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05));
     --checkins-palette-content-color: var(--white);
     --checkins-palette-gray-light: #e5e5e526;
     --checkins-palette-gray-dark: var(--gray);

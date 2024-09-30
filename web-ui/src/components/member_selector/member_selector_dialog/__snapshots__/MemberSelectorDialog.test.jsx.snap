@@ -158,7 +158,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   Filter Type
                 </label>
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                 >
                   <div
                     aria-controls=":r2:"
@@ -204,7 +204,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-input css-1j0qgw8-MuiAutocomplete-root"
+                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-input css-ka7ti6-MuiAutocomplete-root"
               >
                 <div
                   class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
@@ -317,7 +317,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   Required Tenure
                 </label>
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                 >
                   <div
                     aria-controls=":r5:"
