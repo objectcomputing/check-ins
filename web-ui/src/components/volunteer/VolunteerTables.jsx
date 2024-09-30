@@ -47,9 +47,31 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
         value={tabIndex}
         variant="fullWidth"
       >
-        <Tab label="Organizations" {...a11yProps(0)} />
-        <Tab label={onlyMe ? 'My Orgs' : 'Relationships'} {...a11yProps(1)} />
-        <Tab label="Events" {...a11yProps(2)} />
+        {/* Add sx prop to style each Tab */}
+        <Tab
+          label="Organizations"
+          {...a11yProps(0)}
+          sx={{
+            minWidth: '150px',  // Increase the min width of the tab
+            whiteSpace: 'nowrap' // Prevent text wrapping
+          }}
+        />
+        <Tab
+          label={onlyMe ? 'My Orgs' : 'Relationships'}
+          {...a11yProps(1)}
+          sx={{
+            minWidth: '150px',
+            whiteSpace: 'nowrap'
+          }}
+        />
+        <Tab
+          label="Events"
+          {...a11yProps(2)}
+          sx={{
+            minWidth: '150px',
+            whiteSpace: 'nowrap'
+          }}
+        />
       </Tabs>
       <TabPanel index={0} value={tabIndex}>
         <Organizations

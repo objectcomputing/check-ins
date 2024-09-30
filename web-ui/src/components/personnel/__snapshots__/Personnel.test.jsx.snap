@@ -35,7 +35,23 @@ exports[`renders correctly with null 1`] = `
     </div>
     <ul
       class="MuiList-root MuiList-padding MuiList-dense css-h4y409-MuiList-root"
-    />
+    >
+      <li
+        class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+      >
+        <div
+          class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+          >
+            <em>
+              Your assigned development partners are shown here.
+            </em>
+          </span>
+        </div>
+      </li>
+    </ul>
   </div>
 </div>
 `;

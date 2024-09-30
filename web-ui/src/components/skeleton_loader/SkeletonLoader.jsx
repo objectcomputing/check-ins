@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Skeleton from '@mui/material/Skeleton';
 import { Card, CardHeader, CardContent, Grid, Box } from '@mui/material';
@@ -28,26 +28,26 @@ const useStyles = makeStyles({
   }
 });
 
-export default function SkeletonLoader({ type }) {
+export default function SkeletonLoader({ type, delay = 300 }) {
   const additionalClasses = useStyles();
-  // guild and team currently have the same return value but were given different conditionals
-  // for clarity / in case one changes
-  if (type === 'team') {
-    return (
-      <StyledCard className={classes.card}>
-        <CardHeader
-          title={<Skeleton height={50} variant="text" />}
-          subheader={<Skeleton variant="text" />}
-        />
-        <Box mt={2} ml={2} mr={2} height={80}>
-          <Skeleton variant="text" height={15} />
-          <Box height={10} />
-          <Skeleton variant="text" height={15} />
-          <Skeleton variant="text" width={180} height={15} />
-        </Box>
-      </StyledCard>
-    );
-  } else if (type === 'guild') {
+  
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  // Introduce a delay before showing the skeleton loader
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSkeleton(true);
+    }, delay);
+
+    // Clear the timer on component unmount
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  if (!showSkeleton) {
+    return null; // Do not render the skeleton if the delay has not passed
+  }
+
+  if (type === 'team' || type === 'guild') {
     return (
       <StyledCard className={classes.card}>
         <CardHeader
@@ -183,7 +183,7 @@ export default function SkeletonLoader({ type }) {
         </StyledCard>
       </Box>
     );
-  } else if (type === "kudos") {
+  } else if (type === 'kudos') {
     return (
       <Box width={400}>
         <StyledCard padding={0}>
@@ -209,4 +209,6 @@ export default function SkeletonLoader({ type }) {
       </Box>
     );
   }
+
+  return null;
 }
