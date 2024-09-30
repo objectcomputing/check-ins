@@ -23,8 +23,7 @@
   td,
   th {
     padding: 0.5rem;
-    text-align: center;
-    color: black;
+    color: var(--checkins-palette-text-primary);
   }
 
   th {
@@ -37,11 +36,12 @@
   }
 
   tr:nth-child(even) {
-    background-color: #eee;
+    background-color: var(--checkins-palette-background-default);
+    background-image: var(--checkins-palette-alternate-row-overlay);
   }
 
   tr:nth-child(odd) {
-    background-color: #ffffff;
+    background-color: var(--checkins-palette-background-default);
   }
 }
 
