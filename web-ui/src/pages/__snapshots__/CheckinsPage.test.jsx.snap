@@ -101,8 +101,8 @@ exports[`renders correctly 1`] = `
               <label
                 class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
                 data-shrink="true"
-                for=":r1:"
-                id=":r1:-label"
+                for=":r3:"
+                id=":r3:-label"
               >
                 Check-In Date
               </label>
@@ -114,7 +114,7 @@ exports[`renders correctly 1`] = `
                   aria-label="Choose date, selected date is Oct 21, 2020"
                   autocomplete="off"
                   class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd Mui-readOnly MuiInputBase-readOnly css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
-                  id=":r1:"
+                  id=":r3:"
                   inputmode="text"
                   placeholder="MMMM DD, YYYY @hh:mm aa"
                   readonly=""

@@ -1,3 +1,20 @@
+#organizations {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.volunteer-dialog .MuiDialogContent-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 1rem !important;
+}
+
+.volunteer-dialog .MuiTextField-root {
+  width: 100%;
+}
+
 .volunteer-tables {
   display: flex;
   flex-direction: column;
@@ -30,28 +47,44 @@
   td,
   th {
     padding: 0.5rem;
+    color: var(--checkins-palette-text-primary);
   }
 
   th {
     background-color: var(--oci-orange);
     border-right: 1px solid var(--oci-light-blue);
   }
+
   th:last-child {
     border-right: none;
   }
+
+  tr:nth-child(even) {
+    background-color: var(--checkins-palette-background-default);
+    background-image: var(--checkins-palette-alternate-row-overlay);
+  }
+
+  tr:nth-child(odd) {
+    background-color: var(--checkins-palette-background-default);
+  }
+
   .actions-th {
     width: 6rem;
   }
 
-  tr:nth-child(even) {
-    background-color: #eee;
-  }
-  tr:nth-child(odd) {
-    background-color: #ffffff;
-  }
-
   .warning {
     font-style: italic;
+  }
+}
+
+
+.volunteer-tables .MuiIconButton-root {
+  color: var(--checkins-palette-text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .volunteer-tables .MuiIconButton-root {
+    color: var(--checkins-palette-text-primary);
   }
 }
 
