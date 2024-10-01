@@ -24,7 +24,7 @@ const hasPermission = permissionName =>
     userProfile =>
       userProfile &&
       userProfile.role &&
-      userProfile.permissions.some(p => p?.permission?.includes(permissionName))
+      userProfile.permissions?.some(p => p?.permission?.includes(permissionName))
   );
 
 export const selectTeamsLoading = createSelector(selectLoading, loading => {
