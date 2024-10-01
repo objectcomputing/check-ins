@@ -108,6 +108,21 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
 3. Open the browser to run the application at `http://localhost:8080`
 4. Access swagger-UI at - `http://localhost:8080/swagger-ui`
 
+# Testing
+
+1. To run the server tests, run the following:
+    ```sh
+    $ ./gradlew :server:check
+    ```
+2. To run the UI tests, run the following:
+    ```sh
+    $ ./gradlew :web-ui:check
+    ```
+3. To update snapshots, run the following:
+    ```sh
+    $ cd web-ui && yarn test -u
+    ```
+
 # Contributing
 
 Please see [Contributing](./CONTRIBUTING.md) for details on how to contribute to this project.
