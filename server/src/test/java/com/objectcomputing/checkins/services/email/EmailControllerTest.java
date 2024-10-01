@@ -172,6 +172,6 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
                 client.toBlocking().exchange(request, Argument.listOf(Email.class)));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
+        assertEquals("Forbidden", responseException.getMessage());
     }
 }
