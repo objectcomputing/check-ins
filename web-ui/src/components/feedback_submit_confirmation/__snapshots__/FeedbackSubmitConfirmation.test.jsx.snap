@@ -2,27 +2,8 @@
 
 exports[`renders the confirmation message 1`] = `
 <div>
-  <div
-    class="submit-confirmation css-7zlo4e"
-  >
-    <svg
-      aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-      data-testid="CheckCircleIcon"
-      focusable="false"
-      style="color: rgb(76, 175, 80); font-size: 40vh;"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"
-      />
-    </svg>
-    <h3
-      class="MuiTypography-root MuiTypography-h3 FeedbackSubmitConfirmation-announcement css-gepadz-MuiTypography-root"
-    >
-      Thank you for your feedback on 
-      <b />
-    </h3>
-  </div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
 </div>
 `;

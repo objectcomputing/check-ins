@@ -2,55 +2,8 @@
 
 exports[`renders the confirmation message 1`] = `
 <div>
-  <div
-    class="request-confirmation css-1to9pmo"
-  >
-    <svg
-      aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-      data-testid="CheckCircleIcon"
-      focusable="false"
-      style="color: rgb(76, 175, 80); font-size: 40vh;"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"
-      />
-    </svg>
-    <h3
-      class="MuiTypography-root MuiTypography-h3 FeedbackRequestConfirmation-announcement css-gepadz-MuiTypography-root"
-    >
-      <b>
-        Feedback request
-         
-         sent
-         
-        for 
-         
-      </b>
-    </h3>
-    <h6
-      class="MuiTypography-root MuiTypography-h6 recipients-list css-2ulfj5-MuiTypography-root"
-    >
-      <b>
-        Sent to: 
-      </b>
-    </h6>
-    <a
-      href="/"
-      style="margin-top: 4em; text-decoration: none;"
-    >
-      <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1rwt2y5-MuiButtonBase-root-MuiButton-root"
-        tabindex="0"
-        type="button"
-      >
-        Return home
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
-      </button>
-    </a>
-  </div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
 </div>
 `;
