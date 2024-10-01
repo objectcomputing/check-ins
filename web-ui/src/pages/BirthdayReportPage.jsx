@@ -12,7 +12,11 @@ import { UPDATE_TOAST } from '../context/actions';
 import SearchBirthdayAnniversaryResults from '../components/search-results/SearchBirthdayAnniversaryResults';
 import { sortBirthdays } from '../context/util';
 
-import { selectCsrfToken } from '../context/selectors';
+import {
+  selectCsrfToken,
+  selectHasBirthdayReportPermission,
+  noPermission,
+} from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 
 const months = [
@@ -62,7 +66,7 @@ const BirthdayReportPage = () => {
     setSelectedMonths(newValue);
   }
 
-  return (
+  return selectHasBirthdayReportPermission(state) ? (
     <div>
       <div className="select-month">
         <Autocomplete
@@ -117,6 +121,8 @@ const BirthdayReportPage = () => {
         }
       </div>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

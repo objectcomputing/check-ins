@@ -16,6 +16,8 @@ export const selectLoading = state => state.loading;
 export const selectReviewPeriods = state => state.reviewPeriods;
 export const selectPermissions = state => state.permissions;
 
+export const noPermission = 'You do not have permission to view this page.';
+
 const hasPermission = permissionName =>
   createSelector(
     selectUserProfile,
@@ -126,6 +128,62 @@ export const selectHasLaunchReviewPeriodPermission = hasPermission(
 
 export const selectHasUpdateReviewPeriodPermission = hasPermission(
   'CAN_UPDATE_REVIEW_PERIOD'
+);
+
+export const selectHasMeritReportPermission = hasPermission(
+  'CAN_CREATE_MERIT_REPORT'
+);
+
+export const selectHasEarnedCertificationsPermission = hasPermission(
+  'CAN_MANAGE_EARNED_CERTIFICATIONS'
+);
+
+export const selectHasVolunteeringEventsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_EVENTS'
+);
+
+export const selectHasVolunteeringOrganizationsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS'
+);
+
+export const selectHasVolunteeringRelationshipsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS'
+);
+
+export const selectHasRoleAssignmentPermission = hasPermission(
+  'CAN_ASSIGN_ROLE_PERMISSIONS'
+);
+
+export const selectHasCreateFeedbackPermission = hasPermission(
+  'CAN_CREATE_FEEDBACK_REQUEST'
+);
+
+export const selectHasAdministerKudosPermission = hasPermission(
+  'CAN_ADMINISTER_KUDOS'
+);
+
+export const selectHasDeleteMembersPermission = hasPermission(
+  'CAN_DELETE_ORGANIZATION_MEMBERS'
+);
+
+export const selectHasCreateMembersPermission = hasPermission(
+  'CAN_CREATE_ORGANIZATION_MEMBERS'
+);
+
+export const selectHasImpersonateMembersPermission = hasPermission(
+  'CAN_IMPERSONATE_MEMBERS'
+);
+
+export const selectHasViewSettingsPermission = hasPermission(
+  'CAN_VIEW_SETTINGS'
+);
+
+export const selectHasAdministerSettingsPermission = hasPermission(
+  'CAN_ADMINISTER_SETTINGS'
+);
+
+export const selectHasSendEmailPermission = hasPermission(
+  'CAN_SEND_EMAIL'
 );
 
 export const selectIsPDL = createSelector(

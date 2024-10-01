@@ -17,7 +17,8 @@ import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import {
   selectRoles,
-  selectHasPermissionAssignmentPermission
+  selectHasPermissionAssignmentPermission,
+  noPermission,
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 
@@ -214,7 +215,7 @@ const EditPermissionsPage = () => {
             ))}
         </>
       ) : (
-        <h3>You do not have permission to view this page.</h3>
+        <h3>{noPermission}</h3>
       )}
     </div>
   );

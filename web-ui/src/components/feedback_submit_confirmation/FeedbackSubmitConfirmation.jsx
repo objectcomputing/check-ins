@@ -5,7 +5,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {
   selectCsrfToken,
   selectCurrentUser,
-  selectProfile
+  selectProfile,
+  selectHasCreateFeedbackPermission,
+  noPermission,
 } from '../../context/selectors';
 import { AppContext } from '../../context/AppContext';
 import { useLocation } from 'react-router-dom';
@@ -85,7 +87,7 @@ const FeedbackSubmitConfirmation = props => {
     }
   }, [feedbackRequest, state]);
 
-  return (
+  return selectHasCreateFeedbackPermission(state) ? (
     <Root className="submit-confirmation">
       <CheckCircleIcon style={{ color: green[500], fontSize: '40vh' }}>
         checkmark-image
@@ -94,6 +96,8 @@ const FeedbackSubmitConfirmation = props => {
         Thank you for your feedback on <b>{requestee?.name}</b>
       </Typography>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

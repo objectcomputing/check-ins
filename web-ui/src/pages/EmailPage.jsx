@@ -32,7 +32,11 @@ import { sendEmail } from '../api/notifications';
 import './EmailPage.css';
 import { getAvatarURL } from '../api/api';
 import MemberSelector from '../components/member_selector/MemberSelector.jsx';
-import { selectCsrfToken } from '../context/selectors.js';
+import {
+  selectCsrfToken,
+  selectHasSendEmailPermission,
+  noPermission,
+} from '../context/selectors';
 
 const Root = styled('div')({
   margin: '2rem'
@@ -488,7 +492,7 @@ const EmailPage = () => {
     return false;
   };
 
-  return (
+  return selectHasSendEmailPermission(state) ? (
     <Root className="email-page">
       <Stepper activeStep={currentStep}>
         {steps.map((step, index) => (
@@ -610,6 +614,8 @@ const EmailPage = () => {
         </Card>
       </Modal>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

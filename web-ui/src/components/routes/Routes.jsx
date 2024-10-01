@@ -47,8 +47,6 @@ import SkillCategoryEditPage from '../../pages/SkillCategoryEditPage';
 export default function Routes() {
   const { state } = useContext(AppContext);
 
-  const isAdmin = selectIsAdmin(state);
-
   return (
     <Switch>
       <Route path="/teams">
@@ -113,102 +111,98 @@ export default function Routes() {
         <KudosPage />
       </Route>
 
-      {isAdmin && (
-        <Switch>
-          <Route path="/admin/edit-skills">
-            <Header title="Skills" />
-            <EditSkillsPage />
-          </Route>
-          <Route path="/admin/settings">
-            <Header title="Settings" />
-            <SettingsPage />
-          </Route>
-          <Route path="/admin/permissions">
-            <Header title="Permissions" />
-            <EditPermissionsPage />
-          </Route>
-          <Route path="/admin/skill-categories/:categoryId">
-            <SkillCategoryEditPage />
-          </Route>
-          <Route path="/admin/skill-categories">
-            <SkillCategoriesPage />
-          </Route>
-          <Route path="/checkins-reports">
-            <Header title="Check-in Report" />
-            <CheckinsReportPage />
-          </Route>
-          <Route path="/skills-reports">
-            <Header title="Skill Report" />
-            <SkillReportPage />
-          </Route>
-          <Route path="/team-skills-reports">
-            <Header title="Team Skill Report" />
-            <TeamSkillReportPage />
-          </Route>
-          <Route path="/anniversary-reports">
-            <Header title="Anniversary Report" />
-            <AnniversaryReportPage />
-          </Route>
-          <Route path="/birthday-reports">
-            <Header title="Birthday Report" />
-            <BirthdayReportPage />
-          </Route>
-          <Route path="/certification-reports">
-            <Header title="Certification Report" />
-            <CertificationReportPage />
-          </Route>
-          <Route path="/annual-review-reports">
-            <Header title="Annual Review Report" />
-            <AnnualReviewReportPage />
-          </Route>
-          <Route path="/merit-reports">
-            <Header title="Merit Report" />
-            <MeritReportPage />
-          </Route>
-          <Route path="/volunteer-reports">
-            <Header title="Volunteering Report" />
-            <VolunteerReportPage />
-          </Route>
-          <Route path="/pulse-reports">
-            <Header title="Pulse Report" />
-            <PulseReportPage />
-          </Route>
-          <Route path="/admin/roles">
-            <Header title="Roles"></Header>
-            <Roles />
-          </Route>
-          <Route path="/admin/users">
-            <Header title="Users"></Header>
-            <Users />
-          </Route>
-          <Route path="/admin/email">
-            <Header title="Send Email"></Header>
-            <EmailPage />
-          </Route>
-          <Route exact path="/feedback/request/confirmation">
-            <FeedbackRequestConfirmation />
-          </Route>
-          <Route path="/feedback/request">
-            <FeedbackRequestPage />
-          </Route>
-          <Route exact path="/feedback/view">
-            <ViewFeedbackPage />
-          </Route>
-          <Route exact path="/feedback/view/responses">
-            <ViewFeedbackResponses />
-          </Route>
-          <Route exact path="/feedback/submit/confirmation">
-            <FeedbackSubmitConfirmation />
-          </Route>
-          <Route path="/feedback/submit">
-            <FeedbackSubmitPage />
-          </Route>
-          <Route exact path="/admin/manage-kudos">
-            <Header title="Manage Kudos"></Header>
-            <ManageKudosPage />
-          </Route>
-        </Switch>
-      )}
+      <Route path="/admin/edit-skills">
+        <Header title="Skills" />
+        <EditSkillsPage />
+      </Route>
+      <Route path="/admin/settings">
+        <Header title="Settings" />
+        <SettingsPage />
+      </Route>
+      <Route path="/admin/permissions">
+        <Header title="Permissions" />
+        <EditPermissionsPage />
+      </Route>
+      <Route path="/admin/skill-categories/:categoryId">
+        <SkillCategoryEditPage />
+      </Route>
+      <Route path="/admin/skill-categories">
+        <SkillCategoriesPage />
+      </Route>
+      <Route path="/checkins-reports">
+        <Header title="Check-in Report" />
+        <CheckinsReportPage />
+      </Route>
+      <Route path="/skills-reports">
+        <Header title="Skill Report" />
+        <SkillReportPage />
+      </Route>
+      <Route path="/team-skills-reports">
+        <Header title="Team Skill Report" />
+        <TeamSkillReportPage />
+      </Route>
+      <Route path="/anniversary-reports">
+        <Header title="Anniversary Report" />
+        <AnniversaryReportPage />
+      </Route>
+      <Route path="/birthday-reports">
+        <Header title="Birthday Report" />
+        <BirthdayReportPage />
+      </Route>
+      <Route path="/certification-reports">
+        <Header title="Certification Report" />
+        <CertificationReportPage />
+      </Route>
+      <Route path="/annual-review-reports">
+        <Header title="Annual Review Report" />
+        <AnnualReviewReportPage />
+      </Route>
+      <Route path="/merit-reports">
+        <Header title="Merit Report" />
+        <MeritReportPage />
+      </Route>
+      <Route path="/volunteer-reports">
+        <Header title="Volunteering Report" />
+        <VolunteerReportPage />
+      </Route>
+      <Route path="/pulse-reports">
+        <Header title="Pulse Report" />
+        <PulseReportPage />
+      </Route>
+      <Route path="/admin/roles">
+        <Header title="Roles"></Header>
+        <Roles />
+      </Route>
+      <Route path="/admin/users">
+        <Header title="Users"></Header>
+        <Users />
+      </Route>
+      <Route path="/admin/email">
+        <Header title="Send Email"></Header>
+        <EmailPage />
+      </Route>
+      <Route exact path="/feedback/request/confirmation">
+        <FeedbackRequestConfirmation />
+      </Route>
+      <Route path="/feedback/request">
+        <FeedbackRequestPage />
+      </Route>
+      <Route exact path="/feedback/view">
+        <ViewFeedbackPage />
+      </Route>
+      <Route exact path="/feedback/view/responses">
+        <ViewFeedbackResponses />
+      </Route>
+      <Route exact path="/feedback/submit/confirmation">
+        <FeedbackSubmitConfirmation />
+      </Route>
+      <Route path="/feedback/submit">
+        <FeedbackSubmitPage />
+      </Route>
+      <Route exact path="/admin/manage-kudos">
+        <Header title="Manage Kudos"></Header>
+        <ManageKudosPage />
+      </Route>
     </Switch>
   );
 }

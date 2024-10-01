@@ -11,7 +11,9 @@ import { sortMembersBySkill } from '../helpers/checks.js';
 import {
   selectOrderedSkills,
   selectCsrfToken,
-  selectCurrentMemberIds
+  selectCurrentMemberIds,
+  selectHasSkillsReportPermission,
+  noPermission,
 } from '../context/selectors';
 
 import { useQueryParameters } from '../helpers/query-parameters';
@@ -100,7 +102,7 @@ const SkillReportPage = props => {
     setSearchSkills([...skillsCopy]);
   }
 
-  return (
+  return selectHasSkillsReportPermission(state) ? (
     <div className="skills-report-page">
       <div className="SkillReportModal">
         <h2>Select desired skills...</h2>
@@ -134,6 +136,8 @@ const SkillReportPage = props => {
       </div>
       <SearchResults searchResults={searchResults} />
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 
