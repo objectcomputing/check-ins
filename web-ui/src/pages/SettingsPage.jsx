@@ -11,6 +11,7 @@ import {
 } from '../components/settings';
 import { putOption, postOption, getAllOptions } from '../api/settings';
 import { selectCsrfToken } from '../context/selectors';
+import { titleCase } from '../helpers/strings';
 import './SettingsPage.css';
 
 const displayName = 'SettingsPage';
@@ -30,8 +31,6 @@ const SettingsPage = () => {
   const [settingsControls, setSettingsControls] = useState([]);
   const [update, setState] = useState();
 
-  const categories = {};
-
   useEffect(() => {
     const fetchData = async () => {
       // Get the options from the server
@@ -42,9 +41,6 @@ const SettingsPage = () => {
       // create new settings and PUT to modify existing settings.
       for (let option of allOptions) {
         option.exists = option.id != '00000000-0000-0000-0000-000000000000';
-
-        // Add this category and mark it as not displayed as of yet.
-        categories[option.category] = false;
       }
 
       // Sort the options by category, store them, and upate the state.
@@ -53,14 +49,6 @@ const SettingsPage = () => {
     };
     fetchData();
   }, []);
-
-  // Replace all underscores with spaces, lowercase the string, and
-  // capitalize each word.
-  const humanize = (name) => {
-    return name.toLowerCase().replaceAll('_', ' ')
-               .replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
-  };
-
 
   // For specific settings, add a handleFunction to the settings object.
   // Format should be handleSetting and then add it to the handlers object
@@ -190,8 +178,9 @@ const SettingsPage = () => {
   return (
     <div className="settings-page">
       {updatedSettingsControls.map((componentInfo, index) => {
+        const categories = {};
         const Component = componentMapping[componentInfo.type.toUpperCase()];
-        const info = {...componentInfo, name: humanize(componentInfo.name)};
+        const info = {...componentInfo, name: titleCase(componentInfo.name)};
         if (categories[info.category]) {
           return <Component key={index} {...info} />;
         } else {
@@ -200,7 +189,7 @@ const SettingsPage = () => {
             <>
             <Typography variant="h4"
                         sx={{textDecoration: 'underline'}}
-                        display="inline">{humanize(info.category)}</Typography>
+                        display="inline">{titleCase(info.category)}</Typography>
             <Component key={index} {...info} />
             </>
           );
