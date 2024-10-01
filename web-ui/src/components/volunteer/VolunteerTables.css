@@ -15,6 +15,14 @@
   width: 100%;
 }
 
+.volunteer-activities-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 1rem auto;
+  padding: 1rem;
+  box-shadow: var(--checkins-palette-shadow);
+}
+
 .volunteer-tables {
   display: flex;
   flex-direction: column;
