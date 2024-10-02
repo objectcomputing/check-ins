@@ -50,7 +50,7 @@ public class PulseServicesImpl implements PulseServices {
   );
 
   public PulseServicesImpl(
-                    @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
+                    @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                     CheckInsConfiguration checkInsConfiguration,
                     MemberProfileServices memberProfileServices,
                     SettingsServices settingsServices) {
