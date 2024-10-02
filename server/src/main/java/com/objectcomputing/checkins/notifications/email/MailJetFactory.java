@@ -14,6 +14,7 @@ import jakarta.inject.Singleton;
 public class MailJetFactory {
 
     public static final String HTML_FORMAT = "html";
+    public static final String MJML_FORMAT = "mjml";
     public static final String TEXT_FORMAT = "text";
 
     @Bean
@@ -31,6 +32,13 @@ public class MailJetFactory {
     @Named(HTML_FORMAT)
     EmailSender getHtmlSender(MailJetSender sender) {
         sender.setEmailFormat(Emailv31.Message.HTMLPART);
+        return sender;
+    }
+
+    @Singleton
+    @Named(MJML_FORMAT)
+    EmailSender getMjmlSender(MailJetSender sender) {
+        sender.setEmailFormat(MailJetSender.MJMLPART);
         return sender;
     }
 
