@@ -6,7 +6,9 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.email.Email;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
@@ -19,6 +21,7 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,11 +47,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final String notificationSubject;
     private final String webURL;
 
+    private enum CompletionEmailType { REVIEWERS, SUPERVISOR }
+    private record ReviewPeriodInfo(String subject, LocalDate closeDate) {}
+
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices,
                                        ReviewPeriodRepository reviewPeriodRepository, ReviewAssignmentRepository reviewAssignmentRepository,
-                                       @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
+                                       @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                                        CheckInsConfiguration checkInsConfiguration
     ) {
         this.feedbackReqRepository = feedbackReqRepository;
@@ -107,18 +113,62 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public void sendNewRequestEmail(FeedbackRequest storedRequest) {
         MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
+        MemberProfile reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
-        String senderName = creator.getFirstName() + " " + creator.getLastName();
-        String newContent = "<h1>You have received a feedback request.</h1>" +
-                "<p><b>" + senderName + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
-        if (storedRequest.getDueDate() != null) {
-            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth() + ", " + storedRequest.getDueDate().getYear() + ".";
-        }
-        newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
+        String senderName = MemberProfileUtils.getFullName(creator);
 
-//        LOG.warn("Pretending to send an email about the new request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
+        String newContent = String.format("""
+<mjml>
+  <mj-head>
+    <mj-title>Feedback Request</mj-title>
+    <mj-preview>Feedback Request</mj-preview>
+    <mj-attributes>
+      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#e0f2ff">
+    <mj-section background-color="#2559a7">
+      <mj-column>
+        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
+      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> Give Your Feedback! </mj-text>
+   
+    </mj-hero>
+    <mj-section background-color="#ffffff">
+      <mj-column>
+        <mj-text>
+          <h2>You have received a feedback request.</h2>
+        </mj-text>
+          <mj-text font-size="16px">Hello, %s!</mj-text>
+        <mj-text font-size="16px"><strong>%s</strong> is requesting feedback on <strong>%s</strong> from you.</mj-text>
+        <mj-text font-size="16px">%s</mj-text>
+        <mj-text font-size="16px">Please go to <a href="%s">your unique link</a> to complete this request.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#feb672" padding="10px">
+      <mj-column vertical-align="top" width="100%%">
+        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+""", reviewer.getFirstName(), senderName,
+     MemberProfileUtils.getFullName(requestee),
+     storedRequest.getDueDate() == null ?
+         "This request does not have a due date." :
+         String.format("This request is due on %s %d, %d.",
+                       storedRequest.getDueDate().getMonth(),
+                       storedRequest.getDueDate().getDayOfMonth(),
+                       storedRequest.getDueDate().getYear()),
+     String.format("%s/feedback/submit?request=%s",
+                   webURL, storedRequest.getId().toString()));
+
         if (!storedRequest.getRecipientId().equals(storedRequest.getRequesteeId())) {
-            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(senderName, creator.getWorkEmail(),
+                                  notificationSubject, newContent,
+                                  reviewer.getWorkEmail());
         }
     }
 
@@ -187,20 +237,55 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
+        MemberProfile reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         // Send email if the feedback request has been reopened for edits
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
+            String senderName = MemberProfileUtils.getFullName(creator);
+            String newContent = String.format("""
+<mjml>
+  <mj-head>
+    <mj-title>Feedback Request Reopened</mj-title>
+    <mj-preview>Feedback Request Reopened</mj-preview>
+    <mj-attributes>
+      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#e0f2ff">
+    <mj-section background-color="#2559a7">
+      <mj-column>
+        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
+      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> Edit Your Feedback! </mj-text>
+   
+    </mj-hero>
+    <mj-section background-color="#ffffff">
+      <mj-column>
+        <mj-text>
+          <h2>You have received edit access to a feedback request.</h2>
+        </mj-text>
+          <mj-text font-size="16px">Hello, %s!</mj-text>
+        <mj-text font-size="16px"><strong>%s has reopened the feedback request on %s from you.</strong></mj-text>
+        <mj-text font-size="16px">You may make changes to your answers, but you will need to submit the form again when finished.</mj-text>
+        <mj-text font-size="16px">Please go to <a href="%s">your unique link</a> to complete this request.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#feb672" padding="10px">
+      <mj-column vertical-align="top" width="100%%">
+        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+""", reviewer.getFirstName(), senderName,
+     MemberProfileUtils.getFullName(requestee),
+     String.format("%s/feedback/submit?request=%s",
+                   webURL, storedRequest.getId().toString()));
 
-            String senderName = creator.getFirstName() + " " + creator.getLastName();
-            String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
-                    "<p><b>" + senderName +
-                    "</b> has reopened the feedback request on <b>" +
-                    requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
-                    "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
-            newContent += "<p>Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.</p>";
-//            LOG.warn("Pretending to send an email about the reopened request to "+memberProfileServices.getById(storedRequest.getRecipientId()).getFirstName());
-            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewer.getWorkEmail());
         }
 
         // Send email if the feedback request has been reassigned
@@ -210,12 +295,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // Send self-review completion email to supervisor and pdl if appropriate
         if (currentUserServices.getCurrentUser().getId().equals(requestee.getId())) {
-            sendSelfReviewCompletionEmailToPdlAndSupervisor(feedbackRequest);
+            sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
         }
 
-        // Send email to reviewers
-        if (reviewAssignmentsSet != null && reviewAssignmentsSet.size() > 0) {
-            this.sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);    
+        // Send email to reviewers.  But, only when the requestee is the
+        // recipient (i.e., a self-review).
+        if (reviewAssignmentsSet != null && reviewAssignmentsSet.size() > 0 &&
+            feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
+            sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);    
         }        
 
         return storedRequest;
@@ -344,121 +431,182 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return feedbackRequest;
     }
 
-    public void sendSelfReviewCompletionEmailToReviewers(FeedbackRequest feedbackRequest, Set<ReviewAssignment> reviewAssignmentSet) {
-        MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
-        MemberProfile pdlProfile = null;
-        MemberProfile supervisorProfile = null;
-
-        try {
-            if (currentUserProfile.getPdlId() != null) {
-                pdlProfile = memberProfileServices.getById(currentUserProfile.getPdlId());
-            }
-        } catch (NullPointerException e) {
-            LOG.error("PDL could not be found for self-review completion email");
-        }
-
-        try {
-            if (currentUserProfile.getSupervisorid() != null) {
-                supervisorProfile = memberProfileServices.getById(currentUserProfile.getSupervisorid());
-            }
-        } catch (NullPointerException e) {
-            LOG.error("Supervisor could not be found for self-review completion email");
-        }
-
-        String reviewPeriodString = "";
-        if (feedbackRequest.getReviewPeriodId() != null) {
-            Optional<ReviewPeriod> reviewPeriodOpt = reviewPeriodRepository.findById(feedbackRequest.getReviewPeriodId());
-            if (reviewPeriodOpt.isPresent()) {
-                ReviewPeriod reviewPeriod = reviewPeriodOpt.get();
-                reviewPeriodString = String.format(" for %s", reviewPeriod.getName());
-            }
-        }
-
-        String subject = String.format("%s %s has finished their self-review%s.", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString);
-        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
-
-        if (pdlProfile != null) {
-            bodyBuilder.append(String.format("PDL: %s %s<br>", pdlProfile.getFirstName(), pdlProfile.getLastName()));
-        }
-
-        if (supervisorProfile != null) {
-            bodyBuilder.append(String.format("Supervisor: %s %s<br>", supervisorProfile.getFirstName(), supervisorProfile.getLastName()));
-        }
-
-        Set<String> recipients = new HashSet<>();
+    private void sendSelfReviewCompletionEmailToReviewers(FeedbackRequest feedbackRequest, Set<ReviewAssignment> reviewAssignmentSet) {
+        // Send an email to each reviewer.
         reviewAssignmentSet.forEach(reviewAssignment -> {
             MemberProfile memberProfileReviewer = memberProfileServices.getById(reviewAssignment.getReviewerId());
-            if (memberProfileReviewer != null && memberProfileReviewer.getWorkEmail() != null) {
-                recipients.add(memberProfileReviewer.getWorkEmail());
+            if (memberProfileReviewer != null &&
+                memberProfileReviewer.getWorkEmail() != null) {
+                sendSelfReviewCompletionEmail(feedbackRequest,
+                                              memberProfileReviewer,
+                                              CompletionEmailType.REVIEWERS);
             }
         });
+    }
 
-        bodyBuilder.append("<br>It is now your turn in their review process. Please complete your portion in a timely manner.");
-
-        String body = bodyBuilder.toString();
-
-        if (recipients.size() > 0) {
-            try {
-                emailSender.sendEmail(null, null, subject, body, recipients.toArray(new String[0]));
-            } catch (Exception e) {
-                LOG.error("Unable to send self-review completion email to reviewers", e);
+    private void sendSelfReviewCompletionEmailToSupervisor(FeedbackRequest feedbackRequest) {
+        MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
+        try {
+            if (currentUserProfile.getSupervisorid() != null) {
+                MemberProfile supervisorProfile =
+                    memberProfileServices.getById(
+                        currentUserProfile.getSupervisorid());
+                sendSelfReviewCompletionEmail(feedbackRequest,
+                                              supervisorProfile,
+                                              CompletionEmailType.SUPERVISOR);
             }
+        } catch (NotFoundException e) {
+            LOG.error("Supervisor could not be found for completion email");
         }
     }
 
-    public void sendSelfReviewCompletionEmailToPdlAndSupervisor(FeedbackRequest feedbackRequest) {
+    private void sendSelfReviewCompletionEmail(FeedbackRequest feedbackRequest,
+                                               MemberProfile reviewer,
+                                               CompletionEmailType emailType) {
+        // Build the email contents.
+        Email email;
         MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
-        MemberProfile pdlProfile = null;
-        MemberProfile supervisorProfile = null;
-
-        try {
-            if (currentUserProfile.getPdlId() != null) {
-                pdlProfile = memberProfileServices.getById(currentUserProfile.getPdlId());
-            }
-        } catch (NullPointerException e) {
-            LOG.error("PDL could not be found for self-review completion email");
+        switch(emailType) {
+            case CompletionEmailType.REVIEWERS:
+                email = buildReviewerEmail(feedbackRequest, reviewer,
+                                           currentUserProfile);
+                break;
+            default:
+            case CompletionEmailType.SUPERVISOR:
+                email = buildSupervisorEmail(feedbackRequest, reviewer,
+                                             currentUserProfile);
+                break;
         }
 
+        // Send the email.
         try {
-            if (currentUserProfile.getSupervisorid() != null) {
-                supervisorProfile = memberProfileServices.getById(currentUserProfile.getSupervisorid());
-            }
-        } catch (NullPointerException e) {
-            LOG.error("Supervisor could not be found for self-review completion email");
+            emailSender.sendEmail(null, null, email.getSubject(),
+                                  email.getContents(),
+                                  reviewer.getWorkEmail());
+        } catch (Exception e) {
+           LOG.error("Unable to send the self-review completion email.", e);
         }
+    }
 
+    private ReviewPeriodInfo getSelfReviewInfo(
+                                 FeedbackRequest feedbackRequest, String name) {
         String reviewPeriodString = "";
+        LocalDate closeDate = null;
         if (feedbackRequest.getReviewPeriodId() != null) {
             Optional<ReviewPeriod> reviewPeriodOpt = reviewPeriodRepository.findById(feedbackRequest.getReviewPeriodId());
             if (reviewPeriodOpt.isPresent()) {
                 ReviewPeriod reviewPeriod = reviewPeriodOpt.get();
+                closeDate = reviewPeriod.getCloseDate().toLocalDate();
                 reviewPeriodString = String.format(" for %s", reviewPeriod.getName());
             }
         }
-
-        String subject = String.format("%s %s has finished their self-review%s.", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString);
-        StringBuilder bodyBuilder = new StringBuilder(String.format("Self-review has been completed by %s %s%s.<br>", currentUserProfile.getFirstName(), currentUserProfile.getLastName(), reviewPeriodString));
-
-        Set<String> recipients = new HashSet<>();
-        if (pdlProfile != null) {
-            bodyBuilder.append(String.format("PDL: %s %s<br>", pdlProfile.getFirstName(), pdlProfile.getLastName()));
-            recipients.add(pdlProfile.getWorkEmail());
-        }
-
-        if (supervisorProfile != null) {
-            bodyBuilder.append(String.format("Supervisor: %s %s<br>", supervisorProfile.getFirstName(), supervisorProfile.getLastName()));
-            recipients.add(supervisorProfile.getWorkEmail());
-        }
-
-        String body = bodyBuilder.toString();
-
-        if (pdlProfile != null || supervisorProfile != null) {
-            try {
-                emailSender.sendEmail(null, null, subject, body, recipients.toArray(new String[0]));
-            } catch (Exception e) {
-                LOG.error("Unable to send self-review completion email to PDL/Supervisor", e);
-            }
-        }
+        return new ReviewPeriodInfo(
+                       String.format("%s has finished their self-review%s.",
+                                     name, reviewPeriodString), closeDate);
     }
 
+    private Email buildReviewerEmail(FeedbackRequest feedbackRequest,
+                                     MemberProfile reviewerProfile,
+                                     MemberProfile currentUserProfile) {
+        String reviewerName = reviewerProfile.getFirstName();
+        String revieweeName = MemberProfileUtils.getFullName(currentUserProfile);
+        String selfReviewURL = String.format("%s/feedback/view/responses/?request=%s", webURL, feedbackRequest.getId().toString());
+        ReviewPeriodInfo info = getSelfReviewInfo(feedbackRequest, revieweeName);
+        LocalDate closeDate = info.closeDate();
+        String ending = closeDate == null ? "the review period closes" :
+                 closeDate.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+        String body = String.format("""
+<mjml>
+  <mj-head>
+    <mj-title>Self-Review Completion</mj-title>
+    <mj-preview>Self-Reviews Completion for Reviewer</mj-preview>
+    <mj-attributes>
+      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#e0f2ff">
+    <mj-section background-color="#2559a7">
+      <mj-column>
+        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
+      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> It's Your Turn! </mj-text>
+   
+    </mj-hero>
+    <mj-section background-color="#ffffff">
+      <mj-column>
+        <mj-text>
+          <h2>It's time to begin your review of %s</h2>
+        </mj-text>
+          <mj-text font-size="16px">Hello, %s!</mj-text>
+        <mj-text font-size="16px">%s has completed their self-review and it can be viewed <a href="%s">here</a>.</mj-text>   <mj-text font-size="16px">It's your turn to share your thoughts and complete your review. Please complete your review before %s. </strong></mj-text>
+     
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#feb672" padding="10px">
+      <mj-column vertical-align="top" width="100%%">
+        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>""", revieweeName, reviewerName, revieweeName, selfReviewURL, ending);
+        Email email = new Email();
+        email.setSubject(info.subject());
+        email.setContents(body);
+        return email;
+    }
+
+    private Email buildSupervisorEmail(FeedbackRequest feedbackRequest,
+                                       MemberProfile supervisorProfile,
+                                       MemberProfile currentUserProfile) {
+        String supervisorName = supervisorProfile == null ? "Supervisor" :
+                                   supervisorProfile.getFirstName();
+        String revieweeName = MemberProfileUtils.getFullName(currentUserProfile);
+        String selfReviewURL = String.format("%s/feedback/view/responses/?request=%s", webURL, feedbackRequest.getId().toString());
+        ReviewPeriodInfo info = getSelfReviewInfo(feedbackRequest, revieweeName);
+
+        String body = String.format("""
+<mjml>
+  <mj-head>
+    <mj-title>Self-Review Completion</mj-title>
+    <mj-preview>Self-Reviews Completion for Supervisor</mj-preview>
+    <mj-attributes>
+      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#e0f2ff">
+    <mj-section background-color="#2559a7">
+      <mj-column>
+        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
+      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> Self-Review Completion </mj-text>
+   
+    </mj-hero>
+    <mj-section background-color="#ffffff">
+      <mj-column>
+        <mj-text>
+          <h2>Your team member has completed their self-review!</h2>
+        </mj-text>
+          <mj-text font-size="16px">Hello, %s!</mj-text>
+        <mj-text font-size="16px">%s has completed their self-review. You can view it <a href="%s">here</a>.</mj-text>
+     
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#feb672" padding="10px">
+      <mj-column vertical-align="top" width="100%%">
+        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>""", supervisorName, revieweeName, selfReviewURL);
+
+        Email email = new Email();
+        email.setSubject(info.subject());
+        email.setContents(body);
+        return email;
+    }
 }
