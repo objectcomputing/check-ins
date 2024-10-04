@@ -35,6 +35,12 @@ public class Certification {
     @Schema(description = "name of the certification")
     private String name;
 
+    @NotBlank
+    @Column(name = "description")
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "description of the certification")
+    private String description;
+
     @Nullable
     @Column(name = "badge_url")
     @Schema(description = "url of the badge")
@@ -47,18 +53,19 @@ public class Certification {
     public Certification() {
     }
 
-    Certification(UUID id, String name, @Nullable String badgeUrl, boolean active) {
+    Certification(UUID id, String name, @NotBlank String description, @Nullable String badgeUrl, boolean active) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.badgeUrl = badgeUrl;
         this.active = active;
     }
 
-    public Certification(String name, @Nullable String badgeUrl) {
-        this(null, name, badgeUrl, true);
+    public Certification(String name, @NotBlank String description, @Nullable String badgeUrl) {
+        this(null, name, description, badgeUrl, true);
     }
 
-    public Certification(String name, String badgeUrl, boolean active) {
-        this(null, name, badgeUrl, active);
+    public Certification(String name, String description, String badgeUrl, boolean active) {
+        this(null, name, description, badgeUrl, active);
     }
 }
