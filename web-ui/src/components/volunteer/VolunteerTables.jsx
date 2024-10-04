@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useReducer, useState } from 'react';
-import { Box, Tab, Tabs, Card, CardHeader, Avatar } from '@mui/material';
+import { Box, Tab, Tabs, Typography, Card, CardHeader, CardContent, Avatar } from '@mui/material';
 
 import VolunteerEvents from './VolunteerEvents';
 import VolunteerRelationships from './VolunteerRelationships';
@@ -43,15 +43,7 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
 
   return (
     <Card className="volunteer-activities-card">
-      <CardHeader
-        avatar={
-          <Avatar>
-            <HandshakeIcon /> {/* Handshake Icon in the card title */}
-          </Avatar>
-        }
-        title="Volunteer Activities"
-      />
-      <div className="volunteer-tables">
+      <CardContent className="volunteer-tables">
         <Tabs
           indicatorColor="secondary"
           onChange={(event, index) => setTabIndex(index)}
@@ -63,9 +55,9 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar sx={{ mr: 1 }}>
-                  <GroupIcon />
+                  <HandshakeIcon />
                 </Avatar>
-                {onlyMe ? 'My Orgs' : 'Relationships'}
+                <Typography textTransform="none" variant='h5' component='h2'>Volunteer Orgs</Typography>
               </Box>
             }
             {...a11yProps(0)}
@@ -80,7 +72,7 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
                 <Avatar sx={{ mr: 1 }}>
                   <EventIcon />
                 </Avatar>
-                Events
+                <Typography textTransform="none" variant='h5' component='h2'>Events</Typography>
               </Box>
             }
             {...a11yProps(1)}
@@ -104,7 +96,7 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
             onlyMe={onlyMe}
           />
         </TabPanel>
-      </div>
+      </CardContent>
     </Card>
   );
 };

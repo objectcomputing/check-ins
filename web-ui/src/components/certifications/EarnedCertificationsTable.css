@@ -1,6 +1,4 @@
 #earned-certifications-table {
-  display: flex;
-  justify-content: center;
 
   .MuiCardHeader-root {
     padding-bottom: 0;
@@ -13,6 +11,7 @@
 
   table {
     margin: 0 auto;
+    width: 100%;
     border-collapse: collapse;
 
     img {
@@ -42,6 +41,10 @@
 
   tr:nth-child(odd) {
     background-color: var(--checkins-palette-background-default);
+  }
+
+  .actions-th {
+    width: 6rem;
   }
 }
 

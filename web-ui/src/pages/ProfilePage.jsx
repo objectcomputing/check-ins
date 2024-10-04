@@ -19,7 +19,7 @@ import ProgressBar from '../components/contribution_hours/ProgressBar';
 import VolunteerTables from '../components/volunteer/VolunteerTables';
 
 import { Info } from '@mui/icons-material';
-import { Card, CardContent, CardHeader, Chip, TextField } from '@mui/material';
+import { Card, CardContent, CardHeader, Chip, TextField, Avatar } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -149,7 +149,7 @@ const ProfilePage = () => {
         <div className="profile-page-bio">
           <Card>
             <CardHeader
-              avatar={<Info />}
+              avatar={<Avatar sx={{ mr: 1 }}><Info /></Avatar>}
               title="Bio"
               titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
@@ -171,7 +171,7 @@ const ProfilePage = () => {
             {myHours && (
               <Card>
                 <CardHeader
-                  avatar={<Info />}
+                  avatar={<Avatar sx={{ mr: 1 }}><Info /></Avatar>}
                   subheader={`As Of: ${new Date(
                     myHours?.asOfDate
                   ).toLocaleDateString()}`}
@@ -189,7 +189,7 @@ const ProfilePage = () => {
         <div className="profile-guilds">
           <Card style={{ minHeight: 150 }}>
             <CardHeader
-              avatar={<GroupIcon />}
+              avatar={<Avatar sx={{ mr: 1 }}><GroupIcon /></Avatar>}
               title="Guilds"
               titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
@@ -218,7 +218,7 @@ const ProfilePage = () => {
         <div className="profile-teams">
           <Card>
             <CardHeader
-              avatar={<GroupIcon />}
+              avatar={<Avatar sx={{ mr: 1 }}><GroupIcon /></Avatar>}
               title="Teams"
               titleTypographyProps={{ variant: 'h5', component: 'h1' }}
             />
