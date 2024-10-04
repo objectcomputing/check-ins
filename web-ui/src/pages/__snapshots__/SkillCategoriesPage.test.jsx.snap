@@ -92,7 +92,7 @@ exports[`renders correctly 1`] = `
           </div>
         </div>
         <div
-          class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-skill-categories-field css-1y8r37a-MuiAutocomplete-root"
+          class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-skill-categories-field css-ia8vjw-MuiAutocomplete-root"
           style="min-width: 200px; max-width: 300px;"
         >
           <div
