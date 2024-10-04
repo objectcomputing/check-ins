@@ -190,7 +190,7 @@ const ProfilePage = () => {
           <Card style={{ minHeight: 150 }}>
             <CardHeader
               avatar={<Avatar sx={{ mr: 1 }}><GroupIcon /></Avatar>}
-              title="Guilds"
+              title="Guilds & Communities"
               titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
             <CardContent>
