@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class PulseServicesTest extends TestContainersSuite implements TeamFixture, RoleFixture {
     @Inject
-    @Named(MailJetFactory.HTML_FORMAT)
+    @Named(MailJetFactory.MJML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
