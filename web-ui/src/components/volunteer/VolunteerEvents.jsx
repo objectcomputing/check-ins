@@ -1,13 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AddCircleOutline, Delete, Edit, Event } from '@mui/icons-material';
+import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
 import {
   Autocomplete,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
   Dialog,
   DialogActions,
   DialogContent,
@@ -21,11 +18,7 @@ import { resolve } from '../../api/api.js';
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
-import {
-  selectCsrfToken,
-  selectCurrentUser,
-  selectProfileMap
-} from '../../context/selectors';
+import { selectCsrfToken, selectCurrentUser, selectProfileMap } from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 
 const eventBaseUrl = '/services/volunteer/event';
@@ -73,9 +66,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       // Only keep the events for my relationships.
       events = events.filter(e => Boolean(relationshipMap[e.relationshipId]));
     }
-    events.sort((event1, event2) =>
-      event1.eventDate.localeCompare(event2.eventDate)
-    );
+    events.sort((event1, event2) => event1.eventDate.localeCompare(event2.eventDate));
     setEvents(events);
   }, [csrf, relationshipMap]);
 
@@ -92,9 +83,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     if (res.error) return;
 
     const organizations = res.payload.data;
-    setOrganizationMap(
-      organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
-    );
+    setOrganizationMap(organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {}));
   }, [csrf]);
 
   const loadRelationships = useCallback(async () => {
@@ -119,9 +108,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       return member1.name.localeCompare(member2.name);
     });
     setRelationships(relationships);
-    setRelationshipMap(
-      relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {})
-    );
+    setRelationshipMap(relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {}));
   }, [csrf, onlyMe, profileMap]);
 
   useEffect(() => {
@@ -183,11 +170,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const eventDialog = useCallback(
     () => (
-      <Dialog
-        classes={{ root: 'volunteer-dialog' }}
-        open={eventDialogOpen}
-        onClose={cancelEvent}
-      >
+      <Dialog classes={{ root: 'volunteer-dialog' }} open={eventDialogOpen} onClose={cancelEvent}>
         <DialogTitle>{selectedEvent?.id ? 'Edit' : 'Add'} Event</DialogTitle>
         <DialogContent>
           <Autocomplete
@@ -202,17 +185,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
             }}
             options={relationships}
             renderInput={params => (
-              <TextField
-                {...params}
-                className="fullWidth"
-                label={onlyMe ? 'Organization' : 'Volunteer Relationship'}
-              />
+              <TextField {...params} className="fullWidth" label={onlyMe ? 'Organization' : 'Volunteer Relationship'} />
             )}
-            value={
-              selectedEvent?.relationshipId
-                ? relationshipMap[selectedEvent.relationshipId]
-                : null
-            }
+            value={selectedEvent?.relationshipId ? relationshipMap[selectedEvent.relationshipId] : null}
           />
           <DatePickerField
             date={getDate(selectedEvent?.eventDate)}
@@ -235,9 +210,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           />
           <TextField
             label="Notes"
-            onChange={e =>
-              setSelectedEvent({ ...selectedEvent, notes: e.target.value })
-            }
+            onChange={e => setSelectedEvent({ ...selectedEvent, notes: e.target.value })}
             value={selectedEvent?.notes ?? ''}
           />
         </DialogContent>
@@ -270,10 +243,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
-              <IconButton
-                aria-label="Delete"
-                onClick={() => confirmDelete(event)}
-              >
+              <IconButton aria-label="Delete" onClick={() => confirmDelete(event)}>
                 <Delete />
               </IconButton>
             </Tooltip>
@@ -290,58 +260,29 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     if (isEmpty(relationshipMap)) return null;
 
     return (
-      <Card>
-        <CardHeader
-          avatar={<Event />}
-          title="Events"
-          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-        />
-        <CardContent>
-          <div className="row">
-            <table>
-              <thead>
-                <tr>
-                  {sortableTableColumns.map(column => (
-                    <th
-                      key={column}
-                      onClick={() => sortTable(column)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {column}
-                      {sortIndicator(column)}
-                    </th>
-                  ))}
-                  <th className="actions-th" key="actions">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>{events.map(eventRow)}</tbody>
-            </table>
-            <IconButton
-              aria-label="Add Volunteer Event"
-              classes={{ root: 'add-button' }}
-              onClick={addEvent}
-            >
-              <AddCircleOutline />
-            </IconButton>
-          </div>
-          {onlyMe && (
-            <p className="warning">
-              Create events for your organizations.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <div className="row">
+        <table>
+          <thead>
+            <tr>
+              {sortableTableColumns.map(column => (
+                <th key={column} onClick={() => sortTable(column)} style={{ cursor: 'pointer' }}>
+                  {column}
+                  {sortIndicator(column)}
+                </th>
+              ))}
+              <th className="actions-th" key="actions">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>{events.map(eventRow)}</tbody>
+        </table>
+        <IconButton aria-label="Add Volunteer Event" classes={{ root: 'add-button' }} onClick={addEvent}>
+          <AddCircleOutline />
+        </IconButton>
+      </div>
     );
-  }, [
-    events,
-    organizationMap,
-    profileMap,
-    relationshipMap,
-    sortAscending,
-    sortColumn
-  ]);
+  }, [events, organizationMap, profileMap, relationshipMap, sortAscending, sortColumn]);
 
   const getDate = dateString => {
     if (!dateString) return null;
