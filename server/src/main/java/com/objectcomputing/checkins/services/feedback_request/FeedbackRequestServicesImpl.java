@@ -142,7 +142,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
           <h2>You have received a feedback request.</h2>
         </mj-text>
           <mj-text font-size="16px">Hello, %s!</mj-text>
-        <mj-text font-size="16px"><strong>%s</strong> is requesting feedback on <strong>%s</strong> from you.</mj-text>
+        <mj-text font-size="16px"><strong>%s</strong> is requesting feedback %sfrom you.</mj-text>
         <mj-text font-size="16px">%s</mj-text>
         <mj-text font-size="16px">Please go to <a href="%s">your unique link</a> to complete this request.</mj-text>
       </mj-column>
@@ -155,21 +155,22 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
   </mj-body>
 </mjml>
 """, reviewer.getFirstName(), senderName,
-     MemberProfileUtils.getFullName(requestee),
+     storedRequest.getRecipientId().equals(storedRequest.getRequesteeId()) ?
+     "" :
+     String.format("on <strong>%s</strong> ",
+                   MemberProfileUtils.getFullName(requestee)),
      storedRequest.getDueDate() == null ?
-         "This request does not have a due date." :
-         String.format("This request is due on %s %d, %d.",
-                       storedRequest.getDueDate().getMonth(),
-                       storedRequest.getDueDate().getDayOfMonth(),
-                       storedRequest.getDueDate().getYear()),
+     "This request does not have a due date." :
+     String.format("This request is due on %s %d, %d.",
+                   storedRequest.getDueDate().getMonth(),
+                   storedRequest.getDueDate().getDayOfMonth(),
+                   storedRequest.getDueDate().getYear()),
      String.format("%s/feedback/submit?request=%s",
                    webURL, storedRequest.getId().toString()));
 
-        if (!storedRequest.getRecipientId().equals(storedRequest.getRequesteeId())) {
-            emailSender.sendEmail(senderName, creator.getWorkEmail(),
-                                  notificationSubject, newContent,
-                                  reviewer.getWorkEmail());
-        }
+        emailSender.sendEmail(senderName, creator.getWorkEmail(),
+                              notificationSubject, newContent,
+                              reviewer.getWorkEmail());
     }
 
     @Override
@@ -431,7 +432,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return feedbackRequest;
     }
 
-    private void sendSelfReviewCompletionEmailToReviewers(FeedbackRequest feedbackRequest, Set<ReviewAssignment> reviewAssignmentSet) {
+    public void sendSelfReviewCompletionEmailToReviewers(FeedbackRequest feedbackRequest, Set<ReviewAssignment> reviewAssignmentSet) {
         // Send an email to each reviewer.
         reviewAssignmentSet.forEach(reviewAssignment -> {
             MemberProfile memberProfileReviewer = memberProfileServices.getById(reviewAssignment.getReviewerId());
@@ -444,7 +445,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         });
     }
 
-    private void sendSelfReviewCompletionEmailToSupervisor(FeedbackRequest feedbackRequest) {
+    public void sendSelfReviewCompletionEmailToSupervisor(FeedbackRequest feedbackRequest) {
         MemberProfile currentUserProfile = currentUserServices.getCurrentUser();
         try {
             if (currentUserProfile.getSupervisorid() != null) {
@@ -496,7 +497,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             Optional<ReviewPeriod> reviewPeriodOpt = reviewPeriodRepository.findById(feedbackRequest.getReviewPeriodId());
             if (reviewPeriodOpt.isPresent()) {
                 ReviewPeriod reviewPeriod = reviewPeriodOpt.get();
-                closeDate = reviewPeriod.getCloseDate().toLocalDate();
+                if (reviewPeriod.getCloseDate() != null) {
+                    closeDate = reviewPeriod.getCloseDate().toLocalDate();
+                }
                 reviewPeriodString = String.format(" for %s", reviewPeriod.getName());
             }
         }
@@ -510,7 +513,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                      MemberProfile currentUserProfile) {
         String reviewerName = reviewerProfile.getFirstName();
         String revieweeName = MemberProfileUtils.getFullName(currentUserProfile);
-        String selfReviewURL = String.format("%s/feedback/view/responses/?request=%s", webURL, feedbackRequest.getId().toString());
+        UUID requestId = feedbackRequest.getId();
+        String selfReviewURL = String.format("%s/feedback/view/responses/?request=%s", webURL, requestId == null ? "none" : requestId.toString());
         ReviewPeriodInfo info = getSelfReviewInfo(feedbackRequest, revieweeName);
         LocalDate closeDate = info.closeDate();
         String ending = closeDate == null ? "the review period closes" :
@@ -564,7 +568,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         String supervisorName = supervisorProfile == null ? "Supervisor" :
                                    supervisorProfile.getFirstName();
         String revieweeName = MemberProfileUtils.getFullName(currentUserProfile);
-        String selfReviewURL = String.format("%s/feedback/view/responses/?request=%s", webURL, feedbackRequest.getId().toString());
+        UUID requestId = feedbackRequest.getId();
+        String selfReviewURL = String.format("%s/feedback/view/responses/?request=%s", webURL, requestId == null ? "none" : requestId.toString());
         ReviewPeriodInfo info = getSelfReviewInfo(feedbackRequest, revieweeName);
 
         String body = String.format("""
