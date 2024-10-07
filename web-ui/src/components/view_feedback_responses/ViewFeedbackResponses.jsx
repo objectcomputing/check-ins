@@ -89,9 +89,17 @@ const ViewFeedbackResponses = () => {
       const res = await getQuestionsAndAnswers(requests, cookie);
 
       if (res) {
-        console.log('Retrieved Questions and Answers:', res); // Debugging log
-        res.sort((a, b) => a.questionNumber - b.questionNumber);
-        setQuestionsAndAnswers(res);
+        const sanitizedResponses = res.map(question => ({
+          ...question,
+          answers: question.answers.map(answer => ({
+            ...answer,
+            answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)
+          }))
+        }));
+
+        sanitizedResponses.sort((a, b) => a.questionNumber - b.questionNumber);
+        setQuestionsAndAnswers(sanitizedResponses);
+
       } else {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -165,11 +173,22 @@ const ViewFeedbackResponses = () => {
             answer.toLowerCase().includes(searchText.trim().toLowerCase())
         );
       }
+
+      // Ensure blank, null, undefined, or non-string answers are handled
+      filteredAnswers = filteredAnswers.map(answer => ({
+        ...answer,
+        answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)
+      }));
+
       return { ...response, answers: filteredAnswers };
     });
 
     setFilteredQuestionsAndAnswers(responsesToDisplay);
   }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    console.log("CSRF Token:", csrf);
+  }, [csrf, state]);
 
   useEffect(() => {
     if (isLoading && filteredQuestionsAndAnswers.length > 0) {
@@ -181,8 +200,9 @@ const ViewFeedbackResponses = () => {
     setSelectedResponders(responderOptions);
   };
 
+  // Updated isEmptyOrWhitespace function to handle non-string values
   const isEmptyOrWhitespace = (text) => {
-    return !text || text.trim() === '';
+    return typeof text !== 'string' || !text.trim();
   };
 
   return (
@@ -284,39 +304,7 @@ const ViewFeedbackResponses = () => {
         ))}
       {!isLoading &&
         filteredQuestionsAndAnswers?.map(question => {
-          // Handle Section Headers for questions 3 and 10
-          if (question.questionNumber === 3) {
-            return (
-              <Box
-                key={`section-1`}
-                border={1}
-                borderColor="gray"
-                p={2}
-                mb={3}
-                style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
-              >
-                Section 1: How often has this team member displayed each of the following behaviors during the period covered by this review?
-              </Box>
-            );
-          }
-
-          if (question.questionNumber === 10) {
-            return (
-              <Box
-                key={`section-2`}
-                border={1}
-                borderColor="gray"
-                p={2}
-                mb={3}
-                style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
-              >
-                Section 2: You can provide more detailed context to your review of this team member below. Be as specific as possible!
-              </Box>
-            );
-          }
-
-          // Handle other questions by removing "Q#: "
-          const questionText = question.question.replace(/^Q\d+: /, '');
+          const questionText = question.question;
           const hasResponses = question.answers.length > 0;
 
           return (
@@ -334,8 +322,8 @@ const ViewFeedbackResponses = () => {
               {!hasResponses && (
                 <div className="no-responses-found">
                   <Typography variant="body1" style={{ color: 'gray', display: 'flex', alignItems: 'center' }}>
-                    <ReportProblemOutlinedIcon style={{ marginRight: '0.5em' }} /> {/* Display caution icon */}
-                    Not yet submitted
+                    <ReportProblemOutlinedIcon style={{ marginRight: '0.5em' }} />
+                    ⚠️ No response submitted
                   </Typography>
                 </div>
               )}
@@ -344,7 +332,7 @@ const ViewFeedbackResponses = () => {
                 <FeedbackResponseCard
                   key={answer.id || answer.responder}
                   responderId={answer.responder}
-                  answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ Not yet submitted' : answer.answer}
+                  answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
                   inputType={question.inputType}
                   sentiment={answer.sentiment}
                 />

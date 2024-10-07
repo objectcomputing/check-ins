@@ -203,7 +203,6 @@ const Organizations = ({ onlyMe = false }) => {
           aria-label="Add Organization"
           onClick={addOrganization} // Open the dialog to add an organization
         >
-          {console.log("Add Organization button rendered")}
           <AddCircleOutline />
         </IconButton>
       </div>
