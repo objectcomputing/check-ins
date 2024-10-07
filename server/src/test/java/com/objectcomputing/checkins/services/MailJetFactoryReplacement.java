@@ -29,6 +29,13 @@ import java.util.stream.Collectors;
 public class MailJetFactoryReplacement {
 
     @Singleton
+    @Named(MailJetFactory.MJML_FORMAT)
+    @Replaces(value = EmailSender.class, named = MailJetFactory.MJML_FORMAT)
+    MockEmailSender getMjmlSender() {
+        return new MockEmailSender();
+    }
+
+    @Singleton
     @Named(MailJetFactory.HTML_FORMAT)
     @Replaces(value = EmailSender.class, named = MailJetFactory.HTML_FORMAT)
     MockEmailSender getHtmlSender() {

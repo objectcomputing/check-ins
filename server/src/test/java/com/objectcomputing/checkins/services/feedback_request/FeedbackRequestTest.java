@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.mockito.Mockito.never;
@@ -56,7 +57,7 @@ class FeedbackRequestTest extends TestContainersSuite {
     private FeedbackRequestServicesImpl feedbackRequestServices;
 
     @Inject
-    @Named(MailJetFactory.HTML_FORMAT)
+    @Named(MailJetFactory.MJML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
@@ -250,16 +251,16 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         feedbackRequestServices.sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);
 
-        assertEquals(1, emailSender.events.size());
-        assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner.", reviewer01.getWorkEmail() + "," + reviewer02.getWorkEmail()),
+        // This should equal the number of review assignments.
+        assertEquals(2, emailSender.events.size());
+        validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review",
                 emailSender.events.getFirst()
         );
     }
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmailToPdlAndSupervisor() {
+    void testSendSelfReviewCompletionEmailToSupervisor() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);
@@ -297,50 +298,16 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
         when(reviewPeriodRepository.findById(reviewPeriodId)).thenReturn(Optional.of(reviewPeriod));
 
-        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(feedbackRequest);
+        feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
 
         assertEquals(1, emailSender.events.size());
-        assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br>", supervisorProfile.getWorkEmail() + "," + pdlProfile.getWorkEmail()),
-                emailSender.events.getFirst()
+        validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review", emailSender.events.getFirst()
         );
     }
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_MissingPdl() {
-        UUID creatorId = UUID.randomUUID();
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
-
-        MemberProfile supervisorProfile = new MemberProfile();
-        supervisorProfile.setId(UUID.randomUUID());
-        supervisorProfile.setFirstName("Supervisor");
-        supervisorProfile.setLastName("Profile");
-        supervisorProfile.setWorkEmail("supervisor@example.com");
-
-        currentUser.setSupervisorid(supervisorProfile.getId());
-
-        String firstName = "firstName";
-        String lastName = "lastName";
-
-        currentUser.setFirstName(firstName);
-        currentUser.setLastName(lastName);
-
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
-        when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
-
-        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest());
-        assertEquals(1, emailSender.events.size());
-        assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>Supervisor: Supervisor Profile<br>", supervisorProfile.getWorkEmail()),
-                emailSender.events.getFirst()
-        );
-    }
-
-    @Test
-    @Tag("mocked")
-    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_MissingSupervisor() {
+    void testSendSelfReviewCompletionEmailToSupervisor_MissingSupervisor() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);
@@ -362,37 +329,13 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
         when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
 
-        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest());
-        assertEquals(1, emailSender.events.size());
-        assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br>", pdlProfile.getWorkEmail()),
-                emailSender.events.getFirst()
-        );
-    }
-
-    @Test
-    @Tag("mocked")
-    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_MissingPdlAndSupervisor() {
-        UUID creatorId = UUID.randomUUID();
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
-
-        String firstName = "firstName";
-        String lastName = "lastName";
-
-        currentUser.setFirstName(firstName);
-        currentUser.setLastName(lastName);
-
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
-
-        feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest());
-
+        feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(new FeedbackRequest());
         assertEquals(0, emailSender.events.size());
     }
 
     @Test
     @Tag("mocked")
-    void testSendSelfReviewCompletionEmailToPdlAndSupervisor_EmailSenderException() {
+    void testSendSelfReviewCompletionEmailToSupervisor_EmailSenderException() {
         UUID creatorId = UUID.randomUUID();
         MemberProfile currentUser = new MemberProfile();
         currentUser.setId(creatorId);
@@ -424,11 +367,21 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         emailSender.setException(new RuntimeException("Email sending failed"));
 
-        assertDoesNotThrow(() -> feedbackRequestServices.sendSelfReviewCompletionEmailToPdlAndSupervisor(new FeedbackRequest()));
+        assertDoesNotThrow(() -> feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(new FeedbackRequest()));
         assertEquals(1, emailSender.events.size());
-        assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br>", supervisorProfile.getWorkEmail() + "," + pdlProfile.getWorkEmail()),
-                emailSender.events.getFirst()
+        validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "firstName lastName has completed their self-review", emailSender.events.getFirst()
         );
+    }
+
+    private void validateEmail(String action, String fromName,
+                               String fromAddress, String subject,
+                               String partial, List<String> event) {
+        assertEquals(action, event.get(0));
+        assertEquals(fromName, event.get(1));
+        assertEquals(fromAddress, event.get(2));
+        assertEquals(subject, event.get(3));
+        if (partial != null && !partial.isEmpty()) {
+            assertTrue(event.get(4).contains(partial));
+        }
     }
 }
