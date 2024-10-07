@@ -54,6 +54,7 @@ class CertificationController {
     Certification create(@Body @Valid CertificationDTO certification) {
         return certificationService.saveCertification(new Certification(
                 certification.getName(),
+                certification.getDescription(),
                 certification.getBadgeUrl(),
                 !Boolean.FALSE.equals(certification.getActive())
         ));
@@ -72,6 +73,7 @@ class CertificationController {
         return certificationService.updateCertification(new Certification(
                 id,
                 certification.getName(),
+                certification.getDescription(),
                 certification.getBadgeUrl(),
                 !Boolean.FALSE.equals(certification.getActive())
         ));

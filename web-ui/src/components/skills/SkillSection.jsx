@@ -23,9 +23,11 @@ import { getSkill, createSkill } from '../../api/skill.js';
 import SkillSlider from './SkillSlider';
 
 import {
+  Avatar,
   Button,
   Card,
   CardActions,
+  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
@@ -280,9 +282,10 @@ const SkillSection = ({ userId }) => {
       </Modal>
       <Root>
         <Card>
+          <CardContent>
           <div className="skill-card-header">
             <div className="skill-card-header-title">
-              <BuildIcon style={{ marginRight: '16px' }} />
+              <Avatar sx={{ mr: 1 }}><BuildIcon/></Avatar>
               <Typography variant="h5" component="h2">
                 Skills
               </Typography>
@@ -315,6 +318,7 @@ const SkillSection = ({ userId }) => {
                 );
               })}
           </List>
+          </CardContent>
           <CardActions>
             <div>
               <Dialog
