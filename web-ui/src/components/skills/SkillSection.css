@@ -79,7 +79,6 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-end;
-  padding: 0 16px 16px 16px;
   justify-content: space-between;
 }
 
