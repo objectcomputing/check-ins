@@ -1,12 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AddCircleOutline, Delete, Edit, FoodBank } from '@mui/icons-material';
+import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
 import {
   Button,
-  Card,
-  CardContent,
-  CardHeader,
   Dialog,
   DialogActions,
   DialogContent,
@@ -32,12 +29,14 @@ const Organizations = ({ onlyMe = false }) => {
   const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false);
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrganization, setSelectedOrganization] = useState(null);
+  const [newOrganization, setNewOrganization] = useState({ name: '', description: '', website: '' }); // Add new state for new organization
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Name');
 
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
+  // Load organizations from the server
   const loadOrganizations = useCallback(async () => {
     const res = await resolve({
       method: 'GET',
@@ -65,21 +64,25 @@ const Organizations = ({ onlyMe = false }) => {
     setOrganizations([...organizations]);
   }, [sortAscending, sortColumn]);
 
+  // Add organization handler
   const addOrganization = useCallback(() => {
-    setSelectedOrganization({ name: '', description: '', website: '' });
+    setNewOrganization({ name: '', description: '', website: '' }); // Reset the new organization form
     setOrganizationDialogOpen(true);
   }, []);
 
+  // Cancel organization creation/edit
   const cancelOrganization = useCallback(() => {
     setSelectedOrganization(null);
     setOrganizationDialogOpen(false);
   }, []);
 
+  // Confirm delete
   const confirmDelete = useCallback(organization => {
     setSelectedOrganization(organization);
     setConfirmDeleteOpen(true);
   }, []);
 
+  // Delete organization handler
   const deleteOrganization = useCallback(async organization => {
     organization.active = false;
     const res = await resolve({
@@ -97,18 +100,50 @@ const Organizations = ({ onlyMe = false }) => {
     setOrganizations(orgs => orgs.filter(org => org.id !== organization.id));
   }, []);
 
+  // Edit organization handler
   const editOrganization = useCallback(org => {
     setSelectedOrganization(org);
     setOrganizationDialogOpen(true);
   }, []);
 
+  // Handle form submission for adding or editing an organization
+  const saveOrganization = useCallback(async () => {
+    const { id, name, description, website } = selectedOrganization || newOrganization; // Use selected or new organization
+    const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
+
+    const res = await resolve({
+      method: id ? 'PUT' : 'POST',
+      url,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: { name, description, website }
+    });
+
+    if (res.error) return;
+
+    const newOrg = res.payload.data;
+
+    if (!id) {
+      setOrganizations(prevOrgs => [...prevOrgs, newOrg]); // Add new organization to the list
+    } else {
+      const index = organizations.findIndex(org => org.id === id);
+      organizations[index] = newOrg; // Update the edited organization
+      setOrganizations([...organizations]);
+    }
+    setOrganizationDialogOpen(false); // Close dialog after saving
+  }, [selectedOrganization, newOrganization, csrf]);
+
+  // Render each organization row
   const organizationRow = useCallback(
     organization => (
       <tr key={organization.id}>
         <td>{organization.name}</td>
         <td>{organization.description}</td>
         <td>
-          <a alt="website" href={organization.website} target="_blank">
+          <a alt="website" href={organization.website} target="_blank" rel="noopener noreferrer">
             website
           </a>
         </td>
@@ -134,167 +169,49 @@ const Organizations = ({ onlyMe = false }) => {
         )}
       </tr>
     ),
-    []
+    [editOrganization, confirmDelete, onlyMe]
   );
 
-  const organizationDialog = useCallback(
-    () => (
-      <Dialog
-        classes={{ root: 'volunteer-dialog' }}
-        open={organizationDialogOpen}
-        onClose={cancelOrganization}
-      >
-        <DialogTitle>
-          {selectedOrganization?.id ? 'Edit' : 'Add'} Organization
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            className="fullWidth"
-            label="Name"
-            required
-            onChange={e =>
-              setSelectedOrganization({
-                ...selectedOrganization,
-                name: e.target.value
-              })
-            }
-            value={selectedOrganization?.name ?? ''}
-          />
-          <TextField
-            className="fullWidth"
-            label="Description"
-            required
-            onChange={e =>
-              setSelectedOrganization({
-                ...selectedOrganization,
-                description: e.target.value
-              })
-            }
-            value={selectedOrganization?.description ?? ''}
-          />
-          <TextField
-            className="fullWidth"
-            label="Website URL"
-            onChange={e =>
-              setSelectedOrganization({
-                ...selectedOrganization,
-                website: e.target.value
-              })
-            }
-            value={selectedOrganization?.website ?? ''}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={cancelOrganization}>Cancel</Button>
-          <Button
-            disabled={
-              !selectedOrganization?.name || !selectedOrganization?.description
-            }
-            onClick={saveOrganization}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    ),
-    [organizationDialogOpen, selectedOrganization]
-  );
-
+  // Organization table rendering
   const organizationsTable = useCallback(
     () => (
-      <Card>
-        <CardHeader
-          avatar={<FoodBank />}
-          title="Organizations"
-          titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-        />
-        <CardContent>
-          <div className="row">
-            <table>
-              <thead>
-                <tr>
-                  {sortableTableColumns.map(column => (
-                    <th
-                      key={column}
-                      onClick={() => sortTable(column)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {column}
-                      {sortIndicator(column)}
-                    </th>
-                  ))}
-                  <th key="website">Website</th>
-                  {!onlyMe && (
-                    <th className="actions-th" key="actions">
-                      Actions
-                    </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>{organizations.map(organizationRow)}</tbody>
-            </table>
-            <IconButton
-              aria-label="Add Organization"
-              classes={{ root: 'add-button' }}
-              onClick={addOrganization}
-            >
-              <AddCircleOutline />
-            </IconButton>
-          </div>
-          {onlyMe && (
-            <p className="warning">
-              You can add organizations, but they can only be edited and deleted
-              by an admin user.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <div className="row">
+        <table>
+          <thead>
+            <tr>
+              {sortableTableColumns.map(column => (
+                <th
+                  key={column}
+                  onClick={() => sortTable(column)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {column}
+                  {sortIndicator(column)}
+                </th>
+              ))}
+              <th key="website">Website</th>
+              {!onlyMe && (
+                <th className="actions-th" key="actions">
+                  Actions
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody>{organizations.map(organizationRow)}</tbody>
+        </table>
+        <IconButton
+          aria-label="Add Organization"
+          onClick={addOrganization} // Open the dialog to add an organization
+        >
+          {console.log("Add Organization button rendered")}
+          <AddCircleOutline />
+        </IconButton>
+      </div>
     ),
-    [organizations, sortAscending, sortColumn]
+    [organizations, sortAscending, sortColumn, organizationRow]
   );
 
-  const organizationValue = useCallback(
-    organization => {
-      switch (sortColumn) {
-        case 'Name':
-          return organization.name;
-        case 'Description':
-          return organization.description;
-        case 'Website':
-          return organization.website || '';
-      }
-    },
-    [sortColumn]
-  );
-
-  const saveOrganization = useCallback(async () => {
-    const { id } = selectedOrganization;
-    const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
-    const res = await resolve({
-      method: id ? 'PUT' : 'POST',
-      url,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: selectedOrganization
-    });
-    if (res.error) return;
-
-    const newOrg = res.payload.data;
-    if (id) {
-      const index = organizations.findIndex(org => org.id === id);
-      organizations[index] = newOrg;
-    } else {
-      organizations.push(newOrg);
-    }
-    sortOrganizations(organizations);
-    setOrganizations(organizations);
-    setSelectedOrganization(null);
-    setOrganizationDialogOpen(false);
-  }, [selectedOrganization]);
-
+  // Sort organizations
   const sortOrganizations = useCallback(
     orgs => {
       orgs.sort((org1, org2) => {
@@ -309,7 +226,7 @@ const Organizations = ({ onlyMe = false }) => {
   const sortIndicator = useCallback(
     column => {
       if (column !== sortColumn) return '';
-      return ' ' + (sortAscending ? '🔼' : '🔽');
+      return sortAscending ? '🔼' : '🔽';
     },
     [sortAscending, sortColumn]
   );
@@ -326,11 +243,78 @@ const Organizations = ({ onlyMe = false }) => {
     [sortAscending, sortColumn]
   );
 
+  // Value sorting helper
+  const organizationValue = useCallback(
+    organization => {
+      switch (sortColumn) {
+        case 'Name':
+          return organization.name;
+        case 'Description':
+          return organization.description;
+        case 'Website':
+          return organization.website || '';
+        default:
+          return '';
+      }
+    },
+    [sortColumn]
+  );
+
   return (
     <div id="organizations">
       {organizationsTable()}
-
-      {organizationDialog()}
+      {/* Dialog for adding/editing an organization */}
+      <Dialog
+        open={organizationDialogOpen}
+        onClose={cancelOrganization}
+      >
+        <DialogTitle>
+          {selectedOrganization?.id ? 'Edit Organization' : 'Add Organization'}
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            required
+            fullWidth
+            onChange={e =>
+              selectedOrganization
+                ? setSelectedOrganization({ ...selectedOrganization, name: e.target.value })
+                : setNewOrganization({ ...newOrganization, name: e.target.value })
+            }
+            value={selectedOrganization?.name ?? newOrganization.name}
+          />
+          <TextField
+            label="Description"
+            required
+            fullWidth
+            onChange={e =>
+              selectedOrganization
+                ? setSelectedOrganization({ ...selectedOrganization, description: e.target.value })
+                : setNewOrganization({ ...newOrganization, description: e.target.value })
+            }
+            value={selectedOrganization?.description ?? newOrganization.description}
+          />
+          <TextField
+            label="Website URL"
+            fullWidth
+            onChange={e =>
+              selectedOrganization
+                ? setSelectedOrganization({ ...selectedOrganization, website: e.target.value })
+                : setNewOrganization({ ...newOrganization, website: e.target.value })
+            }
+            value={selectedOrganization?.website ?? newOrganization.website}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelOrganization}>Cancel</Button>
+          <Button
+            disabled={!newOrganization.name || !newOrganization.description} // Ensure mandatory fields are filled
+            onClick={saveOrganization}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <ConfirmationDialog
         open={confirmDeleteOpen}

@@ -1310,6 +1310,26 @@ INSERT INTO feedback_requests
 VALUES
 ('98390c09-7121-110a-bfee-9380a470a7f3', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
 
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f4', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', null, 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f5', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', null, 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f6', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '105f2968-a182-45a3-892c-eeff76383fe0', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', null, 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
+VALUES
+('98390c09-7121-110a-bfee-9380a470a7f7', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '5b90beb2-0e96-438b-bfd6-1487a89b339b', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', null, 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+
 -- CAE - Feedback request, Creator: Big Boss
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
@@ -1808,31 +1828,31 @@ values
 --- CERTIFICATIONS
 
 INSERT INTO certification
-(certification_id, name, badge_url)
+(certification_id, name, description, badge_url)
 VALUES
-    ('23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java', 'https://images.credly.com/images/235d5b25-d41e-48c2-9c0e-63b373e78fc8/image.png');
+    ('23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java', 'Java Certification', 'https://images.credly.com/images/235d5b25-d41e-48c2-9c0e-63b373e78fc8/image.png');
 
 INSERT INTO certification
-(certification_id, name, badge_url)
+(certification_id, name, description, badge_url)
 VALUES
-    ('68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python', 'https://pythoninstitute.org/assets/61f11f7719dd3800707549.png');
+    ('68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python', 'Python Certification', 'https://pythoninstitute.org/assets/61f11f7719dd3800707549.png');
 
 --- MEMBER CERTIFICATIONS
 
 INSERT INTO earned_certification
-(earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, earned_date)
 VALUES -- Michael Kimberlin, Java
-       ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2024-04-01');
+       ('d946dfaa-4bae-4a4e-a3c3-9378ce1cae37', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '23b248e1-40f3-4477-b1b6-544b743e6ee3', '2024-04-01');
 
 INSERT INTO earned_certification
-(earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, earned_date)
 VALUES -- Revolver Ocelot, Java
-       ('42471a8c-8851-42a0-8cc2-bc42cb1020cc', '105f2968-a182-45a3-892c-eeff76383fe0', '23b248e1-40f3-4477-b1b6-544b743e6ee3', 'Java certification', '2022-06-01');
+       ('42471a8c-8851-42a0-8cc2-bc42cb1020cc', '105f2968-a182-45a3-892c-eeff76383fe0', '23b248e1-40f3-4477-b1b6-544b743e6ee3', '2022-06-01');
 
 INSERT INTO earned_certification
-(earned_certification_id, member_id, certification_id, description, earned_date)
+(earned_certification_id, member_id, certification_id, earned_date)
 VALUES -- Revolver Ocelot, Python
-       ('1f4272da-6ecb-4c15-b4a8-28739405bd1c', '105f2968-a182-45a3-892c-eeff76383fe0', '68343978-4072-4b48-aa9c-01f7ec910c9b', 'Python certification', '2024-03-01');
+       ('1f4272da-6ecb-4c15-b4a8-28739405bd1c', '105f2968-a182-45a3-892c-eeff76383fe0', '68343978-4072-4b48-aa9c-01f7ec910c9b', '2024-03-01');
 
 -- Volunteering
 
