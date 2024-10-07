@@ -29,7 +29,9 @@ import {
   selectIsSupervisor,
   selectMyTeam,
   selectCurrentMembers,
-  selectSubordinates
+  selectSubordinates,
+  selectCanViewFeedbackRequestPermission,
+  noPermission,
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
@@ -379,7 +381,7 @@ const ViewFeedbackPage = () => {
     }, []);
   }, [searchText, sortValue, dateRange, feedbackRequests]);
 
-  return (
+  return selectCanViewFeedbackRequestPermission(state) ? (
     <Root className="view-feedback-page">
       <div className="view-feedback-header-container">
         <Typography className={classes.pageTitle} variant="h4">
@@ -462,6 +464,8 @@ const ViewFeedbackPage = () => {
             ))}
       </div>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

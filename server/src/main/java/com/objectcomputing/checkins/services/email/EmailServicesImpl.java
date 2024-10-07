@@ -48,10 +48,6 @@ public class EmailServicesImpl implements EmailServices {
 
         List<Email> sentEmails = new ArrayList<>();
 
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
-
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
         LocalDateTime sendDate = LocalDateTime.now();
