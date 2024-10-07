@@ -7,7 +7,12 @@ import { getFeedbackRequestById } from '../../api/feedback';
 import queryString from 'query-string';
 import { useLocation } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken, selectProfile } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectProfile,
+  selectCanViewFeedbackAnswerPermission,
+  noPermission,
+} from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -185,11 +190,14 @@ const ViewFeedbackResponses = () => {
     setSelectedResponders(responderOptions);
   };
 
+
   const isEmptyOrWhitespace = (text) => {
     return typeof text !== 'string' || !text.trim();
   };
 
-  return (
+
+  return selectCanViewFeedbackAnswerPermission(state) ? (
+
     <Root className="view-feedback-responses-page">
       <Typography
         variant="h4"
@@ -319,6 +327,8 @@ const ViewFeedbackResponses = () => {
           );
         })}
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

@@ -22,6 +22,7 @@ const initialState = {
       firstName: 'Current',
       lastName: 'User',
       role: ['MEMBER'],
+      permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
       memberProfile: currentUserProfile
@@ -90,6 +91,16 @@ describe('EditSkillsCard', () => {
   it('renders correctly', () => {
     snapshot(
       <AppContextProvider value={initialState}>
+        <BrowserRouter>
+          <EditSkillsPage />
+        </BrowserRouter>
+      </AppContextProvider>
+    );
+  });
+
+  it('renders an error if user does not have appropriate permission', () => {
+    snapshot(
+      <AppContextProvider>
         <BrowserRouter>
           <EditSkillsPage />
         </BrowserRouter>

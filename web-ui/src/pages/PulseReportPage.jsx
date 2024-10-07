@@ -37,8 +37,10 @@ import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext.jsx';
 import {
   selectCsrfToken,
-  selectProfileMap
-} from '../context/selectors.js';
+  selectProfileMap,
+  selectHasViewPulseReportPermission,
+  noPermission,
+} from '../context/selectors';
 import ExpandMore from '../components/expand-more/ExpandMore';
 
 import './PulseReportPage.css';
@@ -500,7 +502,7 @@ const PulseReportPage = () => {
     );
   };
 
-  return (
+  return selectHasViewPulseReportPermission(state) ? (
     <div className="pulse-report-page">
       <div className="date-pickers">
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -551,6 +553,8 @@ const PulseReportPage = () => {
         </>
       )}
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

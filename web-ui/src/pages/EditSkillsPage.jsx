@@ -2,7 +2,12 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { AppContext } from '../context/AppContext';
-import { selectOrderedSkills, selectPendingSkills } from '../context/selectors';
+import {
+  selectOrderedSkills,
+  selectPendingSkills,
+  selectHasSkillsReportPermission,
+  noPermission,
+} from '../context/selectors';
 import EditSkillsCard from '../components/edit_skills/EditSkillsCard';
 import EditSkillsModal from '../components/edit_skills/EditSkillsModal';
 import { useQueryParameters } from '../helpers/query-parameters';
@@ -42,7 +47,7 @@ const EditSkillsPage = () => {
     }
   ]);
 
-  return (
+  return selectHasSkillsReportPermission(state) ? (
     <div className="pending-skills-page">
       <div className="search">
         <div>
@@ -98,6 +103,8 @@ const EditSkillsPage = () => {
             )}
       </div>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 
