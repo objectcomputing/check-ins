@@ -10,7 +10,12 @@ import {
   SettingsString
 } from '../components/settings';
 import { putOption, postOption, getAllOptions } from '../api/settings';
-import { selectCsrfToken } from '../context/selectors';
+import {
+  selectCsrfToken,
+  selectHasViewSettingsPermission,
+  selectHasAdministerSettingsPermission,
+  noPermission
+} from '../context/selectors';
 import { titleCase } from '../helpers/strings';
 import './SettingsPage.css';
 
@@ -34,13 +39,17 @@ const SettingsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       // Get the options from the server
-      const allOptions = (await getAllOptions()).payload.data;
+      const allOptions = selectHasViewSettingsPermission(state) ||
+                         selectHasAdministerSettingsPermission(state) ?
+                            (await getAllOptions()).payload.data : [];
 
-      // If the option has a valid UUID, then the setting already exists.
-      // This information is necessary to know since we must use POST to
-      // create new settings and PUT to modify existing settings.
-      for (let option of allOptions) {
-        option.exists = option.id != '00000000-0000-0000-0000-000000000000';
+      if (allOptions) {
+        // If the option has a valid UUID, then the setting already exists.
+        // This information is necessary to know since we must use POST to
+        // create new settings and PUT to modify existing settings.
+        for (let option of allOptions) {
+          option.exists = option?.id != '00000000-0000-0000-0000-000000000000';
+        }
       }
 
       // Sort the options by category, store them, and upate the state.
@@ -94,7 +103,7 @@ const SettingsPage = () => {
   };
 
   const addHandlersToSettings = settings => {
-    return settings.map(setting => {
+    return settings ? settings.map(setting => {
       const handler = handlers[setting.name.toUpperCase()];
       if (handler) {
         if (setting.type.toUpperCase() === 'FILE') {
@@ -111,7 +120,7 @@ const SettingsPage = () => {
 
       console.warn(`WARNING: No handler for ${setting.name}`);
       return setting;
-    });
+    }) : [];
   };
 
   const save = async () => {
@@ -175,7 +184,8 @@ const SettingsPage = () => {
   /** @type {Controls[]} */
   const updatedSettingsControls = addHandlersToSettings(settingsControls);
 
-  return (
+  return (selectHasViewSettingsPermission(state) ||
+          selectHasAdministerSettingsPermission(state)) ? (
     <div className="settings-page">
       {updatedSettingsControls.map((componentInfo, index) => {
         const categories = {};
@@ -195,6 +205,8 @@ const SettingsPage = () => {
           );
         }
       })}
+      {settingsControls && settingsControls.length &&
+       selectHasAdministerSettingsPermission(state) &&
       <div className="buttons">
         <Button
           color="primary"
@@ -202,7 +214,10 @@ const SettingsPage = () => {
           Save
         </Button>
       </div>
+      }
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

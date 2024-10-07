@@ -10,7 +10,9 @@ import {
   selectCsrfToken,
   selectOrderedMemberFirstName,
   selectOrderedSkills,
-  selectSkill
+  selectSkill,
+  selectHasTeamSkillsReportPermission,
+  noPermission,
 } from '../context/selectors';
 import { levelMap } from '../context/util';
 import { sortMembersBySkill } from '../helpers/checks.js';
@@ -158,7 +160,7 @@ const TeamSkillReportPage = () => {
     }
   }
 
-  return (
+  return selectHasTeamSkillsReportPermission(state) ? (
     <div className="team-skill-report-page">
       <MemberSelector
         className="team-skill-member-selector"
@@ -234,6 +236,8 @@ const TeamSkillReportPage = () => {
         </div>
       )}
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

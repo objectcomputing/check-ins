@@ -97,6 +97,7 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_ADMINISTER_KUDOS,
         Permission.CAN_CREATE_KUDOS,
         Permission.CAN_IMPERSONATE_MEMBERS,
+        Permission.CAN_SEND_EMAIL,
         Permission.CAN_CREATE_MERIT_REPORT
     );
 

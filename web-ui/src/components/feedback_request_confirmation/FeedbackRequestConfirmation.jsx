@@ -2,7 +2,11 @@ import React, { useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { selectProfile } from '../../context/selectors';
+import {
+  selectProfile,
+  selectHasCreateFeedbackPermission,
+  noPermission,
+} from '../../context/selectors';
 import { AppContext } from '../../context/AppContext';
 import { Link, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
@@ -62,7 +66,8 @@ const FeedbackRequestConfirmation = () => {
       return recipientProfiles;
     }
   }
-  return (
+
+  return selectHasCreateFeedbackPermission(state) ? (
     <Root className="request-confirmation">
       <CheckCircleIcon style={{ color: green[500], fontSize: '40vh' }}>
         checkmark-image
@@ -87,6 +92,8 @@ const FeedbackRequestConfirmation = () => {
         <Button variant="outlined">Return home</Button>
       </Link>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 
