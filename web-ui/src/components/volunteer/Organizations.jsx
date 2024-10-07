@@ -66,7 +66,6 @@ const Organizations = ({ onlyMe = false }) => {
 
   // Add organization handler
   const addOrganization = useCallback(() => {
-    console.log("Add Organization button clicked"); // Debugging log
     setNewOrganization({ name: '', description: '', website: '' }); // Reset the new organization form
     setOrganizationDialogOpen(true);
   }, []);

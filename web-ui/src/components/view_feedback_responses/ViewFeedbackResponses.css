@@ -24,6 +24,17 @@
   text-align: center;
   border-radius: 4px;
   padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.caution-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('path-to-caution-icon.png'); /* Add the correct icon path */
+  background-size: cover;
+  margin-right: 8px;
 }
 
 .question-responses-container {

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography } from '@mui/material';
+import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography, Box } from '@mui/material';
 import FeedbackResponseCard from './feedback_response_card/FeedbackResponseCard';
 import { getQuestionsAndAnswers } from '../../api/feedbackanswer';
 import { getFeedbackRequestById } from '../../api/feedback';
@@ -15,6 +15,7 @@ import { getAvatarURL } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined'; // Import the caution icon
 
 import './ViewFeedbackResponses.css';
 
@@ -85,7 +86,21 @@ const ViewFeedbackResponses = () => {
           ? requests
           : [requests]
         : [];
-      return await getQuestionsAndAnswers(requests, cookie);
+      const res = await getQuestionsAndAnswers(requests, cookie);
+
+      if (res) {
+        console.log('Retrieved Questions and Answers:', res); // Debugging log
+        res.sort((a, b) => a.questionNumber - b.questionNumber);
+        setQuestionsAndAnswers(res);
+      } else {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Failed to retrieve questions and answers'
+          }
+        });
+      }
     }
 
     if (!csrf || !query.request) {
@@ -115,20 +130,7 @@ const ViewFeedbackResponses = () => {
         });
       }
     });
-    retrieveQuestionsAndAnswers(query.request, csrf).then(res => {
-      if (res) {
-        res.sort((a, b) => a.questionNumber - b.questionNumber);
-        setQuestionsAndAnswers(res);
-      } else {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'Failed to retrieve questions and answers'
-          }
-        });
-      }
-    });
+    retrieveQuestionsAndAnswers(query.request, csrf);
   }, [csrf, query.request]);
 
   // Sets the options for filtering by responders
@@ -177,6 +179,10 @@ const ViewFeedbackResponses = () => {
 
   const handleReset = () => {
     setSelectedResponders(responderOptions);
+  };
+
+  const isEmptyOrWhitespace = (text) => {
+    return !text || text.trim() === '';
   };
 
   return (
@@ -278,6 +284,41 @@ const ViewFeedbackResponses = () => {
         ))}
       {!isLoading &&
         filteredQuestionsAndAnswers?.map(question => {
+          // Handle Section Headers for questions 3 and 10
+          if (question.questionNumber === 3) {
+            return (
+              <Box
+                key={`section-1`}
+                border={1}
+                borderColor="gray"
+                p={2}
+                mb={3}
+                style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
+              >
+                Section 1: How often has this team member displayed each of the following behaviors during the period covered by this review?
+              </Box>
+            );
+          }
+
+          if (question.questionNumber === 10) {
+            return (
+              <Box
+                key={`section-2`}
+                border={1}
+                borderColor="gray"
+                p={2}
+                mb={3}
+                style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
+              >
+                Section 2: You can provide more detailed context to your review of this team member below. Be as specific as possible!
+              </Box>
+            );
+          }
+
+          // Handle other questions by removing "Q#: "
+          const questionText = question.question.replace(/^Q\d+: /, '');
+          const hasResponses = question.answers.length > 0;
+
           return (
             <div
               className="question-responses-container"
@@ -287,26 +328,27 @@ const ViewFeedbackResponses = () => {
                 className="question-text"
                 style={{ marginBottom: '0.5em', fontWeight: 'bold' }}
               >
-                Q{question.questionNumber}: {question.question}
+                {questionText}
               </Typography>
-              {question.answers.length === 0 && (
+
+              {!hasResponses && (
                 <div className="no-responses-found">
-                  <Typography variant="body1" style={{ color: 'gray' }}>
-                    No matching responses found
+                  <Typography variant="body1" style={{ color: 'gray', display: 'flex', alignItems: 'center' }}>
+                    <ReportProblemOutlinedIcon style={{ marginRight: '0.5em' }} /> {/* Display caution icon */}
+                    Not yet submitted
                   </Typography>
                 </div>
               )}
-              {question.inputType !== 'NONE' &&
-                question.answers.length > 0 &&
-                question.answers.map(answer => (
-                  <FeedbackResponseCard
-                    key={answer.id || answer.responder}
-                    responderId={answer.responder}
-                    answer={answer.answer || ''}
-                    inputType={question.inputType}
-                    sentiment={answer.sentiment}
-                  />
-                ))}
+
+              {hasResponses && question.answers.map(answer => (
+                <FeedbackResponseCard
+                  key={answer.id || answer.responder}
+                  responderId={answer.responder}
+                  answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ Not yet submitted' : answer.answer}
+                  inputType={question.inputType}
+                  sentiment={answer.sentiment}
+                />
+              ))}
             </div>
           );
         })}
