@@ -34,7 +34,7 @@ const FeedbackResponseCard = props => {
         <FeedbackAnswerInput
           inputType={props.inputType}
           readOnly
-          answer={props.answer || 'Not yet submitted'} // Updated to show "Not yet submitted"
+          answer={props.answer || ' ⚠️ Not yet submitted'}
         />
       </CardContent>
     </Card>
