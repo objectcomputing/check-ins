@@ -15,8 +15,6 @@ import { getAvatarURL } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
-
 import './ViewFeedbackResponses.css';
 
 const PREFIX = 'MuiCardContent';
@@ -90,7 +88,6 @@ const ViewFeedbackResponses = () => {
           ...question,
           answers: question.answers.map(answer => ({
             ...answer,
-            // Ensure blank, null, undefined, or non-string answers are handled
             answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer),
           }))
         }));
@@ -139,37 +136,32 @@ const ViewFeedbackResponses = () => {
     retrieveQuestionsAndAnswers(query.request, csrf);
   }, [csrf, query.request]);
 
-  // Sets the options for filtering by responders
   useEffect(() => {
     let allResponders = [];
     questionsAndAnswers.forEach(({ answers }) => {
       const responders = answers.map(answer => answer.responder);
       allResponders.push(...responders);
     });
-    allResponders = [...new Set(allResponders)]; // Remove duplicate responders
+    allResponders = [...new Set(allResponders)];
     setResponderOptions(allResponders);
   }, [state, questionsAndAnswers]);
 
-  // Populate all responders as selected by default
   useEffect(() => {
     setSelectedResponders(responderOptions);
   }, [responderOptions]);
 
   useEffect(() => {
     let responsesToDisplay = [...questionsAndAnswers];
-    // Filter based on selected responders
     responsesToDisplay = responsesToDisplay.map(response => {
       let filteredAnswers = response.answers.filter(answer =>
         selectedResponders.includes(answer.responder)
       );
 
-      // If no filtered answers remain after filtering recipients, display a unified error message
       if (filteredAnswers.length === 0) {
         filteredAnswers = [{ answer: 'No input due to recipient filter', responder: null }];
       }
 
       if (searchText.trim()) {
-        // Filter based on search text
         filteredAnswers = filteredAnswers.filter(
           ({ answer }) =>
             answer &&
@@ -181,9 +173,8 @@ const ViewFeedbackResponses = () => {
     });
 
     setFilteredQuestionsAndAnswers(responsesToDisplay);
-  }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchText, selectedResponders]);
 
-  // Add "No input" for questions with inputType "NONE"
   useEffect(() => {
     if (isLoading && filteredQuestionsAndAnswers.length > 0) {
       setIsLoading(false);
@@ -313,23 +304,7 @@ const ViewFeedbackResponses = () => {
               </Typography>
 
               {/* If the question has no answers or inputType is "NONE" */}
-              {!hasResponses || question.inputType === 'NONE' ? (
-                <div className="no-responses-found">
-                  <Typography
-                    variant="body1"
-                    style={{
-                      color: 'gray',
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <ReportProblemOutlinedIcon
-                      style={{ marginRight: '0.5em' }}
-                    />
-                    {question.inputType === 'NONE' ? 'No input available for this question.' : '⚠️ No response submitted'}
-                  </Typography>
-                </div>
-              ) : (
+              {!hasResponses || question.inputType === 'NONE' ? null : (
                 question.answers.map(answer => (
                   <FeedbackResponseCard
                     key={answer.id || answer.responder}

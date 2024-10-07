@@ -21,14 +21,9 @@ const FeedbackResponseCard = props => {
   const { state } = useContext(AppContext);
   const userInfo = selectProfile(state, props.responderId);
 
-  // Handle different input types and answer values
   const getFormattedAnswer = () => {
-    if (props.answer === 'No input due to recipient filter') {
-      return props.answer;
-    }
-    
     if (props.inputType === 'NONE') {
-      return 'No input'; // Display "No input" if the question input type is "NONE"
+      return null; // Return null to display nothing
     }
 
     // Return fallback if the answer is null, undefined, or empty
@@ -49,11 +44,13 @@ const FeedbackResponseCard = props => {
           />
           <Typography className="responder-name">{userInfo?.name}</Typography>
         </div>
-        <FeedbackAnswerInput
-          inputType={props.inputType}
-          readOnly
-          answer={getFormattedAnswer()} // Ensure the proper message is displayed
-        />
+        {props.inputType !== 'NONE' && (
+          <FeedbackAnswerInput
+            inputType={props.inputType}
+            readOnly
+            answer={getFormattedAnswer()} // Ensure the proper message is displayed
+          />
+        )}
       </CardContent>
     </Card>
   );
