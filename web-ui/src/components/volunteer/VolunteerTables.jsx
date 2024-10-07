@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useReducer, useState } from 'react';
-import { Box, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs, Typography, Card, CardHeader, CardContent, Avatar } from '@mui/material';
 
-import Organizations from './Organizations';
 import VolunteerEvents from './VolunteerEvents';
 import VolunteerRelationships from './VolunteerRelationships';
+import GroupIcon from '@mui/icons-material/Group';
+import EventIcon from '@mui/icons-material/Event';
+import HandshakeIcon from '@mui/icons-material/Handshake'; // Adding Handshake Icon
 
 import './VolunteerTables.css';
 
@@ -34,67 +36,68 @@ TabPanel.displayName = 'TabPanel';
 const propTypes = {
   onlyMe: PropTypes.bool
 };
+
 const VolunteerReportPage = ({ onlyMe = false }) => {
   const [n, forceUpdate] = useReducer(n => n + 1, 0);
   const [tabIndex, setTabIndex] = useState(0);
 
   return (
-    <div className="volunteer-tables">
-      <Tabs
-        indicatorColor="secondary"
-        onChange={(event, index) => setTabIndex(index)}
-        textColor="inherit"
-        value={tabIndex}
-        variant="fullWidth"
-      >
-        {/* Add sx prop to style each Tab */}
-        <Tab
-          label="Organizations"
-          {...a11yProps(0)}
-          sx={{
-            minWidth: '150px',  // Increase the min width of the tab
-            whiteSpace: 'nowrap' // Prevent text wrapping
-          }}
-        />
-        <Tab
-          label={onlyMe ? 'My Orgs' : 'Relationships'}
-          {...a11yProps(1)}
-          sx={{
-            minWidth: '150px',
-            whiteSpace: 'nowrap'
-          }}
-        />
-        <Tab
-          label="Events"
-          {...a11yProps(2)}
-          sx={{
-            minWidth: '150px',
-            whiteSpace: 'nowrap'
-          }}
-        />
-      </Tabs>
-      <TabPanel index={0} value={tabIndex}>
-        <Organizations
-          forceUpdate={forceUpdate}
-          key={'org' + n}
-          onlyMe={onlyMe}
-        />
-      </TabPanel>
-      <TabPanel index={1} value={tabIndex}>
-        <VolunteerRelationships
-          forceUpdate={forceUpdate}
-          key={'vr' + n}
-          onlyMe={onlyMe}
-        />
-      </TabPanel>
-      <TabPanel index={2} value={tabIndex}>
-        <VolunteerEvents
-          forceUpdate={forceUpdate}
-          key={'vh' + n}
-          onlyMe={onlyMe}
-        />
-      </TabPanel>
-    </div>
+    <Card className="volunteer-activities-card">
+      <CardContent className="volunteer-tables">
+        <Tabs
+          indicatorColor="secondary"
+          onChange={(event, index) => setTabIndex(index)}
+          textColor="inherit"
+          value={tabIndex}
+          variant="fullWidth"
+        >
+          <Tab
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar sx={{ mr: 1 }}>
+                  <HandshakeIcon />
+                </Avatar>
+                <Typography textTransform="none" variant='h5' component='h2'>Volunteer Orgs</Typography>
+              </Box>
+            }
+            {...a11yProps(0)}
+            sx={{
+              minWidth: '150px',
+              whiteSpace: 'nowrap'
+            }}
+          />
+          <Tab
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar sx={{ mr: 1 }}>
+                  <EventIcon />
+                </Avatar>
+                <Typography textTransform="none" variant='h5' component='h2'>Events</Typography>
+              </Box>
+            }
+            {...a11yProps(1)}
+            sx={{
+              minWidth: '150px',
+              whiteSpace: 'nowrap'
+            }}
+          />
+        </Tabs>
+        <TabPanel index={0} value={tabIndex}>
+          <VolunteerRelationships
+            forceUpdate={forceUpdate}
+            key={'vr' + n}
+            onlyMe={onlyMe}
+          />
+        </TabPanel>
+        <TabPanel index={1} value={tabIndex}>
+          <VolunteerEvents
+            forceUpdate={forceUpdate}
+            key={'vh' + n}
+            onlyMe={onlyMe}
+          />
+        </TabPanel>
+      </CardContent>
+    </Card>
   );
 };
 

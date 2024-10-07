@@ -10,6 +10,7 @@ import {
 } from '@mui/icons-material';
 import {
   Autocomplete,
+  Avatar,
   Button,
   Card,
   CardContent,
@@ -370,7 +371,7 @@ const EarnedCertificationsTable = ({
     () => (
       <Card>
         <CardHeader
-          avatar={<EmojiEvents />}
+          avatar={<Avatar sx={{ mr: 1 }}><EmojiEvents /></Avatar>}
           title="Earned Certifications"
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
@@ -389,7 +390,7 @@ const EarnedCertificationsTable = ({
                       {sortIndicator(column)}
                     </th>
                   ))}
-                  <th key="Actions">Actions</th>
+                  <th className="actions-th" key="Actions">Actions</th>
                 </tr>
               </thead>
               <tbody>{earnedCertifications.map(earnedCertificationRow)}</tbody>
