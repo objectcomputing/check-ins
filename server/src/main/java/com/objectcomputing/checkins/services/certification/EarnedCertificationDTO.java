@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.certification;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,10 +24,6 @@ class EarnedCertificationDTO {
     @Schema(description = "id of the certification")
     private UUID certificationId;
 
-    @NotBlank
-    @Schema(description = "description of the certification earned")
-    private String description;
-
     @NotNull
     @Schema(description = "when the certification was earned")
     private LocalDate earnedDate;
@@ -36,10 +31,10 @@ class EarnedCertificationDTO {
     @Schema(description = "optionally when the certification expires")
     private LocalDate expirationDate;
 
-    @Schema(description = "optionally the image of the certification")
-    private String certificateImageUrl;
+    @Schema(description = "optionally the validation URL of the certification")
+    private String validationUrl;
 
-    EarnedCertificationDTO(UUID memberId, UUID certificationId, String description, LocalDate earnedDate) {
-        this(memberId, certificationId, description, earnedDate, null, null);
+    EarnedCertificationDTO(UUID memberId, UUID certificationId, LocalDate earnedDate) {
+        this(memberId, certificationId, earnedDate, null, null);
     }
 }
