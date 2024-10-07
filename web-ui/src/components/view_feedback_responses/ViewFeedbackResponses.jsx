@@ -157,12 +157,19 @@ const ViewFeedbackResponses = () => {
 
   useEffect(() => {
     let responsesToDisplay = [...questionsAndAnswers];
-
+    // Filter based on selected responders
     responsesToDisplay = responsesToDisplay.map(response => {
       let filteredAnswers = response.answers.filter(answer =>
         selectedResponders.includes(answer.responder)
       );
+
+      // If no filtered answers remain after filtering recipients, display a unified error message
+      if (filteredAnswers.length === 0) {
+        filteredAnswers = [{ answer: 'No input due to recipient filter', responder: null }];
+      }
+
       if (searchText.trim()) {
+        // Filter based on search text
         filteredAnswers = filteredAnswers.filter(
           ({ answer }) =>
             answer &&

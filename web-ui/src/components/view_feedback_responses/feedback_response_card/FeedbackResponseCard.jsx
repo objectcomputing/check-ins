@@ -23,6 +23,10 @@ const FeedbackResponseCard = props => {
 
   // Handle different input types and answer values
   const getFormattedAnswer = () => {
+    if (props.answer === 'No input due to recipient filter') {
+      return props.answer;
+    }
+    
     if (props.inputType === 'NONE') {
       return 'No input'; // Display "No input" if the question input type is "NONE"
     }
