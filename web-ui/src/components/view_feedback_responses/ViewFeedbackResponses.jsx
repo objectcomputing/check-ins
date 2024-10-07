@@ -15,7 +15,7 @@ import { getAvatarURL } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined'; // Import the caution icon
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 
 import './ViewFeedbackResponses.css';
 
@@ -46,7 +46,6 @@ const Root = styled('div')({
     marginRight: '3em',
     width: '350px',
     ['@media (max-width: 800px)']: {
-      // eslint-disable-line no-useless-computed-key
       marginRight: 0,
       width: '100%'
     }
@@ -54,7 +53,6 @@ const Root = styled('div')({
   [`& .${classes.responderField}`]: {
     minWidth: '500px',
     ['@media (max-width: 800px)']: {
-      // eslint-disable-line no-useless-computed-key
       minWidth: 0,
       width: '100%'
     }
@@ -71,8 +69,7 @@ const ViewFeedbackResponses = () => {
   const [searchText, setSearchText] = useState('');
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
-  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] =
-    useState([]);
+  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -93,7 +90,8 @@ const ViewFeedbackResponses = () => {
           ...question,
           answers: question.answers.map(answer => ({
             ...answer,
-            answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)
+            // Ensure blank, null, undefined, or non-string answers are handled
+            answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer),
           }))
         }));
 
@@ -161,12 +159,10 @@ const ViewFeedbackResponses = () => {
     let responsesToDisplay = [...questionsAndAnswers];
 
     responsesToDisplay = responsesToDisplay.map(response => {
-      // Filter based on selected responders
       let filteredAnswers = response.answers.filter(answer =>
         selectedResponders.includes(answer.responder)
       );
       if (searchText.trim()) {
-        // Filter based on search text
         filteredAnswers = filteredAnswers.filter(
           ({ answer }) =>
             answer &&
@@ -174,22 +170,13 @@ const ViewFeedbackResponses = () => {
         );
       }
 
-      // Ensure blank, null, undefined, or non-string answers are handled
-      filteredAnswers = filteredAnswers.map(answer => ({
-        ...answer,
-        answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)
-      }));
-
       return { ...response, answers: filteredAnswers };
     });
 
     setFilteredQuestionsAndAnswers(responsesToDisplay);
   }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    console.log("CSRF Token:", csrf);
-  }, [csrf, state]);
-
+  // Add "No input" for questions with inputType "NONE"
   useEffect(() => {
     if (isLoading && filteredQuestionsAndAnswers.length > 0) {
       setIsLoading(false);
@@ -200,7 +187,6 @@ const ViewFeedbackResponses = () => {
     setSelectedResponders(responderOptions);
   };
 
-  // Updated isEmptyOrWhitespace function to handle non-string values
   const isEmptyOrWhitespace = (text) => {
     return typeof text !== 'string' || !text.trim();
   };
@@ -319,24 +305,34 @@ const ViewFeedbackResponses = () => {
                 {questionText}
               </Typography>
 
-              {!hasResponses && (
+              {/* If the question has no answers or inputType is "NONE" */}
+              {!hasResponses || question.inputType === 'NONE' ? (
                 <div className="no-responses-found">
-                  <Typography variant="body1" style={{ color: 'gray', display: 'flex', alignItems: 'center' }}>
-                    <ReportProblemOutlinedIcon style={{ marginRight: '0.5em' }} />
-                    ⚠️ No response submitted
+                  <Typography
+                    variant="body1"
+                    style={{
+                      color: 'gray',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <ReportProblemOutlinedIcon
+                      style={{ marginRight: '0.5em' }}
+                    />
+                    {question.inputType === 'NONE' ? 'No input available for this question.' : '⚠️ No response submitted'}
                   </Typography>
                 </div>
+              ) : (
+                question.answers.map(answer => (
+                  <FeedbackResponseCard
+                    key={answer.id || answer.responder}
+                    responderId={answer.responder}
+                    answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
+                    inputType={question.inputType}
+                    sentiment={answer.sentiment}
+                  />
+                ))
               )}
-
-              {hasResponses && question.answers.map(answer => (
-                <FeedbackResponseCard
-                  key={answer.id || answer.responder}
-                  responderId={answer.responder}
-                  answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
-                  inputType={question.inputType}
-                  sentiment={answer.sentiment}
-                />
-              ))}
             </div>
           );
         })}

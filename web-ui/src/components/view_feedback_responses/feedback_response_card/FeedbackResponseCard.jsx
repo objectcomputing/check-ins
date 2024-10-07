@@ -12,7 +12,7 @@ import FeedbackAnswerInput from '../../feedback_answer_input/FeedbackAnswerInput
 
 const propTypes = {
   responderId: PropTypes.string.isRequired,
-  answer: PropTypes.string, // Make answer optional in case it's null
+  answer: PropTypes.string, // Allow answer to be null or undefined
   inputType: PropTypes.string.isRequired,
   sentiment: PropTypes.number
 };
@@ -21,12 +21,18 @@ const FeedbackResponseCard = props => {
   const { state } = useContext(AppContext);
   const userInfo = selectProfile(state, props.responderId);
 
-  // Fallback answer handling
+  // Handle different input types and answer values
   const getFormattedAnswer = () => {
-    // Check if the answer is a string and has content, otherwise return the fallback
-    return typeof props.answer === 'string' && props.answer.trim()
-      ? props.answer
-      : ' ⚠️ No response submitted';
+    if (props.inputType === 'NONE') {
+      return 'No input'; // Display "No input" if the question input type is "NONE"
+    }
+
+    // Return fallback if the answer is null, undefined, or empty
+    if (props.answer === null || props.answer === undefined || !props.answer.trim()) {
+      return '⚠️ No response submitted';
+    }
+
+    return props.answer;
   };
 
   return (
@@ -42,7 +48,7 @@ const FeedbackResponseCard = props => {
         <FeedbackAnswerInput
           inputType={props.inputType}
           readOnly
-          answer={getFormattedAnswer()}
+          answer={getFormattedAnswer()} // Ensure the proper message is displayed
         />
       </CardContent>
     </Card>
