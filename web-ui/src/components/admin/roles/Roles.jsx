@@ -12,7 +12,10 @@ import {
   removeUserFromRole,
   updateRole
 } from '../../../api/roles';
-
+import {
+  selectHasRoleAssignmentPermission,
+  noPermission,
+} from '../../../context/selectors';
 import RoleUserCards from './RoleUserCards';
 
 import {
@@ -64,7 +67,7 @@ const Roles = () => {
   memberProfiles?.sort((a, b) => a.name.localeCompare(b.name));
 
   if (!roles) console.error('Roles.jsx: state.roles is not set!');
-  const allRoles = roles.map(r => r.role).sort();
+  const allRoles = roles?.map(r => r.role).sort() ?? [];
   useQueryParameters([
     {
       name: 'roles',
@@ -74,7 +77,7 @@ const Roles = () => {
         setSelectedRoles(isArrayPresent(value) ? value.sort() : allRoles);
       },
       toQP() {
-        return selectedRoles.join(',');
+        return selectedRoles?.join(',');
       }
     },
     {
@@ -212,7 +215,7 @@ const Roles = () => {
     setEditedRole({ ...editedRole, description: event?.target?.value });
   };
 
-  return (
+  return selectHasRoleAssignmentPermission(state) ? (
     <div className="roles-content">
       <div className="roles">
         <div className="roles-top">
@@ -234,13 +237,13 @@ const Roles = () => {
                   {roles?.map(roleObj => (
                     <MenuItem key={roleObj.role} value={roleObj.role}>
                       <Checkbox
-                        checked={selectedRoles.indexOf(roleObj.role) > -1}
+                        checked={selectedRoles?.indexOf(roleObj.role) > -1}
                       />
                       <ListItemText primary={roleObj.role} />
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{`Showing ${selectedRoles.length}/${roles?.length} roles`}</FormHelperText>
+                <FormHelperText>{`Showing ${selectedRoles?.length}/${roles?.length} roles`}</FormHelperText>
               </FormControl>
               <TextField
                 className="member-role-search"
@@ -303,7 +306,7 @@ const Roles = () => {
         </Modal>
         <div className="roles-bot">
           {roles?.map(roleObj =>
-            selectedRoles.includes(roleObj.role) ? (
+            selectedRoles?.includes(roleObj.role) ? (
               <Card className="role" key={`${roleObj.role}-card`}>
                 <CardContent className="role-card">
                   <List style={{ paddingTop: 0 }}>
@@ -398,6 +401,8 @@ const Roles = () => {
         </div>
       </div>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

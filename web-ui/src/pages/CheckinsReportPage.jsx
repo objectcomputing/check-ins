@@ -5,7 +5,9 @@ import {
   selectTerminatedMembersAsOfDateWithPDLRole,
   selectCheckinPDLS,
   selectMappedPdls,
-  selectNormalizedMembers
+  selectNormalizedMembers,
+  selectHasCheckinsReportPermission,
+  noPermission,
 } from '../context/selectors';
 
 import {
@@ -184,7 +186,7 @@ const CheckinsReportPage = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  return (
+  return selectHasCheckinsReportPermission(state) ? (
     <div className="checkins-report-page">
       <MemberSelector
         initialFilters={[{ type: FilterType.ROLE, value: 'PDL' }]}
@@ -268,6 +270,8 @@ const CheckinsReportPage = () => {
         )}
       </div>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 
