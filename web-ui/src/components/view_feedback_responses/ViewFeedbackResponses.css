@@ -32,7 +32,7 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  background-image: url('path-to-caution-icon.png'); /* Add the correct icon path */
+  background-image: url('icon.png');
   background-size: cover;
   margin-right: 8px;
 }

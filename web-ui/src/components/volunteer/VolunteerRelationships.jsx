@@ -84,7 +84,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       }
     });
     if (res.error) return;
-
+  
     const relationships = res.payload.data || [];
     relationships.sort((rel1, rel2) => {
       const member1 = profileMap[rel1.memberId];
@@ -92,7 +92,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       return (member1?.name || '').localeCompare(member2?.name || '');
     });
     setRelationships(relationships);
-  }, [currentUser.id, onlyMe, profileMap]);
+    setRelationshipMap(relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {}));
+  }, [currentUser.id, onlyMe, profileMap, csrf]);
 
   useEffect(() => {
     loadOrganizations();
@@ -151,34 +152,48 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const saveRelationship = useCallback(async () => {
     const { id, organizationId, startDate, endDate } = selectedRelationship;
-
-    if (!organizationId || !startDate || !endDate) {
-      console.error('Organization, start date, or end date missing');
+  
+    // Restrict adding duplicate active relationships only for new ones, exclude current relationship being edited
+    const existingRelationship = relationships.find(
+      (rel) => rel.organizationId === organizationId && !rel.endDate && rel.id !== id
+    );
+    if (existingRelationship) {
+      console.error("Cannot add duplicate active relationships.");
       return;
     }
-
+  
+    // Ensure start date is before or equal to the current date
+    if (new Date(startDate) > new Date()) {
+      console.error("Start date cannot be in the future.");
+      return;
+    }
+  
+    // Ensure end date is after the start date
+    if (endDate && new Date(endDate) <= new Date(startDate)) {
+      console.error("End date must be after the start date.");
+      return;
+    }
+  
     const formattedStartDate = formatDate(new Date(startDate));
-    const formattedEndDate = formatDate(new Date(endDate));
-
+    const formattedEndDate = endDate ? formatDate(new Date(endDate)) : null;
+  
     const res = await resolve({
       method: id ? 'PUT' : 'POST',
       url: id ? `${relationshipBaseUrl}/${id}` : relationshipBaseUrl,
       headers: {
         'X-CSRF-Header': csrf,
         Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
+        'Content-Type': 'application/json;charset=UTF-8',
       },
-      data: { ...selectedRelationship, startDate: formattedStartDate, endDate: formattedEndDate }
+      data: { ...selectedRelationship, startDate: formattedStartDate, endDate: formattedEndDate },
     });
-    if (res.error) {
-      console.error("Error saving relationship", res.error);
-      return;
-    }
-
-    await refreshRelationships(); // Refresh the list after saving
+    
+    if (res.error) return;
+  
+    await refreshRelationships();
     setSelectedRelationship(null);
     setRelationshipDialogOpen(false);
-  }, [selectedRelationship, csrf, refreshRelationships]);
+  }, [selectedRelationship, relationships, csrf, refreshRelationships]);
 
   const openCreateOrganizationDialog = useCallback(() => {
     setNewOrganization({ name: '', description: '', website: '' });
@@ -328,10 +343,12 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         <DialogContent>
         <Autocomplete
           disableClearable
-          getOptionLabel={(option) => (organizationMap[option]?.name || option)}
-          options={['Create a New Organization', ...Object.keys(organizationMap)]}
+          getOptionLabel={(option) => 
+            option === 'new' ? 'Create a New Organization' : organizationMap[option]?.name || option
+          }
+          options={['new', ...Object.keys(organizationMap)]}
           onChange={(event, value) => {
-            if (value === 'Create a New Organization') {
+            if (value === 'new') {
               setRelationshipDialogOpen(false); // Close the relationship dialog
               openCreateOrganizationDialog(); // Open the organization creation dialog
             } else {
