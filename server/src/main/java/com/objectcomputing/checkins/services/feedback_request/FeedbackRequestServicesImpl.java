@@ -16,11 +16,15 @@ import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.util.Util;
+import io.micronaut.context.annotation.Value;
+import io.micronaut.core.io.Readable;
+import io.micronaut.core.io.IOUtils;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -49,11 +53,20 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private enum CompletionEmailType { REVIEWERS, SUPERVISOR }
     private record ReviewPeriodInfo(String subject, LocalDate closeDate) {}
+    @Value("classpath:mjml/feedback_request.mjml")
+    private Readable feedbackRequestTemplate;
+    @Value("classpath:mjml/update_request.mjml")
+    private Readable updateRequestTemplate;
+    @Value("classpath:mjml/reviewer_email.mjml")
+    private Readable reviewerTemplate;
+    @Value("classpath:mjml/supervisor_email.mjml")
+    private Readable supervisorTemplate;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices,
-                                       ReviewPeriodRepository reviewPeriodRepository, ReviewAssignmentRepository reviewAssignmentRepository,
+                                       ReviewPeriodRepository reviewPeriodRepository,
+                                       ReviewAssignmentRepository reviewAssignmentRepository,
                                        @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                                        CheckInsConfiguration checkInsConfiguration
     ) {
@@ -117,56 +130,21 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         String senderName = MemberProfileUtils.getFullName(creator);
 
-        String newContent = String.format("""
-<mjml>
-  <mj-head>
-    <mj-title>Feedback Request</mj-title>
-    <mj-preview>Feedback Request</mj-preview>
-    <mj-attributes>
-      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
-    </mj-attributes>
-  </mj-head>
-  <mj-body background-color="#e0f2ff">
-    <mj-section background-color="#2559a7">
-      <mj-column>
-        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
-      </mj-column>
-    </mj-section>
-    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
-      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> Give Your Feedback! </mj-text>
-   
-    </mj-hero>
-    <mj-section background-color="#ffffff">
-      <mj-column>
-        <mj-text>
-          <h2>You have received a feedback request.</h2>
-        </mj-text>
-          <mj-text font-size="16px">Hello, %s!</mj-text>
-        <mj-text font-size="16px"><strong>%s</strong> is requesting feedback %sfrom you.</mj-text>
-        <mj-text font-size="16px">%s</mj-text>
-        <mj-text font-size="16px">Please go to <a href="%s">your unique link</a> to complete this request.</mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#feb672" padding="10px">
-      <mj-column vertical-align="top" width="100%%">
-        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
-""", reviewer.getFirstName(), senderName,
-     storedRequest.getRecipientId().equals(storedRequest.getRequesteeId()) ?
-     "" :
-     String.format("on <strong>%s</strong> ",
-                   MemberProfileUtils.getFullName(requestee)),
-     storedRequest.getDueDate() == null ?
-     "This request does not have a due date." :
-     String.format("This request is due on %s %d, %d.",
-                   storedRequest.getDueDate().getMonth(),
-                   storedRequest.getDueDate().getDayOfMonth(),
-                   storedRequest.getDueDate().getYear()),
-     String.format("%s/feedback/submit?request=%s",
-                   webURL, storedRequest.getId().toString()));
+        String newContent = String.format(
+                                templateToString(feedbackRequestTemplate),
+                                reviewer.getFirstName(), senderName,
+                                storedRequest.getRecipientId().equals(storedRequest.getRequesteeId()) ?
+                                  "" :
+                                  String.format("on <strong>%s</strong> ",
+                                                MemberProfileUtils.getFullName(requestee)),
+                                storedRequest.getDueDate() == null ?
+                                    "This request does not have a due date." :
+                                    String.format("This request is due on %s %d, %d.",
+                                                  storedRequest.getDueDate().getMonth(),
+                                                  storedRequest.getDueDate().getDayOfMonth(),
+                                                  storedRequest.getDueDate().getYear()),
+                                String.format("%s/feedback/submit?request=%s",
+                                              webURL, storedRequest.getId().toString()));
 
         emailSender.sendEmail(senderName, creator.getWorkEmail(),
                               notificationSubject, newContent,
@@ -244,47 +222,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
             String senderName = MemberProfileUtils.getFullName(creator);
-            String newContent = String.format("""
-<mjml>
-  <mj-head>
-    <mj-title>Feedback Request Reopened</mj-title>
-    <mj-preview>Feedback Request Reopened</mj-preview>
-    <mj-attributes>
-      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
-    </mj-attributes>
-  </mj-head>
-  <mj-body background-color="#e0f2ff">
-    <mj-section background-color="#2559a7">
-      <mj-column>
-        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
-      </mj-column>
-    </mj-section>
-    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
-      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> Edit Your Feedback! </mj-text>
-   
-    </mj-hero>
-    <mj-section background-color="#ffffff">
-      <mj-column>
-        <mj-text>
-          <h2>You have received edit access to a feedback request.</h2>
-        </mj-text>
-          <mj-text font-size="16px">Hello, %s!</mj-text>
-        <mj-text font-size="16px"><strong>%s has reopened the feedback request on %s from you.</strong></mj-text>
-        <mj-text font-size="16px">You may make changes to your answers, but you will need to submit the form again when finished.</mj-text>
-        <mj-text font-size="16px">Please go to <a href="%s">your unique link</a> to complete this request.</mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#feb672" padding="10px">
-      <mj-column vertical-align="top" width="100%%">
-        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
-""", reviewer.getFirstName(), senderName,
-     MemberProfileUtils.getFullName(requestee),
-     String.format("%s/feedback/submit?request=%s",
-                   webURL, storedRequest.getId().toString()));
+            String newContent = String.format(
+                                  templateToString(updateRequestTemplate),
+                                  reviewer.getFirstName(), senderName,
+                                  MemberProfileUtils.getFullName(requestee),
+                                  String.format("%s/feedback/submit?request=%s",
+                                                webURL, storedRequest.getId().toString()));
 
             emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewer.getWorkEmail());
         }
@@ -520,42 +463,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         String ending = closeDate == null ? "the review period closes" :
                  closeDate.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
 
-        String body = String.format("""
-<mjml>
-  <mj-head>
-    <mj-title>Self-Review Completion</mj-title>
-    <mj-preview>Self-Reviews Completion for Reviewer</mj-preview>
-    <mj-attributes>
-      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
-    </mj-attributes>
-  </mj-head>
-  <mj-body background-color="#e0f2ff">
-    <mj-section background-color="#2559a7">
-      <mj-column>
-        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
-      </mj-column>
-    </mj-section>
-    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
-      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> It's Your Turn! </mj-text>
-   
-    </mj-hero>
-    <mj-section background-color="#ffffff">
-      <mj-column>
-        <mj-text>
-          <h2>It's time to begin your review of %s</h2>
-        </mj-text>
-          <mj-text font-size="16px">Hello, %s!</mj-text>
-        <mj-text font-size="16px">%s has completed their self-review and it can be viewed <a href="%s">here</a>.</mj-text>   <mj-text font-size="16px">It's your turn to share your thoughts and complete your review. Please complete your review before %s. </strong></mj-text>
-     
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#feb672" padding="10px">
-      <mj-column vertical-align="top" width="100%%">
-        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>""", revieweeName, reviewerName, revieweeName, selfReviewURL, ending);
+        String body = String.format(templateToString(reviewerTemplate),
+                                    revieweeName, reviewerName, revieweeName,
+                                    selfReviewURL, ending);
         Email email = new Email();
         email.setSubject(info.subject());
         email.setContents(body);
@@ -572,46 +482,22 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         String selfReviewURL = String.format("%s/feedback/view/responses/?request=%s", webURL, requestId == null ? "none" : requestId.toString());
         ReviewPeriodInfo info = getSelfReviewInfo(feedbackRequest, revieweeName);
 
-        String body = String.format("""
-<mjml>
-  <mj-head>
-    <mj-title>Self-Review Completion</mj-title>
-    <mj-preview>Self-Reviews Completion for Supervisor</mj-preview>
-    <mj-attributes>
-      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
-    </mj-attributes>
-  </mj-head>
-  <mj-body background-color="#e0f2ff">
-    <mj-section background-color="#2559a7">
-      <mj-column>
-        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
-      </mj-column>
-    </mj-section>
-    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
-      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> Self-Review Completion </mj-text>
-   
-    </mj-hero>
-    <mj-section background-color="#ffffff">
-      <mj-column>
-        <mj-text>
-          <h2>Your team member has completed their self-review!</h2>
-        </mj-text>
-          <mj-text font-size="16px">Hello, %s!</mj-text>
-        <mj-text font-size="16px">%s has completed their self-review. You can view it <a href="%s">here</a>.</mj-text>
-     
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#feb672" padding="10px">
-      <mj-column vertical-align="top" width="100%%">
-        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>""", supervisorName, revieweeName, selfReviewURL);
+        String body = String.format(templateToString(supervisorTemplate),
+                                    supervisorName, revieweeName,
+                                    selfReviewURL);
 
         Email email = new Email();
         email.setSubject(info.subject());
         email.setContents(body);
         return email;
+    }
+
+    private String templateToString(Readable template) {
+        try {
+            return IOUtils.readText(new BufferedReader(template.asReader()));
+        } catch (Exception ex) {
+            LOG.error(ex.toString());
+            return "";
+        }
     }
 }

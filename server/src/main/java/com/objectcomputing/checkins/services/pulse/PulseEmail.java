@@ -7,14 +7,26 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 
 import jakarta.inject.Named;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.micronaut.context.annotation.Value;
+import io.micronaut.core.io.Readable;
+import io.micronaut.core.io.IOUtils;
+
+import java.io.BufferedReader;
 import java.util.List;
 
 class PulseEmail {
+  private static final Logger LOG = LoggerFactory.getLogger(PulseEmail.class);
   private final EmailSender emailSender;
   private final CheckInsConfiguration checkInsConfiguration;
   private final MemberProfileServices memberProfileServices;
 
   private final String SUBJECT = "Check Out the Pulse Survey!";
+
+  @Value("classpath:mjml/pulse_email.mjml")
+  private Readable pulseEmailTemplate;
   
   public PulseEmail(@Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                     CheckInsConfiguration checkInsConfiguration,
@@ -33,19 +45,14 @@ class PulseEmail {
   }
 
   private String getEmailContent() {
-    return String.format("""
-<mjml>
-  <mj-body>
-    <mj-section>
-      <mj-column>
-        <mj-divider border-color="#2559a7"></mj-divider>
-        <mj-text font-size="16px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" color="#4d4c4f">Please fill out your Pulse survey, if you haven't already done so. We want to know how you're doing!</mj-text>
-        <mj-text font-size="16px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" color="#4d4c4f">Click <a href="%s/pulse" target="_blank">here</a> to begin.</mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
-""", checkInsConfiguration.getWebAddress());
+    try {
+      return String.format(IOUtils.readText(
+                             new BufferedReader(pulseEmailTemplate.asReader())),
+                           checkInsConfiguration.getWebAddress());
+    } catch(Exception ex) {
+      LOG.error(ex.toString());
+      return "";
+    }
   }
 
   public void send() {
