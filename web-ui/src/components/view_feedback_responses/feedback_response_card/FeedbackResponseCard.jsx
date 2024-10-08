@@ -1,46 +1,35 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { Typography } from '@mui/material';
+import { Typography, IconButton } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import './FeedbackResponseCard.css';
-import { AppContext } from '../../../context/AppContext';
-import { selectProfile } from '../../../context/selectors';
-import Avatar from '@mui/material/Avatar';
-import { getAvatarURL } from '../../../api/api.js';
-import FeedbackAnswerInput from '../../feedback_answer_input/FeedbackAnswerInput';
 
-const propTypes = {
-  responderId: PropTypes.string.isRequired,
-  answer: PropTypes.string.isRequired,
-  inputType: PropTypes.string.isRequired,
-  sentiment: PropTypes.number
-};
-
-const FeedbackResponseCard = props => {
-  const { state } = useContext(AppContext);
-  const userInfo = selectProfile(state, props.responderId);
-
+const FeedbackResponseCard = ({ responderId, answer, inputType, sentiment, handleDenyClick }) => {
+  console.log("Rendering FeedbackResponseCard");
   return (
-    <Card className="response-card">
-      <CardContent className="response-card-content">
-        <div className="response-card-recipient-info">
-          <Avatar
-            className="avatar-photo"
-            src={getAvatarURL(userInfo?.workEmail)}
-          />
-          <Typography className="responder-name">{userInfo?.name}</Typography>
-        </div>
-        <FeedbackAnswerInput
-          inputType={props.inputType}
-          readOnly
-          answer={props.answer}
-        />
+    <Card>
+      <CardContent>
+        <Typography variant="h6">Responder: {responderId}</Typography>
+        <Typography variant="body2">Answer: {answer}</Typography>
+        <IconButton aria-label="Deny feedback request" onClick={() => {
+          console.log(`Deny click for responder ID: ${responderId}`);
+          handleDenyClick();
+        }}>
+          <CloseIcon />
+        </IconButton>
       </CardContent>
     </Card>
   );
 };
 
-FeedbackResponseCard.propTypes = propTypes;
+FeedbackResponseCard.propTypes = {
+  responderId: PropTypes.string.isRequired,
+  answer: PropTypes.string.isRequired,
+  inputType: PropTypes.string.isRequired,
+  sentiment: PropTypes.number,
+  handleDenyClick: PropTypes.func.isRequired
+};
 
 export default FeedbackResponseCard;
