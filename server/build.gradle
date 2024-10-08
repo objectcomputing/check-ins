@@ -12,6 +12,15 @@ group "com.objectcomputing.checkins"
 
 repositories {
     mavenCentral()
+
+    maven {
+        url 'https://repo1.maven.org/maven2'
+
+        metadataSources {
+            artifact()
+        }
+    }
+
 }
 
 micronaut {
@@ -206,6 +215,7 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN")!=null?System.getenv("GITHUB_TOKEN"):"OCI-LABS"
             }
         }
+        mavenCentral()
     }
 }
 
@@ -215,3 +225,5 @@ java {
 }
 
 run.jvmArgs('-Dcom.sun.management.jmxremote', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000')
+
+
