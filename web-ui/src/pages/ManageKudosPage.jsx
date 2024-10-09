@@ -4,7 +4,11 @@ import {MenuItem, Tab, TextField, Typography} from "@mui/material";
 import {TabContext, TabList, TabPanel} from "@mui/lab";
 import {getAllKudos} from "../api/kudos";
 import {AppContext} from "../context/AppContext";
-import {selectCsrfToken} from "../context/selectors";
+import {
+  selectCsrfToken,
+  selectHasAdministerKudosPermission,
+  noPermission,
+} from "../context/selectors";
 import {UPDATE_TOAST} from "../context/actions";
 import KudosCard from "../components/kudos_card/KudosCard";
 import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
@@ -109,7 +113,7 @@ const ManageKudosPage = () => {
     setKudosTab(newTab);
   }, [loadPendingKudos, loadApprovedKudos]);
 
-  return (
+  return selectHasAdministerKudosPermission(state) ? (
     <Root className="manage-kudos-page">
       <TabContext value={kudosTab}>
         <div className="kudos-tab-container">
@@ -182,8 +186,9 @@ const ManageKudosPage = () => {
         </TabPanel>
       </TabContext>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
-
 };
 
 export default ManageKudosPage;

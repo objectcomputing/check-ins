@@ -7,7 +7,12 @@ import { getFeedbackRequestById } from '../../api/feedback';
 import queryString from 'query-string';
 import { useLocation } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken, selectProfile } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectProfile,
+  selectCanViewFeedbackAnswerPermission,
+  noPermission,
+} from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -15,8 +20,6 @@ import { getAvatarURL } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined'; // Import the caution icon
-
 import './ViewFeedbackResponses.css';
 
 const PREFIX = 'MuiCardContent';
@@ -46,7 +49,6 @@ const Root = styled('div')({
     marginRight: '3em',
     width: '350px',
     ['@media (max-width: 800px)']: {
-      // eslint-disable-line no-useless-computed-key
       marginRight: 0,
       width: '100%'
     }
@@ -54,7 +56,6 @@ const Root = styled('div')({
   [`& .${classes.responderField}`]: {
     minWidth: '500px',
     ['@media (max-width: 800px)']: {
-      // eslint-disable-line no-useless-computed-key
       minWidth: 0,
       width: '100%'
     }
@@ -71,8 +72,7 @@ const ViewFeedbackResponses = () => {
   const [searchText, setSearchText] = useState('');
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
-  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] =
-    useState([]);
+  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -89,9 +89,17 @@ const ViewFeedbackResponses = () => {
       const res = await getQuestionsAndAnswers(requests, cookie);
 
       if (res) {
-        console.log('Retrieved Questions and Answers:', res); // Debugging log
-        res.sort((a, b) => a.questionNumber - b.questionNumber);
-        setQuestionsAndAnswers(res);
+        const sanitizedResponses = res.map(question => ({
+          ...question,
+          answers: question.answers.map(answer => ({
+            ...answer,
+            answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer),
+          }))
+        }));
+
+        sanitizedResponses.sort((a, b) => a.questionNumber - b.questionNumber);
+        setQuestionsAndAnswers(sanitizedResponses);
+
       } else {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -133,43 +141,44 @@ const ViewFeedbackResponses = () => {
     retrieveQuestionsAndAnswers(query.request, csrf);
   }, [csrf, query.request]);
 
-  // Sets the options for filtering by responders
   useEffect(() => {
     let allResponders = [];
     questionsAndAnswers.forEach(({ answers }) => {
       const responders = answers.map(answer => answer.responder);
       allResponders.push(...responders);
     });
-    allResponders = [...new Set(allResponders)]; // Remove duplicate responders
+    allResponders = [...new Set(allResponders)];
     setResponderOptions(allResponders);
   }, [state, questionsAndAnswers]);
 
-  // Populate all responders as selected by default
   useEffect(() => {
     setSelectedResponders(responderOptions);
   }, [responderOptions]);
 
   useEffect(() => {
     let responsesToDisplay = [...questionsAndAnswers];
-
     responsesToDisplay = responsesToDisplay.map(response => {
-      // Filter based on selected responders
       let filteredAnswers = response.answers.filter(answer =>
         selectedResponders.includes(answer.responder)
       );
+
+      if (filteredAnswers.length === 0) {
+        filteredAnswers = [{ answer: 'No input due to recipient filter', responder: null }];
+      }
+
       if (searchText.trim()) {
-        // Filter based on search text
         filteredAnswers = filteredAnswers.filter(
           ({ answer }) =>
             answer &&
             answer.toLowerCase().includes(searchText.trim().toLowerCase())
         );
       }
+
       return { ...response, answers: filteredAnswers };
     });
 
     setFilteredQuestionsAndAnswers(responsesToDisplay);
-  }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchText, selectedResponders]);
 
   useEffect(() => {
     if (isLoading && filteredQuestionsAndAnswers.length > 0) {
@@ -181,11 +190,14 @@ const ViewFeedbackResponses = () => {
     setSelectedResponders(responderOptions);
   };
 
+
   const isEmptyOrWhitespace = (text) => {
-    return !text || text.trim() === '';
+    return typeof text !== 'string' || !text.trim();
   };
 
-  return (
+
+  return selectCanViewFeedbackAnswerPermission(state) ? (
+
     <Root className="view-feedback-responses-page">
       <Typography
         variant="h4"
@@ -284,39 +296,7 @@ const ViewFeedbackResponses = () => {
         ))}
       {!isLoading &&
         filteredQuestionsAndAnswers?.map(question => {
-          // Handle Section Headers for questions 3 and 10
-          if (question.questionNumber === 3) {
-            return (
-              <Box
-                key={`section-1`}
-                border={1}
-                borderColor="gray"
-                p={2}
-                mb={3}
-                style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
-              >
-                Section 1: How often has this team member displayed each of the following behaviors during the period covered by this review?
-              </Box>
-            );
-          }
-
-          if (question.questionNumber === 10) {
-            return (
-              <Box
-                key={`section-2`}
-                border={1}
-                borderColor="gray"
-                p={2}
-                mb={3}
-                style={{ fontSize: '1.2rem', fontWeight: 'bold' }}
-              >
-                Section 2: You can provide more detailed context to your review of this team member below. Be as specific as possible!
-              </Box>
-            );
-          }
-
-          // Handle other questions by removing "Q#: "
-          const questionText = question.question.replace(/^Q\d+: /, '');
+          const questionText = question.question;
           const hasResponses = question.answers.length > 0;
 
           return (
@@ -331,28 +311,24 @@ const ViewFeedbackResponses = () => {
                 {questionText}
               </Typography>
 
-              {!hasResponses && (
-                <div className="no-responses-found">
-                  <Typography variant="body1" style={{ color: 'gray', display: 'flex', alignItems: 'center' }}>
-                    <ReportProblemOutlinedIcon style={{ marginRight: '0.5em' }} /> {/* Display caution icon */}
-                    Not yet submitted
-                  </Typography>
-                </div>
+              {/* If the question has no answers or inputType is "NONE" */}
+              {!hasResponses || question.inputType === 'NONE' ? null : (
+                question.answers.map(answer => (
+                  <FeedbackResponseCard
+                    key={answer.id || answer.responder}
+                    responderId={answer.responder}
+                    answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
+                    inputType={question.inputType}
+                    sentiment={answer.sentiment}
+                  />
+                ))
               )}
-
-              {hasResponses && question.answers.map(answer => (
-                <FeedbackResponseCard
-                  key={answer.id || answer.responder}
-                  responderId={answer.responder}
-                  answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ Not yet submitted' : answer.answer}
-                  inputType={question.inputType}
-                  sentiment={answer.sentiment}
-                />
-              ))}
             </div>
           );
         })}
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

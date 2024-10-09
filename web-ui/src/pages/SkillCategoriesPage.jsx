@@ -28,7 +28,12 @@ import SkillCategoryCard from '../components/skill-category-card/SkillCategoryCa
 import SkillCategoryNewDialog from '../components/skill-category-new-dialog/SkillCategoryNewDialog';
 import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
-import { selectCsrfToken, selectOrderedSkills } from '../context/selectors';
+import {
+  selectCsrfToken,
+  selectOrderedSkills,
+  selectHasSkillsReportPermission,
+  noPermission,
+} from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 
 import './SkillCategoriesPage.css';
@@ -187,7 +192,7 @@ const SkillCategoriesPage = () => {
     return [];
   }, [skillCategories, query, skillFilter]);
 
-  return (
+  return selectHasSkillsReportPermission(state) ? (
     <Root className={classes.root}>
       <div className="skill-categories-header">
         <Typography variant="h4">Skill Categories</Typography>
@@ -289,6 +294,8 @@ const SkillCategoriesPage = () => {
         </Dialog>
       )}
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

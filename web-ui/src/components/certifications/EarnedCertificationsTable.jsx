@@ -10,6 +10,7 @@ import {
 } from '@mui/icons-material';
 import {
   Autocomplete,
+  Avatar,
   Button,
   Card,
   CardContent,
@@ -45,7 +46,7 @@ const tableColumns = [
   'Description',
   'Earned On',
   'Expiration',
-  'Certificate Image',
+  'Validation Image',
   'Badge'
 ];
 
@@ -63,6 +64,7 @@ const EarnedCertificationsTable = ({
   const [certificationDialogOpen, setCertificationDialogOpen] = useState(false);
   const [certificationMap, setCertificationMap] = useState({});
   const [certificationName, setCertificationName] = useState('');
+  const [certificationDescription, setCertificationDescription] = useState('');
   const [certifications, setCertifications] = useState([]);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [earnedCertifications, setEarnedCertifications] = useState([]);
@@ -140,6 +142,8 @@ const EarnedCertificationsTable = ({
 
   const cancelCertification = useCallback(() => {
     setCertificationName('');
+    setCertificationDescription('');
+    setBadgeUrl('');
     setCertificationDialogOpen(false);
   }, []);
 
@@ -166,8 +170,13 @@ const EarnedCertificationsTable = ({
             value={certificationName}
           />
           <TextField
-            label="Badge URL"
+            label="Description"
             required
+            onChange={e => setCertificationDescription(e.target.value)}
+            value={certificationDescription}
+          />
+          <TextField
+            label="Badge URL"
             onChange={e => setBadgeUrl(e.target.value)}
             value={badgeUrl}
           />
@@ -177,7 +186,7 @@ const EarnedCertificationsTable = ({
           <Button
             disabled={
               !certificationName ||
-              !badgeUrl ||
+              !certificationDescription ||
               certifications.some(cert => cert.name === certificationName)
             }
             onClick={saveCertification}
@@ -187,7 +196,7 @@ const EarnedCertificationsTable = ({
         </DialogActions>
       </Dialog>
     ),
-    [badgeUrl, certificationDialogOpen, certificationName]
+    [badgeUrl, certificationDialogOpen, certificationDescription, certificationName]
   );
 
   const confirmDelete = useCallback(earned => {
@@ -209,14 +218,14 @@ const EarnedCertificationsTable = ({
   const earnedCertificationRow = useCallback(
     earned => {
       const profile = profileMap[earned.memberId];
-      const { certificateImageUrl, certificationId } = earned;
+      const { validationUrl, certificationId } = earned;
       const certification = certificationMap[certificationId];
       const { badgeUrl } = certification;
       return (
         <tr key={earned.id}>
           {!onlyMe && <td>{profile?.name ?? 'unknown'}</td>}
           <td>{certificationMap[earned.certificationId]?.name ?? 'unknown'}</td>
-          <td>{earned.description}</td>
+          <td>{certificationMap[earned.certificationId]?.description ?? 'unknown'}</td>
           <td>{formatDate(new Date(earned.earnedDate))}</td>
           <td>
             {earned.expirationDate
@@ -224,7 +233,7 @@ const EarnedCertificationsTable = ({
               : ''}
           </td>
           <td onClick={() => selectImage(earned)} style={{ cursor: 'pointer' }}>
-            {certificateImageUrl && <img src={certificateImageUrl} />}
+            {validationUrl && <img src={validationUrl} />}
           </td>
           <td>{badgeUrl && <img src={badgeUrl} />}</td>
           <td>
@@ -309,19 +318,6 @@ const EarnedCertificationsTable = ({
             </IconButton>
           </div>
 
-          <TextField
-            className="fullWidth"
-            label="Description"
-            placeholder="Description"
-            required
-            onChange={e =>
-              setSelectedEarned({
-                ...selectedEarned,
-                description: e.target.value
-              })
-            }
-            value={selectedEarned?.description ?? ''}
-          />
           <DatePickerField
             date={new Date(selectedEarned?.earnedDate)}
             label="Earned On"
@@ -344,15 +340,15 @@ const EarnedCertificationsTable = ({
           />
           <TextField
             className="fullWidth"
-            label="Image URL"
-            placeholder="Image URL"
+            label="Validation URL"
+            placeholder="Validation URL"
             onChange={e =>
               setSelectedEarned({
                 ...selectedEarned,
-                certificateImageUrl: e.target.value
+                validationUrl: e.target.value
               })
             }
-            value={selectedEarned?.certificateImageUrl ?? ''}
+            value={selectedEarned?.validationUrl ?? ''}
           />
         </DialogContent>
         <DialogActions>
@@ -375,7 +371,7 @@ const EarnedCertificationsTable = ({
     () => (
       <Card>
         <CardHeader
-          avatar={<EmojiEvents />}
+          avatar={<Avatar sx={{ mr: 1 }}><EmojiEvents /></Avatar>}
           title="Earned Certifications"
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
@@ -394,7 +390,7 @@ const EarnedCertificationsTable = ({
                       {sortIndicator(column)}
                     </th>
                   ))}
-                  <th key="Actions">Actions</th>
+                  <th className="actions-th" key="Actions">Actions</th>
                 </tr>
               </thead>
               <tbody>{earnedCertifications.map(earnedCertificationRow)}</tbody>
@@ -422,9 +418,9 @@ const EarnedCertificationsTable = ({
         case 'Expiration':
           return earned.expirationDate || '';
         case 'Description':
-          return earned.description;
-        case 'Certificate Image':
-          return earned.certificateImageUrl || '';
+          return certificationMap[earned.certificationId]?.description ?? '';
+        case 'Validation Image':
+          return earned.validationUrl || '';
         case 'Badge':
           return certification.badgeUrl || '';
         case 'Member':
@@ -452,9 +448,9 @@ const EarnedCertificationsTable = ({
       <Dialog open={imageDialogOpen} onClose={() => setImageDialogOpen(false)}>
         <DialogTitle>Certification Image</DialogTitle>
         <DialogContent>
-          {selectedEarned?.certificateImageUrl && (
+          {selectedEarned?.validationUrl && (
             <img
-              src={sanitizeUrl(selectedEarned.certificateImageUrl)}
+              src={sanitizeUrl(selectedEarned.validationUrl)}
               style={{ width: '100%' }}
             />
           )}
@@ -473,7 +469,11 @@ const EarnedCertificationsTable = ({
         Accept: 'application/json',
         'Content-Type': 'application/json;charset=UTF-8'
       },
-      data: { name: certificationName, badgeUrl }
+      data: {
+        name: certificationName,
+        description: certificationDescription,
+        badgeUrl
+      }
     });
     if (res.error) return;
 
@@ -487,9 +487,11 @@ const EarnedCertificationsTable = ({
     });
     setSelectedCertification(newCert);
     setCertificationName('');
+    setCertificationDescription('');
+    setBadgeUrl('');
     setCertificationDialogOpen(false);
     forceUpdate();
-  }, [certificationName, certifications, selectedCertification]);
+  }, [certificationName, certificationDescription, badgeUrl, certifications, selectedCertification]);
 
   const saveEarnedCertification = useCallback(async () => {
     selectedEarned.memberId = selectedProfile?.id || currentUser.id;
@@ -526,7 +528,7 @@ const EarnedCertificationsTable = ({
   }, [selectedCertification, selectedEarned, selectedProfile]);
 
   const selectImage = useCallback(earned => {
-    if (!earned.certificateImageUrl) return;
+    if (!earned.validationUrl) return;
     setSelectedEarned(earned);
     setImageDialogOpen(true);
   }, []);

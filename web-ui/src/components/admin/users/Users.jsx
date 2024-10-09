@@ -17,7 +17,8 @@ import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
   selectHasProfileReportPermission,
   selectNormalizedMembers,
-  selectNormalizedMembersAdmin
+  selectNormalizedMembersAdmin,
+  selectHasCreateMembersPermission,
 } from '../../../context/selectors';
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
@@ -145,7 +146,7 @@ const Users = () => {
                 setSearchText(e.target.value);
               }}
             />
-            {isAdmin && (
+            {selectHasCreateMembersPermission(state) && (
               <div className="add-member">
                 <Button startIcon={<PersonIcon />} onClick={handleOpen}>
                   Add Member
