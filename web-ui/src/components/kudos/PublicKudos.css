@@ -1,7 +1,3 @@
-.public-kudos {
-  width: 100%;
-}
-
 .public-kudos .kudos-title {
   display: flex;
   justify-content: space-between;
@@ -9,8 +5,5 @@
   gap: 1rem;
 }
 
-.kudos-list {
-  width: 100%;
-}
 
 
