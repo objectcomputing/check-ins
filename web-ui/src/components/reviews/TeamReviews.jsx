@@ -68,10 +68,11 @@ import {
 
 import MemberSelector from '../member_selector/MemberSelector';
 import MemberSelectorDialog from '../member_selector/member_selector_dialog/MemberSelectorDialog';
-
 import DatePickerField from '../date-picker-field/DatePickerField.jsx';
 import '../date-picker-field/DatePickerField.css';
 import './TeamReviews.css';
+import ReviewPeriodStepper from "./periods/ReviewPeriodStepper.jsx";
+
 
 const propTypes = {
   onBack: PropTypes.func,
@@ -1009,6 +1010,12 @@ const TeamReviews = ({ onBack, periodId }) => {
           </div>
         )}
       </div>
+
+      <ReviewPeriodStepper
+          reviewPeriod={period}
+      />
+
+
       {period && (
         <div className="date-pickers-row">
           <div className="date-pickers-container">
