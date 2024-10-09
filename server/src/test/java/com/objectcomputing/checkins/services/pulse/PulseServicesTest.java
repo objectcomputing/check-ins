@@ -30,6 +30,7 @@ import java.time.temporal.TemporalAdjusters;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class PulseServicesTest extends TestContainersSuite implements TeamFixture, RoleFixture {
@@ -98,9 +99,11 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         pulseServices.sendPendingEmail(biWeeklyDate);
         assertEquals(1, emailSender.events.size());
 
-        final List<String> event = emailSender.events.get(0);
-        assertEquals(6, event.size());
-        assertEquals(recipients, event.get(5));
+        validateEmail("SEND_EMAIL", "null", "null",
+                      "Check Out the Pulse Survey!",
+                      "Please fill out your Pulse survey, if you haven't already done so.",
+                      recipients,
+                      emailSender.events.getFirst());
     }
 
     @Test
@@ -111,9 +114,11 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         pulseServices.sendPendingEmail(weeklyDate);
         assertEquals(1, emailSender.events.size());
 
-        final List<String> event = emailSender.events.get(0);
-        assertEquals(6, event.size());
-        assertEquals(recipients, event.get(5));
+        validateEmail("SEND_EMAIL", "null", "null",
+                      "Check Out the Pulse Survey!",
+                      "Please fill out your Pulse survey, if you haven't already done so.",
+                      recipients,
+                      emailSender.events.getFirst());
     }
 
     @Test
@@ -124,9 +129,11 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         pulseServices.sendPendingEmail(monthlyDate);
         assertEquals(1, emailSender.events.size());
 
-        final List<String> event = emailSender.events.get(0);
-        assertEquals(6, event.size());
-        assertEquals(recipients, event.get(5));
+        validateEmail("SEND_EMAIL", "null", "null",
+                      "Check Out the Pulse Survey!",
+                      "Please fill out your Pulse survey, if you haven't already done so.",
+                      recipients,
+                      emailSender.events.getFirst());
     }
 
     @Test
@@ -153,5 +160,19 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         pulseServices.sendPendingEmail(nonMonday);
         // This should be zero because the date is not a Monday.
         assertEquals(0, emailSender.events.size());
+    }
+
+    private void validateEmail(String action, String fromName,
+                               String fromAddress, String subject,
+                               String partial, String recipients,
+                               List<String> event) {
+        assertEquals(action, event.get(0));
+        assertEquals(fromName, event.get(1));
+        assertEquals(fromAddress, event.get(2));
+        assertEquals(subject, event.get(3));
+        if (partial != null && !partial.isEmpty()) {
+            assertTrue(event.get(4).contains(partial));
+        }
+        assertEquals(recipients, event.get(5));
     }
 }
