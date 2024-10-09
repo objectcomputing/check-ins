@@ -955,59 +955,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
-        {period && isAdmin && (
-          <div>
-            {canUpdate && (
-              <Tooltip
-                title={
-                  period.reviewStatus === ReviewStatus.OPEN
-                    ? 'Archive'
-                    : 'Unarchive'
-                }
-              >
-                <IconButton
-                  onClick={toggleReviewPeriod}
-                  aria-label={
-                    period.reviewStatus === ReviewStatus.OPEN
-                      ? 'Archive'
-                      : 'Unarchive'
-                  }
-                >
-                  {period.reviewStatus === ReviewStatus.OPEN ? (
-                    <Archive />
-                  ) : (
-                    <Unarchive />
-                  )}
-                </IconButton>
-              </Tooltip>
-            )}
-
-            {selectHasDeleteReviewPeriodPermission(state) && (
-              <Tooltip title="Delete">
-                <IconButton
-                  onClick={confirmDelete}
-                  edge="end"
-                  aria-label="Delete"
-                >
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            )}
-
-            {approvalMode && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={showAll}
-                    onChange={() => setShowAll(b => !b)}
-                  />
-                }
-                label="Show All"
-                sx={{ marginLeft: '0.5rem' }}
-              />
-            )}
-          </div>
-        )}
       </div>
       {period && (
         <div className="date-pickers-row">
@@ -1069,6 +1016,22 @@ const TeamReviews = ({ onBack, periodId }) => {
               )
             }}
           />
+          {period && isAdmin && (
+              <div>
+                {approvalMode && (
+                    <FormControlLabel
+                        control={
+                          <Switch
+                              checked={showAll}
+                              onChange={() => setShowAll(b => !b)}
+                          />
+                        }
+                        label="Show All"
+                        sx={{ marginLeft: '0.5rem' }}
+                    />
+                )}
+              </div>
+          )}
           {canUpdate && (
             <div>
               <Button onClick={() => setConfirmApproveAllOpen(true)}>
