@@ -1000,47 +1000,49 @@ const TeamReviews = ({ onBack, periodId }) => {
       )}
 
       {approvalMode && (
-        <div id="approval-row">
-          <TextField
-            className="name-search-field"
-            label="Name"
-            placeholder="Search by member name"
-            variant="outlined"
-            value={nameQuery}
-            onChange={event => setNameQuery(event.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" color="gray">
-                  <Search />
-                </InputAdornment>
-              )
-            }}
-          />
-          {period && isAdmin && (
-              <div>
-                {approvalMode && (
-                    <FormControlLabel
-                        control={
-                          <Switch
-                              checked={showAll}
-                              onChange={() => setShowAll(b => !b)}
-                          />
-                        }
-                        label="Show All"
-                        sx={{ marginLeft: '0.5rem' }}
-                    />
-                )}
-              </div>
-          )}
-          {canUpdate && (
-            <div>
-              <Button onClick={() => setConfirmApproveAllOpen(true)}>
-                Approve All
-              </Button>
-              <Button onClick={unapproveAll}>Unapprove All</Button>
+          <div id="approval-row" style={{ display: 'flex', alignItems: 'center' }}>
+            {/* Wrapper div for TextField and Switch */}
+            <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+              <TextField
+                  className="name-search-field"
+                  label="Name"
+                  placeholder="Search by member name"
+                  variant="outlined"
+                  value={nameQuery}
+                  onChange={event => setNameQuery(event.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end" color="gray">
+                          <Search />
+                        </InputAdornment>
+                    )
+                  }}
+                  style={{ flexGrow: 1, maxWidth: '400px' }}
+              />
+              {/* Add the Switch right next to the TextField */}
+              {period && isAdmin && (
+                  <FormControlLabel
+                      control={
+                        <Switch
+                            checked={showAll}
+                            onChange={() => setShowAll(b => !b)}
+                        />
+                      }
+                      label="Show All"
+                      sx={{ marginLeft: '0.5rem' }}
+                  />
+              )}
             </div>
-          )}
-        </div>
+            {/* Button aligned to the right */}
+            {canUpdate && (
+                <div style={{ marginLeft: 'auto' }}>
+                  <Button onClick={() => setConfirmApproveAllOpen(true)}>
+                    Approve All
+                  </Button>
+                  <Button onClick={unapproveAll}>Unapprove All</Button>
+                </div>
+            )}
+          </div>
       )}
 
       {canUpdate && (
