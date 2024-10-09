@@ -15,12 +15,16 @@ import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.StringUtils;
+import io.micronaut.runtime.server.EmbeddedServer;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledInNativeImage;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
@@ -32,11 +36,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 // Disabled in nativeTest, as we get an exception from Mockito
@@ -44,14 +48,19 @@ import static org.mockito.Mockito.when;
 @DisabledInNativeImage
 class FeedbackRequestTest extends TestContainersSuite {
 
+    @Mock
     private FeedbackRequestRepository feedbackReqRepository;
 
+    @Mock
     private CurrentUserServices currentUserServices;
 
+    @Mock
     private MemberProfileServices memberProfileServices;
 
+    @Mock
     private ReviewPeriodRepository reviewPeriodRepository;
 
+    @Mock
     private ReviewAssignmentRepository reviewAssignmentRepository;
 
     private FeedbackRequestServicesImpl feedbackRequestServices;
@@ -61,19 +70,34 @@ class FeedbackRequestTest extends TestContainersSuite {
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
+    private EmbeddedServer server;
+
+    private AutoCloseable mockFinalizer;
+
+    @Inject
     CheckInsConfiguration checkInsConfiguration;
+
+    @BeforeAll
+    void initMocks() {
+        mockFinalizer = openMocks(this);
+        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices, memberProfileServices, reviewPeriodRepository, reviewAssignmentRepository, emailSender, checkInsConfiguration);
+        server.getApplicationContext().inject(feedbackRequestServices);
+    }
 
     @BeforeEach
     @Tag("mocked")
     void setUp() {
+        Mockito.reset(feedbackReqRepository);
+        Mockito.reset(currentUserServices);
+        Mockito.reset(memberProfileServices);
+        Mockito.reset(reviewPeriodRepository);
+        Mockito.reset(reviewAssignmentRepository);
         emailSender.reset();
+    }
 
-        feedbackReqRepository = Mockito.mock(FeedbackRequestRepository.class);
-        currentUserServices = Mockito.mock(CurrentUserServices.class);
-        memberProfileServices = Mockito.mock(MemberProfileServices.class);
-        reviewPeriodRepository = Mockito.mock(ReviewPeriodRepository.class);
-        reviewAssignmentRepository = Mockito.mock(ReviewAssignmentRepository.class);
-        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices, memberProfileServices, reviewPeriodRepository, reviewAssignmentRepository, emailSender, checkInsConfiguration);
+    @AfterAll
+    void cleanupMocks() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test
