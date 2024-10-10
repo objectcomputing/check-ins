@@ -62,7 +62,7 @@ const PublicKudos = () => {
           {kudosLoading ? (
             <div className="kudos-list">
               {Array.from({ length: 5 }).map((_, index) => (
-                <SkeletonLoader width={400} key={index} type="kudos" />
+                <SkeletonLoader width="100%" key={index} type="kudos" />
               ))}
             </div>
           ) : !kudosLoading && kudos?.length > 0 ? (
