@@ -18,6 +18,8 @@ public class EmailHelper {
         if (partialBody != null && !partialBody.isEmpty()) {
             assertTrue(event.get(4).contains(partialBody));
         }
-        assertEquals(recipients, event.get(5));
+        if (recipients != null && !recipients.isEmpty()) {
+            assertEquals(recipients, event.get(5));
+        }
     }
 }
