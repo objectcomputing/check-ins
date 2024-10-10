@@ -21,6 +21,7 @@ import OrganizationDialog from '../dialogs/OrganizationDialog';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken, selectCurrentUser, selectProfileMap } from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
+import { showError } from '../../helpers/toast';
 
 const relationshipBaseUrl = '/services/volunteer/relationship';
 
@@ -158,19 +159,19 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       (rel) => rel.organizationId === organizationId && !rel.endDate && rel.id !== id
     );
     if (existingRelationship) {
-      console.error("Cannot add duplicate active relationships.");
+      showError("Cannot add duplicate active relationships.");
       return;
     }
   
     // Ensure start date is before or equal to the current date
     if (new Date(startDate) > new Date()) {
-      console.error("Start date cannot be in the future.");
+      showError("Start date cannot be in the future.");
       return;
     }
-  
+
     // Ensure end date is after the start date
     if (endDate && new Date(endDate) <= new Date(startDate)) {
-      console.error("End date must be after the start date.");
+      showError("End date must be after the start date.");
       return;
     }
   
@@ -203,7 +204,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const saveOrganizationAndRelationship = useCallback(async () => {
     const { name, description, website } = newOrganization;
     if (!name || !description) {
-      console.error('Missing organization name or description');
+      showError('Missing organization name or description');
       return;
     }
 
