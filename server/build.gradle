@@ -115,6 +115,8 @@ dependencies {
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micrometer:context-propagation")
 
+    implementation 'ch.digitalfondue.mjml4j:mjml4j:1.0.3'
+
     testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
 
@@ -213,3 +215,5 @@ java {
 }
 
 run.jvmArgs('-Dcom.sun.management.jmxremote', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000')
+
+

@@ -5,6 +5,7 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
+import ch.digitalfondue.mjml4j.Mjml4j;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
@@ -20,6 +21,7 @@ import java.util.List;
 @Prototype
 @Requires(bean = MailJetConfiguration.class)
 public class MailJetSender implements EmailSender {
+    public static final String MJMLPART = "MJMLPART";
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
@@ -94,6 +96,16 @@ public class MailJetSender implements EmailSender {
                 .put("Email", fromAddress)
                 .put("Name", fromName);
 
+        String modifiedEmailFormat = emailFormat;
+        if (modifiedEmailFormat.equals(MJMLPART)) {
+            // Convert the MJML to HTML and update the local email format.
+            var configuration = new Mjml4j.Configuration("en");
+            content = Mjml4j.render(content, configuration);
+            modifiedEmailFormat = Emailv31.Message.HTMLPART;
+        }
+        final String localEmailFormat = modifiedEmailFormat;
+        final String localContent = content;
+
         emailBatches.forEach((recipientList) -> {
             MailjetRequest request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
@@ -102,7 +114,7 @@ public class MailJetSender implements EmailSender {
                                     .put(Emailv31.Message.TO, new JSONArray().put(sender))
                                     .put(Emailv31.Message.BCC, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(emailFormat, content)));
+                                    .put(localEmailFormat, localContent)));
             try {
                 MailjetResponse response = client.post(request);
                 LOG.info("Mailjet response status: {}", response.getStatus());
@@ -134,10 +146,12 @@ public class MailJetSender implements EmailSender {
 
     @Override
     public void setEmailFormat(String format) {
-        if (format.equals(Emailv31.Message.HTMLPART) || format.equals(Emailv31.Message.TEXTPART)) {
+        if (format.equals(MJMLPART) ||
+            format.equals(Emailv31.Message.HTMLPART) ||
+            format.equals(Emailv31.Message.TEXTPART)) {
             this.emailFormat = format;
         } else {
-            throw new BadArgException(String.format("Email format must be either HTMLPART or TEXTPART, got %s", format));
+            throw new BadArgException(String.format("Email format must be either HTMLPART, MJMLPART or TEXTPART, got %s", format));
         }
     }
 }
