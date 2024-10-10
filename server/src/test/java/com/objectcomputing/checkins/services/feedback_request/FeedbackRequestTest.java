@@ -13,6 +13,7 @@ import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
+import com.objectcomputing.checkins.services.EmailHelper;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.server.EmbeddedServer;
@@ -277,9 +278,7 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         // This should equal the number of review assignments.
         assertEquals(2, emailSender.events.size());
-        validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review",
-                emailSender.events.getFirst()
-        );
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review", reviewer02.getWorkEmail(), emailSender.events.getFirst());
     }
 
     @Test
@@ -325,8 +324,7 @@ class FeedbackRequestTest extends TestContainersSuite {
         feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
 
         assertEquals(1, emailSender.events.size());
-        validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review", emailSender.events.getFirst()
-        );
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review", supervisorProfile.getWorkEmail(), emailSender.events.getFirst());
     }
 
     @Test
@@ -393,19 +391,6 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         assertDoesNotThrow(() -> feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(new FeedbackRequest()));
         assertEquals(1, emailSender.events.size());
-        validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "firstName lastName has completed their self-review", emailSender.events.getFirst()
-        );
-    }
-
-    private void validateEmail(String action, String fromName,
-                               String fromAddress, String subject,
-                               String partial, List<String> event) {
-        assertEquals(action, event.get(0));
-        assertEquals(fromName, event.get(1));
-        assertEquals(fromAddress, event.get(2));
-        assertEquals(subject, event.get(3));
-        if (partial != null && !partial.isEmpty()) {
-            assertTrue(event.get(4).contains(partial));
-        }
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "firstName lastName has completed their self-review", supervisorProfile.getWorkEmail(), emailSender.events.getFirst());
     }
 }
