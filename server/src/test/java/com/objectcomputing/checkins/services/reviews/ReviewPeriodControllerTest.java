@@ -819,18 +819,4 @@ class ReviewPeriodControllerTest
         assertTrue(exception.getMessage()
                             .contains("end date must be on or before"));
     }
-
-    private void validateEmail(String action, String fromName,
-                               String fromAddress, String subject,
-                               String partial, String recipients,
-                               List<String> event) {
-        assertEquals(action, event.get(0));
-        assertEquals(fromName, event.get(1));
-        assertEquals(fromAddress, event.get(2));
-        assertEquals(subject, event.get(3));
-        if (partial != null && !partial.isEmpty()) {
-            assertTrue(event.get(4).contains(partial));
-        }
-        assertEquals(recipients, event.get(5));
-    }
 }
