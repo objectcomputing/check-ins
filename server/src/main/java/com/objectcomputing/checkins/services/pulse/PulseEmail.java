@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 
+import jakarta.inject.Singleton;
 import jakarta.inject.Named;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import io.micronaut.core.io.IOUtils;
 import java.io.BufferedReader;
 import java.util.List;
 
+@Singleton
 class PulseEmail {
   private static final Logger LOG = LoggerFactory.getLogger(PulseEmail.class);
   private final EmailSender emailSender;
