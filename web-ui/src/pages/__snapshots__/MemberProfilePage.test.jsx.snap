@@ -95,7 +95,7 @@ exports[`renders correctly 1`] = `
             <h1
               class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
             >
-              Guilds
+              Guilds & Communities
             </h1>
           </div>
         </div>

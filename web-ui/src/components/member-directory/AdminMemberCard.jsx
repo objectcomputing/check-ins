@@ -5,7 +5,12 @@ import { Link } from 'react-router-dom';
 import MemberModal from './MemberModal';
 import { AppContext } from '../../context/AppContext';
 import { DELETE_MEMBER_PROFILE, UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../context/actions';
-import { selectProfileMap } from '../../context/selectors';
+import {
+  selectProfileMap,
+  selectHasCreateMembersPermission,
+  selectHasDeleteMembersPermission,
+  selectHasImpersonateMembersPermission,
+} from '../../context/selectors';
 import { getAvatarURL, resolve } from '../../api/api.js';
 
 import Avatar from '@mui/material/Avatar';
@@ -48,8 +53,6 @@ const StyledBox = styled(Box)(() => ({
 const AdminMemberCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
   const { memberProfiles, userProfile, csrf } = state;
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
   const {
     location,
     name,
@@ -74,9 +77,14 @@ const AdminMemberCard = ({ member, index }) => {
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
   const options = () => {
-    let entries = ['Edit'];
-    if (isAdmin) {
+    let entries = [];
+    if (selectHasCreateMembersPermission(state)) {
+      entries.push('Edit');
+    }
+    if (selectHasDeleteMembersPermission(state)) {
       entries.push('Delete');
+    }
+    if (selectHasImpersonateMembersPermission(state)) {
       // If we have not already impersonated a user, we can provide that option.
       if (document.cookie.indexOf("OJWT=") == -1) {
         entries.push('Impersonate');
@@ -209,7 +217,9 @@ const AdminMemberCard = ({ member, index }) => {
             </Typography>
           </Container>
         </CardContent>
-        {isAdmin && (
+        {(selectHasCreateMembersPermission(state) ||
+          selectHasDeleteMembersPermission(state) ||
+          selectHasImpersonateMembersPermission(state)) && (
           <CardActions>
             <SplitButton
               className="split-button"

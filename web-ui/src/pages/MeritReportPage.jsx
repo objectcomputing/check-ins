@@ -9,6 +9,8 @@ import { AppContext } from '../context/AppContext';
 import {
   selectCsrfToken,
   selectOrderedMemberFirstName,
+  selectHasMeritReportPermission,
+  noPermission,
 } from '../context/selectors';
 
 import './MeritReportPage.css';
@@ -497,7 +499,7 @@ const MeritReportPage = () => {
 
   const checkMark = "✓";
 
-  return (
+  return selectHasMeritReportPermission(state) ? (
     <div className="merit-report-page">
       <Button color="primary" className="space-between">
         <label htmlFor="file-upload-comp">
@@ -572,6 +574,8 @@ const MeritReportPage = () => {
         </label>
       </Button>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

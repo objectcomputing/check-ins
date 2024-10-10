@@ -14,7 +14,9 @@ public interface RoleFixture extends RepositoryFixture, PermissionFixture, Membe
     }
 
     default Role createAndAssignAdminRole(MemberProfile memberProfile) {
-        return createAndAssignRole(RoleType.ADMIN, memberProfile);
+        Role role = createAndAssignRole(RoleType.ADMIN, memberProfile);
+        setPermissionsForAdmin(role.getId());
+        return role;
     }
 
     // TODO phase out RoleType

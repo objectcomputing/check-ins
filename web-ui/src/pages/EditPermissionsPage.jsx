@@ -12,7 +12,7 @@ import { getMemberRolesList } from '../api/memberroles';
 import { isArrayPresent, filterObjectByValOrKey } from '../helpers/checks';
 import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
-import { selectCurrentUserId } from '../context/selectors';
+import { selectCurrentUserId, noPermission } from '../context/selectors';
 
 import './EditPermissionsPage.css';
 
@@ -1387,7 +1387,7 @@ const EditPermissionsPage = () => {
         </>
       ) : (
         <>
-          <h3>You do not have permission to view this page.</h3>
+          <h3>{noPermission}</h3>
         </>
       )}
     </div>

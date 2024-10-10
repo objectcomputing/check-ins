@@ -1,13 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography } from '@mui/material';
+import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography, Box } from '@mui/material';
 import FeedbackResponseCard from './feedback_response_card/FeedbackResponseCard';
 import { getQuestionsAndAnswers } from '../../api/feedbackanswer';
 import { getFeedbackRequestById } from '../../api/feedback';
 import queryString from 'query-string';
 import { useLocation } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken, selectProfile } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectProfile,
+  selectCanViewFeedbackAnswerPermission,
+  noPermission,
+} from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -15,7 +20,6 @@ import { getAvatarURL } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
-
 import './ViewFeedbackResponses.css';
 
 const PREFIX = 'MuiCardContent';
@@ -45,7 +49,6 @@ const Root = styled('div')({
     marginRight: '3em',
     width: '350px',
     ['@media (max-width: 800px)']: {
-      // eslint-disable-line no-useless-computed-key
       marginRight: 0,
       width: '100%'
     }
@@ -53,7 +56,6 @@ const Root = styled('div')({
   [`& .${classes.responderField}`]: {
     minWidth: '500px',
     ['@media (max-width: 800px)']: {
-      // eslint-disable-line no-useless-computed-key
       minWidth: 0,
       width: '100%'
     }
@@ -70,8 +72,7 @@ const ViewFeedbackResponses = () => {
   const [searchText, setSearchText] = useState('');
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
-  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] =
-    useState([]);
+  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -85,7 +86,29 @@ const ViewFeedbackResponses = () => {
           ? requests
           : [requests]
         : [];
-      return await getQuestionsAndAnswers(requests, cookie);
+      const res = await getQuestionsAndAnswers(requests, cookie);
+
+      if (res) {
+        const sanitizedResponses = res.map(question => ({
+          ...question,
+          answers: question.answers.map(answer => ({
+            ...answer,
+            answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer),
+          }))
+        }));
+
+        sanitizedResponses.sort((a, b) => a.questionNumber - b.questionNumber);
+        setQuestionsAndAnswers(sanitizedResponses);
+
+      } else {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Failed to retrieve questions and answers'
+          }
+        });
+      }
     }
 
     if (!csrf || !query.request) {
@@ -115,59 +138,47 @@ const ViewFeedbackResponses = () => {
         });
       }
     });
-    retrieveQuestionsAndAnswers(query.request, csrf).then(res => {
-      if (res) {
-        res.sort((a, b) => a.questionNumber - b.questionNumber);
-        setQuestionsAndAnswers(res);
-      } else {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'Failed to retrieve questions and answers'
-          }
-        });
-      }
-    });
+    retrieveQuestionsAndAnswers(query.request, csrf);
   }, [csrf, query.request]);
 
-  // Sets the options for filtering by responders
   useEffect(() => {
     let allResponders = [];
     questionsAndAnswers.forEach(({ answers }) => {
       const responders = answers.map(answer => answer.responder);
       allResponders.push(...responders);
     });
-    allResponders = [...new Set(allResponders)]; // Remove duplicate responders
+    allResponders = [...new Set(allResponders)];
     setResponderOptions(allResponders);
   }, [state, questionsAndAnswers]);
 
-  // Populate all responders as selected by default
   useEffect(() => {
     setSelectedResponders(responderOptions);
   }, [responderOptions]);
 
   useEffect(() => {
     let responsesToDisplay = [...questionsAndAnswers];
-
     responsesToDisplay = responsesToDisplay.map(response => {
-      // Filter based on selected responders
       let filteredAnswers = response.answers.filter(answer =>
         selectedResponders.includes(answer.responder)
       );
+
+      if (filteredAnswers.length === 0) {
+        filteredAnswers = [{ answer: 'No input due to recipient filter', responder: null }];
+      }
+
       if (searchText.trim()) {
-        // Filter based on search text
         filteredAnswers = filteredAnswers.filter(
           ({ answer }) =>
             answer &&
             answer.toLowerCase().includes(searchText.trim().toLowerCase())
         );
       }
+
       return { ...response, answers: filteredAnswers };
     });
 
     setFilteredQuestionsAndAnswers(responsesToDisplay);
-  }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchText, selectedResponders]);
 
   useEffect(() => {
     if (isLoading && filteredQuestionsAndAnswers.length > 0) {
@@ -179,7 +190,14 @@ const ViewFeedbackResponses = () => {
     setSelectedResponders(responderOptions);
   };
 
-  return (
+
+  const isEmptyOrWhitespace = (text) => {
+    return typeof text !== 'string' || !text.trim();
+  };
+
+
+  return selectCanViewFeedbackAnswerPermission(state) ? (
+
     <Root className="view-feedback-responses-page">
       <Typography
         variant="h4"
@@ -278,6 +296,9 @@ const ViewFeedbackResponses = () => {
         ))}
       {!isLoading &&
         filteredQuestionsAndAnswers?.map(question => {
+          const questionText = question.question;
+          const hasResponses = question.answers.length > 0;
+
           return (
             <div
               className="question-responses-container"
@@ -287,30 +308,27 @@ const ViewFeedbackResponses = () => {
                 className="question-text"
                 style={{ marginBottom: '0.5em', fontWeight: 'bold' }}
               >
-                Q{question.questionNumber}: {question.question}
+                {questionText}
               </Typography>
-              {question.answers.length === 0 && (
-                <div className="no-responses-found">
-                  <Typography variant="body1" style={{ color: 'gray' }}>
-                    No matching responses found
-                  </Typography>
-                </div>
-              )}
-              {question.inputType !== 'NONE' &&
-                question.answers.length > 0 &&
+
+              {/* If the question has no answers or inputType is "NONE" */}
+              {!hasResponses || question.inputType === 'NONE' ? null : (
                 question.answers.map(answer => (
                   <FeedbackResponseCard
                     key={answer.id || answer.responder}
                     responderId={answer.responder}
-                    answer={answer.answer || ''}
+                    answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
                     inputType={question.inputType}
                     sentiment={answer.sentiment}
                   />
-                ))}
+                ))
+              )}
             </div>
           );
         })}
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 
