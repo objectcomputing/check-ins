@@ -1,0 +1,13 @@
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#2559a7"></mj-divider>
+        <mj-text font-size="16px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" color="#4d4c4f">
+          <h3>Review Assignments for Review Period '%s' are ready for your approval.</h3></mj-text>
+<mj-text font-size="16px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" color="#4d4c4f">
+          Click <a href="%s/feedback/reviews?period=%s">here</a> to review and approve reviewer assignments in the Check-Ins app.</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

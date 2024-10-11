@@ -12,8 +12,10 @@ import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.EmailHelper;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
@@ -65,7 +67,7 @@ class ReviewPeriodControllerTest
     private HttpClient client;
 
     @Inject
-    @Named(MailJetFactory.HTML_FORMAT)
+    @Named(MailJetFactory.MJML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
@@ -512,9 +514,11 @@ class ReviewPeriodControllerTest
 
         // expect email has been sent
         assertEquals(1, emailSender.events.size());
-        assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "Review Assignments Awaiting Approval", "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3><a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.", supervisor.getWorkEmail()),
-                emailSender.events.getFirst()
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  "Review Assignments Awaiting Approval",
+                                  "Click <a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">here</a> to review and approve reviewer assignments in the Check-Ins app.",
+                                  supervisor.getWorkEmail(),
+                                  emailSender.events.getFirst()
         );
     }
 
@@ -544,6 +548,14 @@ class ReviewPeriodControllerTest
         FeedbackRequest feedbackRequest = requests.get(0);
         assertEquals(member.getId(), feedbackRequest.getRequesteeId());
         assertEquals(reviewPeriod.getId(), feedbackRequest.getReviewPeriodId());
+
+        assertEquals(2, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  "It's time for performance reviews!",
+                                  "Help us make this a valuable experience for everyone!",
+                                  member.getWorkEmail() + "," + supervisor.getWorkEmail(),
+                                  emailSender.events.get(1)
+        );
     }
 
     @Test
