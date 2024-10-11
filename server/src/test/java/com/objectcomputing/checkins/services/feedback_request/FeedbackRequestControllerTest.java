@@ -14,6 +14,7 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.EmailHelper;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
@@ -187,13 +188,13 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         assertEquals(1, emailSender.events.size());
-        validateEmail("SEND_EMAIL",
-                      fromName,
-                      pdlMemberProfile.getWorkEmail(),
-                      checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                      "You have received a feedback request",
-                      recipient.getWorkEmail(),
-                      emailSender.events.getFirst()
+        EmailHelper.validateEmail("SEND_EMAIL",
+                                  fromName,
+                                  pdlMemberProfile.getWorkEmail(),
+                                  checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                                  "You have received a feedback request",
+                                  recipient.getWorkEmail(),
+                                  emailSender.events.getFirst()
         );
     }
 
@@ -1049,13 +1050,13 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         // Verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         assertEquals(1, emailSender.events.size());
-        validateEmail("SEND_EMAIL",
-                      fromName,
-                      pdl.getWorkEmail(),
-                      checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                      "You have received edit access to a feedback request",
-                      recipient.getWorkEmail(),
-                      emailSender.events.getFirst()
+        EmailHelper.validateEmail("SEND_EMAIL",
+                                  fromName,
+                                  pdl.getWorkEmail(),
+                                  checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                                  "You have received edit access to a feedback request",
+                                  recipient.getWorkEmail(),
+                                  emailSender.events.getFirst()
         );
     }
 
@@ -1413,19 +1414,5 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
-    }
-
-    private void validateEmail(String action, String fromName,
-                               String fromAddress, String subject,
-                               String partial, String toAddress,
-                               List<String> event) {
-        assertEquals(action, event.get(0));
-        assertEquals(fromName, event.get(1));
-        assertEquals(fromAddress, event.get(2));
-        assertEquals(subject, event.get(3));
-        if (partial != null && !partial.isEmpty()) {
-            assertTrue(event.get(4).contains(partial));
-        }
-        assertEquals(toAddress, event.get(5));
     }
 }
