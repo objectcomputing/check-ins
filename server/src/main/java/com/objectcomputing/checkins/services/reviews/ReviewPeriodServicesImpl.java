@@ -28,7 +28,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.BufferedReader;
+import java.time.temporal.ChronoUnit;
 
 @Singleton
 class ReviewPeriodServicesImpl implements ReviewPeriodServices {
@@ -44,10 +47,15 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private final Environment environment;
     private final String webAddress;
 
+    private enum SelfReviewDate { LAUNCH, THREE_DAYS, ONE_DAY }
+    private final Map<String, Boolean> sent = new HashMap<>();
+
     @Value("classpath:mjml/supervisor_review_assignment.mjml")
     private Readable supervisorReviewAssignmentTemplate;
     @Value("classpath:mjml/review_period_announcement.mjml")
     private Readable reviewPeriodAnnouncementTemplate;
+    @Value("classpath:mjml/self_review_reminder.mjml")
+    private Readable selfReviewReminderTemplate;
 
     ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
                                     ReviewAssignmentRepository reviewAssignmentRepository,
@@ -344,6 +352,110 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             feedbackRequestServices.save(request);
         } catch(Exception ex) {
             LOG.error(ex.toString());
+        }
+    }
+
+    public void sendNotifications(LocalDate today) {
+        List<ReviewPeriod> openPeriods =
+            reviewPeriodRepository.findByReviewStatus(ReviewStatus.OPEN);
+        for(ReviewPeriod openPeriod : openPeriods) {
+            for(SelfReviewDate date : SelfReviewDate.values()) {
+                String key = openPeriod.getId().toString() + date.toString();
+                if (!sent.containsKey(key)) {
+                    LocalDateTime check;
+                    switch(date) {
+                        case SelfReviewDate.LAUNCH:
+                            check = openPeriod.getLaunchDate();
+                            break;
+                        case SelfReviewDate.THREE_DAYS:
+                            check = openPeriod.getSelfReviewCloseDate();
+                            if (check != null) {
+                                check = check.minus(3, ChronoUnit.DAYS);
+                            }
+                            break;
+                        default:
+                        case SelfReviewDate.ONE_DAY:
+                            check = openPeriod.getSelfReviewCloseDate();
+                            if (check != null) {
+                                check = check.minus(1, ChronoUnit.DAYS);
+                            }
+                            break;
+                    }
+
+                    if (check != null) {
+                        if (today.isEqual(check.toLocalDate())) {
+                            sendSelfReviewEmail(openPeriod.getId(), date);
+                            sent.put(key, true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void sendSelfReviewEmail(UUID reviewPeriodId, SelfReviewDate date) {
+        Optional<ReviewPeriod> reviewPeriod =
+            reviewPeriodRepository.findById(reviewPeriodId);
+        if (reviewPeriod.isEmpty()) {
+            LOG.error("Unable to find review period: " + reviewPeriodId.toString());
+            return;
+        }
+
+        // Determine which email template and subject we need to use.
+        String subject = "";
+        switch(date) {
+            case SelfReviewDate.LAUNCH:
+                subject = reviewPeriod.get().getName() + " has launched!";
+                break;
+            case SelfReviewDate.THREE_DAYS:
+                subject = reviewPeriod.get().getName() +
+                          " closes in three days!";
+                break;
+            default:
+            case SelfReviewDate.ONE_DAY:
+                subject = reviewPeriod.get().getName() + " closes in one day!";
+                break;
+        }
+
+        try {
+            // Read in the email template.
+            String template = IOUtils.readText(
+                                  new BufferedReader(
+                                      selfReviewReminderTemplate.asReader()));
+
+            // Get the set of self-reviewer email addresses.
+            Set<MemberProfile> recipients = new HashSet<>();
+            List<FeedbackRequest> requests =
+                feedbackRequestServices.findByValues(null, null, null, null,
+                                                     reviewPeriodId,
+                                                     null, null);
+            for (FeedbackRequest request : requests) {
+                if (request.getRecipientId().equals(request.getRequesteeId())) {
+                    Optional<MemberProfile> requesteeProfile =
+                        memberProfileRepository.findById(
+                            request.getRequesteeId());
+                    if (!requesteeProfile.isEmpty()) {
+                        recipients.add(requesteeProfile.get());
+                    }
+                }
+            }
+
+            for(MemberProfile recipient : recipients) {
+                // Customize the email content using the template.
+                String content = String.format(template,
+                                     webAddress,
+                                     reviewPeriodId.toString(),
+                                     recipient.getFirstName(),
+                                     dateAsString(reviewPeriod.get()
+                                                    .getSelfReviewCloseDate()),
+                                     webAddress);
+
+                // Send out the email to the individual.
+                emailSender.sendEmail(null, null, subject, content,
+                                      recipient.getWorkEmail());
+            }
+        } catch(Exception ex) {
+            LOG.error("Send Self-Review Email: " + ex.toString());
         }
     }
 }

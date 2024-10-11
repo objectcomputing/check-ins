@@ -1,0 +1,35 @@
+<mjml>
+  <mj-head>
+    <mj-title>Self-Review Reminder</mj-title>
+    <mj-preview>Self-Reviews are due soon!</mj-preview>
+    <mj-attributes>
+      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#e0f2ff">
+    <mj-section background-color="#2559a7">
+      <mj-column>
+        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEXvzBSrNroLHtqfW8W5_oM296XY7FPJqz15RNP3RBcf_XEkyZ0gn5JVkDCSTWA-loYTeVL5c-ycoAEOh_3dFBpPju1UmfGt7tLPCMFQdf5IVeHipmhyOV4fZnCWSl0n-b3tsHB4THfub4Mtknvz8R4t=w900-h600-no" background-color="#FFF" padding="100px 0px">
+      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900"> If you haven't already... </mj-text>
+      <mj-button href="%s/feedback/self-reviews?period=%s" align="center"> FILL OUT YOUR<br/>SELF-REVIEW </mj-button>
+    </mj-hero>
+    <mj-section background-color="#ffffff">
+      <mj-column>
+        <mj-text>
+          <h2>Self-Review Reminder!</h2>
+        </mj-text>
+          <mj-text font-size="16px">Dear %s,</mj-text>
+        <mj-text font-size="16px">This is a friendly reminder to complete your self-reviews by %s. <strong></strong></mj-text>
+        <mj-text font-size="16px">To access your self-review click the button above, or visit <a href="%s">Check-Ins</a> and find "Self-Reviews" under the "Feedback" menu.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#feb672" padding="10px">
+      <mj-column vertical-align="top" width="100%%">
+        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

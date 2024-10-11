@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.reviews;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,4 +15,6 @@ public interface ReviewPeriodServices {
     Set<ReviewPeriod> findByValue(String name, ReviewStatus reviewStatus);
 
     void delete(UUID id);
+
+    void sendNotifications(LocalDate today);
 }
