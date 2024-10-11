@@ -26,7 +26,8 @@ import {
   selectCurrentMembers,
   selectHasUpdateReviewAssignmentsPermission,
   selectReviewPeriod,
-  selectReviewPeriods
+  selectReviewPeriods,
+  selectSupervisors,
 } from '../../../context/selectors';
 import { titleCase } from '../../../helpers/strings.js';
 
@@ -90,14 +91,26 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
     if (res.error) return;
 
     const assignments = res.payload.data;
+
+    const supervisors = selectSupervisors(state);
+    for (const assignment of assignments) {
+      // If the reviewer is not a supervisor, locally modify the assignment
+      // so that this will count as one to be approved by the reviewer's
+      // supervisor.
+      const id = assignment.reviewerId;
+      if (!supervisors.some(s => s.id === id)) {
+        const member = currentMembers.find(m => m.id === id);
+        if (member) {
+          assignment.reviewerId = member.supervisorid;
+        }
+      }
+    }
+
     const approvedCount = assignments.filter(a => a.approved).length;
     setOverallApprovalPercentage((100 * approvedCount) / assignments.length);
 
     // Get a list of all the reviewers in this period.
-    const reviewerIds = new Set();
-    for (const assignment of assignments) {
-      reviewerIds.add(assignment.reviewerId);
-    }
+    const reviewerIds = new Set(assignments.map(a => a.reviewerId));
     const reviewers = [...reviewerIds].map(id =>
       currentMembers.find(m => m.id === id)
     );
