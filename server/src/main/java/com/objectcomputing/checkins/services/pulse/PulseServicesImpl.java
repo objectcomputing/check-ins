@@ -11,6 +11,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
@@ -40,6 +41,9 @@ public class PulseServicesImpl implements PulseServices {
   private final SettingsServices settingsServices;
   private final Map<String, Boolean> sent = new HashMap<String, Boolean>();
 
+  @Inject
+  private PulseEmail email;
+
   private final DayOfWeek emailDay = DayOfWeek.MONDAY;
 
   private String setting = "bi-weekly";
@@ -50,7 +54,7 @@ public class PulseServicesImpl implements PulseServices {
   );
 
   public PulseServicesImpl(
-                    @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
+                    @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                     CheckInsConfiguration checkInsConfiguration,
                     MemberProfileServices memberProfileServices,
                     SettingsServices settingsServices) {
@@ -93,7 +97,7 @@ public class PulseServicesImpl implements PulseServices {
             LOG.info("The Pulse Email has already been sent today");
           } else {
             LOG.info("Sending Pulse Email");
-            send();
+            email.send();
             sent.put(key, true);
           }
           break;
@@ -109,11 +113,5 @@ public class PulseServicesImpl implements PulseServices {
         }
       } while(start.isBefore(check) || start.isEqual(check));
     }
-  }
-
-  private void send() {
-    PulseEmail email = new PulseEmail(emailSender, checkInsConfiguration,
-                                      memberProfileServices);
-    email.send();
   }
 }

@@ -308,7 +308,7 @@ const MemberProfilePage = () => {
             </Card>
             <Card>
               <CardHeader
-                title="Guilds"
+                title="Guilds & Communities"
                 titleTypographyProps={{ variant: 'h5', component: 'h1' }}
               />
               <CardContent>

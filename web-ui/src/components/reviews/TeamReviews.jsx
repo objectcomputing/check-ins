@@ -68,10 +68,11 @@ import {
 
 import MemberSelector from '../member_selector/MemberSelector';
 import MemberSelectorDialog from '../member_selector/member_selector_dialog/MemberSelectorDialog';
-
 import DatePickerField from '../date-picker-field/DatePickerField.jsx';
 import '../date-picker-field/DatePickerField.css';
 import './TeamReviews.css';
+import ReviewPeriodStepper from "./periods/ReviewPeriodStepper.jsx";
+
 
 const propTypes = {
   onBack: PropTypes.func,
@@ -955,60 +956,13 @@ const TeamReviews = ({ onBack, periodId }) => {
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
-        {period && isAdmin && (
-          <div>
-            {canUpdate && (
-              <Tooltip
-                title={
-                  period.reviewStatus === ReviewStatus.OPEN
-                    ? 'Archive'
-                    : 'Unarchive'
-                }
-              >
-                <IconButton
-                  onClick={toggleReviewPeriod}
-                  aria-label={
-                    period.reviewStatus === ReviewStatus.OPEN
-                      ? 'Archive'
-                      : 'Unarchive'
-                  }
-                >
-                  {period.reviewStatus === ReviewStatus.OPEN ? (
-                    <Archive />
-                  ) : (
-                    <Unarchive />
-                  )}
-                </IconButton>
-              </Tooltip>
-            )}
-
-            {selectHasDeleteReviewPeriodPermission(state) && (
-              <Tooltip title="Delete">
-                <IconButton
-                  onClick={confirmDelete}
-                  edge="end"
-                  aria-label="Delete"
-                >
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            )}
-
-            {approvalMode && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={showAll}
-                    onChange={() => setShowAll(b => !b)}
-                  />
-                }
-                label="Show All"
-                sx={{ marginLeft: '0.5rem' }}
-              />
-            )}
-          </div>
-        )}
       </div>
+
+      <ReviewPeriodStepper
+          reviewPeriod={period}
+      />
+
+
       {period && (
         <div className="date-pickers-row">
           <div className="date-pickers-container">
@@ -1053,31 +1007,49 @@ const TeamReviews = ({ onBack, periodId }) => {
       )}
 
       {approvalMode && (
-        <div id="approval-row">
-          <TextField
-            className="name-search-field"
-            label="Name"
-            placeholder="Search by member name"
-            variant="outlined"
-            value={nameQuery}
-            onChange={event => setNameQuery(event.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" color="gray">
-                  <Search />
-                </InputAdornment>
-              )
-            }}
-          />
-          {canUpdate && (
-            <div>
-              <Button onClick={() => setConfirmApproveAllOpen(true)}>
-                Approve All
-              </Button>
-              <Button onClick={unapproveAll}>Unapprove All</Button>
+          <div id="approval-row" style={{ display: 'flex', alignItems: 'center' }}>
+            {/* Wrapper div for TextField and Switch */}
+            <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+              <TextField
+                  className="name-search-field"
+                  label="Name"
+                  placeholder="Search by member name"
+                  variant="outlined"
+                  value={nameQuery}
+                  onChange={event => setNameQuery(event.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end" color="gray">
+                          <Search />
+                        </InputAdornment>
+                    )
+                  }}
+                  style={{ flexGrow: 1, maxWidth: '400px' }}
+              />
+              {/* Add the Switch right next to the TextField */}
+              {period && isAdmin && (
+                  <FormControlLabel
+                      control={
+                        <Switch
+                            checked={showAll}
+                            onChange={() => setShowAll(b => !b)}
+                        />
+                      }
+                      label="Show All"
+                      sx={{ marginLeft: '0.5rem' }}
+                  />
+              )}
             </div>
-          )}
-        </div>
+            {/* Button aligned to the right */}
+            {canUpdate && (
+                <div style={{ marginLeft: 'auto' }}>
+                  <Button onClick={() => setConfirmApproveAllOpen(true)}>
+                    Approve All
+                  </Button>
+                  <Button onClick={unapproveAll}>Unapprove All</Button>
+                </div>
+            )}
+          </div>
       )}
 
       {canUpdate && (
