@@ -26,8 +26,7 @@ import {
   selectCurrentMembers,
   selectHasUpdateReviewAssignmentsPermission,
   selectReviewPeriod,
-  selectReviewPeriods,
-  selectSupervisors,
+  selectReviewPeriods
 } from '../../../context/selectors';
 import { titleCase } from '../../../helpers/strings.js';
 
@@ -91,44 +90,37 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
     if (res.error) return;
 
     const assignments = res.payload.data;
-
-    const supervisors = selectSupervisors(state);
     for (const assignment of assignments) {
-      // If the reviewer is not a supervisor, locally modify the assignment
-      // so that this will count as one to be approved by the reviewer's
-      // supervisor.
-      const id = assignment.reviewerId;
-      if (!supervisors.some(s => s.id === id)) {
-        const member = currentMembers.find(m => m.id === id);
-        if (member) {
-          assignment.reviewerId = member.supervisorid;
-        }
+      // Use the reviewee supervisor to track who needs to approve reviewers.
+      const member = currentMembers.find(m => m.id === assignment.revieweeId);
+      if (member?.supervisorid) {
+        assignment.revieweeSupervisorId = member.supervisorid;
       }
     }
 
     const approvedCount = assignments.filter(a => a.approved).length;
     setOverallApprovalPercentage((100 * approvedCount) / assignments.length);
 
-    // Get a list of all the reviewers in this period.
-    const reviewerIds = new Set(assignments.map(a => a.reviewerId));
-    const reviewers = [...reviewerIds].map(id =>
+    // Get a list of all the supervisors in this period.
+    const supervisorIds = new Set(assignments.map(a => a.revieweeSupervisorId));
+    const supervisors = [...supervisorIds].filter(id => !!id).map(id =>
       currentMembers.find(m => m.id === id)
     );
-    reviewers.sort((a, b) => a.name.localeCompare(b.name));
+    supervisors.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Build an array containing statistics for each reviewer.
-    const stats = reviewers.map(reviewer => {
-      const { id } = reviewer;
-      const assignmentsForReviewer = assignments.filter(
-        assignment => assignment.reviewerId === id
+    // Build an array containing statistics for each supervisor.
+    const stats = supervisors.map(supervisor => {
+      const { id } = supervisor;
+      const assignmentsForSupervisor = assignments.filter(
+        assignment => assignment.revieweeSupervisorId === id
       );
-      const approved = assignmentsForReviewer.filter(
+      const approved = assignmentsForSupervisor.filter(
         assignment => assignment.approved
       ).length;
       return {
-        name: reviewer.name,
+        name: supervisor.name,
         percent:
-          ((100 * approved) / assignmentsForReviewer.length).toFixed(0) + '%'
+          ((100 * approved) / assignmentsForSupervisor.length).toFixed(0) + '%'
       };
     });
 
