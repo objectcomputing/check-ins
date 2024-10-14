@@ -90,32 +90,37 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
     if (res.error) return;
 
     const assignments = res.payload.data;
+    for (const assignment of assignments) {
+      // Use the reviewee supervisor to track who needs to approve reviewers.
+      const member = currentMembers.find(m => m.id === assignment.revieweeId);
+      if (member?.supervisorid) {
+        assignment.revieweeSupervisorId = member.supervisorid;
+      }
+    }
+
     const approvedCount = assignments.filter(a => a.approved).length;
     setOverallApprovalPercentage((100 * approvedCount) / assignments.length);
 
-    // Get a list of all the reviewers in this period.
-    const reviewerIds = new Set();
-    for (const assignment of assignments) {
-      reviewerIds.add(assignment.reviewerId);
-    }
-    const reviewers = [...reviewerIds].map(id =>
+    // Get a list of all the supervisors in this period.
+    const supervisorIds = new Set(assignments.map(a => a.revieweeSupervisorId));
+    const supervisors = [...supervisorIds].filter(id => !!id).map(id =>
       currentMembers.find(m => m.id === id)
     );
-    reviewers.sort((a, b) => a.name.localeCompare(b.name));
+    supervisors.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Build an array containing statistics for each reviewer.
-    const stats = reviewers.map(reviewer => {
-      const { id } = reviewer;
-      const assignmentsForReviewer = assignments.filter(
-        assignment => assignment.reviewerId === id
+    // Build an array containing statistics for each supervisor.
+    const stats = supervisors.map(supervisor => {
+      const { id } = supervisor;
+      const assignmentsForSupervisor = assignments.filter(
+        assignment => assignment.revieweeSupervisorId === id
       );
-      const approved = assignmentsForReviewer.filter(
+      const approved = assignmentsForSupervisor.filter(
         assignment => assignment.approved
       ).length;
       return {
-        name: reviewer.name,
+        name: supervisor.name,
         percent:
-          ((100 * approved) / assignmentsForReviewer.length).toFixed(0) + '%'
+          ((100 * approved) / assignmentsForSupervisor.length).toFixed(0) + '%'
       };
     });
 

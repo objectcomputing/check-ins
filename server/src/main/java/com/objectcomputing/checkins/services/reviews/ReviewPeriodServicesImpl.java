@@ -10,7 +10,10 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
+import io.micronaut.core.io.Readable;
+import io.micronaut.core.io.IOUtils;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.io.BufferedReader;
 
 @Singleton
 class ReviewPeriodServicesImpl implements ReviewPeriodServices {
@@ -40,12 +44,17 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private final Environment environment;
     private final String webAddress;
 
+    @Value("classpath:mjml/supervisor_review_assignment.mjml")
+    private Readable supervisorReviewAssignmentTemplate;
+    @Value("classpath:mjml/review_period_announcement.mjml")
+    private Readable reviewPeriodAnnouncementTemplate;
+
     ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
                                     ReviewAssignmentRepository reviewAssignmentRepository,
                                     MemberProfileRepository memberProfileRepository,
                                     FeedbackRequestServices feedbackRequestServices,
                                     ReviewStatusTransitionValidator reviewStatusTransitionValidator,
-                                    @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
+                                    @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                                     Environment environment,
                                     CheckInsConfiguration checkInsConfiguration) {
         this.reviewPeriodRepository = reviewPeriodRepository;
@@ -173,8 +182,20 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                          " does not have a self-review template.");
             }
 
+            Set<String> allInvolved = new HashSet<>();
             Set<UUID> selfRevieweeIds = new HashSet<>();
             for (ReviewAssignment assignment : assignments) {
+                Optional<MemberProfile> reviewerProfile =
+                  memberProfileRepository.findById(assignment.getReviewerId());
+                if (!reviewerProfile.isEmpty()) {
+                    allInvolved.add(reviewerProfile.get().getWorkEmail());
+                }
+                Optional<MemberProfile> revieweeProfile =
+                  memberProfileRepository.findById(assignment.getRevieweeId());
+                if (!revieweeProfile.isEmpty()) {
+                    allInvolved.add(revieweeProfile.get().getWorkEmail());
+                }
+
                 // This person is being reviewed and will need a self-review
                 // request.
                 selfRevieweeIds.add(assignment.getRevieweeId());
@@ -197,9 +218,44 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                                         selfReviewCloseDate);
                 }
             }
+
+            String emailContent = constructReviewPeriodAnnouncementEmail(
+                period.getName(), period.getPeriodStartDate(),
+                period.getPeriodEndDate(), period.getLaunchDate(),
+                period.getSelfReviewCloseDate(), period.getCloseDate()
+            );
+            emailSender.sendEmail(null, null, "It's time for performance reviews!", emailContent, allInvolved.toArray(new String[0]));
         }
 
         return period;
+    }
+
+    private String dateAsString(LocalDateTime dateTime) {
+        String str = String.format("%s %d, %d",
+                                   dateTime.getMonth(),
+                                   dateTime.getDayOfMonth(),
+                                   dateTime.getYear());
+        return str.substring(0, 1) + str.substring(1).toLowerCase();
+    }
+
+    private String constructReviewPeriodAnnouncementEmail(
+                       String reviewPeriodName, LocalDateTime startDate,
+                       LocalDateTime endDate, LocalDateTime launchDate,
+                       LocalDateTime selfReviewDate, LocalDateTime closeDate
+) {
+        try {
+            return String.format(IOUtils.readText(
+                            new BufferedReader(
+                                reviewPeriodAnnouncementTemplate.asReader())),
+                            reviewPeriodName, reviewPeriodName,
+                            dateAsString(startDate), dateAsString(endDate),
+                            dateAsString(launchDate),
+                            dateAsString(selfReviewDate),
+                            dateAsString(closeDate));
+        } catch(Exception ex) {
+            LOG.error(ex.toString());
+            return "";
+        }
     }
 
     private void notifyRevieweeSupervisorsByReviewPeriod(UUID reviewPeriodId, String reviewPeriodName) {
@@ -217,14 +273,20 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         List<String> supervisorEmails = memberProfileRepository.findWorkEmailByIdIn(supervisorIdsToString);
 
         // send notification to supervisors
-        String emailContent = constructEmailContent(reviewPeriodId, reviewPeriodName);
+        String emailContent = constructSupervisorEmail(reviewPeriodId, reviewPeriodName);
         emailSender.sendEmail(null, null, "Review Assignments Awaiting Approval", emailContent, supervisorEmails.toArray(new String[0]));
     }
 
-    private String constructEmailContent (UUID reviewPeriodId, String reviewPeriodName){
-        return """
-                <h3>Review Assignments for Review Period '%s' are ready for your approval.</h3>\
-                <a href="%s/feedback/reviews?period=%s">Click here</a> to review and approve reviewer assignments in the Check-Ins app.""".formatted(reviewPeriodName, webAddress, reviewPeriodId);
+    private String constructSupervisorEmail(UUID reviewPeriodId, String reviewPeriodName){
+        try {
+            return String.format(IOUtils.readText(
+                            new BufferedReader(
+                                supervisorReviewAssignmentTemplate.asReader())),
+                            reviewPeriodName, webAddress, reviewPeriodId);
+        } catch(Exception ex) {
+            LOG.error(ex.toString());
+            return "";
+        }
     }
 
     private void validateDates(ReviewPeriod period) {
