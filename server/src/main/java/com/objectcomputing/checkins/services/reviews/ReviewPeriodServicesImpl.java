@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -42,6 +43,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private final ReviewAssignmentRepository reviewAssignmentRepository;
     private final MemberProfileRepository memberProfileRepository;
     private final FeedbackRequestServices feedbackRequestServices;
+    private final FeedbackRequestRepository feedbackRequestRepository;
     private final ReviewStatusTransitionValidator reviewStatusTransitionValidator;
     private EmailSender emailSender;
     private final Environment environment;
@@ -61,6 +63,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                                     ReviewAssignmentRepository reviewAssignmentRepository,
                                     MemberProfileRepository memberProfileRepository,
                                     FeedbackRequestServices feedbackRequestServices,
+                                    FeedbackRequestRepository feedbackRequestRepository,
                                     ReviewStatusTransitionValidator reviewStatusTransitionValidator,
                                     @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                                     Environment environment,
@@ -69,6 +72,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         this.reviewAssignmentRepository = reviewAssignmentRepository;
         this.memberProfileRepository = memberProfileRepository;
         this.feedbackRequestServices = feedbackRequestServices;
+        this.feedbackRequestRepository = feedbackRequestRepository;
         this.reviewStatusTransitionValidator = reviewStatusTransitionValidator;
         this.emailSender = emailSender;
         this.environment = environment;
@@ -401,7 +405,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             return;
         }
 
-        // Determine which email template and subject we need to use.
+        // Determine which subject we need to use.
         String subject = "";
         switch(date) {
             case SelfReviewDate.LAUNCH:
@@ -425,10 +429,11 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
             // Get the set of self-reviewer email addresses.
             Set<MemberProfile> recipients = new HashSet<>();
+            String templateId = null;
             List<FeedbackRequest> requests =
-                feedbackRequestServices.findByValues(null, null, null, null,
-                                                     reviewPeriodId,
-                                                     null, null);
+                feedbackRequestRepository.findByValues(null, null, null, null,
+                                                       reviewPeriodId.toString(),
+                                                       templateId);
             for (FeedbackRequest request : requests) {
                 if (request.getRecipientId().equals(request.getRequesteeId())) {
                     Optional<MemberProfile> requesteeProfile =
