@@ -1,20 +1,21 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Card, CardContent, CardHeader, Tooltip } from '@mui/material';
+import {Card, CardContent, CardHeader, Chip, Tooltip} from '@mui/material';
 
 import { resolve } from '../../api/api.js';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken } from '../../context/selectors';
 
 import './EarnedCertificationBadges.css';
+import certifications from "../certifications/Certifications.jsx";
 
-const certificationBaseUrl = '/services/earned-certification';
+const earnedCertificationBaseUrl = '/services/earned-certification';
 
 const propTypes = {
-  memberId: PropTypes.string
+  memberId: PropTypes.string, certifications: PropTypes.array,
 };
-const EarnedCertificationBadges = ({ memberId }) => {
+const EarnedCertificationBadges = ({ memberId, certifications }) => {
   const [earnedCertifications, setEarnedCertifications] = useState([]);
 
   const { state } = useContext(AppContext);
@@ -23,7 +24,7 @@ const EarnedCertificationBadges = ({ memberId }) => {
   const loadCertifications = useCallback(async () => {
     const res = await resolve({
       method: 'GET',
-      url: certificationBaseUrl + '?memberId=' + memberId,
+      url: earnedCertificationBaseUrl + '?memberId=' + memberId,
       headers: {
         'X-CSRF-Header': csrf,
         Accept: 'application/json',
@@ -40,23 +41,29 @@ const EarnedCertificationBadges = ({ memberId }) => {
     if (csrf) loadCertifications();
   }, [csrf]);
 
-  if (earnedCertifications.length === 0) return null;
-
+  if (earnedCertifications.length === 0 || !certifications) return null;
   return (
-    <Card className="earned-certification-badges">
-      <CardHeader
-        title="Earned Certifications"
-        titleTypographyProps={{ variant: 'h5', component: 'h1' }}
-      />
-      <CardContent>
-        {earnedCertifications.map(cert => (
-          <Tooltip key={cert.id} title={cert.name}>
-            <img alt={cert.name} key={cert.id} src={cert.badgeUrl} />
-          </Tooltip>
-        ))}
-      </CardContent>
-    </Card>
+      <Card className="earned-certification-badges">
+        <CardHeader
+            title="Earned Certifications"
+            titleTypographyProps={{ variant: 'h5', component: 'h1' }}
+        />
+        <CardContent>
+          {earnedCertifications.map(earnedCert => {
+            // Find the corresponding certification using earnedCert.certificationId
+            const cert = certifications.find(c => c.id === earnedCert.certificationId);
+            // If no matching cert is found, skip rendering for that earnedCert
+            if (!cert) return null;
+            return (
+                <Tooltip key={earnedCert.id} title={cert.name}>
+                  <img alt={cert.name} src={cert.badgeUrl} />
+                </Tooltip>
+            );
+          })}
+        </CardContent>
+      </Card>
   );
+
 };
 
 EarnedCertificationBadges.propTypes = propTypes;

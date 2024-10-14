@@ -40,7 +40,7 @@ import './MemberProfilePage.css';
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const history = useHistory();
-  const { csrf, skills, userProfile } = state;
+  const { csrf, skills, certifications, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
@@ -330,7 +330,7 @@ const MemberProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
-            <EarnedCertificationBadges memberId={memberId} />
+            <EarnedCertificationBadges memberId={memberId} certifications={certifications} />
             <VolunteerBadges memberId={memberId} />
           </Grid>
         </Grid>

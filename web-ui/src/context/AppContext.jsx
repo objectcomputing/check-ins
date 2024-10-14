@@ -11,6 +11,7 @@ import {
   UPDATE_MEMBER_PROFILES,
   UPDATE_TERMINATED_MEMBERS,
   UPDATE_SKILLS,
+  UPDATE_CERTIFICATIONS,
   UPDATE_TEAMS,
   UPDATE_PEOPLE_LOADING,
   UPDATE_TEAMS_LOADING
@@ -26,6 +27,7 @@ import { BASE_API_URL } from '../api/api';
 import { getAllGuilds } from '../api/guild';
 import { getSkills } from '../api/skill';
 import { getAllTeams } from '../api/team';
+import {getCertifications} from "../api/certification.js";
 
 const AppContext = React.createContext();
 
@@ -51,6 +53,7 @@ const AppContextProvider = props => {
     memberProfiles,
     checkins,
     skills,
+    certifications,
     roles,
     userRoles
   } = state;
@@ -213,6 +216,34 @@ const AppContextProvider = props => {
       getAllSkills();
     }
   }, [csrf, skills]);
+
+
+
+
+  useEffect(() => {
+    const getAllCertifications = async () => {
+      const res = await getCertifications(csrf);
+      const data =
+          res &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+              ? res.payload.data
+              : null;
+      if (data && data.length > 0) {
+        dispatch({ type: UPDATE_CERTIFICATIONS, payload: data });
+      }
+    };
+    if (csrf && !certifications) {
+      getAllCertifications();
+    }
+  }, [csrf, certifications]);
+
+
+
+
+
 
   useEffect(() => {
     const getRoles = async () => {
