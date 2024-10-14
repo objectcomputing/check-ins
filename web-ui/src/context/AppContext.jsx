@@ -217,9 +217,6 @@ const AppContextProvider = props => {
     }
   }, [csrf, skills]);
 
-
-
-
   useEffect(() => {
     const getAllCertifications = async () => {
       const res = await getCertifications(csrf);
@@ -239,11 +236,6 @@ const AppContextProvider = props => {
       getAllCertifications();
     }
   }, [csrf, certifications]);
-
-
-
-
-
 
   useEffect(() => {
     const getRoles = async () => {
