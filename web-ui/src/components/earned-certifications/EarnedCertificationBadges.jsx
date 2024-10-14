@@ -54,11 +54,82 @@ const EarnedCertificationBadges = ({ memberId, certifications }) => {
             const cert = certifications.find(c => c.id === earnedCert.certificationId);
             // If no matching cert is found, skip rendering for that earnedCert
             if (!cert) return null;
-            return (
-                <Tooltip key={earnedCert.id} title={cert.name}>
-                  <img alt={cert.name} src={cert.badgeUrl} />
-                </Tooltip>
-            );
+            if (cert.badgeUrl && cert.badgeUrl.trim().length > 0) {
+              return (
+                  <Tooltip
+                      key={earnedCert.id}
+                      title={
+                        <>
+                          {cert.name} <br />
+                          Issued on: {earnedCert.earnedDate} <br />
+                          Expires on: {earnedCert.expirationDate}
+                        </>
+                      }
+                  >
+                    {earnedCert.validationUrl ? (
+                        <a href={earnedCert.validationUrl} target="_blank" rel="noopener noreferrer">
+                          <img
+                              alt={`${cert.name}, Issued on: ${earnedCert.earnedDate}, Expires on: ${earnedCert.expirationDate}`}
+                              src={cert.badgeUrl}
+                          />
+                        </a>
+                    ) : (
+                        <img
+                            alt={`${cert.name}, Issued on: ${earnedCert.earnedDate}, Expires on: ${earnedCert.expirationDate}`}
+                            src={cert.badgeUrl}
+                        />
+                    )}
+                  </Tooltip>
+              );
+            } else {
+              return (
+                  <>
+                    {earnedCert.validationUrl ? (
+                        <a href={earnedCert.validationUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                          <Chip
+                              sx={{
+                                height: 'auto',
+                                '& .MuiChip-label': {
+                                  display: 'block',
+                                  whiteSpace: 'normal',
+                                },
+                              }}
+                              className="chip"
+                              color="primary"
+                              key={earnedCert.id}
+                              label={
+                                <>
+                                  {cert.name} <br />
+                                  Issued on: {earnedCert.earnedDate}<br />
+                                  Expires on: {earnedCert.expirationDate}
+                                </>
+                              }
+                          />
+                        </a>
+                    ) : (
+                        <Chip
+                            sx={{
+                              height: 'auto',
+                              '& .MuiChip-label': {
+                                display: 'block',
+                                whiteSpace: 'normal',
+                              },
+                            }}
+                            className="chip"
+                            color="primary"
+                            key={earnedCert.id}
+                            label={
+                              <>
+                                {cert.name} <br />
+                                Issued on: {earnedCert.earnedDate}<br />
+                                Expires on: {earnedCert.expirationDate}
+                              </>
+                            }
+                        />
+                    )}
+                  </>
+              );
+            }
           })}
         </CardContent>
       </Card>
