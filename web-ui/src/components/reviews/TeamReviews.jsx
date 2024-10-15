@@ -782,13 +782,17 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const renderReviewer = (member, reviewer) => {
+    const hasReviewer = !!reviewer.name;
     const backgroundColor = reviewer.approved ?
                               'var(--checkins-palette-action-green)' :
-                              'var(--checkins-palette-action-yellow)';
+                              (hasReviewer ?
+                                'var(--checkins-palette-action-yellow)' :
+                                'var(--checkins-palette-action-red)');
     const request = getReviewRequest(member, reviewer);
     const selfReviewRequest = getSelfReviewRequest(member);
     const variant = 'outlined';
-    const statusLabel = `${reviewer.name}: ${getReviewStatus(request)}`;
+    const reviewerName = reviewer.name ?? "No Reviewer";
+    const statusLabel = `${reviewerName}: ${getReviewStatus(request)}`;
     const url = getReviewerURL(request, selfReviewRequest);
 
     return (url ?
@@ -802,9 +806,9 @@ const TeamReviews = ({ onBack, periodId }) => {
           </Link> :
           <Chip
             key={reviewer.id}
-            label={openMode ? statusLabel : reviewer.name}
+            label={openMode ? statusLabel : reviewerName}
             variant={variant}
-            onDelete={canUpdate && !openMode ?
+            onDelete={canUpdate && !openMode && hasReviewer ?
                           () => deleteReviewer(member, reviewer) : null}
             style={{backgroundColor: backgroundColor}}
           />);
