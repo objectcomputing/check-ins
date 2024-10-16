@@ -82,10 +82,6 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         } else {
             reviewAssignments = reviewAssignmentRepository.findByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId);
         }
-        if (reviewAssignments.isEmpty()) {
-            //If no assignments exist for the review period, then a set of default review assignments should be returned
-            reviewAssignments = defaultReviewAssignments(reviewPeriodId);
-        }
 
         return reviewAssignments;
     }
