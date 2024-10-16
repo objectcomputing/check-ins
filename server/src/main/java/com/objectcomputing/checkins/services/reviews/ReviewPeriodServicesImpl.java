@@ -11,6 +11,8 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRep
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.email.AutomatedEmail;
+import com.objectcomputing.checkins.services.email.AutomatedEmailRepository;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.io.Readable;
@@ -39,6 +41,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodServicesImpl.class);
 
+    private final AutomatedEmailRepository automatedEmailRepository;
     private final ReviewPeriodRepository reviewPeriodRepository;
     private final ReviewAssignmentRepository reviewAssignmentRepository;
     private final MemberProfileRepository memberProfileRepository;
@@ -50,7 +53,6 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     private final String webAddress;
 
     private enum SelfReviewDate { LAUNCH, THREE_DAYS, ONE_DAY }
-    private final Map<String, Boolean> sent = new HashMap<>();
 
     @Value("classpath:mjml/supervisor_review_assignment.mjml")
     private Readable supervisorReviewAssignmentTemplate;
@@ -67,7 +69,8 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                                     ReviewStatusTransitionValidator reviewStatusTransitionValidator,
                                     @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                                     Environment environment,
-                                    CheckInsConfiguration checkInsConfiguration) {
+                                    CheckInsConfiguration checkInsConfiguration,
+                                    AutomatedEmailRepository automatedEmailRepository) {
         this.reviewPeriodRepository = reviewPeriodRepository;
         this.reviewAssignmentRepository = reviewAssignmentRepository;
         this.memberProfileRepository = memberProfileRepository;
@@ -77,6 +80,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         this.emailSender = emailSender;
         this.environment = environment;
         this.webAddress = checkInsConfiguration.getWebAddress();
+        this.automatedEmailRepository = automatedEmailRepository;
     }
 
    void setEmailSender(EmailSender emailSender) {
@@ -364,8 +368,10 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             reviewPeriodRepository.findByReviewStatus(ReviewStatus.OPEN);
         for(ReviewPeriod openPeriod : openPeriods) {
             for(SelfReviewDate date : SelfReviewDate.values()) {
-                String key = openPeriod.getId().toString() + date.toString();
-                if (!sent.containsKey(key)) {
+                String key = "self_review_notification" +
+                             openPeriod.getId().toString() + date.toString();
+                Optional<AutomatedEmail> sent = automatedEmailRepository.findById(key);
+                if (sent.isEmpty()) {
                     LocalDateTime check;
                     switch(date) {
                         case SelfReviewDate.LAUNCH:
@@ -389,7 +395,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                     if (check != null) {
                         if (today.isEqual(check.toLocalDate())) {
                             sendSelfReviewEmail(openPeriod.getId(), date);
-                            sent.put(key, true);
+                            automatedEmailRepository.save(new AutomatedEmail(key));
                         }
                     }
                 }

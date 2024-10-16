@@ -6,6 +6,8 @@ import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.settings.SettingsServices;
 import com.objectcomputing.checkins.services.settings.Setting;
+import com.objectcomputing.checkins.services.email.AutomatedEmail;
+import com.objectcomputing.checkins.services.email.AutomatedEmailRepository;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 
 import lombok.Getter;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 import java.time.LocalDate;
 import java.time.DayOfWeek;
 import java.time.temporal.ChronoUnit;
@@ -39,7 +42,7 @@ public class PulseServicesImpl implements PulseServices {
   private final CheckInsConfiguration checkInsConfiguration;
   private final MemberProfileServices memberProfileServices;
   private final SettingsServices settingsServices;
-  private final Map<String, Boolean> sent = new HashMap<String, Boolean>();
+  private final AutomatedEmailRepository automatedEmailRepository;
 
   @Inject
   private PulseEmail email;
@@ -57,11 +60,13 @@ public class PulseServicesImpl implements PulseServices {
                     @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                     CheckInsConfiguration checkInsConfiguration,
                     MemberProfileServices memberProfileServices,
-                    SettingsServices settingsServices) {
+                    SettingsServices settingsServices,
+                    AutomatedEmailRepository automatedEmailRepository) {
     this.emailSender = emailSender;
     this.checkInsConfiguration = checkInsConfiguration;
     this.memberProfileServices = memberProfileServices;
     this.settingsServices = settingsServices;
+    this.automatedEmailRepository = automatedEmailRepository;
   }
 
   public void sendPendingEmail(LocalDate check) {
@@ -89,16 +94,18 @@ public class PulseServicesImpl implements PulseServices {
       do {
         if (start.getDayOfMonth() == check.getDayOfMonth()) {
           LOG.info("Check day of month matches frequency day");
-          final String key = new StringBuilder(start.getMonth().toString())
+          final String key = new StringBuilder("pulse")
+                             .append(start.getMonth().toString())
                              .append("_")
                              .append(String.valueOf(start.getDayOfMonth()))
                              .toString();
-          if (sent.containsKey(key)) {
-            LOG.info("The Pulse Email has already been sent today");
-          } else {
+          Optional<AutomatedEmail> sent = automatedEmailRepository.findById(key);
+          if (sent.isEmpty()) {
             LOG.info("Sending Pulse Email");
             email.send();
-            sent.put(key, true);
+            automatedEmailRepository.save(new AutomatedEmail(key));
+          } else {
+            LOG.info("The Pulse Email has already been sent today");
           }
           break;
         }
