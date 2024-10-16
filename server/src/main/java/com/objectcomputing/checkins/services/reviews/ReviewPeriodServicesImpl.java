@@ -453,19 +453,20 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
             List<String> addresses = recipients.stream()
                                          .map(p -> p.getWorkEmail()).toList();
+            if (!addresses.isEmpty()) {
+                // Customize the email content using the template.
+                String content = String.format(
+                                     template, webAddress,
+                                     reviewPeriodId.toString(),
+                                     dateAsString(reviewPeriod.get()
+                                                    .getSelfReviewCloseDate()),
+                                     webAddress);
 
-            // Customize the email content using the template.
-            String content = String.format(template,
-                                 webAddress,
-                                 reviewPeriodId.toString(),
-                                 dateAsString(reviewPeriod.get()
-                                                .getSelfReviewCloseDate()),
-                                 webAddress);
-
-            // Send out the email to everyone.
-            emailSender.sendEmail(null, null, subject, content,
-                                  recipients.toArray(
-                                      new String[recipients.size()]));
+                // Send out the email to everyone.
+                emailSender.sendEmail(null, null, subject, content,
+                                      addresses.toArray(
+                                          new String[addresses.size()]));
+            }
         } catch(Exception ex) {
             LOG.error("Send Self-Review Email: " + ex.toString());
         }
