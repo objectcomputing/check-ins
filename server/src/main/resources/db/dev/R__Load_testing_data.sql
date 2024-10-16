@@ -1291,7 +1291,7 @@ VALUES
 INSERT INTO review_periods
 (id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
 VALUES
-    ('12345678-e29c-4cf4-9ea4-6baa09405c57', 'Review Period 1', 'OPEN', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-01', '2024-09-02', '2024-09-03', '2024-01-01', '2024-12-31');
+    ('12345678-e29c-4cf4-9ea4-6baa09405c57', 'Review Period 1', 'PLANNING', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-01', '2024-09-02', '2024-09-03', '2024-01-01', '2024-12-31');
 
 INSERT INTO review_periods
 (id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
@@ -1302,18 +1302,18 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7ef', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'c7406157-a38f-4d48-aaed-04018d846727', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-04', '2024-09-30', '2024-09-05', 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7ef', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'c7406157-a38f-4d48-aaed-04018d846727', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
 
 -- CAE - Review feedback request, Creator: Big Boss
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7f0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7f0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7f3', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7f3', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
@@ -1339,12 +1339,12 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7f1', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7f1', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7f2', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'sent', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7f2', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
 
 ---- Creator: Big Boss
 INSERT INTO feedback_requests
@@ -1366,17 +1366,17 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Faux Freddy, recipient: Unreal Ulysses
 VALUES
-('0d0d872d-4f05-4af8-9804-d0a99e450c37', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'sent');
+('0d0d872d-4f05-4af8-9804-d0a99e450c37', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'submitted');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Faux Freddy, recipient: Unreal Ulysses
 VALUES
-('1aff4993-2324-41cc-8b21-2ab5715ca70b', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'sent');
+('1aff4993-2324-41cc-8b21-2ab5715ca70b', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'submitted');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Faux Freddy, recipient: Unreal Ulysses
 VALUES
-('7ca4d402-0bb9-4989-9087-8a52a63ee5d0', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'sent');
+('7ca4d402-0bb9-4989-9087-8a52a63ee5d0', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'submitted');
 
 
 -- Feedback Requests with responses
@@ -1416,7 +1416,7 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status) -- requestee: Faux Freddy, recipient: Unreal Ulysses
 VALUES
-('74623897-5279-4dbe-94d4-5a247d9f00b1', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'sent');
+('74623897-5279-4dbe-94d4-5a247d9f00b1', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'submitted');
 
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
