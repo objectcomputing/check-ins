@@ -257,7 +257,8 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Now that teamMembers has been updated, we need to make sure that the
     // assignments reflects the set of team members.
     const ids = teamMembers.map(m => m.id);
-    setAssignments(assignments.filter(a => a.revieweeId && ids.includes(a.revieweeId)));
+    const newAssignments = assignments.filter(a => a.revieweeId && ids.includes(a.revieweeId));
+    setAssignments(newAssignments);
   };
 
   const addAssignmentForMemberWithNone = async (members) => {
@@ -267,6 +268,9 @@ const TeamReviews = ({ onBack, periodId }) => {
       );
       if (!!!exists && member.supervisorid) {
         const reviewers = [{ id: member.supervisorid }];
+        updateReviewers(member, reviewers);
+      } else if (!!!exists && !!!member.supervisorid) {
+        const reviewers = [{ id: null }];
         updateReviewers(member, reviewers);
       }
     });
