@@ -451,20 +451,21 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                 }
             }
 
-            for(MemberProfile recipient : recipients) {
-                // Customize the email content using the template.
-                String content = String.format(template,
-                                     webAddress,
-                                     reviewPeriodId.toString(),
-                                     recipient.getFirstName(),
-                                     dateAsString(reviewPeriod.get()
-                                                    .getSelfReviewCloseDate()),
-                                     webAddress);
+            List<String> addresses = recipients.stream()
+                                         .map(p -> p.getWorkEmail()).toList();
 
-                // Send out the email to the individual.
-                emailSender.sendEmail(null, null, subject, content,
-                                      recipient.getWorkEmail());
-            }
+            // Customize the email content using the template.
+            String content = String.format(template,
+                                 webAddress,
+                                 reviewPeriodId.toString(),
+                                 dateAsString(reviewPeriod.get()
+                                                .getSelfReviewCloseDate()),
+                                 webAddress);
+
+            // Send out the email to everyone.
+            emailSender.sendEmail(null, null, subject, content,
+                                  recipients.toArray(
+                                      new String[recipients.size()]));
         } catch(Exception ex) {
             LOG.error("Send Self-Review Email: " + ex.toString());
         }

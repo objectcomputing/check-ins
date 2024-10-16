@@ -21,7 +21,7 @@
         <mj-text>
           <h2>Self-Review Reminder!</h2>
         </mj-text>
-          <mj-text font-size="16px">Dear %s,</mj-text>
+          <mj-text font-size="16px">Greetings,</mj-text>
         <mj-text font-size="16px">This is a friendly reminder to complete your self-reviews by %s. <strong></strong></mj-text>
         <mj-text font-size="16px">To access your self-review click the button above, or visit <a href="%s">Check-Ins</a> and find "Self-Reviews" under the "Feedback" menu.</mj-text>
       </mj-column>
