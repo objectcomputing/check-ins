@@ -20,6 +20,7 @@ import {
   UPDATE_MEMBER_SKILLS,
   UPDATE_SKILL,
   UPDATE_SKILLS,
+  UPDATE_CERTIFICATIONS,
   UPDATE_GUILD,
   UPDATE_GUILDS,
   ADD_ROLE,
@@ -112,6 +113,9 @@ export const reducer = (state, action) => {
       break;
     case UPDATE_SKILLS:
       state.skills = action.payload;
+      break;
+    case UPDATE_CERTIFICATIONS:
+      state.certifications = action.payload;
       break;
     case SET_CSRF:
       state.csrf = action.payload;
