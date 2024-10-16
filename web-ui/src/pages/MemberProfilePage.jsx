@@ -16,11 +16,11 @@ import { getTeamByMember } from '../api/team';
 import { getGuildsForMember } from '../api/guild';
 import { getAvatarURL } from '../api/api.js';
 import ProfilePage from './ProfilePage';
-import CertificationBadges from '../components/certifications/CertificationBadges';
 import VolunteerBadges from '../components/volunteer/VolunteerBadges';
 import { levelList } from '../context/util';
 import StarIcon from '@mui/icons-material/Star';
 import KudosDialog from '../components/kudos_dialog/KudosDialog';
+import EarnedCertificationBadges from "../components/earned-certifications/EarnedCertificationBadges.jsx";
 
 import {
   Avatar,
@@ -40,7 +40,7 @@ import './MemberProfilePage.css';
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const history = useHistory();
-  const { csrf, skills, userProfile } = state;
+  const { csrf, skills, certifications, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
@@ -330,7 +330,7 @@ const MemberProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
-            <CertificationBadges memberId={memberId} />
+            <EarnedCertificationBadges memberId={memberId} certifications={certifications} />
             <VolunteerBadges memberId={memberId} />
           </Grid>
         </Grid>
