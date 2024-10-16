@@ -33,9 +33,11 @@ import java.util.UUID;
 public class ReviewPeriodController {
 
     private final ReviewPeriodServices reviewPeriodServices;
+    private final ReviewAssignmentServices reviewAssignmentServices;
 
-    public ReviewPeriodController(ReviewPeriodServices reviewPeriodServices) {
+    public ReviewPeriodController(ReviewPeriodServices reviewPeriodServices, ReviewAssignmentServices reviewAssignmentServices) {
         this.reviewPeriodServices = reviewPeriodServices;
+        this.reviewAssignmentServices = reviewAssignmentServices;
     }
 
     /**
@@ -47,11 +49,17 @@ public class ReviewPeriodController {
     @Post
     @RequiredPermission(Permission.CAN_CREATE_REVIEW_PERIOD)
     public HttpResponse<ReviewPeriod> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
+        HttpResponse httpResponse;
+        Set<ReviewAssignment> reviewAssignments;
+
         ReviewPeriod reviewPeriod = reviewPeriodServices.save(period.convertToEntity());
-        return HttpResponse.created(reviewPeriod)
+        httpResponse = HttpResponse.created(reviewPeriod)
                         .headers(headers -> headers
                                 .location(URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId())))
                         );
+        reviewAssignments = reviewAssignmentServices.defaultReviewAssignments(reviewPeriod.getId());
+        reviewAssignmentServices.saveAll(reviewPeriod.getId(), reviewAssignments.stream().toList(), true);
+        return httpResponse;
     }
 
     /**

@@ -109,7 +109,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         }
     }
 
-    private Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
+    public Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
         Set<ReviewAssignment> reviewAssignments = new HashSet<>();
 
         memberProfileRepository.findAll().forEach(memberProfile -> {
