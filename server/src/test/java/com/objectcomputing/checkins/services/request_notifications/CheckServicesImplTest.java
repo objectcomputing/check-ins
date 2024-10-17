@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
 import com.objectcomputing.checkins.services.pulse.PulseServices;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ class CheckServicesImplTest extends TestContainersSuite {
     @Mock
     private PulseServices pulseServices;
 
+    @Mock
+    private ReviewPeriodServices reviewPeriodServices;
+
     @InjectMocks
     private CheckServicesImpl checkServices;
 
@@ -60,6 +64,5 @@ class CheckServicesImplTest extends TestContainersSuite {
         verify(feedbackRequestServices).sendNewRequestEmail(retrievedRequest);
         retrievedRequest.setStatus("sent");
         verify(feedbackRequestRepository).update(retrievedRequest);
-
     }
 }

@@ -210,7 +210,11 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const loadTeamMembers = () => {
-    let members = [];
+    // If we already have a list of team members, we should not overwrite the
+    // list with the original list of team members.
+    if (teamMembers.length > 0) {
+      return;
+    }
 
     let source;
     if (!approvalMode || (isAdmin && showAll)) {
@@ -226,8 +230,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Always filter the members down to existing selected assignments.
     // We do not want to add members that were not already selected.
     const memberIds = assignments.map(a => a.revieweeId);
-    members = source.filter(m => memberIds.includes(m.id));
-
+    let members = source.filter(m => memberIds.includes(m.id));
     setTeamMembers(members);
   };
 

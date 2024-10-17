@@ -7,9 +7,12 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.email.AutomatedEmail;
+import com.objectcomputing.checkins.services.email.AutomatedEmailRepository;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.io.Readable;
@@ -28,43 +31,56 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.BufferedReader;
+import java.time.temporal.ChronoUnit;
 
 @Singleton
 class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodServicesImpl.class);
 
+    private final AutomatedEmailRepository automatedEmailRepository;
     private final ReviewPeriodRepository reviewPeriodRepository;
     private final ReviewAssignmentRepository reviewAssignmentRepository;
     private final MemberProfileRepository memberProfileRepository;
     private final FeedbackRequestServices feedbackRequestServices;
+    private final FeedbackRequestRepository feedbackRequestRepository;
     private final ReviewStatusTransitionValidator reviewStatusTransitionValidator;
     private EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
 
+    private enum SelfReviewDate { LAUNCH, THREE_DAYS, ONE_DAY }
+
     @Value("classpath:mjml/supervisor_review_assignment.mjml")
     private Readable supervisorReviewAssignmentTemplate;
     @Value("classpath:mjml/review_period_announcement.mjml")
     private Readable reviewPeriodAnnouncementTemplate;
+    @Value("classpath:mjml/self_review_reminder.mjml")
+    private Readable selfReviewReminderTemplate;
 
     ReviewPeriodServicesImpl(ReviewPeriodRepository reviewPeriodRepository,
                                     ReviewAssignmentRepository reviewAssignmentRepository,
                                     MemberProfileRepository memberProfileRepository,
                                     FeedbackRequestServices feedbackRequestServices,
+                                    FeedbackRequestRepository feedbackRequestRepository,
                                     ReviewStatusTransitionValidator reviewStatusTransitionValidator,
                                     @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
                                     Environment environment,
-                                    CheckInsConfiguration checkInsConfiguration) {
+                                    CheckInsConfiguration checkInsConfiguration,
+                                    AutomatedEmailRepository automatedEmailRepository) {
         this.reviewPeriodRepository = reviewPeriodRepository;
         this.reviewAssignmentRepository = reviewAssignmentRepository;
         this.memberProfileRepository = memberProfileRepository;
         this.feedbackRequestServices = feedbackRequestServices;
+        this.feedbackRequestRepository = feedbackRequestRepository;
         this.reviewStatusTransitionValidator = reviewStatusTransitionValidator;
         this.emailSender = emailSender;
         this.environment = environment;
         this.webAddress = checkInsConfiguration.getWebAddress();
+        this.automatedEmailRepository = automatedEmailRepository;
     }
 
    void setEmailSender(EmailSender emailSender) {
@@ -344,6 +360,115 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             feedbackRequestServices.save(request);
         } catch(Exception ex) {
             LOG.error(ex.toString());
+        }
+    }
+
+    public void sendNotifications(LocalDate today) {
+        List<ReviewPeriod> openPeriods =
+            reviewPeriodRepository.findByReviewStatus(ReviewStatus.OPEN);
+        for(ReviewPeriod openPeriod : openPeriods) {
+            for(SelfReviewDate date : SelfReviewDate.values()) {
+                String key = "self_review_notification" +
+                             openPeriod.getId().toString() + date.toString();
+                Optional<AutomatedEmail> sent = automatedEmailRepository.findById(key);
+                if (sent.isEmpty()) {
+                    LocalDateTime check;
+                    switch(date) {
+                        case SelfReviewDate.LAUNCH:
+                            check = openPeriod.getLaunchDate();
+                            break;
+                        case SelfReviewDate.THREE_DAYS:
+                            check = openPeriod.getSelfReviewCloseDate();
+                            if (check != null) {
+                                check = check.minus(3, ChronoUnit.DAYS);
+                            }
+                            break;
+                        default:
+                        case SelfReviewDate.ONE_DAY:
+                            check = openPeriod.getSelfReviewCloseDate();
+                            if (check != null) {
+                                check = check.minus(1, ChronoUnit.DAYS);
+                            }
+                            break;
+                    }
+
+                    if (check != null) {
+                        if (today.isEqual(check.toLocalDate())) {
+                            sendSelfReviewEmail(openPeriod.getId(), date);
+                            automatedEmailRepository.save(new AutomatedEmail(key));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void sendSelfReviewEmail(UUID reviewPeriodId, SelfReviewDate date) {
+        Optional<ReviewPeriod> reviewPeriod =
+            reviewPeriodRepository.findById(reviewPeriodId);
+        if (reviewPeriod.isEmpty()) {
+            LOG.error("Unable to find review period: " + reviewPeriodId.toString());
+            return;
+        }
+
+        // Determine which subject we need to use.
+        String subject = "";
+        switch(date) {
+            case SelfReviewDate.LAUNCH:
+                subject = reviewPeriod.get().getName() + " has launched!";
+                break;
+            case SelfReviewDate.THREE_DAYS:
+                subject = reviewPeriod.get().getName() +
+                          " closes in three days!";
+                break;
+            default:
+            case SelfReviewDate.ONE_DAY:
+                subject = reviewPeriod.get().getName() + " closes in one day!";
+                break;
+        }
+
+        try {
+            // Read in the email template.
+            String template = IOUtils.readText(
+                                  new BufferedReader(
+                                      selfReviewReminderTemplate.asReader()));
+
+            // Get the set of self-reviewer email addresses.
+            Set<MemberProfile> recipients = new HashSet<>();
+            String templateId = null;
+            List<FeedbackRequest> requests =
+                feedbackRequestRepository.findByValues(null, null, null, null,
+                                                       reviewPeriodId.toString(),
+                                                       templateId);
+            for (FeedbackRequest request : requests) {
+                if (request.getRecipientId().equals(request.getRequesteeId())) {
+                    Optional<MemberProfile> requesteeProfile =
+                        memberProfileRepository.findById(
+                            request.getRequesteeId());
+                    if (!requesteeProfile.isEmpty()) {
+                        recipients.add(requesteeProfile.get());
+                    }
+                }
+            }
+
+            List<String> addresses = recipients.stream()
+                                         .map(p -> p.getWorkEmail()).toList();
+            if (!addresses.isEmpty()) {
+                // Customize the email content using the template.
+                String content = String.format(
+                                     template, webAddress,
+                                     reviewPeriodId.toString(),
+                                     dateAsString(reviewPeriod.get()
+                                                    .getSelfReviewCloseDate()),
+                                     webAddress);
+
+                // Send out the email to everyone.
+                emailSender.sendEmail(null, null, subject, content,
+                                      addresses.toArray(
+                                          new String[addresses.size()]));
+            }
+        } catch(Exception ex) {
+            LOG.error("Send Self-Review Email: " + ex.toString());
         }
     }
 }

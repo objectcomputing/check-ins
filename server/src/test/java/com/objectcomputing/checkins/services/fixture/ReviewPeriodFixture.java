@@ -39,6 +39,23 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
                            startDate, endDate));
     }
 
+    default ReviewPeriod createADefaultReviewPeriod(
+                             LocalDateTime launchDate,
+                             ReviewStatus reviewStatus,
+                             UUID templateId, UUID selfReviewTemplateId) {
+        launchDate = launchDate.truncatedTo(ChronoUnit.MILLIS);
+
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(4);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+        return getReviewPeriodRepository().save(
+          new ReviewPeriod("Specific Launch Date", reviewStatus, templateId,
+                           selfReviewTemplateId,
+                           launchDate, selfReviewCloseDate, closeDate,
+                           startDate, endDate));
+    }
+
     default ReviewPeriod createASecondaryReviewPeriod() {
         LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1)
                                                 .truncatedTo(ChronoUnit.MILLIS);
