@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.request_notifications;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
 import com.objectcomputing.checkins.services.pulse.PulseServices;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -18,13 +19,16 @@ public class CheckServicesImpl implements CheckServices {
     private final FeedbackRequestServicesImpl feedbackRequestServices;
     private final FeedbackRequestRepository feedbackRequestRepository;
     private final PulseServices pulseServices;
+    private final ReviewPeriodServices reviewPeriodServices;
 
     public CheckServicesImpl(FeedbackRequestServicesImpl feedbackRequestServices,
                              FeedbackRequestRepository feedbackRequestRepository,
-                             PulseServices pulseServices) {
+                             PulseServices pulseServices,
+                             ReviewPeriodServices reviewPeriodServices) {
         this.feedbackRequestServices = feedbackRequestServices;
         this.feedbackRequestRepository = feedbackRequestRepository;
         this.pulseServices = pulseServices;
+        this.reviewPeriodServices = reviewPeriodServices;
     }
 
     @Override
@@ -38,6 +42,7 @@ public class CheckServicesImpl implements CheckServices {
             feedbackRequestRepository.update(req);
         }
         pulseServices.sendPendingEmail(today);
+        reviewPeriodServices.sendNotifications(today);
         return true;
     }
 
