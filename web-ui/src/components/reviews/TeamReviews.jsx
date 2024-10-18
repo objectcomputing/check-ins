@@ -192,7 +192,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const loadAssignments = async () => {
-    const myId = currentUser?.id;
     const res = await resolve({
       method: 'GET',
       url: `${reviewAssignmentsUrl}/period/${periodId}`,
@@ -235,6 +234,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateTeamMembers = async teamMembers => {
+    // First, create a set of team members, each with a default reviewer.
     const data = teamMembers.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
@@ -242,7 +242,8 @@ const TeamReviews = ({ onBack, periodId }) => {
       approved: false
     }));
 
-    const res = await resolve({
+    // Set those on the server as the review assignments.
+    let res = await resolve({
       method: 'POST',
       url: reviewAssignmentsUrl + '/' + periodId,
       data,
@@ -254,14 +255,22 @@ const TeamReviews = ({ onBack, periodId }) => {
     });
     if (res.error) return;
 
-    setTeamMembers(teamMembers);
-    addAssignmentForMemberWithNone(teamMembers);
+    // Get the list of review assignments from the server to ensure that we are
+    // reflecting what was actually created.
+    res = await resolve({
+      method: 'GET',
+      url: `${reviewAssignmentsUrl}/period/${periodId}`,
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    });
+    const assignments = res.error ? [] : res.payload.data;
 
-    // Now that teamMembers has been updated, we need to make sure that the
-    // assignments reflects the set of team members.
-    const ids = teamMembers.map(m => m.id);
-    const newAssignments = assignments.filter(a => a.revieweeId && ids.includes(a.revieweeId));
-    setAssignments(newAssignments);
+    // Update our reactive assignment and member lists.
+    setAssignments(assignments);
+    setTeamMembers(teamMembers);
   };
 
   const addAssignmentForMemberWithNone = async (members) => {
@@ -942,7 +951,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const approveReviewAssignment = async (assignment, approved) => {
     const res = await resolve({
       method: assignment.id === null ? 'POST' : 'PUT',
-      url: '/services/review-assignments',
+      url: reviewAssignmentsUrl,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json;charset=UTF-8',
