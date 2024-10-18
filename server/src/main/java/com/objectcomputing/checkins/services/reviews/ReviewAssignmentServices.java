@@ -16,4 +16,5 @@ public interface ReviewAssignmentServices {
     void delete(UUID id);
     Set<ReviewAssignment> findAllByReviewPeriodIdAndReviewerId(UUID reviewPeriodId, @Nullable UUID reviewerId);
 
+    Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId);
 }
