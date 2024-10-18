@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Controller("/services/roles/members")
 public class MemberRoleController {
