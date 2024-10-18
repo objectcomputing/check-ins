@@ -183,12 +183,12 @@ const SettingsPage = () => {
 
   /** @type {Controls[]} */
   const updatedSettingsControls = addHandlersToSettings(settingsControls);
+  const categories = {};
 
   return (selectHasViewSettingsPermission(state) ||
           selectHasAdministerSettingsPermission(state)) ? (
     <div className="settings-page">
       {updatedSettingsControls.map((componentInfo, index) => {
-        const categories = {};
         const Component = componentMapping[componentInfo.type.toUpperCase()];
         const info = {...componentInfo, name: titleCase(componentInfo.name)};
         if (categories[info.category]) {
