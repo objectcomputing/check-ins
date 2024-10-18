@@ -268,3 +268,4 @@ class VolunteeringRelationshipControllerTest extends TestContainersSuite impleme
         assertEquals(List.of(timFoodbankInactive.getId()), timFood.stream().map(VolunteeringRelationship::getId).toList());
     }
 }
+
