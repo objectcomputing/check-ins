@@ -49,7 +49,7 @@ public class VolunteeringRelationship {
     @Schema(description = "id of the organization with the relationship")
     private UUID organizationId;
 
-    @NotNull
+    @Nullable
     @Column(name = "start_date")
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     @Schema(description = "when the relationship started")
@@ -67,11 +67,11 @@ public class VolunteeringRelationship {
     @Schema(description = "whether the Volunteering Relationship is active")
     private boolean active = true;
 
-    public VolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, @Nullable LocalDate endDate) {
+    public VolunteeringRelationship(UUID memberId, UUID organizationId, @Nullable LocalDate startDate, @Nullable LocalDate endDate) {
         this(null, memberId, organizationId, startDate, endDate, true);
     }
 
-    public VolunteeringRelationship(UUID memberId, UUID organizationId, LocalDate startDate, @Nullable LocalDate endDate, boolean active) {
+    public VolunteeringRelationship(UUID memberId, UUID organizationId, @Nullable LocalDate startDate, @Nullable LocalDate endDate, boolean active) {
         this(null, memberId, organizationId, startDate, endDate, active);
     }
 }
