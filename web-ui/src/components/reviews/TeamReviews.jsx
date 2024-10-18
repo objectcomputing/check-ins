@@ -34,7 +34,12 @@ import {
 import { styled } from '@mui/material/styles';
 
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
-import { resolve } from '../../api/api.js';
+import {
+  getReviewAssignments,
+  createReviewAssignments,
+  updateReviewAssignment,
+  removeReviewAssignment,
+} from '../../api/reviewassignments.js';
 import {
   findReviewRequestsByPeriod,
   findSelfReviewRequestsByPeriodAndTeamMembers
@@ -158,8 +163,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   const isAdmin = selectIsAdmin(state);
   const period = selectReviewPeriod(state, periodId);
 
-  const reviewAssignmentsUrl = '/services/review-assignments';
-
   useEffect(() => {
     loadAssignments();
   }, [currentMembers]);
@@ -192,15 +195,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const loadAssignments = async () => {
-    const res = await resolve({
-      method: 'GET',
-      url: `${reviewAssignmentsUrl}/period/${periodId}`,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    const res = await getReviewAssignments(periodId, csrf);
     if (res.error) return;
 
     const assignments = res.payload.data;
@@ -243,29 +238,12 @@ const TeamReviews = ({ onBack, periodId }) => {
     }));
 
     // Set those on the server as the review assignments.
-    let res = await resolve({
-      method: 'POST',
-      url: reviewAssignmentsUrl + '/' + periodId,
-      data,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    let res = await createReviewAssignments(periodId, data, csrf);
     if (res.error) return;
 
     // Get the list of review assignments from the server to ensure that we are
     // reflecting what was actually created.
-    res = await resolve({
-      method: 'GET',
-      url: `${reviewAssignmentsUrl}/period/${periodId}`,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    res = await getReviewAssignments(periodId, csrf);
     const assignments = res.error ? [] : res.payload.data;
 
     // Update our reactive assignment and member lists.
@@ -614,11 +592,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     const { id, revieweeId, reviewerId } = assignment;
     if (id) {
-      const res = await resolve({
-        method: 'DELETE',
-        url: `${reviewAssignmentsUrl}/${id}`,
-        headers: { 'X-CSRF-Header': csrf }
-      });
+      const res = await removeReviewAssignment(id, csrf);
 
       if (res.error) {
         console.error('Error deleting assignment:', res.error);
@@ -650,19 +624,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateReviewPeriodStatus = async reviewStatus => {
-    const res = await resolve({
-      method: 'PUT',
-      url: '/services/review-periods',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'X-CSRF-Header': csrf
-      },
-      data: {
-        ...period,
-        reviewStatus
-      }
-    });
+    const res = await updateReviewPeriod({ ...period, reviewStatus }, csrf);
     if (res.error) return;
 
     onBack();
@@ -730,16 +692,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       }
     }
 
-    const res = await resolve({
-      method: 'POST',
-      url: `${reviewAssignmentsUrl}/${periodId}`,
-      data: newAssignments,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    const res = await createReviewAssignments(periodId, newAssignments, csrf);
     if (res.error) return;
 
     newAssignments = sortMembers(res.payload.data);
@@ -949,16 +902,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const approveReviewAssignment = async (assignment, approved) => {
-    const res = await resolve({
-      method: assignment.id === null ? 'POST' : 'PUT',
-      url: reviewAssignmentsUrl,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'X-CSRF-Header': csrf
-      },
-      data: { ...assignment, approved }
-    });
+    await updateReviewAssignment({ ...assignment, approved }, csrf);
   };
 
   const visibleTeamMembers = () => {
