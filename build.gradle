@@ -1,5 +1,6 @@
 plugins {
     id "org.sonarqube" version "5.0.0.4638"
+    id 'org.flywaydb.flyway' version '10.20.0'
 }
 
 tasks.named("sonarqube") {
