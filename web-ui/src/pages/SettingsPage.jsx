@@ -48,7 +48,7 @@ const SettingsPage = () => {
         // This information is necessary to know since we must use POST to
         // create new settings and PUT to modify existing settings.
         for (let option of allOptions) {
-          option.exists = option?.id != '00000000-0000-0000-0000-000000000000';
+          option.exists = option?.id != null;
         }
       }
 

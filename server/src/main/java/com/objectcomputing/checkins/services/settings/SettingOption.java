@@ -16,28 +16,26 @@ import java.util.stream.Stream;
 @JsonDeserialize(using = SettingOptionDeserializer.class)
 public enum SettingOption {
     LOGO_URL("The logo url", Category.THEME, Type.FILE),
-    PULSE_EMAIL_FREQUENCY("The Pulse Email Frequency (weekly, bi-weekly, monthly)", Category.CHECK_INS, Type.STRING);
+    PULSE_EMAIL_FREQUENCY("The Pulse Email Frequency", Category.CHECK_INS, Type.STRING, List.of("weekly", "bi-weekly", "monthly"));
 
     private final String description;
     private final Category category;
     private final Type type;
+    private final List<String> values;
 
     SettingOption(String description, Category category, Type type) {
         this.description = description;
         this.category = category;
         this.type = type;
+        this.values = List.of();
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public Type getType() {
-        return type;
+    SettingOption(String description, Category category, Type type,
+                  List<String> values) {
+        this.description = description;
+        this.category = category;
+        this.type = type;
+        this.values = values;
     }
 
     public static List<SettingOption> getOptions(){
