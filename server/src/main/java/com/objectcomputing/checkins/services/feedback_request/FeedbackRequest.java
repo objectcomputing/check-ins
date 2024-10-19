@@ -46,7 +46,6 @@ public class FeedbackRequest {
     private UUID requesteeId;
 
     @Column(name = "recipient_id")
-    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback")
     private UUID recipientId;
@@ -86,15 +85,26 @@ public class FeedbackRequest {
     @Schema(description = "the id of the review period in that this request was created for")
     private UUID reviewPeriodId;
 
-    public FeedbackRequest(UUID creatorId,
-                           UUID requesteeId,
-                           UUID recipientId,
-                           UUID templateId,
-                           LocalDate sendDate,
-                           @Nullable LocalDate dueDate,
-                           String status,
-                           @Nullable LocalDate submitDate,
-                           @Nullable UUID reviewPeriodId) {
+    @Column(name = "external_recipient_id")
+    @NotNull
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the external person who was requested to give feedback")
+    private UUID externalRecipientId;
+
+
+
+    public FeedbackRequest(
+            UUID creatorId,
+            UUID requesteeId,
+            @Nullable UUID recipientId,
+            UUID templateId,
+            LocalDate sendDate,
+            @Nullable LocalDate dueDate,
+            String status,
+            @Nullable LocalDate submitDate,
+            @Nullable UUID reviewPeriodId,
+            @Nullable UUID externalRecipientId
+    ) {
         this.id = null;
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
@@ -105,6 +115,7 @@ public class FeedbackRequest {
         this.status = status;
         this.submitDate = submitDate;
         this.reviewPeriodId = reviewPeriodId;
+        this.externalRecipientId = externalRecipientId;
     }
 
     public FeedbackRequest() {}
@@ -123,12 +134,14 @@ public class FeedbackRequest {
                 && Objects.equals(dueDate, that.dueDate)
                 && Objects.equals(status, that.status)
                 && Objects.equals(submitDate, that.submitDate)
-                && Objects.equals(reviewPeriodId, that.reviewPeriodId);
+                && Objects.equals(reviewPeriodId, that.reviewPeriodId)
+                && Objects.equals(externalRecipientId, that.externalRecipientId)
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate, reviewPeriodId);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate, reviewPeriodId, externalRecipientId);
     }
 
     @Override
@@ -144,6 +157,7 @@ public class FeedbackRequest {
                 ", status='" + status +
                 ", submitDate='" + submitDate +
                 ", reviewPeriodId='" + reviewPeriodId +
+                ", externalRecipientId='" + externalRecipientId +
                 '}';
     }
 }

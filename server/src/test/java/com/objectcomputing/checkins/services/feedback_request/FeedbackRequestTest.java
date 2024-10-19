@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -53,6 +54,9 @@ class FeedbackRequestTest extends TestContainersSuite {
     private FeedbackRequestRepository feedbackReqRepository;
 
     @Mock
+    private FeedbackExternalRecipientServices feedbackExternalRecipientServices;
+
+    @Mock
     private CurrentUserServices currentUserServices;
 
     @Mock
@@ -81,7 +85,7 @@ class FeedbackRequestTest extends TestContainersSuite {
     @BeforeAll
     void initMocks() {
         mockFinalizer = openMocks(this);
-        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices, memberProfileServices, reviewPeriodRepository, reviewAssignmentRepository, emailSender, checkInsConfiguration);
+        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices, memberProfileServices, reviewPeriodRepository, reviewAssignmentRepository, emailSender, checkInsConfiguration, feedbackExternalRecipientServices);
         server.getApplicationContext().inject(feedbackRequestServices);
     }
 

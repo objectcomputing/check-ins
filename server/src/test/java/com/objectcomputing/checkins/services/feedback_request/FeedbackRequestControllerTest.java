@@ -143,6 +143,29 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
+    void testCreateFeedbackRequestByAdminToExternalRecipient() {
+        //create two member profiles: one for normal employee, one for admin
+        final MemberProfile memberProfile = createADefaultMemberProfile();
+        final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("admin"));
+        final MemberProfile recipient = createADefaultRecipient();
+        assignAdminRole(admin);
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, memberProfile, recipient);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        //assert that content of some feedback request equals the test
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
+    @Test
     void testCreateFeedbackRequestByAssignedPDL() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();

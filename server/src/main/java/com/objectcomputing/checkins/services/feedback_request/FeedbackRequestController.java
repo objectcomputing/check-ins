@@ -106,8 +106,8 @@ public class FeedbackRequestController {
      */
     @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,requesteeIds}")
-    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds) {
-        return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds)
+    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds, @Nullable UUID externalRecipientId) {
+        return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds, externalRecipientId)
                 .stream()
                 .map(this::fromEntity)
                 .toList();
@@ -125,6 +125,7 @@ public class FeedbackRequestController {
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
         dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
+        dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
 
         return dto;
     }
@@ -139,6 +140,8 @@ public class FeedbackRequestController {
                 dto.getDueDate(),
                 dto.getStatus(),
                 dto.getSubmitDate(),
-                dto.getReviewPeriodId());
+                dto.getReviewPeriodId(),
+                dto.getExternalRecipientId()
+        );
     }
 }
