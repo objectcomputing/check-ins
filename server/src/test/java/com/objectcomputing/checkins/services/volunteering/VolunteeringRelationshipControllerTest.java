@@ -227,7 +227,7 @@ class VolunteeringRelationshipControllerTest extends TestContainersSuite impleme
         VolunteeringRelationship timFoodbankInactive = createVolunteeringRelationship(tim.getId(), foodbank.getId(), LocalDate.now().minusDays(3), null, false);
         VolunteeringRelationship sarahFoodbank = createVolunteeringRelationship(sarah.getId(), foodbank.getId(), LocalDate.now().minusDays(10), LocalDate.now());
 
-        // Can find all relationships in alphabetical order by organization name
+        // Can find all relationships in correct order
         List<VolunteeringRelationship> allRelationships = relationshipClient.list(memberAuth, null, null, null);
         assertEquals(3, allRelationships.size());
         assertEquals(List.of(sarahLiftForLife.getId(), timLiftForLife.getId(), sarahFoodbank.getId()), 
