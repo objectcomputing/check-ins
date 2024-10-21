@@ -146,6 +146,11 @@ class ReviewAssignmentControllerTest extends TestContainersSuite implements Revi
 
         final HttpResponse<Set<ReviewAssignment>> response = client.toBlocking().exchange(request, Argument.setOf(ReviewAssignment.class));
 
+        // A review period only has default review assignments added to it when
+        // the review period is created through the controller.  And, they are
+        // no longer added to the review period when retrieving the review
+        // assignments for a specific review period.  Therefore, this review
+        // period should have zero review assignments associated with it.
         assertNotNull(response.body());
         assertEquals(0, Objects.requireNonNull(response.body()).size());
     }

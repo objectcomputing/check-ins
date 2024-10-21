@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
+import java.util.List;
 
 public class SettingOptionSerializer extends StdSerializer<SettingOption> {
 
@@ -28,6 +29,15 @@ public class SettingOptionSerializer extends StdSerializer<SettingOption> {
         generator.writeString(settingOption.getCategory().name());
         generator.writeFieldName("type");
         generator.writeString(settingOption.getType().name());
+        List<String> values = settingOption.getValues();
+        if (!values.isEmpty()) {
+          generator.writeFieldName("values");
+          generator.writeStartArray(values.size());
+          for(String value : values) {
+            generator.writeString(value);
+          }
+          generator.writeEndArray();
+        }
         generator.writeEndObject();
     }
 }

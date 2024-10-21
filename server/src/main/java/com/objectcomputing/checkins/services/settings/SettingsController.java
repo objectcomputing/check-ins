@@ -76,10 +76,8 @@ public class SettingsController {
     public List<SettingsResponseDTO> getOptions() {
         List<SettingOption> options = SettingOption.getOptions();
         return options.stream().map(option -> {
-                   // Default to an empty value and "invalid" UUID.
-                   // This can be used by the client to determine pre-existance.
                    String value = "";
-                   UUID uuid = new UUID(0, 0);
+                   UUID uuid = null;
                    try {
                        Setting s = settingsServices.findByName(option.name());
                        uuid = s.getId();
@@ -89,6 +87,7 @@ public class SettingsController {
                    return new SettingsResponseDTO(
                                   uuid, option.name(), option.getDescription(),
                                   option.getCategory(), option.getType(),
+                                  option.getValues(),
                                   value);
                }).toList();
     }
@@ -150,6 +149,7 @@ public class SettingsController {
         dto.setDescription(option.getDescription());
         dto.setCategory(option.getCategory());
         dto.setType(option.getType());
+        dto.setValues(option.getValues());
         dto.setValue(entity.getValue());
         return dto;
     }

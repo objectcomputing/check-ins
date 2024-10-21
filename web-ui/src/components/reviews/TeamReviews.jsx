@@ -34,7 +34,12 @@ import {
 import { styled } from '@mui/material/styles';
 
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
-import { resolve } from '../../api/api.js';
+import {
+  getReviewAssignments,
+  createReviewAssignments,
+  updateReviewAssignment,
+  removeReviewAssignment,
+} from '../../api/reviewassignments.js';
 import {
   findReviewRequestsByPeriod,
   findSelfReviewRequestsByPeriodAndTeamMembers
@@ -158,8 +163,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   const isAdmin = selectIsAdmin(state);
   const period = selectReviewPeriod(state, periodId);
 
-  const reviewAssignmentsUrl = '/services/review-assignments';
-
   useEffect(() => {
     loadAssignments();
   }, [currentMembers]);
@@ -192,16 +195,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const loadAssignments = async () => {
-    const myId = currentUser?.id;
-    const res = await resolve({
-      method: 'GET',
-      url: `${reviewAssignmentsUrl}/period/${periodId}`,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    const res = await getReviewAssignments(periodId, csrf);
     if (res.error) return;
 
     const assignments = res.payload.data;
@@ -210,12 +204,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const loadTeamMembers = () => {
-    // If we already have a list of team members, we should not overwrite the
-    // list with the original list of team members.
-    if (teamMembers.length > 0) {
-      return;
-    }
-
     let source;
     if (!approvalMode || (isAdmin && showAll)) {
       source = currentMembers;
@@ -230,11 +218,12 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Always filter the members down to existing selected assignments.
     // We do not want to add members that were not already selected.
     const memberIds = assignments.map(a => a.revieweeId);
-    let members = source.filter(m => memberIds.includes(m.id));
+    const members = source.filter(m => memberIds.includes(m.id));
     setTeamMembers(members);
   };
 
   const updateTeamMembers = async teamMembers => {
+    // First, create a set of team members, each with a default reviewer.
     const data = teamMembers.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
@@ -242,26 +231,18 @@ const TeamReviews = ({ onBack, periodId }) => {
       approved: false
     }));
 
-    const res = await resolve({
-      method: 'POST',
-      url: reviewAssignmentsUrl + '/' + periodId,
-      data,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    // Set those on the server as the review assignments.
+    let res = await createReviewAssignments(periodId, data, csrf);
     if (res.error) return;
 
-    setTeamMembers(teamMembers);
-    addAssignmentForMemberWithNone(teamMembers);
+    // Get the list of review assignments from the server to ensure that we are
+    // reflecting what was actually created.
+    res = await getReviewAssignments(periodId, csrf);
+    const assignments = res.error ? [] : res.payload.data;
 
-    // Now that teamMembers has been updated, we need to make sure that the
-    // assignments reflects the set of team members.
-    const ids = teamMembers.map(m => m.id);
-    const newAssignments = assignments.filter(a => a.revieweeId && ids.includes(a.revieweeId));
-    setAssignments(newAssignments);
+    // Update our reactive assignment and member lists.
+    setAssignments(assignments);
+    setTeamMembers(teamMembers);
   };
 
   const addAssignmentForMemberWithNone = async (members) => {
@@ -605,11 +586,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     const { id, revieweeId, reviewerId } = assignment;
     if (id) {
-      const res = await resolve({
-        method: 'DELETE',
-        url: `${reviewAssignmentsUrl}/${id}`,
-        headers: { 'X-CSRF-Header': csrf }
-      });
+      const res = await removeReviewAssignment(id, csrf);
 
       if (res.error) {
         console.error('Error deleting assignment:', res.error);
@@ -641,19 +618,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateReviewPeriodStatus = async reviewStatus => {
-    const res = await resolve({
-      method: 'PUT',
-      url: '/services/review-periods',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'X-CSRF-Header': csrf
-      },
-      data: {
-        ...period,
-        reviewStatus
-      }
-    });
+    const res = await updateReviewPeriod({ ...period, reviewStatus }, csrf);
     if (res.error) return;
 
     onBack();
@@ -721,16 +686,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       }
     }
 
-    const res = await resolve({
-      method: 'POST',
-      url: `${reviewAssignmentsUrl}/${periodId}`,
-      data: newAssignments,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    const res = await createReviewAssignments(periodId, newAssignments, csrf);
     if (res.error) return;
 
     newAssignments = sortMembers(res.payload.data);
@@ -940,16 +896,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const approveReviewAssignment = async (assignment, approved) => {
-    const res = await resolve({
-      method: assignment.id === null ? 'POST' : 'PUT',
-      url: '/services/review-assignments',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'X-CSRF-Header': csrf
-      },
-      data: { ...assignment, approved }
-    });
+    await updateReviewAssignment({ ...assignment, approved }, csrf);
   };
 
   const visibleTeamMembers = () => {
