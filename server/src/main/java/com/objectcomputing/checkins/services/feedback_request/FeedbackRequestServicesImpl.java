@@ -90,7 +90,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot save feedback request with invalid creator ID");
         }
 
-        if (feedbackRequest.getRecipientId() == null || feedbackRequest.getExternalRecipientId() == null) {
+        if (feedbackRequest.getRecipientId() == null && feedbackRequest.getExternalRecipientId() == null) {
             throw new BadArgException("Cannot save feedback request without recipient/external-recipient ID");
         }
 
