@@ -48,6 +48,7 @@ public class FeedbackRequest {
     @Column(name = "recipient_id")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback")
+    @Nullable
     private UUID recipientId;
 
     @Column(name = "template_id")
@@ -86,7 +87,7 @@ public class FeedbackRequest {
     private UUID reviewPeriodId;
 
     @Column(name = "external_recipient_id")
-    @NotNull
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the external person who was requested to give feedback")
     private UUID externalRecipientId;

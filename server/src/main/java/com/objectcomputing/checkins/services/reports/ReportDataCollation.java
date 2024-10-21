@@ -227,8 +227,7 @@ public class ReportDataCollation {
       // We will need to cross-reference the templates.
       LocalDateRange dateRange = getDateRange();
       List<FeedbackRequest> requests =
-        feedbackRequestServices.findByValues(null, memberId, null,
-                                             null, null, null, null);
+        feedbackRequestServices.findByValues(null, memberId, null, null, null, null, null, null);
 
       // Iterate over each request and find the template.  Determine the purpose
       // of the template.

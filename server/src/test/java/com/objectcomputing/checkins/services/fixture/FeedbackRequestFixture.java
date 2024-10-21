@@ -21,7 +21,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      */
     default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null);
+        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null, null); /** TODO Luc reciplientg **/
     }
 
     /**
@@ -35,7 +35,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      */
     default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId());
+        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null); /** TODO Luch reciplientg **/
     }
 
     /**
@@ -48,7 +48,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      */
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null, null)); /** TODO Luch recipient **/
     }
 
     /**
@@ -61,12 +61,12 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      */
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId()));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null)); /** TODO Luch recipient **/
     }
 
     default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, String status) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, status, null, null));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, status, null, null, null)); /** TODO Luch recipient **/
     }
 
     default MemberProfile createADefaultRecipient() {
@@ -115,6 +115,6 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
 
     default List<FeedbackRequest> getFeedbackRequests(MemberProfile recipient) {
         return getFeedbackRequestRepository()
-                 .findByValues(null, null, recipient.getId().toString(), null, null, null);
+                 .findByValues(null, null, recipient.getId().toString(), null, null, null, null); /** TODO Luch recipient **/
     }
 }

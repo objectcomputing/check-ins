@@ -35,4 +35,8 @@ public class FeedbackRequestUpdateDTO {
     @Schema(description = "the recipient of the request, used to reassign")
     private UUID recipientId;
 
+    @Nullable
+    @Schema(description = "the external recipient of the request, used to reassign")
+    private UUID externalRecipientId;
+
 }
