@@ -44,20 +44,15 @@ const SettingsPage = () => {
                             (await getAllOptions()).payload.data : [];
 
       if (allOptions) {
-        // If the option has a valid UUID, then the setting already exists.
-        // This information is necessary to know since we must use POST to
-        // create new settings and PUT to modify existing settings.
-        for (let option of allOptions) {
-          option.exists = option?.id != null;
-        }
+        // Sort the options by category, store them, and upate the state.
+        setSettingsControls(
+          allOptions.sort((l, r) => l.category.localeCompare(r.category)));
       }
-
-      // Sort the options by category, store them, and upate the state.
-      setSettingsControls(
-        allOptions.sort((l, r) => l.category.localeCompare(r.category)));
     };
-    fetchData();
-  }, []);
+    if (csrf) {
+      fetchData();
+    }
+  }, [state, csrf]);
 
   // For specific settings, add a handleFunction to the settings object.
   // Format should be handleSetting and then add it to the handlers object
@@ -126,12 +121,12 @@ const SettingsPage = () => {
   const save = async () => {
     let errors;
     let saved = 0;
-    for( let key of Object.keys(handlers)) {
+    for(let key of Object.keys(handlers)) {
       const setting = handlers[key].setting;
       // The settings controller does not allow blank values.
       if (setting && setting.value) {
         let res;
-        if (setting.exists) {
+        if (setting.id) {
           res = await putOption({ name: setting.name,
                                   value: setting.value }, csrf);
         } else {
@@ -197,7 +192,8 @@ const SettingsPage = () => {
           categories[info.category] = true;
           return (
             <>
-            <Typography variant="h4"
+            <Typography data-testid={info.category}
+                        variant="h4"
                         sx={{textDecoration: 'underline'}}
                         display="inline">{titleCase(info.category)}</Typography>
             <Component key={index} {...info} />
