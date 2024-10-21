@@ -7,4 +7,4 @@ CREATE TABLE feedback_external_recipient
     company_name varchar
 );
 ALTER TABLE feedback_requests ADD column external_recipient_id varchar;
-ALTER TABLE feedback_external_recipient ADD CONSTRAINT feedback_requests_externalrecipientid_fkey FOREIGN KEY (id) REFERENCES feedback_requests(external_recipient_id) ON DELETE CASCADE;
+ALTER TABLE feedback_requests ADD CONSTRAINT feedback_requests_externalrecipientid_fkey FOREIGN KEY (external_recipient_id) REFERENCES feedback_external_recipient(id) ON DELETE CASCADE;
