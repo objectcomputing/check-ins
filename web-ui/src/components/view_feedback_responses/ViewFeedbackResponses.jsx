@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography, Box } from '@mui/material';
+import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import FeedbackResponseCard from './feedback_response_card/FeedbackResponseCard';
 import { getQuestionsAndAnswers } from '../../api/feedbackanswer';
 import { getFeedbackRequestById } from '../../api/feedback';
@@ -74,6 +74,28 @@ const ViewFeedbackResponses = () => {
   const [selectedResponders, setSelectedResponders] = useState([]);
   const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Dialog state for denying feedback
+  const [denialPopupOpen, setDenialPopupOpen] = useState(false);
+  const [denialReason, setDenialReason] = useState('');
+  const [currentResponder, setCurrentResponder] = useState(null);  // Track the responder being denied
+
+  const handleDenyClick = (responderId) => {
+    console.log(`Denial process initiated for responder: ${responderId}`);
+    setCurrentResponder(responderId);  // Track the current responder
+    setDenialPopupOpen(true);
+  };
+
+  const handleDenialClose = () => {
+    setDenialPopupOpen(false);
+    console.log("Denial popup closed");
+  };
+
+  const handleDenialSubmit = () => {
+    console.log(`Denial reason for responder ${currentResponder}:`, denialReason);
+    setDenialPopupOpen(false);
+    // Here, you'd normally send the reason to the backend or handle it appropriately
+  };
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
@@ -320,12 +342,34 @@ const ViewFeedbackResponses = () => {
                     answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
                     inputType={question.inputType}
                     sentiment={answer.sentiment}
+                    handleDenyClick={() => handleDenyClick(answer.responder)}  // Pass responderId
                   />
                 ))
               )}
             </div>
           );
         })}
+      
+      {/* Dialog for denial reason */}
+      <Dialog open={denialPopupOpen} onClose={handleDenialClose}>
+        <DialogTitle>Feedback Request Denial Explanation</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Denial Reason"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={denialReason}
+            onChange={(e) => setDenialReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDenialClose}>Cancel</Button>
+          <Button onClick={handleDenialSubmit}>Send</Button>
+        </DialogActions>
+      </Dialog>
     </Root>
   ) : (
     <h3>{noPermission}</h3>
