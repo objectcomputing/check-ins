@@ -12,8 +12,10 @@ import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.EmailHelper;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
@@ -65,7 +67,7 @@ class ReviewPeriodControllerTest
     private HttpClient client;
 
     @Inject
-    @Named(MailJetFactory.HTML_FORMAT)
+    @Named(MailJetFactory.MJML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
@@ -512,9 +514,11 @@ class ReviewPeriodControllerTest
 
         // expect email has been sent
         assertEquals(1, emailSender.events.size());
-        assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "Review Assignments Awaiting Approval", "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3><a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.", supervisor.getWorkEmail()),
-                emailSender.events.getFirst()
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  "Review Assignments Awaiting Approval",
+                                  "Click <a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">here</a> to review and approve reviewer assignments in the Check-Ins app.",
+                                  supervisor.getWorkEmail(),
+                                  emailSender.events.getFirst()
         );
     }
 
@@ -544,6 +548,14 @@ class ReviewPeriodControllerTest
         FeedbackRequest feedbackRequest = requests.get(0);
         assertEquals(member.getId(), feedbackRequest.getRequesteeId());
         assertEquals(reviewPeriod.getId(), feedbackRequest.getReviewPeriodId());
+
+        assertEquals(2, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  "It's time for performance reviews!",
+                                  "Help us make this a valuable experience for everyone!",
+                                  member.getWorkEmail() + "," + supervisor.getWorkEmail(),
+                                  emailSender.events.get(1)
+        );
     }
 
     @Test
@@ -806,5 +818,104 @@ class ReviewPeriodControllerTest
         );
         assertTrue(exception.getMessage()
                             .contains("end date must be on or before"));
+    }
+
+    @Test
+    void testSelfReviewLaunchDateEmail() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        checkSelfReviewEmail(launchDate, launchDate,
+                             " has launched!");
+    }
+
+    @Test
+    void testSelfReviewThreeDaysEmail() {
+        // When using the version of createADefaultReviewPeriod that takes a
+        // launch date, the self-review closes 4 days after the launch date.
+        // So, to get the three day email, we just need to add 1 day to the
+        // launch date.
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        checkSelfReviewEmail(launchDate, launchDate.plusDays(1),
+                             " closes in three days!");
+    }
+
+    @Test
+    void testSelfReviewOneDayEmail() {
+        // When using the version of createADefaultReviewPeriod that takes a
+        // launch date, the self-review closes 4 days after the launch date.
+        // So, to get the one day email, we just need to add 3 days to the
+        // launch date.
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        checkSelfReviewEmail(launchDate, launchDate.plusDays(3),
+                             " closes in one day!");
+    }
+
+    @Test
+    void testSelfReviewNoEmail() {
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createADefaultMemberProfile();
+
+        // Launch date must be in the future.
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        FeedbackTemplate template =
+                             saveReviewFeedbackTemplate(supervisor.getId());
+        ReviewPeriod period = createADefaultReviewPeriod(
+                                  launchDate, ReviewStatus.AWAITING_APPROVAL,
+                                  null, template.getId());
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, period, true);
+        period.setReviewStatus(ReviewStatus.OPEN);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+              PUT("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<ReviewPeriod> response =
+              client.toBlocking().exchange(request, ReviewPeriod.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        // None of these should send notification.
+        reviewPeriodServices.sendNotifications(
+                                 launchDate.plusDays(2).toLocalDate());
+        reviewPeriodServices.sendNotifications(
+                                 launchDate.plusDays(4).toLocalDate());
+        reviewPeriodServices.sendNotifications(
+                                 launchDate.plusDays(5).toLocalDate());
+
+        // Two due to two reviews.
+        // Only those being reviewed will have a self-review assignment.
+        assertEquals(2, emailSender.events.size());
+    }
+
+    private void checkSelfReviewEmail(LocalDateTime launchDate,
+                                      LocalDateTime checkDate,
+                                      String subjectSuffix) {
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createADefaultMemberProfile();
+
+        FeedbackTemplate template =
+                             saveReviewFeedbackTemplate(supervisor.getId());
+        ReviewPeriod period = createADefaultReviewPeriod(
+                                  launchDate, ReviewStatus.AWAITING_APPROVAL,
+                                  null, template.getId());
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, period, true);
+        period.setReviewStatus(ReviewStatus.OPEN);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+              PUT("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<ReviewPeriod> response =
+              client.toBlocking().exchange(request, ReviewPeriod.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        // Send the self-review notification.
+        reviewPeriodServices.sendNotifications(checkDate.toLocalDate());
+
+        // Two due to two reviews and one for launch notification.
+        // Only those being reviewed will have a self-review assignment.
+        assertEquals(3, emailSender.events.size());
+
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  period.getName() + subjectSuffix,
+                                  "To access your self-review click the button above",
+                                  member.getWorkEmail(),
+                                  emailSender.events.get(2));
     }
 }

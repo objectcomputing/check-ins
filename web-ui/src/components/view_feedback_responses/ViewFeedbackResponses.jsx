@@ -20,7 +20,6 @@ import { getAvatarURL } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
-
 import './ViewFeedbackResponses.css';
 
 const PREFIX = 'MuiCardContent';
@@ -73,8 +72,7 @@ const ViewFeedbackResponses = () => {
   const [searchText, setSearchText] = useState('');
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
-  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] =
-    useState([]);
+  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Dialog state for denying feedback
@@ -110,7 +108,29 @@ const ViewFeedbackResponses = () => {
           ? requests
           : [requests]
         : [];
-      return await getQuestionsAndAnswers(requests, cookie);
+      const res = await getQuestionsAndAnswers(requests, cookie);
+
+      if (res) {
+        const sanitizedResponses = res.map(question => ({
+          ...question,
+          answers: question.answers.map(answer => ({
+            ...answer,
+            answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer),
+          }))
+        }));
+
+        sanitizedResponses.sort((a, b) => a.questionNumber - b.questionNumber);
+        setQuestionsAndAnswers(sanitizedResponses);
+
+      } else {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'error',
+            toast: 'Failed to retrieve questions and answers'
+          }
+        });
+      }
     }
 
     if (!csrf || !query.request) {
@@ -140,20 +160,7 @@ const ViewFeedbackResponses = () => {
         });
       }
     });
-    retrieveQuestionsAndAnswers(query.request, csrf).then(res => {
-      if (res) {
-        res.sort((a, b) => a.questionNumber - b.questionNumber);
-        setQuestionsAndAnswers(res);
-      } else {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'Failed to retrieve questions and answers'
-          }
-        });
-      }
-    });
+    retrieveQuestionsAndAnswers(query.request, csrf);
   }, [csrf, query.request]);
 
   useEffect(() => {
@@ -162,7 +169,7 @@ const ViewFeedbackResponses = () => {
       const responders = answers.map(answer => answer.responder);
       allResponders.push(...responders);
     });
-    allResponders = [...new Set(allResponders)]; // Remove duplicate responders
+    allResponders = [...new Set(allResponders)];
     setResponderOptions(allResponders);
   }, [state, questionsAndAnswers]);
 
@@ -172,11 +179,15 @@ const ViewFeedbackResponses = () => {
 
   useEffect(() => {
     let responsesToDisplay = [...questionsAndAnswers];
-
     responsesToDisplay = responsesToDisplay.map(response => {
       let filteredAnswers = response.answers.filter(answer =>
         selectedResponders.includes(answer.responder)
       );
+
+      if (filteredAnswers.length === 0) {
+        filteredAnswers = [{ answer: 'No input due to recipient filter', responder: null }];
+      }
+
       if (searchText.trim()) {
         filteredAnswers = filteredAnswers.filter(
           ({ answer }) =>
@@ -184,6 +195,7 @@ const ViewFeedbackResponses = () => {
             answer.toLowerCase().includes(searchText.trim().toLowerCase())
         );
       }
+
       return { ...response, answers: filteredAnswers };
     });
 
@@ -200,7 +212,14 @@ const ViewFeedbackResponses = () => {
     setSelectedResponders(responderOptions);
   };
 
+
+  const isEmptyOrWhitespace = (text) => {
+    return typeof text !== 'string' || !text.trim();
+  };
+
+
   return selectCanViewFeedbackAnswerPermission(state) ? (
+
     <Root className="view-feedback-responses-page">
       <Typography
         variant="h4"
@@ -299,6 +318,9 @@ const ViewFeedbackResponses = () => {
         ))}
       {!isLoading &&
         filteredQuestionsAndAnswers?.map(question => {
+          const questionText = question.question;
+          const hasResponses = question.answers.length > 0;
+
           return (
             <div
               className="question-responses-container"
@@ -308,27 +330,22 @@ const ViewFeedbackResponses = () => {
                 className="question-text"
                 style={{ marginBottom: '0.5em', fontWeight: 'bold' }}
               >
-                Q{question.questionNumber}: {question.question}
+                {questionText}
               </Typography>
-              {question.answers.length === 0 && (
-                <div className="no-responses-found">
-                  <Typography variant="body1" style={{ color: 'gray' }}>
-                    No matching responses found
-                  </Typography>
-                </div>
-              )}
-              {question.inputType !== 'NONE' &&
-                question.answers.length > 0 &&
+
+              {/* If the question has no answers or inputType is "NONE" */}
+              {!hasResponses || question.inputType === 'NONE' ? null : (
                 question.answers.map(answer => (
                   <FeedbackResponseCard
                     key={answer.id || answer.responder}
                     responderId={answer.responder}
-                    answer={answer.answer || ''}
+                    answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
                     inputType={question.inputType}
                     sentiment={answer.sentiment}
                     handleDenyClick={() => handleDenyClick(answer.responder)}  // Pass responderId
                   />
-                ))}
+                ))
+              )}
             </div>
           );
         })}

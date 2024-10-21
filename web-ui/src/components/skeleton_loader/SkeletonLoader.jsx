@@ -11,7 +11,7 @@ const classes = {
 
 const StyledCard = styled(Card)(() => ({
   [`&.${classes.card}`]: {
-    width: '340px'
+    width: '100%'
   }
 }));
 
@@ -185,7 +185,7 @@ export default function SkeletonLoader({ type, delay = 300 }) {
     );
   } else if (type === 'kudos') {
     return (
-      <Box width={400}>
+      <Box width="100%">
         <StyledCard padding={0}>
           <CardContent style={{ paddingBottom: 0 }}>
             <Box

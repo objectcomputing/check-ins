@@ -5,20 +5,53 @@ import CardContent from '@mui/material/CardContent';
 import { Typography, IconButton } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import './FeedbackResponseCard.css';
+import { AppContext } from '../../../context/AppContext';
+import { selectProfile } from '../../../context/selectors';
+import Avatar from '@mui/material/Avatar';
+import { getAvatarURL } from '../../../api/api.js';
+import FeedbackAnswerInput from '../../feedback_answer_input/FeedbackAnswerInput';
 
-const FeedbackResponseCard = ({ responderId, answer, inputType, sentiment, handleDenyClick }) => {
-  console.log("Rendering FeedbackResponseCard");
+const propTypes = {
+  responderId: PropTypes.string.isRequired,
+  answer: PropTypes.string, // Allow answer to be null or undefined
+  inputType: PropTypes.string.isRequired,
+  sentiment: PropTypes.number
+};
+
+const FeedbackResponseCard = props => {
+  const { state } = useContext(AppContext);
+  const userInfo = selectProfile(state, props.responderId);
+
+  const getFormattedAnswer = () => {
+    if (props.inputType === 'NONE') {
+      return null; // Return null to display nothing
+    }
+
+    // Return fallback if the answer is null, undefined, or empty
+    if (props.answer === null || props.answer === undefined || !props.answer.trim()) {
+      return '⚠️ No response submitted';
+    }
+
+    return props.answer;
+  };
+
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6">Responder: {responderId}</Typography>
-        <Typography variant="body2">Answer: {answer}</Typography>
-        <IconButton aria-label="Deny feedback request" onClick={() => {
-          console.log(`Deny click for responder ID: ${responderId}`);
-          handleDenyClick();
-        }}>
-          <CloseIcon />
-        </IconButton>
+    <Card className="response-card">
+      <CardContent className="response-card-content">
+        <div className="response-card-recipient-info">
+          <Avatar
+            className="avatar-photo"
+            src={getAvatarURL(userInfo?.workEmail)}
+          />
+          <Typography className="responder-name">{userInfo?.name}</Typography>
+        </div>
+        {props.inputType !== 'NONE' && (
+          <FeedbackAnswerInput
+            inputType={props.inputType}
+            readOnly
+            answer={getFormattedAnswer()} // Ensure the proper message is displayed
+          />
+        )}
       </CardContent>
     </Card>
   );

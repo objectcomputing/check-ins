@@ -37,7 +37,6 @@ import {
 } from '../../../context/selectors';
 
 import ReviewPeriodCard from './ReviewPeriodCard.jsx';
-import ReviewPeriodStepper from './ReviewPeriodStepper.jsx';
 
 const propTypes = {
   message: PropTypes.string,
@@ -378,9 +377,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             })
             .map((period) => (
               <div>
-                <ReviewPeriodStepper
-                  reviewPeriod={period}
-                />
                 <ReviewPeriodCard
                   key={`review-period-card-${period.id}`}
                   mode={mode}

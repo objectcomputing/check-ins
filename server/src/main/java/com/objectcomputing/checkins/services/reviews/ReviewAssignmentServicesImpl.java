@@ -43,8 +43,12 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         return newAssignment;
     }
 
+    // Now that uniqueness constraints have been placed on the
+    // reviewee-reviewer-reviewPeriod, this method needs to be synchronized
+    // to avoid multiple calls from the client-side overlapping and attempting
+    // to create the same review assignments multiple times.
     @Override
-    public List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, boolean deleteExisting) {
+    public synchronized List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, boolean deleteExisting) {
 
         if(deleteExisting) {
             LOG.warn("Deleting all review assignments for review period {}", reviewPeriodId);
@@ -82,10 +86,6 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         } else {
             reviewAssignments = reviewAssignmentRepository.findByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId);
         }
-        if (reviewAssignments.isEmpty()) {
-            //If no assignments exist for the review period, then a set of default review assignments should be returned
-            reviewAssignments = defaultReviewAssignments(reviewPeriodId);
-        }
 
         return reviewAssignments;
     }
@@ -109,7 +109,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         }
     }
 
-    private Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
+    public Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
         Set<ReviewAssignment> reviewAssignments = new HashSet<>();
 
         memberProfileRepository.findAll().forEach(memberProfile -> {

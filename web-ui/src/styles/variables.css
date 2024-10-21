@@ -66,6 +66,7 @@
   --checkins-palette-action-disabled: var(--action-disabled);
   --checkins-palette-action-yellow: lightyellow;
   --checkins-palette-action-green: lightgreen;
+  --checkins-palette-action-red: darkred;
 
   &[data-mui-color-scheme='dark'] {
     --primary-text: color-mix(in oklab, var(--white), var(--black) 10%);

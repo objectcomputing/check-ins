@@ -14,6 +14,7 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.EmailHelper;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
@@ -54,33 +55,13 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     CheckInsConfiguration checkInsConfiguration;
 
     @Inject
-    @Named(MailJetFactory.HTML_FORMAT)
+    @Named(MailJetFactory.MJML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @BeforeEach
     void resetMocks() {
         createAndAssignRoles();
         emailSender.reset();
-    }
-
-    private String createEmailContent(FeedbackRequest storedRequest, UUID requestId, MemberProfile creator, MemberProfile requestee) {
-        String newContent = "<h1>You have received a feedback request.</h1>" +
-                "<p><b>" + creator.getFirstName() + " " + creator.getLastName() + "</b> is requesting feedback on <b>" + requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you.</p>";
-        if (storedRequest.getDueDate() != null) {
-            newContent += "<p>This request is due on " + storedRequest.getDueDate().getMonth() + " " + storedRequest.getDueDate().getDayOfMonth() + ", " + storedRequest.getDueDate().getYear() + ".";
-        }
-        newContent += "<p>Please go to your unique link at " + checkInsConfiguration.getWebAddress() + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
-        return newContent;
-    }
-
-    private String updateEmailContent(UUID requestId, MemberProfile creator, MemberProfile requestee) {
-        String newContent = "<h1>You have received edit access to a feedback request.</h1>" +
-                "<p><b>" + creator.getFirstName() + " " + creator.getLastName() +
-                "</b> has reopened the feedback request on <b>" +
-                requestee.getFirstName() + " " + requestee.getLastName() + "</b> from you." +
-                "You may make changes to your answers, but you will need to submit the form again when finished.</p>";
-        newContent += "<p>Please go to your unique link at " + checkInsConfiguration.getWebAddress() + "/feedback/submit?request=" + requestId + " to complete this request.</p>";
-        return newContent;
     }
 
     /**
@@ -206,16 +187,14 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         String fromName = pdlMemberProfile.getFirstName() + " " + pdlMemberProfile.getLastName();
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
-        String correctContent = createEmailContent(feedbackRequest, response.getBody().get().getId(), pdlMemberProfile, employeeMemberProfile);
-        assertEquals(List.of(
-                        "SEND_EMAIL",
-                        fromName,
-                        pdlMemberProfile.getWorkEmail(),
-                        checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                        correctContent,
-                        recipient.getWorkEmail()
-                ),
-                emailSender.events.getFirst()
+        assertEquals(1, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL",
+                                  fromName,
+                                  pdlMemberProfile.getWorkEmail(),
+                                  checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                                  "You have received a feedback request",
+                                  recipient.getWorkEmail(),
+                                  emailSender.events.getFirst()
         );
     }
 
@@ -1070,16 +1049,14 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         String fromName = pdl.getFirstName() + " " + pdl.getLastName();
         // Verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
-        String correctContent = updateEmailContent(response.getBody().get().getId(), pdl, requestee);
-        assertEquals(List.of(
-                        "SEND_EMAIL",
-                        fromName,
-                        pdl.getWorkEmail(),
-                        checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                        correctContent,
-                        recipient.getWorkEmail()
-                ),
-                emailSender.events.getFirst()
+        assertEquals(1, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL",
+                                  fromName,
+                                  pdl.getWorkEmail(),
+                                  checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                                  "You have received edit access to a feedback request",
+                                  recipient.getWorkEmail(),
+                                  emailSender.events.getFirst()
         );
     }
 
