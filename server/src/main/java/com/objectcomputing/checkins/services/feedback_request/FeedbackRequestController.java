@@ -49,7 +49,8 @@ public class FeedbackRequestController {
     @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
     @Post
     public HttpResponse<FeedbackRequestResponseDTO> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
-        FeedbackRequest savedFeedbackRequest = feedbackReqServices.save(fromDTO(requestBody));
+        FeedbackRequest feedbackRequest = fromDTO(requestBody);
+        FeedbackRequest savedFeedbackRequest = feedbackReqServices.save(feedbackRequest);
         return HttpResponse.created(fromEntity(savedFeedbackRequest))
                 .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedbackRequest.getId())));
     }
