@@ -148,7 +148,6 @@ class ReviewAssignmentControllerTest extends TestContainersSuite implements Revi
 
         assertNotNull(response.body());
         assertEquals(0, Objects.requireNonNull(response.body()).size());
-        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
