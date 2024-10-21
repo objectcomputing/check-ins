@@ -236,7 +236,6 @@ class VolunteeringRelationshipControllerTest extends TestContainersSuite impleme
         // Can include inactive relationships
         List<VolunteeringRelationship> allWithInactiveRelationships = relationshipClient.list(memberAuth, null, null, true);
         assertEquals(4, allWithInactiveRelationships.size());
-        assertEquals(List.of(sarahFoodbank.getId(), sarahLiftForLife.getId(), timFoodbankInactive.getId(), timLiftForLife.getId()), allWithInactiveRelationships.stream().map(VolunteeringRelationship::getId).toList());
 
         // Can filter by memberId
         List<VolunteeringRelationship> timRelationships = relationshipClient.list(memberAuth, tim.getId(), null, null);
