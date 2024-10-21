@@ -112,8 +112,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     setSelectedRelationship({
       memberId: onlyMe ? currentUser.id : '',
       organizationId: '',
-      startDate: null, // Ensure this is a valid date object
-      endDate: null // Ensure this is a valid date object
+      startDate: null,
+      endDate: null
     });
     setRelationshipDialogOpen(true);
   }, [currentUser.id, onlyMe]);
@@ -175,7 +175,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       return;
     }
   
-    const formattedStartDate = formatDate(new Date(startDate));
+    const formattedStartDate = startDate ? formatDate(new Date(startDate)) : null;
     const formattedEndDate = endDate ? formatDate(new Date(endDate)) : null;
   
     const res = await resolve({
@@ -362,7 +362,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           value={selectedRelationship?.organizationId || ''}
         />
           <DatePickerField
-            date={selectedRelationship?.startDate}
+            date={selectedRelationship?.startDate || null}
             label="Start Date"
             setDate={date => setSelectedRelationship({ ...selectedRelationship, startDate: date })}
           />
