@@ -394,9 +394,9 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message").asText();
+        String error = Objects.requireNonNull(body).get("message").asText();
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("requestBody.recipientId: must not be null", error);
+        assertEquals("Cannot save feedback request without recipient/external-recipient ID", error);
     }
 
     @Test
