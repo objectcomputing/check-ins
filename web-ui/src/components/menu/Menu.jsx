@@ -17,7 +17,6 @@ import {
   selectHasEarnedCertificationsPermission,
   selectHasMeritReportPermission,
   selectHasVolunteeringEventsPermission,
-  selectHasVolunteeringOrganizationsPermission,
   selectHasVolunteeringRelationshipsPermission,
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
