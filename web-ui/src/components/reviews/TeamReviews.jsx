@@ -971,7 +971,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         </Alert>
       )}
 
-      {canApprove && (
+      {approvalState && (
           <div id="approval-row" style={{ display: 'flex', alignItems: 'center' }}>
             {/* Wrapper div for TextField and Switch */}
             <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
