@@ -21,7 +21,7 @@ public interface VolunteeringRelationshipRepository extends CrudRepository<Volun
               AND rel.member_id = :memberId
               AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
               AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-            ORDER BY rel.start_date, org.name""", nativeQuery = true)
+            ORDER BY org.name""", nativeQuery = true)
     List<VolunteeringRelationship> findByMemberIdAndOrganizationId(UUID memberId, UUID organizationId, boolean includeDeactivated);
 
     @Query(value = """
@@ -31,7 +31,7 @@ public interface VolunteeringRelationshipRepository extends CrudRepository<Volun
             WHERE rel.member_id = :memberId
               AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
               AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-            ORDER BY rel.start_date, org.name""", nativeQuery = true)
+            ORDER BY org.name""", nativeQuery = true)
     List<VolunteeringRelationship> findByMemberId(UUID memberId, boolean includeDeactivated);
 
     @Query(value = """
@@ -41,7 +41,7 @@ public interface VolunteeringRelationshipRepository extends CrudRepository<Volun
             WHERE rel.organization_id = :organizationId
               AND (rel.is_active = TRUE OR :includeDeactivated = TRUE)
               AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-            ORDER BY rel.start_date, org.name""", nativeQuery = true)
+            ORDER BY org.name""", nativeQuery = true)
     List<VolunteeringRelationship> findByOrganizationId(UUID organizationId, boolean includeDeactivated);
 
     @Query(value = """
@@ -50,7 +50,7 @@ public interface VolunteeringRelationshipRepository extends CrudRepository<Volun
                     JOIN volunteering_organization AS org USING(organization_id)
             WHERE (rel.is_active = TRUE OR :includeDeactivated = TRUE)
               AND (org.is_active = TRUE OR :includeDeactivated = TRUE)
-            ORDER BY rel.start_date, org.name""", nativeQuery = true)
+            ORDER BY org.name""", nativeQuery = true)
     List<VolunteeringRelationship> findAll(boolean includeDeactivated);
 
     @Query(value = """
