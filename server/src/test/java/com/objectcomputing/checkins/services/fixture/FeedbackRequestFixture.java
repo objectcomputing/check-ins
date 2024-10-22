@@ -1,4 +1,5 @@
 package com.objectcomputing.checkins.services.fixture;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -19,9 +20,22 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      * @param templateId The UUID of the FeedbackTemplate
      * @return The created {@link FeedbackRequest}
      */
-    default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
+    default FeedbackRequest createSampleFeedbackRequestWithRecipient(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null, null); /** TODO Luc reciplientg **/
+        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null, null);
+    }
+
+    /**
+     * Creates a sample feedback request
+     * @param creator The {@link MemberProfile} of the creator of the feedback request
+     * @param requestee The {@link MemberProfile} of the requestee of the feedback request
+     * @param externalRecipient The {@link MemberProfile} of the member giving feedback
+     * @param templateId The UUID of the FeedbackTemplate
+     * @return The created {@link FeedbackRequest}
+     */
+    default FeedbackRequest createSampleFeedbackRequestWithExternalRecipient(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, UUID templateId) {
+        LocalDate testDate = LocalDate.of(2010, 10, 8);
+        return new FeedbackRequest(creator.getId(), requestee.getId(), null, templateId, testDate, null, "pending", null, null, externalRecipient.getId());
     }
 
     /**
@@ -33,7 +47,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      * @param reviewPeriod the {@link ReviewPeriod} that this feedback request is associated with
      * @return The created {@link FeedbackRequest}
      */
-    default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
+    default FeedbackRequest createSampleFeedbackRequestWithRecipient(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
         return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null); /** TODO Luch reciplientg **/
     }
@@ -85,30 +99,36 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
                 null, null, null, false, false, null));
     }
 
-    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
+    default FeedbackRequest createFeedbackRequestWithRecipient(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
         FeedbackTemplate template = createFeedbackTemplate(creator.getId());
         getFeedbackTemplateRepository().save(template);
-        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId());
+        return createSampleFeedbackRequestWithRecipient(creator, requestee, recipient, template.getId());
     }
 
-    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
+    default FeedbackRequest createFeedbackRequestWithExternalRecipient(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient) {
+        FeedbackTemplate template = createFeedbackTemplate(creator.getId());
+        getFeedbackTemplateRepository().save(template);
+        return createSampleFeedbackRequestWithExternalRecipient(creator, requestee, externalRecipient, template.getId());
+    }
+
+    default FeedbackRequest createFeedbackRequestWithRecipient(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
         FeedbackTemplate template = createAnotherFeedbackTemplate(creator.getId());
         getFeedbackTemplateRepository().save(template);
-        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId(), reviewPeriod);
+        return createSampleFeedbackRequestWithRecipient(creator, requestee, recipient, template.getId(), reviewPeriod);
     }
 
     default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(creator, requestee, recipient);
         return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId());
     }
 
     default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient, reviewPeriod);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(creator, requestee, recipient, reviewPeriod);
         return saveSampleFeedbackRequest(creator, requestee, recipient, feedbackRequest.getTemplateId(), reviewPeriod);
     }
 
     default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, LocalDate sendDate) {
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(creator, requestee, recipient);
         feedbackRequest.setSendDate(sendDate);
         return getFeedbackRequestRepository().save(feedbackRequest);
     }

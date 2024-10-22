@@ -5,10 +5,12 @@ import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackExternalRecipientFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -45,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
-class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture {
+class FeedbackRequestControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, ReviewPeriodFixture, FeedbackExternalRecipientFixture {
 
     @Inject
     @Client("/services/feedback/requests")
@@ -80,6 +82,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         dto.setDueDate(feedbackRequest.getDueDate());
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
+        dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
         return dto;
     }
 
@@ -120,7 +123,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestByAdmin() {
+    void testCreateFeedbackRequestByAdminToRecipient() {
         //create two member profiles: one for normal employee, one for admin
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("admin"));
@@ -128,7 +131,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, memberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, memberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -147,11 +150,11 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //create two member profiles: one for normal employee, one for admin
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("admin"));
-        final MemberProfile recipient = createADefaultRecipient();
+        final FeedbackExternalRecipient feedbackExternalRecipient = createADefaultFeedbackExternalRecipient();
         assignAdminRole(admin);
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, memberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithExternalRecipient(admin, memberProfile, feedbackExternalRecipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -174,7 +177,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         final MemberProfile recipient = createADefaultRecipient();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, employeeMemberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -198,7 +201,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         final MemberProfile recipient = createADefaultRecipient();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackRequest.setSendDate(LocalDate.now());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -230,7 +233,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         final MemberProfile recipient = createADefaultRecipient();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -253,7 +256,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createAnUnrelatedUser();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(memberProfileForPDL, memberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(memberProfileForPDL, memberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -273,7 +276,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createAnUnrelatedUser();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(requesteeProfile, memberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(requesteeProfile, memberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -293,7 +296,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with invalid creator ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
         feedbackRequest.setCreatorId(UUID.randomUUID());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -315,7 +318,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with invalid recipient ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
         feedbackRequest.setRecipientId(UUID.randomUUID());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -337,7 +340,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with invalid requestee ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
         feedbackRequest.setRequesteeId(UUID.randomUUID());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -359,7 +362,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with no requestee
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
         feedbackRequest.setRequesteeId(null);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -383,7 +386,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with no recipient(s)
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
         feedbackRequest.setRecipientId(null);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -407,7 +410,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with no template
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
         feedbackRequest.setTemplateId(null);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -431,7 +434,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with invalid requestee ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.of(1111, 11, 2));
         feedbackRequest.setDueDate(LocalDate.of(1111, 11, 1));
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
@@ -1006,7 +1009,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request that has not been submitted yet
-        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
+        final FeedbackRequest feedbackReq = createFeedbackRequestWithRecipient(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(null);
         getFeedbackRequestRepository().save(feedbackReq);
 
@@ -1030,7 +1033,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request that has already been submitted
-        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
+        final FeedbackRequest feedbackReq = createFeedbackRequestWithRecipient(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(LocalDate.now());
         getFeedbackRequestRepository().save(feedbackReq);
 
@@ -1055,7 +1058,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request that has already been submitted
-        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
+        final FeedbackRequest feedbackReq = createFeedbackRequestWithRecipient(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(LocalDate.now());
         feedbackReq.setStatus("submitted");
         getFeedbackRequestRepository().save(feedbackReq);
@@ -1272,7 +1275,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
@@ -1296,7 +1299,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(adminUser);
 
         // Save feedback request with send date in the future
-        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
@@ -1318,7 +1321,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request with send date in the future
-        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
