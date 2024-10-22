@@ -96,7 +96,8 @@ const FeedbackTemplateSelector = ({ query, changeQuery }) => {
         creatorId: currentUserId,
         active: true,
         isAdHoc: true,
-        isPublic: false
+        isPublic: false,
+        isReview: false,
       };
 
       const newTemplateQuestion = {
@@ -187,6 +188,7 @@ const FeedbackTemplateSelector = ({ query, changeQuery }) => {
         description={template.description}
         isAdHoc={template.isAdHoc}
         isPublic={template.isPublic}
+        isReview={template.isReview}
         isSelected={query === template.id}
         questions={template.questions}
         expanded={preview.open}
