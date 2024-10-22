@@ -330,7 +330,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
         final LocalDate sendDate = feedbackReq.get().getSendDate();
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
-        final UUID recipientId = feedbackReq.get().getRecipientId();
+        final UUID recipientId;
+        recipientId = feedbackReq.get().getRecipientId() != null ? feedbackReq.get().getRecipientId() : feedbackReq.get().getExternalRecipientId();
         if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
@@ -356,12 +357,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
             boolean visible = false;
+            final UUID recipientIdLocal;
             if (currentUserServices.isAdmin()) {
                 visible = true;
             } else if (request != null) {
                 if (currentUserId.equals(request.getCreatorId())) visible = true;
                 if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
-                if (currentUserId.equals(request.getRecipientId())) visible = true;
+                recipientIdLocal = request.getRecipientId() != null ? request.getRecipientId() : request.getExternalRecipientId();
+                if (currentUserId.equals(recipientIdLocal)) visible = true;
             }
             return visible;
         }).toList();
@@ -385,16 +388,16 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || currentUserId.equals(requesteeId);
     }
 
-    private boolean getIsPermitted(UUID requesteeId, UUID recipientId, LocalDate sendDate) {
+    private boolean getIsPermitted(UUID requesteeId, UUID recipientOrExternalRecipientId, LocalDate sendDate) {
         LocalDate today = LocalDate.now();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
         // The recipient can only access the feedback request after it has been sent
-        if (sendDate.isAfter(today) && currentUserId.equals(recipientId)) {
+        if (sendDate.isAfter(today) && currentUserId.equals(recipientOrExternalRecipientId)) {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
 
-        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId);
+        return createIsPermitted(requesteeId) || currentUserId.equals(recipientOrExternalRecipientId);
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {
@@ -427,6 +430,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setStatus(dto.getStatus());
         feedbackRequest.setSubmitDate(dto.getSubmitDate());
         feedbackRequest.setRecipientId(dto.getRecipientId());
+        feedbackRequest.setExternalRecipientId(dto.getExternalRecipientId());
 
         return feedbackRequest;
     }
