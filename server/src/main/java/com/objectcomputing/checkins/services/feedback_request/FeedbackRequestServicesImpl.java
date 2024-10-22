@@ -349,7 +349,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (requesteeIds != null && !requesteeIds.isEmpty()) {
             LOG.debug("Finding feedback requests for {} requesteeIds.", requesteeIds.size());
-            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDListToStringList(requesteeIds), Util.nullSafeUUIDToString(externalRecipientId)));
+            feedbackReqList.addAll(feedbackReqRepository.findByValuesWithRequesteeIds(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDToString(externalRecipientId), Util.nullSafeUUIDListToStringList(requesteeIds)));
         } else {
             LOG.debug("Finding feedback requests one or fewer requesteeIds: {}", requesteeId);
             feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDToString(externalRecipientId)));

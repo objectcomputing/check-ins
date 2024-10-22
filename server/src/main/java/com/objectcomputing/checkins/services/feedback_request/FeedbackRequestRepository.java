@@ -33,7 +33,7 @@ public interface FeedbackRequestRepository extends CrudRepository<FeedbackReques
             "AND (requestee_id = ANY(:requesteeIds)) " +
             "AND (:externalRecipientId IS NULL OR external_recipient_id = :externalRecipientId) "
             , nativeQuery = true)
-    List<FeedbackRequest> findByValues(@Nullable String creatorId, @Nullable String recipientId, @Nullable LocalDate oldestDate, @Nullable String reviewPeriodId, @Nullable String templateId, @TypeDef(type = DataType.STRING_ARRAY) List<String> requesteeIds, @Nullable String externalRecipientId);
+    List<FeedbackRequest> findByValuesWithRequesteeIds(@Nullable String creatorId, @Nullable String recipientId, @Nullable LocalDate oldestDate, @Nullable String reviewPeriodId, @Nullable String templateId, @Nullable String externalRecipientId, @TypeDef(type = DataType.STRING_ARRAY) List<String> requesteeIds);
 
     @Query(value = "SELECT * " +
             "FROM feedback_requests " +

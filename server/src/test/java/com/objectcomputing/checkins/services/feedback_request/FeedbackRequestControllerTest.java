@@ -99,6 +99,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
         dto.setRecipientId(feedbackRequest.getRecipientId());
+        dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
         return dto;
     }
 
@@ -120,6 +121,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assertEquals(feedbackRequest.getSendDate(), dto.getSendDate());
         assertEquals(feedbackRequest.getDueDate(), dto.getDueDate());
         assertEquals(feedbackRequest.getRecipientId(), dto.getRecipientId());
+        assertEquals(feedbackRequest.getExternalRecipientId(), dto.getExternalRecipientId());
     }
 
     @Test
@@ -131,7 +133,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, memberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, memberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -154,7 +156,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithExternalRecipient(admin, memberProfile, feedbackExternalRecipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, memberProfile, feedbackExternalRecipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -169,7 +171,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestByAssignedPDL() {
+    void testCreateFeedbackRequestByAssignedPdlToRecipient() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
@@ -177,7 +179,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         final MemberProfile recipient = createADefaultRecipient();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, employeeMemberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -191,9 +193,31 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
+    @Test
+    void testCreateFeedbackRequestByAssignedPdlToExternalRecipient() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient feedbackExternalRecipient = createADefaultFeedbackExternalRecipient();
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, feedbackExternalRecipient);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        //assert that content of some feedback request equals the test
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
 
     @Test
-    void testCreateFeedbackRequestSendsEmailNow() {
+    void testCreateFeedbackRequestSendsEmailNowToRecipient() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
@@ -201,7 +225,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         final MemberProfile recipient = createADefaultRecipient();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, employeeMemberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackRequest.setSendDate(LocalDate.now());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -225,7 +249,39 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestSendsEmailFuture() {
+    void testCreateFeedbackRequestSendsEmailNowToExternalRecipient() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient);
+        feedbackRequest.setSendDate(LocalDate.now());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        String fromName = pdlMemberProfile.getFirstName() + " " + pdlMemberProfile.getLastName();
+        //verify appropriate email was sent
+        assertTrue(response.getBody().isPresent());
+        assertEquals(1, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL",
+                fromName,
+                pdlMemberProfile.getWorkEmail(),
+                checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
+                "You have received a feedback request",
+                externalRecipient.getEmail(),
+                emailSender.events.getFirst()
+        );
+    }
+
+    @Test
+    void testCreateFeedbackRequestSendsEmailFutureToRecipient() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
@@ -233,7 +289,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         final MemberProfile recipient = createADefaultRecipient();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, employeeMemberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -248,7 +304,30 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestByUnassignedPdl() {
+    void testCreateFeedbackRequestSendsEmailFutureToExternalRecipient() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        //verify appropriate email was not sent
+        assertTrue(response.getBody().isPresent());
+        assertEquals(0, emailSender.events.size());
+    }
+
+    @Test
+    void testCreateFeedbackRequestByUnassignedPdlToRecipient() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createASecondDefaultMemberProfile();
@@ -256,7 +335,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createAnUnrelatedUser();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(memberProfileForPDL, memberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(memberProfileForPDL, memberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -269,14 +348,35 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestByMember() {
+    void testCreateFeedbackRequestByUnassignedPdlToExternalRecipient() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createASecondDefaultMemberProfile();
+        assignPdlRole(memberProfileForPDL);
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(memberProfileForPDL, memberProfile, externalRecipient);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(memberProfileForPDL.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(responseException);
+    }
+
+    @Test
+    void testCreateFeedbackRequestByMemberToRecipient() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile requesteeProfile = createASecondDefaultMemberProfile();
         MemberProfile recipient = createAnUnrelatedUser();
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(requesteeProfile, memberProfile, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(requesteeProfile, memberProfile, recipient);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request
@@ -289,14 +389,56 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestWithInvalidCreatorId() {
+    void testCreateFeedbackRequestByMemberToExternalRecipient() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile requesteeProfile = createASecondDefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(requesteeProfile, memberProfile, externalRecipient);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(requesteeProfile.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithInvalidCreatorIdToRecipient() {
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         assignAdminRole(admin);
 
         // Create feedback request with invalid creator ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setCreatorId(UUID.randomUUID());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Cannot save feedback request with invalid creator ID", responseException.getMessage());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithInvalidCreatorIdToExternalRecipient() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        assignAdminRole(admin);
+
+        // Create feedback request with invalid creator ID
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, externalRecipient);
         feedbackRequest.setCreatorId(UUID.randomUUID());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -318,7 +460,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with invalid recipient ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
         feedbackRequest.setRecipientId(UUID.randomUUID());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -333,14 +475,36 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestWithInvalidRequesteeId() {
+    void testCreateFeedbackRequestWithInvalidExternalRecipientId() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        assignAdminRole(admin);
+
+        // Create feedback request with invalid recipient ID
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, externalRecipient);
+        feedbackRequest.setExternalRecipientId(UUID.randomUUID());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Cannot save feedback request with invalid external-recipient ID", responseException.getMessage());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithInvalidRequesteeIdToRecipient() {
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         assignAdminRole(admin);
 
         // Create feedback request with invalid requestee ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
         feedbackRequest.setRequesteeId(UUID.randomUUID());
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -355,14 +519,60 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testCreateFeedbackRequestWithNoRequestee() {
+    void testCreateFeedbackRequestWithInvalidRequesteeIdToExternalRecipient() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        assignAdminRole(admin);
+
+        // Create feedback request with invalid requestee ID
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, externalRecipient);
+        feedbackRequest.setRequesteeId(UUID.randomUUID());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Cannot save feedback request with invalid requestee ID", responseException.getMessage());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithNoRequesteeToRecipient() {
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         assignAdminRole(admin);
 
         // Create feedback request with no requestee
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setRequesteeId(null);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message").asText();
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("requestBody.requesteeId: must not be null", error);
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithNoRequesteeToExternalRecipient() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        assignAdminRole(admin);
+
+        // Create feedback request with no requestee
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, externalRecipient);
         feedbackRequest.setRequesteeId(null);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -386,7 +596,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with no recipient(s)
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
         feedbackRequest.setRecipientId(null);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -403,6 +613,31 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
+    void testCreateFeedbackRequestWithBothRecipientsAndExternalRecipients() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        assignAdminRole(admin);
+
+        // Create feedback request with both a recipient and an external recipient
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setExternalRecipientId(externalRecipient.getId());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Cannot save feedback request with both recipient and external-recipient ID", error);
+    }
+
+    @Test
     void testCreateFeedbackRequestWithNoSelectedTemplate() {
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
@@ -410,7 +645,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with no template
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
         feedbackRequest.setTemplateId(null);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
@@ -434,7 +669,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(admin);
 
         // Create feedback request with invalid requestee ID
-        final FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(admin, requestee, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.of(1111, 11, 2));
         feedbackRequest.setDueDate(LocalDate.of(1111, 11, 1));
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
@@ -450,7 +685,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testGetFeedbackRequestByAdmin() {
+    void testGetFeedbackRequestByAdminToRecipient() {
         //Create users
         MemberProfile adminMemberProfile = createADefaultMemberProfile();
         MemberProfile pdlMemberProfile = createASecondDefaultMemberProfile();
@@ -476,7 +711,32 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testGetFeedbackRequestByAssignedPDL() {
+    void testGetFeedbackRequestByAdminToExternalRecipient() {
+        //Create users
+        MemberProfile adminMemberProfile = createADefaultMemberProfile();
+        MemberProfile pdlMemberProfile = createASecondDefaultMemberProfile();
+        MemberProfile requesteeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+
+        //Setup Roles and permissions for users
+        assignAdminRole(adminMemberProfile);
+        assignPdlRole(pdlMemberProfile);
+        assignMemberRole(requesteeMemberProfile);
+
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requesteeMemberProfile, externalRecipient);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(adminMemberProfile.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
+    @Test
+    void testGetFeedbackRequestByAssignedPDLToRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -494,7 +754,25 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testGetFeedbackRequestByUnassignedPdl() {
+    void testGetFeedbackRequestByAssignedPDLToExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, externalRecipient);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
+    @Test
+    void testGetFeedbackRequestByUnassignedPdlToRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile unrelatedPdl = createASecondDefaultMemberProfile();
         assignPdlRole(unrelatedPdl);
@@ -512,13 +790,50 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testGetFeedbackRequestByRequestee() {
+    void testGetFeedbackRequestByUnassignedPdlToExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile unrelatedPdl = createASecondDefaultMemberProfile();
+        assignPdlRole(unrelatedPdl);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, externalRecipient);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(unrelatedPdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(responseException);
+    }
+
+    @Test
+    void testGetFeedbackRequestByRequesteeToRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile memberProfile2 = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(memberProfile2.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        // requestee should not be able to get the feedback request about them
+        assertUnauthorized(responseException);
+    }
+
+    @Test
+    void testGetFeedbackRequestByRequesteeToExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile memberProfile2 = createASecondDefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient);
 
         //get feedback request
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
@@ -541,6 +856,25 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //get feedback request
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        // recipient must be able to get the feedback request
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
+    @Test
+    void testGetFeedbackRequestByExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, externalRecipient);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(externalRecipient.getEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         // recipient must be able to get the feedback request
@@ -1009,7 +1343,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request that has not been submitted yet
-        final FeedbackRequest feedbackReq = createFeedbackRequestWithRecipient(pdl, requestee, recipient);
+        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(null);
         getFeedbackRequestRepository().save(feedbackReq);
 
@@ -1033,7 +1367,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request that has already been submitted
-        final FeedbackRequest feedbackReq = createFeedbackRequestWithRecipient(pdl, requestee, recipient);
+        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(LocalDate.now());
         getFeedbackRequestRepository().save(feedbackReq);
 
@@ -1058,7 +1392,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request that has already been submitted
-        final FeedbackRequest feedbackReq = createFeedbackRequestWithRecipient(pdl, requestee, recipient);
+        final FeedbackRequest feedbackReq = createFeedbackRequest(pdl, requestee, recipient);
         feedbackReq.setSubmitDate(LocalDate.now());
         feedbackReq.setStatus("submitted");
         getFeedbackRequestRepository().save(feedbackReq);
@@ -1275,7 +1609,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, requestee, recipient);
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
@@ -1299,7 +1633,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assignAdminRole(adminUser);
 
         // Save feedback request with send date in the future
-        FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, requestee, recipient);
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
@@ -1321,7 +1655,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         MemberProfile recipient = createADefaultRecipient();
 
         // Save feedback request with send date in the future
-        FeedbackRequest feedbackRequest = createFeedbackRequestWithRecipient(pdlMemberProfile, requestee, recipient);
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
