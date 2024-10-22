@@ -46,9 +46,9 @@ public class FeedbackRequest {
     private UUID requesteeId;
 
     @Column(name = "recipient_id")
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback")
-    @Nullable
     private UUID recipientId;
 
     @Column(name = "template_id")

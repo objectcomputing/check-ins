@@ -19,6 +19,7 @@ public class FeedbackRequestResponseDTO {
     @Schema(description = "unique id of the feedback request")
     private UUID id;
 
+    @Nullable
     @Schema(description = "id of the person who was requested to give feedback")
     private UUID recipientId;
 
@@ -26,7 +27,7 @@ public class FeedbackRequestResponseDTO {
     @Schema(description = "id of the feedback request creator")
     private UUID creatorId;
 
-    @Nullable
+    @NotNull
     @Schema(description = "id of the person who is getting feedback requested on them")
     private UUID requesteeId;
 

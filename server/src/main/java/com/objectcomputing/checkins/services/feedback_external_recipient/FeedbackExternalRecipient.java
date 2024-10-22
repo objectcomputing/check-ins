@@ -66,12 +66,12 @@ public class FeedbackExternalRecipient {
     private String companyName;
 
     public FeedbackExternalRecipient(
-            @NotBlank String email, @Nullable String firstName, @Nullable String lastName, @Nullable String company
+            @NotBlank String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName
     ) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.companyName = company;
+        this.companyName = companyName;
     }
 
     public FeedbackExternalRecipient() {}

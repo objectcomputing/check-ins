@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
@@ -35,9 +37,11 @@ import java.util.UUID;
 public class FeedbackRequestController {
 
     private final FeedbackRequestServices feedbackReqServices;
+    private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
 
-    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices) {
+    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
         this.feedbackReqServices = feedbackReqServices;
+        this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
     }
 
     /**
@@ -49,8 +53,22 @@ public class FeedbackRequestController {
     @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
     @Post
     public HttpResponse<FeedbackRequestResponseDTO> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
+        FeedbackRequest savedFeedbackRequest;
         FeedbackRequest feedbackRequest = fromDTO(requestBody);
-        FeedbackRequest savedFeedbackRequest = feedbackReqServices.save(feedbackRequest);
+        /*
+        FeedbackExternalRecipient feedbackExternalRecipient = new FeedbackExternalRecipient();
+        feedbackExternalRecipient.setEmail("None@none.com");
+        feedbackExternalRecipient.setCompanyName("OCI");
+        feedbackExternalRecipient.setFirstName("None");
+        feedbackExternalRecipient.setLastName("None");
+        feedbackExternalRecipient = feedbackExternalRecipientServices.save(feedbackExternalRecipient);
+        feedbackRequest.setExternalRecipientId(feedbackExternalRecipient.getId());
+        */
+        try {
+            savedFeedbackRequest = feedbackReqServices.save(feedbackRequest);
+        } catch (Exception e) {
+            throw e;
+        }
         return HttpResponse.created(fromEntity(savedFeedbackRequest))
                 .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedbackRequest.getId())));
     }

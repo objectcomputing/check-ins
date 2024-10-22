@@ -102,6 +102,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot save feedback request with invalid recipient ID");
         }
 
+        /** TODO Luch
         try {
             if (feedbackRequest.getExternalRecipientId() != null) {
                 memberProfileServices.getById(feedbackRequest.getExternalRecipientId());
@@ -109,6 +110,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid external-recipient ID");
         }
+         **/
 
         try {
             memberProfileServices.getById(feedbackRequest.getRequesteeId());
@@ -127,7 +129,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackRequest.getId() != null) {
             throw new BadArgException("Attempted to save feedback request with non-auto-populated ID");
         }
-
 
         if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())) {
             throw new BadArgException("Send date of feedback request must be before the due date.");
@@ -149,7 +150,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         UUID recipientOrExternalRecipientId;
         String reviewerFirstName, reviewerEmail;
 
-        if (memberProfileServices.getById(storedRequest.getExternalRecipientId()) != null) {
+        if (storedRequest.getExternalRecipientId() != null) {
             recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
             reviewerFirstName = "";
             reviewerEmail = "";

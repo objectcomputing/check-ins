@@ -7,9 +7,16 @@ import java.util.UUID;
 
 @Singleton
 public class FeedbackExternalRecipientServicesImpl implements FeedbackExternalRecipientServices {
+
+    private final FeedbackExternalRecipientRepository feedbackExternalRecipientRepository;
+
+    public FeedbackExternalRecipientServicesImpl(FeedbackExternalRecipientRepository feedbackExternalRecipientRepository) {
+        this.feedbackExternalRecipientRepository = feedbackExternalRecipientRepository;
+    }
+
     @Override
     public FeedbackExternalRecipient save(FeedbackExternalRecipient feedbackExternalRecipient) {
-        return null;
+        return feedbackExternalRecipientRepository.save(feedbackExternalRecipient);
     }
 
     @Override
