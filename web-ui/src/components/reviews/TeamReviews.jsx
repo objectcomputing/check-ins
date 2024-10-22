@@ -1055,7 +1055,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                 </IconButton>
               )}
 
-              {canApprove && approvalState &&
+              {canApprove &&
                selectHasUpdateReviewAssignmentsPermission(state) && (
                 <Button onClick={() => toggleApproval(member)}>
                   {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
