@@ -194,6 +194,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
          * status has to be updated with any permissions--fired on submission from any recipient
          * submit date can be updated only when the recipient is logged in--fired on submission from any recipient
          */
+        UUID recipientOrExternalRecipientId;
+        MemberProfile reviewerMemberProfile;
+        FeedbackExternalRecipient reviewerExternalRecipient;
+        String reviewerFirstName, reviewerEmail;
 
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
         FeedbackRequest originalFeedback = null;
@@ -255,7 +259,19 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
-        MemberProfile reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
+
+        if (storedRequest.getExternalRecipientId() != null) {
+            recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
+            reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
+            reviewerFirstName = reviewerExternalRecipient.getFirstName();
+            reviewerEmail = reviewerExternalRecipient.getEmail();
+        } else {
+            recipientOrExternalRecipientId = storedRequest.getRecipientId();
+            reviewerMemberProfile = memberProfileServices.getById(recipientOrExternalRecipientId);
+            reviewerFirstName = reviewerMemberProfile.getFirstName();
+            reviewerEmail = reviewerMemberProfile.getWorkEmail();
+        }
+
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         // Send email if the feedback request has been reopened for edits
         if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
@@ -263,12 +279,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             String senderName = MemberProfileUtils.getFullName(creator);
             String newContent = String.format(
                                   templateToString(updateRequestTemplate),
-                                  reviewer.getFirstName(), senderName,
+                                    reviewerFirstName, senderName,
                                   MemberProfileUtils.getFullName(requestee),
                                   String.format("%s/feedback/submit?request=%s",
                                                 webURL, storedRequest.getId().toString()));
 
-            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewer.getWorkEmail());
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewerEmail);
         }
 
         // Send email if the feedback request has been reassigned
@@ -282,7 +298,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         // Send email to reviewers.  But, only when the requestee is the
-        // recipient (i.e., a self-review).
+        // recipient (i.e., a self-review)
+        // 2024-10-22 - This should not involve the external-recipient ID, only the recipient-id, since self-review should always only use recipient-id
         if (reviewAssignmentsSet != null && reviewAssignmentsSet.size() > 0 &&
             feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
             sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);    
