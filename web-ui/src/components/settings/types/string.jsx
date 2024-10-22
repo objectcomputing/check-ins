@@ -1,5 +1,11 @@
 import React from 'react';
-import { Input, Typography } from '@mui/material';
+import {
+  Select,
+  MenuItem,
+  ListItemText,
+  Input,
+  Typography
+} from '@mui/material';
 import { createLabelId } from '../../../helpers/strings.js';
 
 /**
@@ -17,6 +23,7 @@ import { createLabelId } from '../../../helpers/strings.js';
 const SettingsString = ({
   name,
   description,
+  values,
   value,
   placeholder,
   handleChange
@@ -31,6 +38,18 @@ const SettingsString = ({
         </Typography>
       </label>
       {description && <p>{description}</p>}
+      {values && values.length > 0 ?
+      <Select
+        labelId={labelId}
+        value={value}
+        onChange={handleChange}
+      >
+        {values.map((option) => (
+          <MenuItem key={option} value={option}>
+            <ListItemText primary={option} />
+          </MenuItem>
+        ))}
+      </Select> :
       <Input
         id={labelId}
         className="settings-control"
@@ -38,7 +57,7 @@ const SettingsString = ({
         value={value}
         placeholder={placeholder ?? `Enter ${name}`}
         onChange={handleChange}
-      />
+      />}
     </div>
   );
 };

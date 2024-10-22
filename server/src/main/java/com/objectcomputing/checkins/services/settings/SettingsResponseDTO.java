@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
+import java.util.List;
 
 @Setter
 @Getter
@@ -35,6 +36,10 @@ public class SettingsResponseDTO {
     @NotNull
     @Schema(description = "type of the setting")
     private SettingOption.Type type;
+
+    @NotNull
+    @Schema(description = "possible values for the setting")
+    private List<String> values;
 
     @NotBlank
     @Schema(description = "value of the setting")
