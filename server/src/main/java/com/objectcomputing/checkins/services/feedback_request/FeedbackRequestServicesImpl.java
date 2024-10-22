@@ -330,10 +330,16 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
         final LocalDate sendDate = feedbackReq.get().getSendDate();
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
-        final UUID recipientId;
-        recipientId = feedbackReq.get().getRecipientId() != null ? feedbackReq.get().getRecipientId() : feedbackReq.get().getExternalRecipientId();
-        if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        final UUID recipientId = feedbackReq.get().getRecipientId();
+        final UUID externalRecipientId = feedbackReq.get().getExternalRecipientId();
+        if (recipientId != null) {
+            if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
+            }
+        } else {
+            if (externalRecipientId == null) {
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
+            }
         }
 
         return feedbackReq.get();

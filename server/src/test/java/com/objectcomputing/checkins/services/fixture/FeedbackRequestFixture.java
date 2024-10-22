@@ -20,7 +20,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      * @param templateId The UUID of the FeedbackTemplate
      * @return The created {@link FeedbackRequest}
      */
-    default FeedbackRequest createSampleFeedbackRequestWithRecipient(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
+    default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
         return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null, null);
     }
@@ -47,9 +47,23 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      * @param reviewPeriod the {@link ReviewPeriod} that this feedback request is associated with
      * @return The created {@link FeedbackRequest}
      */
-    default FeedbackRequest createSampleFeedbackRequestWithRecipient(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
+    default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null); /** TODO Luch reciplientg **/
+        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null);
+    }
+
+    /**
+     * Creates a sample feedback request
+     * @param creator The {@link MemberProfile} of the creator of the feedback request
+     * @param requestee The {@link MemberProfile} of the requestee of the feedback request
+     * @param externalRecipient The {@link FeedbackExternalRecipient} of the external-recipient giving feedback
+     * @param templateId The UUID of the FeedbackTemplate
+     * @param reviewPeriod the {@link ReviewPeriod} that this feedback request is associated with
+     * @return The created {@link FeedbackRequest}
+     */
+    default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, UUID templateId, ReviewPeriod reviewPeriod) {
+        LocalDate testDate = LocalDate.of(2010, 10, 8);
+        return new FeedbackRequest(creator.getId(), requestee.getId(), null, templateId, testDate, null, "pending", null, reviewPeriod.getId(), externalRecipient.getId());
     }
 
     /**
@@ -88,12 +102,30 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      */
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null)); /** TODO Luch recipient **/
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null));
+    }
+
+    /**
+     * Saves a sample feedback request
+     * @param creator The {@link MemberProfile} of the creator of the feedback request
+     * @param externalRecipient The {@link FeedbackExternalRecipient} of the external-recipient giving feedback
+     * @param requestee The {@link MemberProfile} of the requestee of the feedback request
+     * @param templateId The UUID of the FeedbackTemplate
+     * @return The saved {@link FeedbackRequest}
+     */
+    default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, UUID templateId, ReviewPeriod reviewPeriod) {
+        LocalDate testDate = LocalDate.of(2010, 10, 8);
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), null, templateId, testDate, null, "pending", null, reviewPeriod.getId(), externalRecipient.getId()));
     }
 
     default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, String status) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, status, null, null, null)); /** TODO Luch recipient **/
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, status, null, null, null));
+    }
+
+    default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, UUID templateId, String status) {
+        LocalDate testDate = LocalDate.of(2010, 10, 8);
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), null, templateId, testDate, null, status, null, null, externalRecipient.getId()));
     }
 
     default MemberProfile createADefaultRecipient() {
@@ -115,7 +147,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
     default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
         FeedbackTemplate template = createFeedbackTemplate(creator.getId());
         getFeedbackTemplateRepository().save(template);
-        return createSampleFeedbackRequestWithRecipient(creator, requestee, recipient, template.getId());
+        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId());
     }
 
     default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient) {
@@ -127,7 +159,13 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
     default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, ReviewPeriod reviewPeriod) {
         FeedbackTemplate template = createAnotherFeedbackTemplate(creator.getId());
         getFeedbackTemplateRepository().save(template);
-        return createSampleFeedbackRequestWithRecipient(creator, requestee, recipient, template.getId(), reviewPeriod);
+        return createSampleFeedbackRequest(creator, requestee, recipient, template.getId(), reviewPeriod);
+    }
+
+    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, ReviewPeriod reviewPeriod) {
+        FeedbackTemplate template = createAnotherFeedbackTemplate(creator.getId());
+        getFeedbackTemplateRepository().save(template);
+        return createSampleFeedbackRequest(creator, requestee, externalRecipient, template.getId(), reviewPeriod);
     }
 
     default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
@@ -144,6 +182,11 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
         final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
         feedbackRequest.setSendDate(sendDate);
         return getFeedbackRequestRepository().save(feedbackRequest);
+    }
+
+    default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, ReviewPeriod reviewPeriod) {
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, externalRecipient, reviewPeriod);
+        return saveSampleFeedbackRequest(creator, requestee, externalRecipient, feedbackRequest.getTemplateId(), reviewPeriod);
     }
 
     default List<FeedbackRequest> getFeedbackRequests(MemberProfile recipient) {

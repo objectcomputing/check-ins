@@ -96,6 +96,7 @@ public class FeedbackRequestController {
      * @param id {@link UUID} ID of the request
      * @return {@link FeedbackRequestResponseDTO}
      */
+    //@Secured(SecurityRule.IS_ANONYMOUS)
     @Get("/{id}")
     @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
