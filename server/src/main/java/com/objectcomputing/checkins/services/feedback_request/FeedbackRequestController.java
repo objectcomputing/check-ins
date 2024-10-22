@@ -55,15 +55,6 @@ public class FeedbackRequestController {
     public HttpResponse<FeedbackRequestResponseDTO> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
         FeedbackRequest savedFeedbackRequest;
         FeedbackRequest feedbackRequest = fromDTO(requestBody);
-        /*
-        FeedbackExternalRecipient feedbackExternalRecipient = new FeedbackExternalRecipient();
-        feedbackExternalRecipient.setEmail("None@none.com");
-        feedbackExternalRecipient.setCompanyName("OCI");
-        feedbackExternalRecipient.setFirstName("None");
-        feedbackExternalRecipient.setLastName("None");
-        feedbackExternalRecipient = feedbackExternalRecipientServices.save(feedbackExternalRecipient);
-        feedbackRequest.setExternalRecipientId(feedbackExternalRecipient.getId());
-        */
         try {
             savedFeedbackRequest = feedbackReqServices.save(feedbackRequest);
         } catch (Exception e) {
@@ -126,11 +117,6 @@ public class FeedbackRequestController {
     @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,requesteeIds}")
     public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds, @Nullable UUID externalRecipientId) {
-        List<FeedbackRequestResponseDTO> feedbackRequestResponseDTOList = feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds, externalRecipientId)
-                .stream()
-                .map(this::fromEntity)
-                .toList();
-
         return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds, externalRecipientId)
                 .stream()
                 .map(this::fromEntity)

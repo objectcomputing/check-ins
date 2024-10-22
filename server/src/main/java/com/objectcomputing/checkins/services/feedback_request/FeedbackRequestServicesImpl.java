@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.email.Email;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
 import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
@@ -90,8 +91,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot save feedback request with invalid creator ID");
         }
 
-        if (feedbackRequest.getRecipientId() == null && feedbackRequest.getExternalRecipientId() == null) {
-            throw new BadArgException("Cannot save feedback request without recipient/external-recipient ID");
+        if (feedbackRequest.getExternalRecipientId() != null && feedbackRequest.getRecipientId() != null) {
+            throw new BadArgException("Cannot save feedback request with both recipient and external-recipient ID");
+        }
+        if (feedbackRequest.getExternalRecipientId() == null && feedbackRequest.getRecipientId() == null) {
+            throw new BadArgException("Cannot save feedback request without both recipient and external-recipient ID");
         }
 
         try {
@@ -102,21 +106,20 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot save feedback request with invalid recipient ID");
         }
 
-        /** TODO Luch
         try {
             if (feedbackRequest.getExternalRecipientId() != null) {
-                memberProfileServices.getById(feedbackRequest.getExternalRecipientId());
+                feedbackExternalRecipientServices.getById(feedbackRequest.getExternalRecipientId());
             }
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid external-recipient ID");
         }
-         **/
 
         try {
             memberProfileServices.getById(feedbackRequest.getRequesteeId());
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid requestee ID");
         }
+
     }
 
     @Override
@@ -144,7 +147,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public void sendNewRequestEmail(FeedbackRequest storedRequest) {
         MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
-        MemberProfile reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
+        MemberProfile reviewerMemberProfile;
+        FeedbackExternalRecipient reviewerExternalRecipient;
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         String senderName = MemberProfileUtils.getFullName(creator);
         UUID recipientOrExternalRecipientId;
@@ -152,13 +156,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         if (storedRequest.getExternalRecipientId() != null) {
             recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
-            reviewerFirstName = "";
-            reviewerEmail = "";
+            reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
+            reviewerFirstName = reviewerExternalRecipient.getFirstName();
+            reviewerEmail = reviewerExternalRecipient.getEmail();
         } else {
-            reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
             recipientOrExternalRecipientId = storedRequest.getRecipientId();
-            reviewerFirstName = reviewer.getFirstName();
-            reviewerEmail = reviewer.getWorkEmail();
+            reviewerMemberProfile = memberProfileServices.getById(recipientOrExternalRecipientId);
+            recipientOrExternalRecipientId = storedRequest.getRecipientId();
+            reviewerFirstName = reviewerMemberProfile.getFirstName();
+            reviewerEmail = reviewerMemberProfile.getWorkEmail();
         }
 
         String newContent = String.format(
@@ -207,7 +213,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             reviewAssignmentsSet = reviewAssignmentRepository.findByReviewPeriodIdAndRevieweeId(feedbackRequest.getReviewPeriodId(), feedbackRequest.getRequesteeId());
         }        
 
-        boolean reassignAttempted = !Objects.equals(originalFeedback.getRecipientId(), feedbackRequest.getRecipientId());
+        boolean reassignAttempted = false;
+        if ((!Objects.equals(originalFeedback.getRecipientId(), feedbackRequest.getRecipientId())) || (!Objects.equals(originalFeedback.getExternalRecipientId(), feedbackRequest.getExternalRecipientId()))) {
+            reassignAttempted = true;
+        }
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
