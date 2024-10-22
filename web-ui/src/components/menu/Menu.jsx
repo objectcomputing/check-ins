@@ -13,7 +13,12 @@ import {
   selectHasSkillsReportPermission,
   selectHasTeamSkillsReportPermission,
   selectHasViewPulseReportPermission,
-  selectIsAdmin
+  selectIsAdmin,
+  selectHasEarnedCertificationsPermission,
+  selectHasMeritReportPermission,
+  selectHasVolunteeringEventsPermission,
+  selectHasVolunteeringOrganizationsPermission,
+  selectHasVolunteeringRelationshipsPermission,
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 
@@ -136,7 +141,9 @@ function Menu({ children }) {
       links.push(['/birthday-reports', 'Birthdays']);
     }
 
-    links.push(['/certification-reports', 'Certifications']);
+    if (selectHasEarnedCertificationsPermission(state)) {
+      links.push(['/certification-reports', 'Certifications']);
+    }
 
     if (selectHasCheckinsReportPermission(state)) {
       links.push(['/checkins-reports', 'Check-ins']);
@@ -154,8 +161,14 @@ function Menu({ children }) {
       links.push(['/team-skills-reports', 'Team Skills']);
     }
 
-    links.push(['/merit-reports', 'Merit Report']);
-    links.push(['/volunteer-reports', 'Volunteering']);
+    if (selectHasMeritReportPermission(state)) {
+      links.push(['/merit-reports', 'Merit Report']);
+    }
+
+    if (selectHasVolunteeringEventsPermission(state) ||
+        selectHasVolunteeringRelationshipsPermission(state)) {
+      links.push(['/volunteer-reports', 'Volunteering']);
+    }
 
     return links;
   };

@@ -4,7 +4,6 @@ import { Box, Tab, Tabs, Typography, Card, CardHeader, CardContent, Avatar } fro
 
 import {
   selectHasVolunteeringEventsPermission,
-  selectHasVolunteeringOrganizationsPermission,
   selectHasVolunteeringRelationshipsPermission,
   noPermission,
 } from '../../context/selectors';
@@ -58,7 +57,6 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
   let tabContent = 0;
 
   return (selectHasVolunteeringEventsPermission(state) ||
-          selectHasVolunteeringOrganizationsPermission(state) ||
           selectHasVolunteeringRelationshipsPermission(state)) ? (
     <Card className="volunteer-activities-card">
       <CardContent className="volunteer-tables">
