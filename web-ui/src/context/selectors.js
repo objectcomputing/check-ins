@@ -186,6 +186,10 @@ export const selectHasSendEmailPermission = hasPermission(
   'CAN_SEND_EMAIL'
 );
 
+export const selectCanViewCheckinsPermission = hasPermission(
+  'CAN_VIEW_CHECKINS'
+);
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   userProfile =>

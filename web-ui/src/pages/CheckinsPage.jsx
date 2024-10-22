@@ -12,7 +12,8 @@ import {
   selectCsrfToken,
   selectCheckin,
   selectProfile,
-  selectCheckinsForMember
+  selectCheckinsForMember,
+  selectCanViewCheckinsPermission,
 } from '../context/selectors';
 import { getCheckins, createNewCheckin } from '../context/thunks';
 import { UPDATE_CHECKIN, UPDATE_TOAST } from '../context/actions';
@@ -72,7 +73,7 @@ const CheckinsPage = () => {
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   useEffect(() => {
-    if (selectedProfile) {
+    if (selectedProfile && selectCanViewCheckinsPermission(state)) {
       getCheckins(memberId, selectedProfile.pdlId, dispatch, csrf);
     }
   }, [memberId, selectedProfile, csrf, dispatch]);

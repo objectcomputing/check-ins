@@ -7,7 +7,8 @@ import { UPDATE_CHECKINS } from '../../context/actions';
 import {
   selectCurrentUserId,
   selectMostRecentCheckin,
-  selectCsrfToken
+  selectCsrfToken,
+  selectCanViewCheckinsPermission,
 } from '../../context/selectors';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -53,7 +54,7 @@ const Personnel = () => {
   // Get checkins per personnel
   useEffect(() => {
     async function updateCheckins() {
-      if (personnel) {
+      if (personnel && selectCanViewCheckinsPermission(state)) {
         for (const person of personnel) {
           let res = await getCheckinByMemberId(person.id, csrf);
           let data =
