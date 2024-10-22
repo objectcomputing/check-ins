@@ -68,7 +68,10 @@ import {
   selectReviewPeriod,
   selectSupervisors,
   selectProfile,
-  selectTeamMembersBySupervisorId
+  selectTeamMembersBySupervisorId,
+  selectHasCreateReviewAssignmentsPermission,
+  selectHasDeleteReviewAssignmentsPermission,
+  selectHasUpdateReviewAssignmentsPermission,
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
@@ -127,9 +130,11 @@ const TeamReviews = ({ onBack, periodId }) => {
   const location = useLocation();
 
   const [openMode, setOpenMode] = useState(false);
-  const [approvalMode, setApprovalMode] = useState(false);
+  const [managerApprovalMode, setManagerApprovalMode] = useState(false);
+  const [approvalState, setApprovalState] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const [canUpdate, setCanUpdate] = useState(false);
+  const [canApprove, setCanApprove] = useState(false);
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
@@ -173,19 +178,22 @@ const TeamReviews = ({ onBack, periodId }) => {
     const isManager = supervisors.some(s => s.id === myId);
     const period = selectReviewPeriod(state, periodId);
     if (period) {
-      setApprovalMode(
-        isManager && period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
-      );
-      setOpenMode(isManager && period.reviewStatus === ReviewStatus.OPEN);
+      setApprovalState(period.reviewStatus === ReviewStatus.AWAITING_APPROVAL);
+      setManagerApprovalMode(isManager && approvalState);
     }
 
-    setCanUpdate(selectHasUpdateReviewPeriodPermission(state) &&
-                 period?.reviewStatus !== ReviewStatus.OPEN);
+    setOpenMode(period?.reviewStatus === ReviewStatus.OPEN);
+    setCanUpdate(!openMode &&
+                 selectHasUpdateReviewPeriodPermission(state));
+    setCanApprove(approvalState &&
+                  selectHasUpdateReviewAssignmentsPermission(state));
+
+
   }, [state]);
 
   useEffect(() => {
     loadTeamMembers();
-  }, [approvalMode, assignments, showAll]);
+  }, [managerApprovalMode, assignments, showAll]);
 
   const editReviewers = member => {
     setSelectedMember(member);
@@ -205,7 +213,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const loadTeamMembers = () => {
     let source;
-    if (!approvalMode || (isAdmin && showAll)) {
+    if (!managerApprovalMode || (isAdmin && showAll)) {
       source = currentMembers;
     } else {
       // Get the direct reports of the current user who is a manager.
@@ -769,7 +777,8 @@ const TeamReviews = ({ onBack, periodId }) => {
             key={reviewer.id}
             label={openMode ? statusLabel : reviewerName}
             variant={variant}
-            onDelete={canUpdate && !openMode && hasReviewer ?
+            onDelete={!openMode && hasReviewer &&
+                      selectHasDeleteReviewAssignmentsPermission(state) ?
                           () => deleteReviewer(member, reviewer) : null}
             style={{backgroundColor: backgroundColor}}
           />);
@@ -901,7 +910,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const visibleTeamMembers = () => {
     const query = nameQuery.trim().toLowerCase();
-    if (!approvalMode || query.length === 0) return teamMembers;
+    if (!managerApprovalMode || query.length === 0) return teamMembers;
 
     return teamMembers.filter(member =>
       member.name.toLowerCase().includes(query)
@@ -962,7 +971,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         </Alert>
       )}
 
-      {approvalMode && (
+      {canApprove && (
           <div id="approval-row" style={{ display: 'flex', alignItems: 'center' }}>
             {/* Wrapper div for TextField and Switch */}
             <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
@@ -997,7 +1006,7 @@ const TeamReviews = ({ onBack, periodId }) => {
               )}
             </div>
             {/* Button aligned to the right */}
-            {canUpdate && (
+            {canApprove && (
                 <div style={{ marginLeft: 'auto' }}>
                   <Button onClick={() => setConfirmApproveAllOpen(true)}>
                     Approve All
@@ -1035,7 +1044,9 @@ const TeamReviews = ({ onBack, periodId }) => {
               <Typography>Reviewers:</Typography>
               {renderReviewers(member)}
 
-              {canUpdate && (
+              {!openMode &&
+               selectHasCreateReviewAssignmentsPermission(state) &&
+               selectHasDeleteReviewAssignmentsPermission(state) && (
                 <IconButton
                   aria-label="Edit Reviewers"
                   onClick={() => editReviewers(member)}
@@ -1044,7 +1055,8 @@ const TeamReviews = ({ onBack, periodId }) => {
                 </IconButton>
               )}
 
-              {canUpdate && approvalMode && (
+              {canApprove && approvalState &&
+               selectHasUpdateReviewAssignmentsPermission(state) && (
                 <Button onClick={() => toggleApproval(member)}>
                   {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
                 </Button>
