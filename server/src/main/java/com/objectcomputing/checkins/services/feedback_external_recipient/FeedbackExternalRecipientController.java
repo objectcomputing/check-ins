@@ -67,6 +67,23 @@ public class FeedbackExternalRecipientController {
                 .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId())));
     }
 
+    /**
+     * Get feedback request by ID
+     *
+     * @param id {@link UUID} ID of the request
+     * @return {@link FeedbackRequestResponseDTO}
+     */
+    //@Secured(SecurityRule.IS_ANONYMOUS)
+    @Get("/{id}")
+    public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("Missing required parameter: externalRecipientId");
+        }
+        return feedbackRequest == null ? HttpResponse.notFound() : HttpResponse.ok(fromEntity(feedbackRequest))
+                .headers(headers -> headers.location(URI.create("/feedback_request" + feedbackRequest.getId())));
+    }
+
     private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
         FeedbackRequestResponseDTO dto = new FeedbackRequestResponseDTO();
         dto.setId(feedbackRequest.getId());

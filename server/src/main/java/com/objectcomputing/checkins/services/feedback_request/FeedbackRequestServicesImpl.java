@@ -351,9 +351,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         } else {
             if (externalRecipientId == null) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
+            } else {
+                if (!getIsPermittedForExternalRecipient(requesteeId, sendDate)) {
+                    throw new PermissionException(NOT_AUTHORIZED_MSG);
+                }
             }
         }
-
         return feedbackReq.get();
     }
 
@@ -425,6 +428,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         return createIsPermitted(requesteeId) || currentUserId.equals(recipientOrExternalRecipientId);
+    }
+
+    private boolean getIsPermittedForExternalRecipient(UUID requesteeId, LocalDate sendDate) {
+        LocalDate today = LocalDate.now();
+
+        // The recipient can only access the feedback request after it has been sent
+        if (sendDate.isAfter(today)) {
+            throw new PermissionException("You are not permitted to access this request before the send date.");
+        }
+
+        return true;
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {
