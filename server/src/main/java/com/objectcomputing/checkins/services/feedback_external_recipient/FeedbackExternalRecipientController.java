@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_external_recipient;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.feedback_request.*;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
@@ -39,9 +40,12 @@ public class FeedbackExternalRecipientController {
         this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
     }
 
-    @Get("/{?externalRecipientId}")
-    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID externalRecipientId) {
-        return feedbackReqServices.findByValues(null, null, null, null, null, null, null, null)
+    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,externalRecipientId,requesteeIds}")
+    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable UUID externalRecipientId, @Nullable List<UUID> requesteeIds) {
+        if (externalRecipientId == null) {
+            throw new BadArgException("Missing required parameter: externalRecipientId");
+        }
+        return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, externalRecipientId, requesteeIds)
                 .stream()
                 .map(this::fromEntity)
                 .toList();

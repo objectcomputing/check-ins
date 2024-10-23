@@ -184,6 +184,12 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
         return getFeedbackRequestRepository().save(feedbackRequest);
     }
 
+    default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient feedbackExternalRecipient, LocalDate sendDate) {
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, feedbackExternalRecipient);
+        feedbackRequest.setSendDate(sendDate);
+        return getFeedbackRequestRepository().save(feedbackRequest);
+    }
+
     default FeedbackRequest saveFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, ReviewPeriod reviewPeriod) {
         final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, externalRecipient, reviewPeriod);
         return saveSampleFeedbackRequest(creator, requestee, externalRecipient, feedbackRequest.getTemplateId(), reviewPeriod);
