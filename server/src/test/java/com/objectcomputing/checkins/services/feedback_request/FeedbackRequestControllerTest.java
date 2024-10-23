@@ -1691,6 +1691,25 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
+    void testUpdateStatusAndSubmitDateAuthorizedByExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient01);
+        feedbackReq.setStatus("complete");
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto);
+        final HttpResponse<FeedbackRequestResponseDTO> response = clientExternalRecipient.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get());
+    }
+
+    @Test
     void testUpdateStatusAuthorizedByCreator() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);

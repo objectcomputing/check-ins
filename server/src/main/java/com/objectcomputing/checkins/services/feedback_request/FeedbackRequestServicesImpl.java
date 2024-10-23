@@ -198,6 +198,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         MemberProfile reviewerMemberProfile;
         FeedbackExternalRecipient reviewerExternalRecipient;
         String reviewerFirstName, reviewerEmail;
+        MemberProfile currentUser;
+        boolean currentUserEqualsRequestee = false;
+
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+        } catch (NotFoundException notFoundException) {
+            currentUser = null;
+        }
+
 
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
         FeedbackRequest originalFeedback = null;
@@ -209,6 +218,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (originalFeedback == null) {
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
+
+        if (currentUser != null) currentUserEqualsRequestee = currentUser.getId().equals(originalFeedback.getRequesteeId());
 
         validateMembers(originalFeedback);
 
@@ -227,7 +238,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         // If a status update is made to anything other than submitted by the requestee, throw an error.
         if (!"submitted".equals(feedbackRequest.getStatus())
                 && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())
-                && currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
+                &&  currentUserEqualsRequestee) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -292,8 +303,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             sendNewRequestEmail(storedRequest);
         }
 
+        boolean currentUserSameAsRequestee = currentUser != null && currentUser.getId().equals(requestee.getId());
         // Send self-review completion email to supervisor and pdl if appropriate
-        if (currentUserServices.getCurrentUser().getId().equals(requestee.getId())) {
+        if (currentUserSameAsRequestee) {
             sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
         }
 
