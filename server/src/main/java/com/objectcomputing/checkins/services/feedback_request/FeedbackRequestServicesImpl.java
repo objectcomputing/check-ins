@@ -347,10 +347,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, UUID externalRecipientId, List<UUID> requesteeIds) {
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (currentUserId == null) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (requesteeIds != null && !requesteeIds.isEmpty()) {
@@ -363,15 +359,27 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
             boolean visible = false;
-            final UUID recipientIdLocal;
             if (currentUserServices.isAdmin()) {
                 visible = true;
             } else if (request != null) {
-                if (currentUserId.equals(request.getCreatorId())) visible = true;
-                if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
-                recipientIdLocal = request.getRecipientId();
-                if (currentUserId.equals(recipientIdLocal)) visible = true;
-                if (request.getExternalRecipientId() != null) visible = true;
+                MemberProfile currentUser;
+                UUID currentUserId;
+
+                try {
+                    currentUser = currentUserServices.getCurrentUser();
+                    currentUserId = currentUser.getId();
+                } catch (NotFoundException notFoundException) {
+                    currentUser = null;
+                    currentUserId = null;
+                }
+                if (currentUserId != null) {
+                    if (currentUserId.equals(request.getCreatorId())) visible = true;
+                    if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
+                    if (currentUserId.equals(request.getRecipientId())) visible = true;
+                } else {
+                    if (request.getExternalRecipientId() != null) visible = true;
+                }
+
             }
             return visible;
         }).toList();

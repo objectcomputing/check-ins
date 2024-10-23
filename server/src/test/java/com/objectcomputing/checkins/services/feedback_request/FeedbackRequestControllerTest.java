@@ -54,6 +54,10 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     HttpClient client;
 
     @Inject
+    @Client("/services/feedback/external/recipients")
+    HttpClient clientExternalRecipient;
+
+    @Inject
     CheckInsConfiguration checkInsConfiguration;
 
     @Inject
@@ -1227,9 +1231,9 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, externalRecipient);
 
         //get feedback request
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?externalRecipientId=%s", feedbackRequest.getExternalRecipientId()))
-                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?externalRecipientId=%s", feedbackRequest.getExternalRecipientId()));
+                //.basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = clientExternalRecipient.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         // recipient must be able to get the feedback request
         assertEquals(HttpStatus.OK, response.getStatus());
