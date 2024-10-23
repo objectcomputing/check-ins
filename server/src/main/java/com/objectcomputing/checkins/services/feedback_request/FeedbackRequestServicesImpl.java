@@ -346,7 +346,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, List<UUID> requesteeIds, UUID externalRecipientId) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, UUID externalRecipientId, List<UUID> requesteeIds) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if (currentUserId == null) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
@@ -369,8 +369,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             } else if (request != null) {
                 if (currentUserId.equals(request.getCreatorId())) visible = true;
                 if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
-                recipientIdLocal = request.getRecipientId() != null ? request.getRecipientId() : request.getExternalRecipientId();
+                recipientIdLocal = request.getRecipientId();
                 if (currentUserId.equals(recipientIdLocal)) visible = true;
+                if (request.getExternalRecipientId() != null) visible = true;
             }
             return visible;
         }).toList();
