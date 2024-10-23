@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { Typography } from '@mui/material';
+import { Typography, IconButton } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import './FeedbackResponseCard.css';
 import { AppContext } from '../../../context/AppContext';
 import { selectProfile } from '../../../context/selectors';
@@ -56,6 +57,12 @@ const FeedbackResponseCard = props => {
   );
 };
 
-FeedbackResponseCard.propTypes = propTypes;
+FeedbackResponseCard.propTypes = {
+  responderId: PropTypes.string.isRequired,
+  answer: PropTypes.string.isRequired,
+  inputType: PropTypes.string.isRequired,
+  sentiment: PropTypes.number,
+  handleDenyClick: PropTypes.func.isRequired
+};
 
 export default FeedbackResponseCard;
