@@ -1520,7 +1520,39 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testUpdateDueDateAuthorized() {
+    void testGetEveryAllTimeAdminToExternalRecipients() {
+        MemberProfile admin = createADefaultMemberProfile();
+        assignAdminRole(admin);
+        MemberProfile pdlMemberProfile = createASecondDefaultMemberProfile();
+        MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        final FeedbackExternalRecipient externalRecipient02 = createASecondDefaultFeedbackExternalRecipient();
+
+        LocalDate now = LocalDate.now();
+        LocalDate oldestDate = LocalDate.of(2010, 10, 10);
+        LocalDate withinLastFewMonths = now.minusMonths(2);
+        LocalDate outOfRange = now.minusMonths(10);
+
+        // create sample feedback requests with different send dates
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, memberOne, externalRecipient01, now);
+        final FeedbackRequest feedbackReqTwo = saveFeedbackRequest(pdlMemberProfile, memberOne, externalRecipient02, withinLastFewMonths);
+        final FeedbackRequest feedbackReqThree = saveFeedbackRequest(pdlMemberProfile, memberOne, externalRecipient02, outOfRange);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?oldestDate=%s", oldestDate))
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(3, response.getBody().get().size());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
+        assertResponseEqualsEntity(feedbackReqThree, response.getBody().get().get(2));
+    }
+
+    @Test
+    void testUpdateDueDateAuthorizedToRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -1540,7 +1572,27 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testUpdateDueDateToBeforeSendDate() {
+    void testUpdateDueDateAuthorizedToExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient01);
+        feedbackReq.setDueDate(LocalDate.now());
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get());
+    }
+
+    @Test
+    void testUpdateDueDateToBeforeSendDateToRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -1561,7 +1613,28 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testUpdateDueDateUnauthorized() {
+    void testUpdateDueDateToBeforeSendDateToExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient01);
+        feedbackReq.setSendDate(LocalDate.of(1111, 11, 2));
+        feedbackReq.setDueDate(LocalDate.of(1111, 11, 1));
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Send date of feedback request must be before the due date.", responseException.getMessage());
+    }
+
+    @Test
+    void testUpdateDueDateUnauthorizedToRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -1575,6 +1648,24 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(responseException);
+    }
+
+    @Test
+    void testUpdateDueDateUnauthorizedToExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        assignPdlRole(pdlMemberProfile);
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient01);
+        feedbackReq.setDueDate(Util.MAX.toLocalDate());
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                clientExternalRecipient.toBlocking().exchange(request, Map.class));
 
         assertUnauthorized(responseException);
     }

@@ -51,6 +51,22 @@ public class FeedbackExternalRecipientController {
                 .toList();
     }
 
+    /**
+     * Update a feedback request
+     *
+     * @param requestBody {@link FeedbackRequestUpdateDTO} The updated feedback request
+     * @return {@link FeedbackRequestResponseDTO}
+     */
+    @Put
+    public HttpResponse<FeedbackRequestResponseDTO> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
+        if (requestBody.getExternalRecipientId() == null) {
+            throw new BadArgException("Missing required parameter: externalRecipientId");
+        }
+        FeedbackRequest savedFeedback = feedbackReqServices.update(requestBody);
+        return HttpResponse.ok(fromEntity(savedFeedback))
+                .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId())));
+    }
+
     private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
         FeedbackRequestResponseDTO dto = new FeedbackRequestResponseDTO();
         dto.setId(feedbackRequest.getId());

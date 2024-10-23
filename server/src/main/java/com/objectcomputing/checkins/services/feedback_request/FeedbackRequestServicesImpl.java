@@ -425,8 +425,19 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private boolean isCurrentUserAdminOrOwner(FeedbackRequest feedbackRequest) {
         boolean isAdmin = currentUserServices.isAdmin();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return isAdmin || currentUserId.equals(feedbackRequest.getCreatorId());
+        boolean currentUserIsSameAsCreator = false;
+        UUID currentUserId;
+        MemberProfile currentUser;
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+        } catch (NotFoundException notFoundException) {
+            currentUser = null;
+        }
+        if (currentUser != null) {
+            currentUserId = currentUserServices.getCurrentUser().getId();
+            currentUserIsSameAsCreator = currentUserId.equals(feedbackRequest.getCreatorId());
+        }
+        return isAdmin || currentUserIsSameAsCreator;
     }
 
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
