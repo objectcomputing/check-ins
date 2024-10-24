@@ -46,7 +46,14 @@ const SettingsPage = () => {
       if (allOptions) {
         // Sort the options by category, store them, and upate the state.
         setSettingsControls(
-          allOptions.sort((l, r) => l.category.localeCompare(r.category)));
+          allOptions.sort((l, r) => {
+            if (l.category === r.category) {
+              return l.name.localeCompare(r.name);
+            } else {
+              return l.category.localeCompare(r.category);
+            }
+          })
+        );
       }
     };
     if (csrf) {
@@ -124,7 +131,7 @@ const SettingsPage = () => {
     for(let key of Object.keys(handlers)) {
       const setting = handlers[key].setting;
       // The settings controller does not allow blank values.
-      if (setting && setting.value) {
+      if (setting?.name && `${setting.value}` != "") {
         let res;
         if (setting.id) {
           res = await putOption({ name: setting.name,
@@ -133,7 +140,7 @@ const SettingsPage = () => {
           res = await postOption({ name: setting.name,
                                    value: setting.value }, csrf);
           if (res?.payload?.data) {
-            setting.exists = true;
+            setting.id = res.payload.data.id;
           }
         }
         if (res?.error) {
@@ -147,6 +154,8 @@ const SettingsPage = () => {
         if (res?.payload?.data) {
           saved++;
         }
+      } else {
+        console.warn(`WARNING: ${setting.name} not sent to the server`);
       }
     }
 
