@@ -19,7 +19,13 @@ import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import OrganizationDialog from '../dialogs/OrganizationDialog';
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken, selectCurrentUser, selectProfileMap } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfileMap,
+  selectHasVolunteeringRelationshipsPermission,
+  selectHasVolunteeringOrganizationsPermission,
+} from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 import { showError } from '../../helpers/toast';
 
@@ -269,6 +275,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [sortAscending, sortColumn]
   );
 
+  const organizationOptions = Object.keys(organizationMap);
+  if (selectHasVolunteeringOrganizationsPermission(state)) {
+    organizationOptions.unshift('new');
+  }
+
   return (
     <div id="volunteer-relationships">
       {/* Table for showing relationships */}
@@ -301,6 +312,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 <td>{relationship.startDate}</td>
                 <td>{relationship.endDate}</td>
                 <td>
+                  {(relationship.memberId == currentUser.id ||
+                    selectHasVolunteeringRelationshipsPermission(state)) &&
+                  <>
                   <Tooltip title="Edit">
                     <IconButton
                       aria-label="Edit"
@@ -320,17 +334,19 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                       <Delete />
                     </IconButton>
                   </Tooltip>
+                  </>}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {(onlyMe || selectHasVolunteeringRelationshipsPermission(state)) &&
         <IconButton
           aria-label="Add Volunteer Relationship"
           onClick={addRelationship}
         >
           <AddCircleOutline />
-        </IconButton>
+        </IconButton>}
       </div>
 
       {/* Message below the table */}
@@ -347,7 +363,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           getOptionLabel={(option) => 
             option === 'new' ? 'Create a New Organization' : organizationMap[option]?.name || option
           }
-          options={['new', ...Object.keys(organizationMap)]}
+          options={organizationOptions}
           onChange={(event, value) => {
             if (value === 'new') {
               setRelationshipDialogOpen(false); // Close the relationship dialog

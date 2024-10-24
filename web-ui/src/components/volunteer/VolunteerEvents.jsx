@@ -19,7 +19,12 @@ import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import OrganizationDialog from '../dialogs/OrganizationDialog'; // Include OrganizationDialog
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken, selectCurrentUser, selectProfileMap } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfileMap,
+  selectHasVolunteeringEventsPermission,
+} from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 
 const eventBaseUrl = '/services/volunteer/event';
@@ -322,6 +327,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           <td>{event.hours}</td>
           <td>{event.notes}</td>
           <td>
+            {(member.id == currentUser.id ||
+              selectHasVolunteeringEventsPermission(state)) &&
+            <>
             <Tooltip title="Edit">
               <IconButton aria-label="Edit" onClick={() => editEvent(event)}>
                 <Edit />
@@ -332,6 +340,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 <Delete />
               </IconButton>
             </Tooltip>
+            </>}
           </td>
         </tr>
       );
@@ -362,9 +371,10 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           </thead>
           <tbody>{events.map(eventRow)}</tbody>
         </table>
+        {(onlyMe || selectHasVolunteeringEventsPermission(state)) &&
         <IconButton aria-label="Add Volunteer Event" classes={{ root: 'add-button' }} onClick={addEvent}>
           <AddCircleOutline />
-        </IconButton>
+        </IconButton>}
       </div>
     );
   }, [events, organizationMap, profileMap, relationshipMap, sortAscending, sortColumn]);
