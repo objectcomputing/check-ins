@@ -21,6 +21,9 @@ import {
   getAllMembers,
   getAllTerminatedMembers
 } from '../api/member';
+import {
+  selectCanViewCheckinsPermission,
+} from './selectors';
 import { getAllRoles, getAllUserRoles } from '../api/roles';
 import { getMemberSkills } from '../api/memberskill';
 import { BASE_API_URL } from '../api/api';
@@ -188,7 +191,7 @@ const AppContextProvider = props => {
         csrf
       ) {
         getAllCheckinsForAdmin(dispatch, csrf);
-      } else if (id && csrf) {
+      } else if (id && csrf && selectCanViewCheckinsPermission(state)) {
         getCheckins(id, pdlId, dispatch, csrf);
       }
     }
