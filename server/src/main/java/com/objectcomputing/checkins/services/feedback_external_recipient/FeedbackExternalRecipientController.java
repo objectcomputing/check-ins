@@ -7,16 +7,13 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.security.utils.SecurityService;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -28,76 +25,52 @@ import java.util.UUID;
 @Validated
 @Controller("/services/feedback/external/recipients")
 @ExecuteOn(TaskExecutors.BLOCKING)
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "feedback external recipient")
 public class FeedbackExternalRecipientController {
 
-    private final FeedbackRequestServices feedbackReqServices;
     private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
 
-    public FeedbackExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
-        this.feedbackReqServices = feedbackRequestServices;
+    public FeedbackExternalRecipientController(FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
         this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
     }
 
-    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,externalRecipientId,requesteeIds}")
-    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable UUID externalRecipientId, @Nullable List<UUID> requesteeIds) {
-        if (externalRecipientId == null) {
-            throw new BadArgException("Missing required parameter: externalRecipientId");
-        }
-        return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, externalRecipientId, requesteeIds)
-                .stream()
-                .map(this::fromEntity)
-                .toList();
-    }
-
     /**
-     * Update a feedback request
+     * Create a feedback request external recipient
      *
-     * @param requestBody {@link FeedbackRequestUpdateDTO} The updated feedback request
-     * @return {@link FeedbackRequestResponseDTO}
+     * @param feedbackExternalRecipientCreateDTO {@link FeedbackExternalRecipientCreateDTO} New feedback-req external recipient to create
+     * @return {@link FeedbackExternalRecipient}
      */
-    @Put
-    public HttpResponse<FeedbackRequestResponseDTO> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
-        if (requestBody.getExternalRecipientId() == null) {
-            throw new BadArgException("Missing required parameter: externalRecipientId");
+    @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
+    @Post
+    public HttpResponse<FeedbackExternalRecipientResponseDTO> save(@Body @Valid @NotNull FeedbackExternalRecipientCreateDTO feedbackExternalRecipientCreateDTO) {
+        FeedbackExternalRecipient savedFeedbackExternalRecipient;
+        FeedbackExternalRecipient feedbackExternalRecipientFromDto = fromDTO(feedbackExternalRecipientCreateDTO);
+        try {
+            savedFeedbackExternalRecipient = feedbackExternalRecipientServices.save(feedbackExternalRecipientFromDto);
+        } catch (Exception e) {
+            throw e;
         }
-        FeedbackRequest savedFeedback = feedbackReqServices.update(requestBody);
-        return HttpResponse.ok(fromEntity(savedFeedback))
-                .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId())));
+        return HttpResponse.created(fromEntity(savedFeedbackExternalRecipient))
+                .headers(headers -> headers.location(URI.create("/feedback_external_recipient/" + savedFeedbackExternalRecipient.getId())));
     }
 
-    /**
-     * Get feedback request by ID
-     *
-     * @param id {@link UUID} ID of the request
-     * @return {@link FeedbackRequestResponseDTO}
-     */
-    //@Secured(SecurityRule.IS_ANONYMOUS)
-    @Get("/{id}")
-    public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
-        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
-        if (feedbackRequest.getExternalRecipientId() == null) {
-            throw new BadArgException("Missing required parameter: externalRecipientId");
-        }
-        return feedbackRequest == null ? HttpResponse.notFound() : HttpResponse.ok(fromEntity(feedbackRequest))
-                .headers(headers -> headers.location(URI.create("/feedback_request" + feedbackRequest.getId())));
+    private FeedbackExternalRecipient fromDTO(FeedbackExternalRecipientCreateDTO dto) {
+        FeedbackExternalRecipient object = new FeedbackExternalRecipient();
+        object.setEmail(dto.getEmail());
+        object.setFirstName(dto.getFirstName());
+        object.setLastName(dto.getLastName());
+        object.setCompanyName(dto.getCompanyName());
+        return object;
     }
 
-    private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
-        FeedbackRequestResponseDTO dto = new FeedbackRequestResponseDTO();
-        dto.setId(feedbackRequest.getId());
-        dto.setCreatorId(feedbackRequest.getCreatorId());
-        dto.setRequesteeId(feedbackRequest.getRequesteeId());
-        dto.setRecipientId(feedbackRequest.getRecipientId());
-        dto.setTemplateId(feedbackRequest.getTemplateId());
-        dto.setSendDate(feedbackRequest.getSendDate());
-        dto.setDueDate(feedbackRequest.getDueDate());
-        dto.setStatus(feedbackRequest.getStatus());
-        dto.setSubmitDate(feedbackRequest.getSubmitDate());
-        dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
-        dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
-
+    private FeedbackExternalRecipientResponseDTO fromEntity(FeedbackExternalRecipient feedbackExternalRecipient) {
+        FeedbackExternalRecipientResponseDTO dto = new FeedbackExternalRecipientResponseDTO();
+        dto.setId(feedbackExternalRecipient.getId());
+        dto.setEmail(feedbackExternalRecipient.getEmail());
+        dto.setFirstName(feedbackExternalRecipient.getFirstName());
+        dto.setLastName(feedbackExternalRecipient.getLastName());
+        dto.setCompanyName(feedbackExternalRecipient.getCompanyName());
         return dto;
     }
 

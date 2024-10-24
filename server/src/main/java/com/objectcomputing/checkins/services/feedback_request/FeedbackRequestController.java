@@ -1,7 +1,8 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
-import com.nimbusds.jose.proc.SecurityContext;
 import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientCreateDTO;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientResponseDTO;
 import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
@@ -16,16 +17,12 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.Status;
-import io.micronaut.http.exceptions.HttpStatusException;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.security.utils.SecurityService;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -43,8 +40,6 @@ public class FeedbackRequestController {
 
     private final FeedbackRequestServices feedbackReqServices;
     private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
-    @Inject
-    SecurityService securityService;
 
     public FeedbackRequestController(FeedbackRequestServices feedbackReqServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
         this.feedbackReqServices = feedbackReqServices;
@@ -60,13 +55,7 @@ public class FeedbackRequestController {
     @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
     @Post
     public HttpResponse<FeedbackRequestResponseDTO> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
-        FeedbackRequest savedFeedbackRequest;
-        FeedbackRequest feedbackRequest = fromDTO(requestBody);
-        try {
-            savedFeedbackRequest = feedbackReqServices.save(feedbackRequest);
-        } catch (Exception e) {
-            throw e;
-        }
+        FeedbackRequest savedFeedbackRequest = feedbackReqServices.save(fromDTO(requestBody));
         return HttpResponse.created(fromEntity(savedFeedbackRequest))
                 .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedbackRequest.getId())));
     }
@@ -144,7 +133,6 @@ public class FeedbackRequestController {
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
         dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
         dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
-
         return dto;
     }
 

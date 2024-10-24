@@ -54,7 +54,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     HttpClient client;
 
     @Inject
-    @Client("/services/feedback/external/recipients")
+    @Client("/services/feedback/requests/external/recipients")
     HttpClient clientExternalRecipient;
 
     @Inject
