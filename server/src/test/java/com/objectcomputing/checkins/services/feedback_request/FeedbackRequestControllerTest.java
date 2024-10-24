@@ -805,11 +805,10 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //get feedback request
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
                 .basicAuth(unrelatedPdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.getBody().isPresent());
-        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+        assertUnauthorized(responseException);
     }
 
     @Test
@@ -843,11 +842,11 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //get feedback request
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
                 .basicAuth(memberProfile2.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.getBody().isPresent());
-        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+        // requestee should not be able to get the feedback request about them
+        assertUnauthorized(responseException);
     }
 
     @Test
@@ -878,9 +877,8 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, externalRecipient);
 
         //get feedback request
-        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
-                .basicAuth(externalRecipient.getEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()));
+        final HttpResponse<FeedbackRequestResponseDTO> response = clientExternalRecipient.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         // recipient must be able to get the feedback request
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -2365,7 +2363,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testRecipientGetBeforeSendDateAsAdminAuthorized() {
+    void testRecipientGetBeforeSendDateAsAdminAuthorizedToRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
@@ -2374,6 +2372,30 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
         // Save feedback request with send date in the future
         FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
+        getFeedbackRequestRepository().save(feedbackRequest);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(adminUser.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        // the sendDate must be before the sent date unless its an admin
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
+    @Test
+    void testRecipientGetBeforeSendDateAsAdminAuthorizedToExternalRecipient() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        MemberProfile adminUser = createAThirdDefaultMemberProfile();
+        assignAdminRole(adminUser);
+
+        // Save feedback request with send date in the future
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, externalRecipient01);
         feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 

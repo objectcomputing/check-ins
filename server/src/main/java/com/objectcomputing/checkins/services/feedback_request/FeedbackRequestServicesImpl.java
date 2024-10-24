@@ -336,6 +336,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     public FeedbackRequest getById(UUID id) {
+        MemberProfile currentUser;
+
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+        } catch (NotFoundException notFoundException) {
+            currentUser = null;
+        }
+
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
         if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
@@ -344,8 +352,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
         final UUID recipientId = feedbackReq.get().getRecipientId();
         final UUID externalRecipientId = feedbackReq.get().getExternalRecipientId();
-        if (recipientId != null) {
-            if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
+        final UUID recipientOrExternalRecipientId = (recipientId != null) ? recipientId : externalRecipientId;
+        if (currentUser != null) {
+            if (!getIsPermitted(requesteeId, recipientOrExternalRecipientId, sendDate)) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         } else {
@@ -420,6 +429,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private boolean getIsPermitted(UUID requesteeId, UUID recipientOrExternalRecipientId, LocalDate sendDate) {
         LocalDate today = LocalDate.now();
+        boolean getIsPermittedReturn;
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
         // The recipient can only access the feedback request after it has been sent
@@ -427,7 +437,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
 
-        return createIsPermitted(requesteeId) || currentUserId.equals(recipientOrExternalRecipientId);
+        getIsPermittedReturn = createIsPermitted(requesteeId) || currentUserId.equals(recipientOrExternalRecipientId);
+        return getIsPermittedReturn;
     }
 
     private boolean getIsPermittedForExternalRecipient(UUID requesteeId, LocalDate sendDate) {
