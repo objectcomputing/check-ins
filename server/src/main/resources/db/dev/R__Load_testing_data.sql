@@ -1298,22 +1298,32 @@ INSERT INTO review_periods
 VALUES
     ('12345678-e29c-4cf4-9ea4-6baa09405c58', 'Review Period 2', 'PLANNING', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-10 06:00:00', '2024-09-11 06:00:00', '2024-09-12 06:00:00', '2024-01-01 06:00:00', '2024-08-31 06:00:00');
 
+INSERT INTO review_periods
+(id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
+VALUES
+    ('12345678-e29c-4cf4-9ea4-6baa09405c59', 'Review Period 3', 'CLOSED', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-10-01 06:00:00', '2024-10-02 06:00:00', '2024-10-03 06:00:00', '2024-01-01 06:00:00', '2024-09-30 06:00:00');
+
+INSERT INTO review_periods
+(id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
+VALUES
+    ('12345678-e29c-4cf4-9ea4-6baa09405c5a', 'Review Period 4', 'CLOSED', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-10-01 06:00:00', '2024-10-02 06:00:00', '2024-10-03 06:00:00', '2024-01-01 06:00:00', '2024-09-30 06:00:00');
+
 -- CAE - Self-Review feedback request, Creator: Big Boss
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7ef', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'c7406157-a38f-4d48-aaed-04018d846727', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7ef', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'c7406157-a38f-4d48-aaed-04018d846727', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-10-04', '2024-10-30', '2024-10-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c59');
 
 -- CAE - Review feedback request, Creator: Big Boss
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7f0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7f0', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-10-04', '2024-10-30', '2024-10-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c59');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7f3', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7f3', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '2024-10-04', '2024-10-30', '2024-10-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c59');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
@@ -1344,7 +1354,7 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id)
 VALUES
-('98390c09-7121-110a-bfee-9380a470a7f2', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1c8bc142-c447-4889-986e-42ab177da683', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57');
+('98390c09-7121-110a-bfee-9380a470a7f2', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1c8bc142-c447-4889-986e-42ab177da683', '2024-10-04', '2024-10-30', '2024-10-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c59');
 
 ---- Creator: Big Boss
 INSERT INTO feedback_requests
