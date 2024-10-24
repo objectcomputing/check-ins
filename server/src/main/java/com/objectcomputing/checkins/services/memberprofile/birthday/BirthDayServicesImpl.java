@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.memberprofile.birthday;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import jakarta.inject.Singleton;
 import java.time.LocalDate;
@@ -15,19 +14,13 @@ import java.util.Set;
 public class BirthDayServicesImpl implements BirthDayServices{
 
     private final MemberProfileServices memberProfileServices;
-    private final CurrentUserServices currentUserServices;
 
-    public BirthDayServicesImpl(MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
+    public BirthDayServicesImpl(MemberProfileServices memberProfileServices) {
         this.memberProfileServices = memberProfileServices;
-        this.currentUserServices = currentUserServices;
     }
 
     @Override
     public List<BirthDayResponseDTO> findByValue(String[] months, Integer[] daysOfMonth) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource.");
-        }
-
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
         List<MemberProfile> memberProfileAll = new ArrayList<>(memberProfiles);
         if (months != null) {
