@@ -177,7 +177,17 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   
     const formattedStartDate = startDate ? formatDate(new Date(startDate)) : null;
     const formattedEndDate = endDate ? formatDate(new Date(endDate)) : null;
-  
+ 
+    const data = {
+      ...selectedRelationship,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate
+    };
+    if (!id && !data.memberId) {
+      // For new relationships, a memberId is required.
+      data.memberId = currentUser.id;
+    }
+
     const res = await resolve({
       method: id ? 'PUT' : 'POST',
       url: id ? `${relationshipBaseUrl}/${id}` : relationshipBaseUrl,
@@ -186,7 +196,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         Accept: 'application/json',
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      data: { ...selectedRelationship, startDate: formattedStartDate, endDate: formattedEndDate },
+      data: data,
     });
     
     if (res.error) return;
