@@ -50,7 +50,7 @@ it('renders correctly', () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <BrowserRouter>
-        <GuildSummaryCard guild={guilds[0]} />
+        <GuildSummaryCard guild={guilds[0]} isOpen={false} />
       </BrowserRouter>
     </AppContextProvider>
   );
@@ -60,7 +60,7 @@ it('renders correctly for ADMIN', () => {
   snapshot(
     <AppContextProvider value={adminState}>
       <BrowserRouter>
-        <GuildSummaryCard guild={guilds[0]} />
+        <GuildSummaryCard guild={guilds[0]} isOpen={false} />
       </BrowserRouter>
     </AppContextProvider>
   );
@@ -70,7 +70,7 @@ it('renders correctly for guild lead', () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <BrowserRouter>
-        <GuildSummaryCard guild={guilds[1]} />
+        <GuildSummaryCard guild={guilds[1]} isOpen={false}/>
       </BrowserRouter>
     </AppContextProvider>
   );
