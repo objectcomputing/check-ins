@@ -228,7 +228,7 @@ const TeamMemberReview = ({
             textColor="inherit"
             variant="fullWidth"
           >
-            {selfReview && selfReview.id && (<Tab
+            <Tab
               icon={selfReviewIcon}
               label={
                 memberProfile?.firstName
@@ -236,17 +236,13 @@ const TeamMemberReview = ({
                   : 'Self-Review'
               }
               {...a11yProps(0)}
-            />)}
+            />
             {reviews &&
-              reviews.map((review, index) => {
-                if (!review) {
-                  return (<></>);
-                }
+              reviews.filter(r => !!r).map((review, index) => {
                 const reviewer = review.recipientId == memberProfile?.id ?
                                  memberProfile :
                                  selectProfile(state, review.recipientId);
                 let label = reviewer?.firstName + "'s Review";
-
                 if (reviewer?.id === currentUser?.id) {
                   label = 'Your Review';
                 }
@@ -267,24 +263,20 @@ const TeamMemberReview = ({
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          {selfReview && selfReview.id && (
           <TabPanel value={value} index={0} dir={theme.direction}>
-            <FeedbackSubmitForm
-              requesteeName={
-                memberProfile?.firstName + ' ' + memberProfile?.lastName
-              }
-              requestId={selfReview?.id}
-              request={selfReview}
-              reviewOnly={true}
-            />
+            {selfReview?.id ? (
+              <FeedbackSubmitForm
+                requesteeName={
+                  memberProfile?.firstName + ' ' + memberProfile?.lastName
+                }
+                requestId={selfReview?.id}
+                request={selfReview}
+                reviewOnly={true}
+              />
+            ) : (<Typography variant="h4">Not Available</Typography>)}
           </TabPanel>
-          )}
           {reviews &&
-            reviews.map((review, index) => {
-              if (!review) {
-                return (<></>);
-              }
-
+            reviews.filter(r => !!r).map((review, index) => {
               const reviewer = selectProfile(state, review.recipientId);
               const requestee = selectProfile(state, review.requesteeId);
               const requesteeName = requestee?.name;
@@ -293,7 +285,7 @@ const TeamMemberReview = ({
 
               return (
                 <TabPanel value={value} index={index + 1} dir={theme.direction}>
-                  {review && review.status?.toUpperCase() !== 'SUBMITTED' && (
+                  {review.status?.toUpperCase() !== 'SUBMITTED' && (
                     <div className={classes.buttonRow}>
                       <Button
                         onClick={handleOpenCancel}
