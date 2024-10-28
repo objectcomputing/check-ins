@@ -185,8 +185,18 @@ const ComposeEmailStep = ({
       const fileReader = new FileReader();
       fileReader.onload = e => {
         const mjmlContent = e.target.result.toString();
-        const { html } = mjml2html(mjmlContent);
-        onEmailContentsChange(html);
+        try {
+          const result = mjml2html(mjmlContent);
+          onEmailContentsChange(result.html);
+        } catch(e) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast: e.message,
+            }
+          });
+        }
       };
 
       const file = event.target.files[0];
