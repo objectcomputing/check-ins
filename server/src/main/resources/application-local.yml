@@ -26,6 +26,9 @@ micronaut:
         http-method: GET
         access:
           - isAnonymous()
+      - pattern: /feedback/submitForExternalRecipient/**
+        access:
+          - isAnonymous()
 ---
 datasources:
   default:

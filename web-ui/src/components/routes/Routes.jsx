@@ -43,6 +43,7 @@ import KudosPage from '../../pages/KudosPage';
 import ManageKudosPage from '../../pages/ManageKudosPage';
 import SkillCategoriesPage from '../../pages/SkillCategoriesPage';
 import SkillCategoryEditPage from '../../pages/SkillCategoryEditPage';
+import FeedbackRequestForExternalRecipientPage from "../../pages/FeedbackRequestForExternalRecipientPage.jsx";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -199,6 +200,9 @@ export default function Routes() {
       <Route path="/feedback/submit">
         <FeedbackSubmitPage />
       </Route>
+        <Route path="/feedback/submitForExternalRecipient">
+            <FeedbackRequestForExternalRecipientPage />
+        </Route>
       <Route exact path="/admin/manage-kudos">
         <Header title="Manage Kudos"></Header>
         <ManageKudosPage />

@@ -1,14 +1,13 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.security.ImpersonationController;
 import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -17,6 +16,8 @@ import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -32,21 +33,41 @@ public class FeedbackRequestExternalRecipientController {
 
     private final FeedbackRequestServices feedbackReqServices;
     private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
+    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestExternalRecipientController.class);
 
     public FeedbackRequestExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
         this.feedbackReqServices = feedbackRequestServices;
         this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
     }
 
-    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,externalRecipientId,requesteeIds}")
-    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable UUID externalRecipientId, @Nullable List<UUID> requesteeIds) {
-        if (externalRecipientId == null) {
-            throw new BadArgException("Missing required parameter: externalRecipientId");
+    @Get("/{id}")
+    public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
         }
+        return feedbackRequest == null ? HttpResponse.notFound() : HttpResponse.ok(feedbackRequestFromEntity(feedbackRequest))
+                .headers(headers -> headers.location(URI.create("/feedback_request" + feedbackRequest.getId())));
+    }
+
+    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,externalRecipientId,requesteeIds}")
+    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, UUID externalRecipientId, @Nullable List<UUID> requesteeIds) {
         return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, externalRecipientId, requesteeIds)
                 .stream()
                 .map(this::feedbackRequestFromEntity)
                 .toList();
+    }
+
+    @Get("/hello")
+    @Produces(MediaType.TEXT_HTML)
+    public String hello() {
+        return "<html><body><h1>Hello, World!</h1></body></html>";
+    }
+
+    @Get("/submitForExternalRecipient")
+    public HttpResponse<?> redirectToReactPage() {
+        LOG.info("FeedbackRequestExternalRecipientController, redirectToReactPage");
+        return HttpResponse.redirect(URI.create("/feedback/submitForExternalRecipient"));
     }
 
     /**
@@ -63,23 +84,6 @@ public class FeedbackRequestExternalRecipientController {
         FeedbackRequest savedFeedback = feedbackReqServices.update(requestBody);
         return HttpResponse.ok(feedbackRequestFromEntity(savedFeedback))
                 .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId())));
-    }
-
-    /**
-     * Get feedback request by ID
-     *
-     * @param id {@link UUID} ID of the request
-     * @return {@link FeedbackRequestResponseDTO}
-     */
-    //@Secured(SecurityRule.IS_ANONYMOUS)
-    @Get("/{id}")
-    public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
-        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
-        if (feedbackRequest.getExternalRecipientId() == null) {
-            throw new BadArgException("Missing required parameter: externalRecipientId");
-        }
-        return feedbackRequest == null ? HttpResponse.notFound() : HttpResponse.ok(feedbackRequestFromEntity(feedbackRequest))
-                .headers(headers -> headers.location(URI.create("/feedback_request" + feedbackRequest.getId())));
     }
 
     private FeedbackRequestResponseDTO feedbackRequestFromEntity(FeedbackRequest feedbackRequest) {
