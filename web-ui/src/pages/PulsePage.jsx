@@ -9,6 +9,8 @@ import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
 
 import './PulsePage.css';
 
+const center = 2; // zero-based
+
 const PulsePage = () => {
   const { state } = useContext(AppContext);
   const currentUser = selectCurrentUser(state);
@@ -16,9 +18,9 @@ const PulsePage = () => {
   const history = useHistory();
 
   const [externalComment, setExternalComment] = useState('');
-  const [externalScore, setExternalScore] = useState(2); // zero-based
+  const [externalScore, setExternalScore] = useState(center);
   const [internalComment, setInternalComment] = useState('');
-  const [internalScore, setInternalScore] = useState(2); // zero-based
+  const [internalScore, setInternalScore] = useState(center);
   const [pulse, setPulse] = useState(null);
   const [submittedToday, setSubmittedToday] = useState(false);
   const today = format(new Date(), 'yyyy-MM-dd');
@@ -36,10 +38,10 @@ const PulsePage = () => {
 
     setInternalComment(pulse.internalFeelings ?? '');
     setExternalComment(pulse.externalFeelings ?? '');
-    //TODO: Change the next two lines to use scores from server
-    //      when story #2345 is completed.
-    setInternalScore(2);
-    setExternalScore(3);
+    setInternalScore(pulse.internalScore == undefined ?
+                       center : pulse.internalScore - 1);
+    setExternalScore(pulse.externalScore == undefined ?
+                       center : pulse.externalScore - 1);
   }, [pulse]);
 
   const loadTodayPulse = async () => {
@@ -65,8 +67,21 @@ const PulsePage = () => {
     });
     if (res.error) return;
 
-    const pulses = res.payload.data;
-    setPulse(pulses.at(-1)); // last element is most recent
+    // Sort pulse responses by date, latest to earliest
+    const pulses = res.payload.data?.sort((a, b) => {
+      const l = a.submissionDate;
+      const r = b.submissionDate;
+      if (r[0] == l[0]) {
+        if (r[1] == l[1]) {
+          return r[2] - l[2];
+        } else {
+          return r[1] - l[1];
+        }
+      } else {
+        return r[0] - l[0];
+      }
+    });
+    setPulse(pulses.at(0));
   };
 
   useEffect(() => {
