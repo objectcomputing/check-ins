@@ -334,7 +334,7 @@ const TeamMemberReview = ({
               </Typography>
             </CardContent>
             <CardActions>
-              <Button color="secondary" onClick={handleCloseReassign}>
+              <Button color="secondary" onClick={handleCloseCancel}>
                 No, Keep Feedback Request
               </Button>
               <Button color="primary" onClick={handleCancelClick}>
