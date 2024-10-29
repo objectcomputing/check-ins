@@ -3,6 +3,7 @@ import React, { useContext, useRef, useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
+import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import { reportSkills } from '../api/memberskill.js';
 import SearchResults from '../components/search-results/SearchResults';
@@ -126,7 +127,17 @@ const SkillReportPage = props => {
         <div className="SkillsSearch-actions fullWidth">
           <Button
             onClick={() => {
-              handleSearch(createRequestDTO(editedSearchRequest));
+              if (!searchSkills.length) {
+                window.snackDispatch({
+                  type: UPDATE_TOAST,
+                  payload: {
+                    severity: 'error',
+                    toast: 'Must select a skill'
+                  }
+                });
+              } else {
+                handleSearch(createRequestDTO(editedSearchRequest));
+              }
             }}
             color="primary"
           >
