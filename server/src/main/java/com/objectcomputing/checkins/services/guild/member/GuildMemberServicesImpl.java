@@ -86,7 +86,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
         if (sendEmail) {
             emailSender
-                    .sendEmail(null, null, "Membership changes have been made to the " + guild.get().getName() + " guild",
+                    .sendEmailBlind(null, null, "Membership changes have been made to the " + guild.get().getName() + " guild",
                             constructEmailContent(guildMember, true),
                             getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
                     );
@@ -170,7 +170,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
         if (sendEmail) {
             emailSender
-                    .sendEmail(null, null, "Membership Changes have been made to the " + guild.getName() + " guild",
+                    .sendEmailBlind(null, null, "Membership Changes have been made to the " + guild.getName() + " guild",
                             constructEmailContent(guildMember, false),
                             getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
                     );

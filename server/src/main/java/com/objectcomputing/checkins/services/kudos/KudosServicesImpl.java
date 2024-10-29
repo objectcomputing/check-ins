@@ -356,8 +356,8 @@ class KudosServicesImpl implements KudosServices {
                             }
                             break;
                         }
-                        if (recipientAddresses.size() > 0) {
-                            emailSender.sendEmail(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, recipientAddresses.toArray(new String[recipientAddresses.size()]));
+                        if (!recipientAddresses.isEmpty()) {
+                            emailSender.sendEmailBlind(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, recipientAddresses.toArray(new String[0]));
                         }
                     }
                 }

@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.EmailHelper;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -13,7 +14,6 @@ import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
-import com.objectcomputing.checkins.services.EmailHelper;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.server.EmbeddedServer;
@@ -29,13 +29,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -258,7 +261,7 @@ class FeedbackRequestTest extends TestContainersSuite {
         when(memberProfileServices.getById(reviewer02.getId())).thenReturn(reviewer02);
         when(reviewPeriodRepository.findById(reviewPeriodId)).thenReturn(Optional.of(reviewPeriod));
 
-        Set<ReviewAssignment> reviewAssignmentsSet = new HashSet<ReviewAssignment>();
+        Set<ReviewAssignment> reviewAssignmentsSet = new HashSet<>();
         reviewAssignmentId = UUID.randomUUID();
         reviewAssignment= new ReviewAssignment();
         reviewAssignment.setId(reviewAssignmentId);
@@ -280,7 +283,15 @@ class FeedbackRequestTest extends TestContainersSuite {
         // The order in which emails are sent is random.  We will not be
         // checking the recipient.
         assertEquals(2, emailSender.events.size());
-        EmailHelper.validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review", null, emailSender.events.getFirst());
+        String action = "SEND_EMAIL";
+        String fromName = "null";
+        String fromAddress = "null";
+        String subject = "firstName lastName has finished their self-review for Self-Review Test.";
+        String partialBody = "firstName lastName has completed their self-review";
+        String recipient = reviewer02.getWorkEmail();
+        List<List<String>> events = emailSender.events;
+        List<String> reviewer02Events = events.stream().filter(event -> event.get(3).equals(recipient)).findAny().orElseThrow();
+        EmailHelper.validateExposedEmail(action, fromName,  fromAddress, recipient, subject, partialBody, reviewer02Events);
     }
 
     @Test
@@ -326,7 +337,13 @@ class FeedbackRequestTest extends TestContainersSuite {
         feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
 
         assertEquals(1, emailSender.events.size());
-        EmailHelper.validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review for Self-Review Test.", "firstName lastName has completed their self-review", supervisorProfile.getWorkEmail(), emailSender.events.getFirst());
+        String action = "SEND_EMAIL";
+        String fromName = "null";
+        String fromAddress = "null";
+        String subject = "firstName lastName has finished their self-review for Self-Review Test.";
+        String content = "firstName lastName has completed their self-review";
+        String recipient = supervisorProfile.getWorkEmail();
+        EmailHelper.validateExposedEmail(action, fromName, fromAddress, recipient, subject, content, emailSender.events.getFirst());
     }
 
     @Test
@@ -393,6 +410,12 @@ class FeedbackRequestTest extends TestContainersSuite {
 
         assertDoesNotThrow(() -> feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(new FeedbackRequest()));
         assertEquals(1, emailSender.events.size());
-        EmailHelper.validateEmail("SEND_EMAIL", "null", "null", "firstName lastName has finished their self-review.", "firstName lastName has completed their self-review", supervisorProfile.getWorkEmail(), emailSender.events.getFirst());
+        String action = "SEND_EMAIL";
+        String fromName = "null";
+        String fromAddress = "null";
+        String subject = "firstName lastName has finished their self-review.";
+        String partialBody = "firstName lastName has completed their self-review";
+        String recipient = supervisorProfile.getWorkEmail();
+        EmailHelper.validateExposedEmail(action, fromName, fromAddress, recipient, subject, partialBody, emailSender.events.getFirst());
     }
 }

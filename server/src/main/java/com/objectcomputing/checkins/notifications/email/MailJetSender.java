@@ -45,6 +45,7 @@ public class MailJetSender implements EmailSender {
     /**
      * Helper method to divide a list of recipients into smaller lists (batches) of recipients
      * Enables sending emails to more recipients than permitted by a single MailJet API call
+     *
      * @param recipients List of recipient email addresses
      * @return list of {@link JSONArray}
      */
@@ -74,18 +75,19 @@ public class MailJetSender implements EmailSender {
 
     /**
      * This call sends a message to the given recipient with attachment.
-     * @param fromName {@link String} The name of the person sending the email
+     *
+     * @param fromName    {@link String} The name of the person sending the email
      * @param fromAddress {@link String} The email address of the person sending the email
-     * @param subject {@link String} Subject of email
-     * @param content {@link String} Contents of email
-     * @param recipients List of recipient email addresses
+     * @param subject     {@link String} Subject of email
+     * @param content     {@link String} Contents of email
+     * @param recipients  List of recipient email addresses
      */
     @Override
-    public void sendEmail(String fromName, String fromAddress, String subject, String content, String... recipients) {
-        if(fromName == null) fromName = this.fromName;
-        if(fromAddress == null) fromAddress = this.fromAddress;
+    public void sendEmailBlind(String fromName, String fromAddress, String subject, String content, String... recipients) {
+        if (fromName == null) fromName = this.fromName;
+        if (fromAddress == null) fromAddress = this.fromAddress;
 
-        if(System.getenv("MJ_APIKEY_PUBLIC") == null || System.getenv("MJ_APIKEY_PRIVATE") == null) {
+        if (System.getenv("MJ_APIKEY_PUBLIC") == null || System.getenv("MJ_APIKEY_PRIVATE") == null) {
             LOG.error("API key(s) are missing for MailJetSender");
             return;
         }
@@ -130,11 +132,62 @@ public class MailJetSender implements EmailSender {
         }
     }
 
+    /**
+     *
+     * Sends email directly to recipient
+     * @param fromName    {@link String} The name of the person sending the email
+     * @param fromAddress {@link String} The email address of the person sending the email
+     * @param subject     {@link String} Subject of email
+     * @param content     {@link String} Contents of email
+     * @param recipient   {@link String} recipient email addresses
+     */
+    @Override
+    public void sendEmailExposed(String fromName, String fromAddress, String subject, String content, String recipient) {
+        if (fromName == null) fromName = this.fromName;
+        if (fromAddress == null) fromAddress = this.fromAddress;
+
+        if (System.getenv("MJ_APIKEY_PUBLIC") == null || System.getenv("MJ_APIKEY_PRIVATE") == null) {
+            LOG.error("API key(s) are missing for MailJetSender");
+            return;
+        }
+
+        JSONObject sender = new JSONObject()
+                .put("Email", fromAddress)
+                .put("Name", fromName);
+
+        String modifiedEmailFormat = emailFormat;
+        if (modifiedEmailFormat.equals(MJMLPART)) {
+            // Convert the MJML to HTML and update the local email format.
+            var configuration = new Mjml4j.Configuration("en");
+            content = Mjml4j.render(content, configuration);
+            modifiedEmailFormat = Emailv31.Message.HTMLPART;
+        }
+        final String localEmailFormat = modifiedEmailFormat;
+        final String localContent = content;
+
+        MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                .property(Emailv31.MESSAGES, new JSONArray()
+                        .put(new JSONObject()
+                                .put(Emailv31.Message.FROM, sender)
+                                .put(Emailv31.Message.TO, recipient)
+                                .put(Emailv31.Message.SUBJECT, subject)
+                                .put(localEmailFormat, localContent)));
+        try {
+            MailjetResponse response = client.post(request);
+            LOG.info("Mailjet response status: {}", response.getStatus());
+            LOG.info("Mailjet response data: {}", response.getData());
+        } catch (MailjetException e) {
+            LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
+        }
+
+
+    }
+
     @Override
     public boolean sendEmailReceivesStatus(String fromName, String fromAddress, String subject, String content, String... recipients) {
         try {
-            sendEmail(fromName, fromAddress, subject, content, recipients);
-        } catch (Exception e){
+            sendEmailBlind(fromName, fromAddress, subject, content, recipients);
+        } catch (Exception e) {
             LOG.error("An unexpected exception occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
             return false;
         } catch (Error e) {
@@ -147,8 +200,8 @@ public class MailJetSender implements EmailSender {
     @Override
     public void setEmailFormat(String format) {
         if (format.equals(MJMLPART) ||
-            format.equals(Emailv31.Message.HTMLPART) ||
-            format.equals(Emailv31.Message.TEXTPART)) {
+                format.equals(Emailv31.Message.HTMLPART) ||
+                format.equals(Emailv31.Message.TEXTPART)) {
             this.emailFormat = format;
         } else {
             throw new BadArgException(String.format("Email format must be either HTMLPART, MJMLPART or TEXTPART, got %s", format));

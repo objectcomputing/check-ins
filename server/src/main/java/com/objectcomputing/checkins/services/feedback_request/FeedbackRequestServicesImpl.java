@@ -8,8 +8,8 @@ import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.email.Email;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
@@ -17,18 +17,17 @@ import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Value;
-import io.micronaut.core.io.Readable;
 import io.micronaut.core.io.IOUtils;
+import io.micronaut.core.io.Readable;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -146,7 +145,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                 String.format("%s/feedback/submit?request=%s",
                                               webURL, storedRequest.getId().toString()));
 
-        emailSender.sendEmail(senderName, creator.getWorkEmail(),
+        emailSender.sendEmailExposed(senderName, creator.getWorkEmail(),
                               notificationSubject, newContent,
                               reviewer.getWorkEmail());
     }
@@ -173,7 +172,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         validateMembers(originalFeedback);
 
         Set<ReviewAssignment> reviewAssignmentsSet = Set.of();
-        if (feedbackRequest != null && feedbackRequest.getReviewPeriodId() != null && feedbackRequest.getRequesteeId() != null) {
+        if (feedbackRequest.getReviewPeriodId() != null && feedbackRequest.getRequesteeId() != null) {
             reviewAssignmentsSet = reviewAssignmentRepository.findByReviewPeriodIdAndRevieweeId(feedbackRequest.getReviewPeriodId(), feedbackRequest.getRequesteeId());
         }        
 
@@ -229,7 +228,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                   String.format("%s/feedback/submit?request=%s",
                                                 webURL, storedRequest.getId().toString()));
 
-            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewer.getWorkEmail());
+            emailSender.sendEmailExposed(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewer.getWorkEmail());
         }
 
         // Send email if the feedback request has been reassigned
@@ -244,7 +243,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // Send email to reviewers.  But, only when the requestee is the
         // recipient (i.e., a self-review).
-        if (reviewAssignmentsSet != null && reviewAssignmentsSet.size() > 0 &&
+        if (reviewAssignmentsSet != null && !reviewAssignmentsSet.isEmpty() &&
             feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
             sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);    
         }        
@@ -424,7 +423,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         // Send the email.
         try {
-            emailSender.sendEmail(null, null, email.getSubject(),
+            emailSender.sendEmailExposed(null, null, email.getSubject(),
                                   email.getContents(),
                                   reviewer.getWorkEmail());
         } catch (Exception e) {

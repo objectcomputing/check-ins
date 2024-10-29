@@ -87,7 +87,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
                     String fromEmail = sender.getWorkEmail();
                     String fromName = sender.getFirstName() + " " + sender.getLastName();
                     String content = kudos.getMessage();
-                    emailSender.sendEmail(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, member.getWorkEmail());
+                    emailSender.sendEmailBlind(fromName, fromEmail, KUDOS_EMAIL_SUBJECT, content, member.getWorkEmail());
                 }
             }
         } catch(Exception ex) {

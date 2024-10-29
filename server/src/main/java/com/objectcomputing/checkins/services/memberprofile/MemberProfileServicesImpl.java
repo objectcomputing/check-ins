@@ -136,7 +136,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                         String subject = "You have been assigned as the " + role + " of " + member.getFirstName() + " " + member.getLastName();
                         String body = member.getFirstName() + " " + member.getLastName() + " will now report to you as their " + role + ". Please engage with them: " + member.getWorkEmail();
 
-                        emailSender.sendEmail(null, null, subject, body, roleProfile.getWorkEmail());
+                        emailSender.sendEmailBlind(null, null, subject, body, roleProfile.getWorkEmail());
                     } else {
                         LOG.warn("Unable to send email regarding {} {}'s {} update as the {} was unable to be pulled up correctly",
                                 member.getFirstName(), member.getLastName(), role, role);

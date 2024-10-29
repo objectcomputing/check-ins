@@ -188,7 +188,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         }
 
         if (!recipients.isEmpty()) {
-            emailSender.sendEmail(null, null, subject, bodyBuilder.toString(), recipients.toArray(new String[0]));
+            emailSender.sendEmailBlind(null, null, subject, bodyBuilder.toString(), recipients.toArray(new String[0]));
         }
     }
 }

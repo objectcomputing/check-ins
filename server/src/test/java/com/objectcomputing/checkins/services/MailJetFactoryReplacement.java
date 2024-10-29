@@ -74,7 +74,7 @@ public class MailJetFactoryReplacement {
         }
 
         @Override
-        public void sendEmail(String fromName, String fromAddress, String subject, String content, String... recipients) {
+        public void sendEmailBlind(String fromName, String fromAddress, String subject, String content, String... recipients) {
             events.add(List.of(
                     "SEND_EMAIL",
                     nullSafe(fromName),
@@ -82,6 +82,18 @@ public class MailJetFactoryReplacement {
                     nullSafe(subject),
                     nullSafe(content),
                     Arrays.stream(recipients).map(MockEmailSender::nullSafe).collect(Collectors.joining(","))
+            ));
+            maybeThrow();
+        }
+
+        public void sendEmailExposed(String fromName, String fromAddress, String subject, String content, String recipient){
+            events.add(List.of(
+                    "SEND_EMAIL",
+                    nullSafe(fromName),
+                    nullSafe(fromAddress),
+                    nullSafe(recipient),
+                    nullSafe(subject),
+                    nullSafe(content)
             ));
             maybeThrow();
         }

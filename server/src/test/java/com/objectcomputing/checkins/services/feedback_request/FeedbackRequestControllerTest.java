@@ -188,14 +188,12 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         assertEquals(1, emailSender.events.size());
-        EmailHelper.validateEmail("SEND_EMAIL",
-                                  fromName,
-                                  pdlMemberProfile.getWorkEmail(),
-                                  checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                                  "You have received a feedback request",
-                                  recipient.getWorkEmail(),
-                                  emailSender.events.getFirst()
-        );
+        String action = "SEND_EMAIL";
+        String fromAddress = pdlMemberProfile.getWorkEmail();
+        String subject = checkInsConfiguration.getApplication().getFeedback().getRequestSubject();
+        String partialBody = "You have received a feedback request";
+        String recipientWorkEmail = recipient.getWorkEmail();
+        EmailHelper.validateExposedEmail(action, fromName, fromAddress, recipientWorkEmail, subject,   partialBody, emailSender.events.getFirst());
     }
 
     @Test
@@ -542,7 +540,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertEquals(1, response.getBody().get().size());
-        assertResponseEqualsEntity(feedbackRequest, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get().getFirst());
     }
 
     @Test
@@ -589,7 +587,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertEquals(1, response.getBody().get().size());
-        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().getFirst());
     }
 
     @Test
@@ -648,7 +646,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
 
         assertTrue(response.getBody().isPresent());
         assertEquals(1, response.getBody().get().size());
-        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().getFirst());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
@@ -671,7 +669,6 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         //search for feedback requests by a specific creator, requestee, and template
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId()))
                 .basicAuth(recipientTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        ;
 
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
@@ -1050,14 +1047,11 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         // Verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
         assertEquals(1, emailSender.events.size());
-        EmailHelper.validateEmail("SEND_EMAIL",
-                                  fromName,
-                                  pdl.getWorkEmail(),
-                                  checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                                  "You have received edit access to a feedback request",
-                                  recipient.getWorkEmail(),
-                                  emailSender.events.getFirst()
-        );
+        String fromAddress = pdl.getWorkEmail();
+        String recipientWorkEmail = recipient.getWorkEmail();
+        String subject = checkInsConfiguration.getApplication().getFeedback().getRequestSubject();
+        String partialBody = "You have received edit access to a feedback request";
+        EmailHelper.validateExposedEmail("SEND_EMAIL", fromName, fromAddress, recipientWorkEmail, subject, partialBody,  emailSender.events.getFirst());
     }
 
     @Test

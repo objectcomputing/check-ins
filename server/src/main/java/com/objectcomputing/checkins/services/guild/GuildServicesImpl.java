@@ -304,7 +304,7 @@ public class GuildServicesImpl implements GuildServices {
 
         String emailContent = constructEmailContent(addedMembers, removedMembers, guildName);
         String subject = "Membership Changes have been made to the " + guildName +" guild";
-        emailSender.sendEmail(null, null, subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
+        emailSender.sendEmailBlind(null, null, subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
 
     }
 
@@ -339,6 +339,6 @@ public class GuildServicesImpl implements GuildServices {
         }
        String subject = "You have been assigned as a guild leader of " + guild.getName();
        String body = "Congratulations, you have been assigned as a guild leader of " + guild.getName();
-       emailSender.sendEmail(null, null, subject, body, guildLeadersEmails.toArray(new String[0]));
+       emailSender.sendEmailBlind(null, null, subject, body, guildLeadersEmails.toArray(new String[0]));
     }
 }

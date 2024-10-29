@@ -60,7 +60,7 @@ class PulseEmail {
   public void send() {
     final List<String> recipients = getActiveTeamMembers();
     final String content = getEmailContent();
-    emailSender.sendEmail(null, null, SUBJECT, content,
+    emailSender.sendEmailBlind(null, null, SUBJECT, content,
                           recipients.toArray(new String[recipients.size()]));
   }
 }

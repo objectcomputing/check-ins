@@ -31,8 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.HashMap;
 import java.io.BufferedReader;
 import java.time.temporal.ChronoUnit;
 
@@ -240,7 +238,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                 period.getPeriodEndDate(), period.getLaunchDate(),
                 period.getSelfReviewCloseDate(), period.getCloseDate()
             );
-            emailSender.sendEmail(null, null, "It's time for performance reviews!", emailContent, allInvolved.toArray(new String[0]));
+            emailSender.sendEmailBlind(null, null, "It's time for performance reviews!", emailContent, allInvolved.toArray(new String[0]));
         }
 
         return period;
@@ -290,7 +288,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
 
         // send notification to supervisors
         String emailContent = constructSupervisorEmail(reviewPeriodId, reviewPeriodName);
-        emailSender.sendEmail(null, null, "Review Assignments Awaiting Approval", emailContent, supervisorEmails.toArray(new String[0]));
+        emailSender.sendEmailBlind(null, null, "Review Assignments Awaiting Approval", emailContent, supervisorEmails.toArray(new String[0]));
     }
 
     private String constructSupervisorEmail(UUID reviewPeriodId, String reviewPeriodName){
@@ -463,7 +461,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                                      webAddress);
 
                 // Send out the email to everyone.
-                emailSender.sendEmail(null, null, subject, content,
+                emailSender.sendEmailBlind(null, null, subject, content,
                                       addresses.toArray(
                                           new String[addresses.size()]));
             }
