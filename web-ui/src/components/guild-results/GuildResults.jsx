@@ -3,13 +3,13 @@ import React, { useContext, useState } from 'react';
 import GroupIcon from '@mui/icons-material/Group';
 import { Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 
 import { createGuild, getGuildLeaders } from '../../api/guild';
 import { ADD_GUILD } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import AddGuildModal from './EditGuildModal';
 import GuildSummaryCard from './GuildSummaryCard';
+import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
 import './GuildResults.css';
 
@@ -113,8 +113,8 @@ const GuildResults = () => {
         </div>
       </div>
       <div className="guilds">
-        {guilds?.length
-          ? guilds?.map((guild, index) =>
+        {guilds
+          ? guilds.map((guild, index) =>
               guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
                 <GuildSummaryCard
                   key={`guild-summary-${guild.id}`}
@@ -125,7 +125,9 @@ const GuildResults = () => {
                 />
               ) : null
             )
-          : <Typography variant="h5">None Available</Typography>}
+          : Array.from({ length: 20 }).map((_, index) => (
+              <SkeletonLoader key={index} type="guild" />
+            ))}
       </div>
     </Root>
   );
