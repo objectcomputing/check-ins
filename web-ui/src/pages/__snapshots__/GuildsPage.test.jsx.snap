@@ -53,7 +53,13 @@ exports[`renders correctly 1`] = `
       </div>
       <div
         class="guilds"
-      />
+      >
+        <h5
+          class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+        >
+          None Available
+        </h5>
+      </div>
     </div>
   </div>
 </div>
