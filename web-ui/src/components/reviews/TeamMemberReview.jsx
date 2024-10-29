@@ -20,9 +20,6 @@ import {
   Typography
 } from '@mui/material';
 import FeedbackSubmitForm from '../feedback_submit_form/FeedbackSubmitForm';
-import SelectUserModal from './SelectUserModal';
-import { cancelFeedbackRequest, updateFeedbackRequest } from '../../api/feedback';
-import { UPDATE_TOAST } from '../../context/actions';
 
 const propTypes = {
   selfReview: PropTypes.any,
