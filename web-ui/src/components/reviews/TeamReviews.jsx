@@ -64,7 +64,6 @@ import {
   selectHasDeleteReviewPeriodPermission,
   selectHasLaunchReviewPeriodPermission,
   selectHasUpdateReviewPeriodPermission,
-  selectIsAdmin,
   selectReviewPeriod,
   selectSupervisors,
   selectProfile,
@@ -130,7 +129,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   const location = useLocation();
 
   const [openMode, setOpenMode] = useState(false);
-  const [managerApprovalMode, setManagerApprovalMode] = useState(false);
   const [approvalState, setApprovalState] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const [canUpdate, setCanUpdate] = useState(false);
@@ -148,6 +146,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selfReviews, setSelfReviews] = useState({});
   const [showAll, setShowAll] = useState(false);
+  const [hasShowAll, setHasShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [toDelete, setToDelete] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
@@ -165,7 +164,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     return map;
   }, {});
   const currentUser = selectCurrentUser(state);
-  const isAdmin = selectIsAdmin(state);
   const period = selectReviewPeriod(state, periodId);
 
   useEffect(() => {
@@ -179,7 +177,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     const period = selectReviewPeriod(state, periodId);
     if (period) {
       setApprovalState(period.reviewStatus === ReviewStatus.AWAITING_APPROVAL);
-      setManagerApprovalMode(isManager && approvalState);
     }
 
     setOpenMode(period?.reviewStatus === ReviewStatus.OPEN);
@@ -189,11 +186,13 @@ const TeamReviews = ({ onBack, periodId }) => {
                   selectHasUpdateReviewAssignmentsPermission(state));
 
 
+    setHasShowAll((isManager || selectHasUpdateReviewPeriodPermission(state)) &&
+                  (approvalState || openMode));
   }, [state]);
 
   useEffect(() => {
     loadTeamMembers();
-  }, [managerApprovalMode, assignments, showAll]);
+  }, [assignments, showAll]);
 
   const editReviewers = member => {
     setSelectedMember(member);
@@ -213,7 +212,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const loadTeamMembers = () => {
     let source;
-    if (!managerApprovalMode || (isAdmin && showAll)) {
+    if (selectHasUpdateReviewPeriodPermission(state) && showAll) {
       source = currentMembers;
     } else {
       // Get the direct reports of the current user who is a manager.
@@ -907,7 +906,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const visibleTeamMembers = () => {
     const query = nameQuery.trim().toLowerCase();
-    if (!managerApprovalMode || query.length === 0) return teamMembers;
+    if (query.length === 0) return teamMembers;
 
     return teamMembers.filter(member =>
       member.name.toLowerCase().includes(query)
@@ -968,7 +967,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         </Alert>
       )}
 
-      {approvalState && (
+      {(approvalState || hasShowAll) && (
           <div id="approval-row" style={{ display: 'flex', alignItems: 'center' }}>
             {/* Wrapper div for TextField and Switch */}
             <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
@@ -989,7 +988,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                   style={{ flexGrow: 1, maxWidth: '400px' }}
               />
               {/* Add the Switch right next to the TextField */}
-              {period && isAdmin && (
+              {period && hasShowAll && (
                   <FormControlLabel
                       control={
                         <Switch

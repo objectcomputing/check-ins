@@ -95,6 +95,10 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
       const member = currentMembers.find(m => m.id === assignment.revieweeId);
       if (member?.supervisorid) {
         assignment.revieweeSupervisorId = member.supervisorid;
+      } else {
+        // If this person does not have a supervisor, use the reviewer for
+        // the calculations below.
+        assignment.revieweeSupervisorId = assignment.reviewerId;
       }
     }
 
