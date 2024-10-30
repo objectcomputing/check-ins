@@ -111,6 +111,17 @@ const TemplateCard = props => {
         <p className="creator">
           Created by: <b>{creatorName}</b>
         </p>
+        {props.isForExternalRecipient && (
+            <label className="externalRecipientLabel" style={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                  type="checkbox"
+                  checked={props.isForExternalRecipient}
+                  disabled
+                  className="externalRecipient"
+              />
+              <span style={{ marginLeft: '5px' }}>For external recipients only</span>
+            </label>
+        )}
       </CardContent>
     </Card>
   );

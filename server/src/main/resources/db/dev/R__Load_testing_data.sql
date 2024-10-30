@@ -1250,7 +1250,7 @@ VALUES
 INSERT INTO feedback_templates
 (id, title, description, creator_id, date_created, active, is_public, is_ad_hoc, is_for_external_recipient) -- created by: Big Boss
 VALUES
-    ('265c4d57-7cd9-4c14-9878-bd05d3bb59f1', 'Survey 1', 'Make a survey with a few questions for external recipients'
+    ('265c4d57-7cd9-4c14-9878-bd05d3bb59f1', 'Survey For External Recips', 'Make a survey with a few questions for external recipients'
     , '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '2021-05-05', true, true, false, true)
 ;
 INSERT INTO template_questions
