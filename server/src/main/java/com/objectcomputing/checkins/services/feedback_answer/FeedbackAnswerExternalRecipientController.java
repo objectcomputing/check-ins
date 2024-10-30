@@ -1,14 +1,13 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -20,15 +19,17 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Controller("/services/feedback/answers")
+@Controller("/services/feedback/answers/external/recipients")
 @ExecuteOn(TaskExecutors.BLOCKING)
-@Secured(SecurityRule.IS_AUTHENTICATED)
-public class FeedbackAnswerController {
+@Secured(SecurityRule.IS_ANONYMOUS)
+public class FeedbackAnswerExternalRecipientController {
 
     private final FeedbackAnswerServices feedbackAnswerServices;
+    private final FeedbackRequestServices feedbackRequestServices;
 
-    public FeedbackAnswerController(FeedbackAnswerServices feedbackAnswerServices) {
+    public FeedbackAnswerExternalRecipientController(FeedbackAnswerServices feedbackAnswerServices, FeedbackRequestServices feedbackRequestServices) {
         this.feedbackAnswerServices = feedbackAnswerServices;
+        this.feedbackRequestServices = feedbackRequestServices;
     }
 
     /**
@@ -39,6 +40,10 @@ public class FeedbackAnswerController {
      */
     @Post
     public HttpResponse<FeedbackAnswerResponseDTO> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
+        FeedbackRequest feedbackRequest = this.feedbackRequestServices.getById(requestBody.getRequestId());
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
         FeedbackAnswer savedAnswer = feedbackAnswerServices.save(fromDTO(requestBody));
         return HttpResponse.created(fromEntity(savedAnswer))
                 .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())));
@@ -52,6 +57,11 @@ public class FeedbackAnswerController {
      */
     @Put
     public HttpResponse<FeedbackAnswerResponseDTO> update(@Body @Valid @NotNull FeedbackAnswerUpdateDTO requestBody) {
+        FeedbackAnswer feedbackAnswerExistingRecord = this.feedbackAnswerServices.getById(requestBody.getId());
+        FeedbackRequest feedbackRequest = this.feedbackRequestServices.getById(feedbackAnswerExistingRecord.getRequestId());
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
         FeedbackAnswer savedAnswer = feedbackAnswerServices.update(fromDTO(requestBody));
         return HttpResponse.ok(fromEntity(savedAnswer))
                 .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())));
@@ -64,9 +74,12 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     public HttpResponse<FeedbackAnswerResponseDTO> getById(UUID id) {
         FeedbackAnswer savedAnswer = feedbackAnswerServices.getById(id);
+        FeedbackRequest feedbackRequest = this.feedbackRequestServices.getById(savedAnswer.getRequestId());
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
         return HttpResponse.ok(fromEntity(savedAnswer))
                 .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())));
     }
@@ -77,12 +90,12 @@ public class FeedbackAnswerController {
      *
      * @param questionId The attached {@link UUID} of the related question
      * @param requestId  The attached {@link UUID} of the request that corresponds with the answer
+     * @param externalRecipientId  The attached {@link UUID} of the external-recipient that corresponds with the answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
-    @Get("/{?questionId,requestId}")
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
-    public List<FeedbackAnswerResponseDTO> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
-        return feedbackAnswerServices.findByValues(questionId, requestId, null)
+    @Get("/{?questionId,requestId,externalRecipientId}")
+    public List<FeedbackAnswerResponseDTO> findByValues(@Nullable UUID questionId, @Nullable UUID requestId, @Nullable UUID externalRecipientId) {
+        return feedbackAnswerServices.findByValues(questionId, requestId, externalRecipientId)
                 .stream()
                 .map(this::fromEntity)
                 .toList();

@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import jakarta.inject.Singleton;
@@ -115,7 +116,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     @Override
     public TemplateQuestion getById(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
-        if (!getIsPermitted()) {
+        if (!getIsPermitted(id)) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -130,7 +131,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     public List<TemplateQuestion> findByFields(UUID templateId) {
         if (templateId == null) {
             throw new BadArgException("Cannot find template questions for null template ID");
-        } else if (!getIsPermitted()) {
+        } else if (!getIsPermitted(templateId)) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -152,8 +153,21 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         return createIsPermitted(templateCreatorId);
     }
 
-    public boolean getIsPermitted() {
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return currentUserId != null;
+    public boolean getIsPermitted(UUID templateQuestionId) {
+        UUID currentUserId;
+        MemberProfile currentUser;
+
+        final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(templateQuestionId);
+        final Optional<FeedbackTemplate> feedbackTemplate = (templateQuestion.isPresent()) ? feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId()) : null;
+
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+            currentUserId = currentUser.getId();
+        } catch (NotFoundException e) {
+            currentUser = null;
+            currentUserId = null;
+        }
+
+        return (currentUserId != null || (feedbackTemplate.isPresent() && feedbackTemplate.get().getIsForExternalRecipient() != null && feedbackTemplate.get().getIsForExternalRecipient() == true));
     }
 }

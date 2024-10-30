@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
@@ -8,6 +9,7 @@ import com.objectcomputing.checkins.services.fixture.FeedbackAnswerFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackExternalRecipientFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.TemplateQuestionFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -32,11 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FeedbackAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture, TemplateQuestionFixture {
+class FeedbackAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, MemberProfileFixture, FeedbackExternalRecipientFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture, TemplateQuestionFixture {
 
     @Inject
     @Client("/services/feedback/answers")
     HttpClient client;
+
+    @Inject
+    @Client("/services/feedback/answers/external/recipients")
+    HttpClient clientExternalRecipient;
 
     @BeforeEach
     void createRolesAndPermissions() {
@@ -54,8 +60,24 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
         return createSampleFeedbackAnswer(question.getId(), feedbackRequest.getId());
     }
 
+    FeedbackAnswer createSampleAnswer(MemberProfile sender, FeedbackExternalRecipient externalRecipient) {
+        assignPdlRole(sender);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
+        MemberProfile templateCreator = createADefaultSupervisor();
+        FeedbackTemplate template = createFeedbackTemplateForExternalRecipient01(templateCreator.getId());
+        getFeedbackTemplateRepository().save(template);
+        TemplateQuestion question = saveTemplateQuestion(template, 1);
+        FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, externalRecipient, template.getId());
+        return createSampleFeedbackAnswer(question.getId(), feedbackRequest.getId());
+    }
+
     FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         FeedbackAnswer answer = createSampleAnswer(sender, recipient);
+        return getFeedbackAnswerRepository().save(answer);
+    }
+
+    FeedbackAnswer saveSampleAnswer(MemberProfile sender, FeedbackExternalRecipient externalRecipient) {
+        FeedbackAnswer answer = createSampleAnswer(sender, externalRecipient);
         return getFeedbackAnswerRepository().save(answer);
     }
 
@@ -85,6 +107,12 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     void assertUnauthorized(HttpClientResponseException exception) {
         assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+    }
+
+    void assertUnauthorizedHttpStatus(HttpClientResponseException exception) {
+        String exceptionMessage = exception.getMessage();
+        String exceptionMessageUppercase = exceptionMessage != null ? exceptionMessage.toUpperCase() : "";
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionMessageUppercase);
     }
 
     @Test
@@ -121,7 +149,23 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     @Test
-    void testPostAnswerByRecipientForCanceledRequest() {
+    void testPostAnswerByExternalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+
+        FeedbackAnswer feedbackAnswer = createSampleAnswer(sender, externalRecipient01);
+        FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
+
+        final HttpRequest<?> request = HttpRequest.POST("", dto);
+        final HttpResponse<FeedbackAnswerResponseDTO> response = this.clientExternalRecipient.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testPostAnswerByRecipientForCanceledRequestToRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         assignPdlRole(sender);
@@ -141,6 +185,31 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Attempted to save an answer for a canceled feedback request", responseException.getMessage());
+    }
+
+    @Test
+    void testPostAnswerByRecipientForCanceledRequestToExternalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        assignPdlRole(sender);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
+
+        MemberProfile templateCreator = createADefaultSupervisor();
+        FeedbackTemplate template = createFeedbackTemplateForExternalRecipient01(templateCreator.getId());
+        getFeedbackTemplateRepository().save(template);
+
+        TemplateQuestion question = saveTemplateQuestion(template, 1);
+        FeedbackRequest canceledRequest = saveSampleFeedbackRequestWithStatus(sender, requestee, externalRecipient01, template.getId(), "canceled");
+
+        FeedbackAnswer feedbackAnswer = createSampleFeedbackAnswer(question.getId(), canceledRequest.getId());
+        FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
+
+        final HttpRequest<?> request = HttpRequest.POST("", dto);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                clientExternalRecipient.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals("Attempted to save an answer for a canceled feedback request", responseException.getMessage());
@@ -181,6 +250,24 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     @Test
+    void testUpdateByExternalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, externalRecipient01);
+        feedbackAnswer.setAnswer(":p");
+        feedbackAnswer.setSentiment(1.0);
+        FeedbackAnswerUpdateDTO dto = updateDTO(feedbackAnswer);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto);
+        final HttpResponse<FeedbackAnswerResponseDTO> response = clientExternalRecipient.toBlocking()
+                .exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
     void testUpdateByAdminUnauthorized() {
         MemberProfile admin = createADefaultMemberProfile();
         assignAdminRole(admin);
@@ -198,7 +285,7 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     @Test
-    void testGetByIdSender() {
+    void testGetByIdSenderForRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
@@ -213,7 +300,21 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     @Test
-    void testGetByIdSubmitter() {
+    void testGetByIdSenderForExternalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, externalRecipient01);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()));
+        final HttpResponse<FeedbackAnswerResponseDTO> response = clientExternalRecipient.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testGetByIdSubmitterForRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
@@ -221,6 +322,20 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()))
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testGetByIdSubmitterForExternalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, externalRecipient01);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()));
+        final HttpResponse<FeedbackAnswerResponseDTO> response = clientExternalRecipient.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
 
         assertTrue(response.getBody().isPresent());
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -243,7 +358,7 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     @Test
-    void testGetByRequestAndQuestionIdAuthorized() {
+    void testGetByRequestAndQuestionIdAuthorizedToRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
@@ -258,7 +373,21 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     @Test
-    void testGetByRequestAndQuestionIdAuthorizedRequestOnly() {
+    void testGetByRequestAndQuestionIdAuthorizedToExternalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, externalRecipient01);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s&externalRecipientId=%s", feedbackAnswer.getQuestionId(), feedbackAnswer.getRequestId(), externalRecipient01.getId()));
+        final HttpResponse<List<FeedbackAnswerResponseDTO>> response = clientExternalRecipient.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackAnswerResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get().get(0));
+    }
+
+    @Test
+    void testGetByRequestAndQuestionIdAuthorizedRequestOnlyToRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         assignPdlRole(sender);
@@ -285,7 +414,33 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
     }
 
     @Test
-    void testGetByRequestAndQuestionIdUnauthorized() {
+    void testGetByRequestAndQuestionIdAuthorizedRequestOnlyToExternalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        assignPdlRole(sender);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
+        MemberProfile templateCreator = createADefaultSupervisor();
+        FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
+        getFeedbackTemplateRepository().save(template);
+        TemplateQuestion question = saveTemplateQuestion(template, 1);
+        TemplateQuestion questionTwo = saveAnotherTemplateQuestion(template, 2);
+        FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, externalRecipient01, template.getId());
+        FeedbackAnswer answerOne = new FeedbackAnswer("Sample answer 1", question.getId(), feedbackRequest.getId(), 0.5);
+        getFeedbackAnswerRepository().save(answerOne);
+        FeedbackAnswer answerTwo = new FeedbackAnswer("Sample answer 2", questionTwo.getId(), feedbackRequest.getId(), 0.5);
+        getFeedbackAnswerRepository().save(answerTwo);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s&externalRecipientId=%s", answerOne.getRequestId(), externalRecipient01.getId().toString()));
+        final HttpResponse<List<FeedbackAnswerResponseDTO>> response = clientExternalRecipient.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackAnswerResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(answerOne, response.getBody().get().get(0));
+        assertContentEqualsResponse(answerTwo, response.getBody().get().get(1));
+    }
+
+    @Test
+    void testGetByRequestAndQuestionIdUnauthorizedToRandomRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile random = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
@@ -295,12 +450,21 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         assertUnauthorized(exception);
-
-
     }
 
     @Test
-    void testGetByRequestAndQuestionIdRequestNotExists() {
+    void testGetByRequestAndQuestionIdUnauthorizedToExternalRecipientWithoutId() {
+        MemberProfile sender = createADefaultMemberProfile();
+        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, externalRecipient01);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", feedbackAnswer.getQuestionId(), feedbackAnswer.getRequestId()));
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        assertUnauthorizedHttpStatus(exception);
+    }
+
+    @Test
+    void testGetByRequestAndQuestionIdRequestNotExistsToRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         UUID random = UUID.randomUUID();
@@ -311,7 +475,18 @@ class FeedbackAnswerControllerTest extends TestContainersSuite implements Feedba
                 () -> client.toBlocking().exchange(request, Map.class));
         assertEquals("Cannot find attached request for search", exception.getMessage());
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    }
 
+    @Test
+    void testGetByRequestAndQuestionIdRequestNotExistsToExernalRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        UUID random = UUID.randomUUID();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", feedbackAnswer.getQuestionId(), random));
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> clientExternalRecipient.toBlocking().exchange(request, Map.class));
+        assertEquals("Cannot find attached request for search", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }
 
 }

@@ -98,10 +98,20 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     @Override
-    public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+    public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId, @Nullable UUID externalRecipientId) {
         List<FeedbackAnswer> response = new ArrayList<>();
         FeedbackRequest feedbackRequest;
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        MemberProfile currentUser;
+
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+
+        } catch (NotFoundException e) {
+            currentUser = null;
+
+        }
+        final UUID currentUserId = (currentUser != null) ? currentUser.getId() : null;
+
         try {
             feedbackRequest = feedbackRequestServices.getById(requestId);
         } catch (NotFoundException e) {
@@ -110,16 +120,18 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         final UUID requestCreatorId = feedbackRequest.getCreatorId();
         final UUID requesteeId = feedbackRequest.getRequesteeId();
         final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
+        boolean isRequesteesSupervisor = requesteeId != null && currentUserId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID requesteePDL = requestee.getPdlId();
-        if (currentUserServices.isAdmin() || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId)) {
+        if (currentUserServices.isAdmin() || (currentUserId != null && currentUserId.equals(requesteePDL)) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || (recipientId != null && recipientId.equals(currentUserId))) {
             response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
+            return response;
+        } else if (externalRecipientId != null) {
+            response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId), externalRecipientId.toString()));
             return response;
         }
 
         throw new PermissionException(NOT_AUTHORIZED_MSG);
-
     }
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {
@@ -136,8 +148,17 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
     public boolean createIsPermitted(FeedbackRequest feedbackRequest) {
         final UUID recipientId = feedbackRequest.getRecipientId();
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return recipientId.equals(currentUserId);
+        MemberProfile currentUser;
+        UUID currentUserId;
+
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+            currentUserId = currentUser.getId();
+        } catch (NotFoundException e) {
+            currentUser = null;
+            currentUserId = null;
+        }
+        return (recipientId != null && recipientId.equals(currentUserId)) || (currentUserId == null && feedbackRequest.getExternalRecipientId() != null);
     }
 
     public boolean updateIsPermitted(FeedbackRequest feedbackRequest) {
@@ -145,15 +166,30 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     public boolean getIsPermitted(FeedbackRequest feedbackRequest) {
+        MemberProfile currentUser;
+
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+        } catch (NotFoundException e) {
+            currentUser = null;
+        }
+        final UUID currentUserId = (currentUser != null) ? currentUserServices.getCurrentUser().getId() : null;
+
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID requestCreatorId = feedbackRequest.getCreatorId();
         UUID requesteeId = feedbackRequest.getRequesteeId();
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
+        boolean isRequesteesSupervisor;
+
+        if  (requesteeId != null && currentUserId != null) {
+            isRequesteesSupervisor = memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
+        } else {
+            isRequesteesSupervisor = false;
+        }
+
         final UUID requesteePDL = requestee.getPdlId();
 
-        return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);
+        return isAdmin || (currentUserId != null && currentUserId.equals(requesteePDL)) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || (recipientId != null && recipientId.equals(currentUserId)) || feedbackRequest.getExternalRecipientId()!= null;
     }
 }

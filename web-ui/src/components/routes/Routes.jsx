@@ -200,7 +200,7 @@ export default function Routes() {
       <Route path="/feedback/submit">
         <FeedbackSubmitPage />
       </Route>
-        <Route path="/feedback/submitForExternalRecipient">
+        <Route path="/feedbackExternalRecipient">
             <FeedbackRequestForExternalRecipientPage />
         </Route>
       <Route exact path="/admin/manage-kudos">

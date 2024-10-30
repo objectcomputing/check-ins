@@ -287,7 +287,7 @@ public class ReportDataCollation {
                 recipientId.toString() :
                 MemberProfileUtils.getFullName(recipient));
             List<FeedbackAnswer> answers =
-                   feedbackAnswerServices.findByValues(null, request.getId());
+                   feedbackAnswerServices.findByValues(null, request.getId(), null);
             for (FeedbackAnswer answer : answers) {
               String questionText;
               String questionType = textQuestion;

@@ -46,7 +46,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         List<TemplateQuestion> templateQuestions = templateQuestionServices.findByFields(feedbackRequest.getTemplateId());
-        List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId);
+        List<FeedbackAnswer> answerList = feedbackAnswerServices.findByValues(null, requestId, null);
 
         List<Tuple> returnerList = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         }
 
         List<FeedbackAnswer> list;
-        list = feedbackAnswerServices.findByValues(questionId, requestId);
+        list = feedbackAnswerServices.findByValues(questionId, requestId, null);
 
         FeedbackAnswer returnedAnswer;
         if (list.isEmpty()) {

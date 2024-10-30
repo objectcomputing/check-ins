@@ -145,6 +145,7 @@ public class FeedbackTemplateController {
         dto.setActive(feedbackTemplate.getActive());
         dto.setIsPublic(feedbackTemplate.getIsPublic());
         dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
+        dto.setIsForExternalRecipient(feedbackTemplate.getIsForExternalRecipient());
         return dto;
     }
 }

@@ -13,5 +13,5 @@ public interface FeedbackAnswerServices {
 
     FeedbackAnswer getById(UUID id);
 
-    List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId);
+    List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId, @Nullable UUID externalRecipientId);
 }

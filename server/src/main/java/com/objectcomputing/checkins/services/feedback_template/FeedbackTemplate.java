@@ -77,6 +77,11 @@ public class FeedbackTemplate {
     @Schema(description = "indicates whether the template is utilized for performance reviews")
     private Boolean isReview;
 
+    @Column(name = "is_for_external_recipient")
+    @Nullable
+    @Schema(description = "indicates whether the template is utilized for external recipients")
+    private Boolean isForExternalRecipient;
+
     /**
      * Constructs a new {@link FeedbackTemplate} to save
      *
@@ -87,7 +92,7 @@ public class FeedbackTemplate {
      * @param isAdHoc     Whether the template is an ad-hoc template
      * @param isReview    Whether the template is used for performance reviews
      */
-    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isPublic, Boolean isAdHoc, Boolean isReview) {
+    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isPublic, Boolean isAdHoc, Boolean isReview, @Nullable Boolean isForExternalRecipient) {
         this.id = null;
         this.title = title;
         this.description = description;
@@ -96,6 +101,11 @@ public class FeedbackTemplate {
         this.isPublic = isPublic;
         this.isAdHoc = isAdHoc;
         this.isReview = isReview;
+        this.isForExternalRecipient = isForExternalRecipient;
+    }
+
+    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isPublic, Boolean isAdHoc, Boolean isReview) {
+        this(title, description, creatorId, isPublic, isAdHoc, isReview, null);
     }
 
     /**
@@ -126,12 +136,14 @@ public class FeedbackTemplate {
                 Objects.equals(active, that.active) &&
                 Objects.equals(isPublic, that.isPublic) &&
                 Objects.equals(isAdHoc, that.isAdHoc) &&
-                Objects.equals(isReview, that.isReview);
+                Objects.equals(isReview, that.isReview)
+                && customEquals(isForExternalRecipient, that.isForExternalRecipient)
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, creatorId, dateCreated, active, isPublic, isAdHoc, isReview);
+        return Objects.hash(id, title, description, creatorId, dateCreated, active, isPublic, isAdHoc, isReview, isForExternalRecipient);
     }
 
     @Override
@@ -146,6 +158,14 @@ public class FeedbackTemplate {
                 ", isPublic=" + isPublic +
                 ", isAdHoc=" + isAdHoc +
                 ", isReview=" + isReview +
+                ", isForExternalRecipient=" + isForExternalRecipient +
                 '}';
     }
+
+    public static boolean customEquals(Boolean a, Boolean b) {
+        if (Boolean.FALSE.equals(a) && b == null) return true;
+        if (a == null && Boolean.FALSE.equals(b)) return true;
+        return Objects.equals(a, b);
+    }
+
 }

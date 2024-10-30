@@ -23,7 +23,17 @@ public interface FeedbackAnswerRepository extends CrudRepository<FeedbackAnswer,
     @Override
     <S extends FeedbackAnswer> S update(@NotNull @Valid S entity);
 
-    @Query("SELECT id, PGP_SYM_DECRYPT(cast(answer as bytea), '${aes.key}') as answer, question_id, request_id, sentiment FROM feedback_answers WHERE (:questionId IS NULL OR question_id = :questionId) AND (request_id = :requestId)")
+    @Query("SELECT id, PGP_SYM_DECRYPT(cast(answer as bytea), '${aes.key}') as answer, question_id, request_id, sentiment " +
+            "FROM feedback_answers WHERE (:questionId IS NULL OR question_id = :questionId) AND (request_id = :requestId)")
     List<FeedbackAnswer> getByQuestionIdAndRequestId(@Nullable String questionId, @Nullable String requestId);
+
+    @Query("SELECT FA.id, PGP_SYM_DECRYPT(cast(FA.answer as bytea), '${aes.key}') as answer, FA.question_id, FA.request_id, FA.sentiment " +
+            "FROM feedback_answers FA JOIN feedback_requests FR on FA.request_id = FR.id " +
+            "WHERE 1=1 " +
+            "and (:questionId IS NULL OR question_id = :questionId) " +
+            "AND (request_id = :requestId) " +
+            "AND :externalRecipientId = FR.external_recipient_id " +
+            "")
+    List<FeedbackAnswer> getByQuestionIdAndRequestId(@Nullable String questionId, @Nullable String requestId, @NotNull String externalRecipientId);
 
 }
