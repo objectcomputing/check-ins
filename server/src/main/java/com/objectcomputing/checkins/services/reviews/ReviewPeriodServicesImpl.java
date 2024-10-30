@@ -264,7 +264,6 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                             new BufferedReader(
                                 reviewPeriodAnnouncementTemplate.asReader())),
                             reviewPeriodName, reviewPeriodName,
-                            dateAsString(startDate), dateAsString(endDate),
                             dateAsString(launchDate),
                             dateAsString(selfReviewDate),
                             dateAsString(closeDate));
