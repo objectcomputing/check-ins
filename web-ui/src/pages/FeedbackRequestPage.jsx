@@ -31,6 +31,9 @@ import DateFnsUtils from '@date-io/date-fns';
 import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
 
 import './FeedbackRequestPage.css';
+import FeedbackRequestForExternalRecipientPage from "./FeedbackRequestForExternalRecipientPage.jsx";
+import FeedbackExternalRecipientSelector
+  from "../components/feedback_external_recipient_selector/FeedbackExternalRecipientSelector.jsx";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'FeedbackRequestPage';
@@ -120,6 +123,7 @@ const FeedbackRequestPage = () => {
   const queryLoaded = useRef(false);
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();
+  const [templateIsForExternalRecipient, setTemplateIsForExternalRecipient] = useState();
   const [requestee, setRequestee] = useState({});
   const [memberIds, setMemberIds] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
@@ -130,6 +134,7 @@ const FeedbackRequestPage = () => {
         ...query,
         [key]: value
       };
+      console.log("FeedbackRequestPage, handleQueryChange, query: ", query);
       history.push({ ...location, search: queryString.stringify(newQuery) });
     },
     [history, location, query]
@@ -328,22 +333,25 @@ const FeedbackRequestPage = () => {
 
   useEffect(() => {
     const params = queryString.parse(location?.search);
+    console.log("FeedbackRequestPage, useEffect, setQuery, params: ", params);
     setQuery(params);
   }, [location.search]);
 
   useEffect(() => {
     async function isTemplateValid() {
       if (!query.template || !csrf) {
-        return false;
+        return { isValid: false, additionalData: null };
       }
+
       let res = await getFeedbackTemplate(query.template, csrf);
       let templateResponse =
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+              ? res.payload.data
+              : null;
+
       if (templateResponse === null) {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -352,20 +360,26 @@ const FeedbackRequestPage = () => {
             toast: 'The ID for the template you selected does not exist.'
           }
         });
-        return false;
+        return { isValid: false, templateIsForExternalRecipientParam: false };
       } else {
-        return true;
+        // Set additionalData based on the res.payload.data content
+        const additionalData = templateResponse.someField; // Replace with the actual data you want to return
+        console.log("FeedbackRequestPage, isTemplateValid, templateResponse.isForExternalRecipient: ", templateResponse.isForExternalRecipient);
+        return { isValid: true, templateIsForExternalRecipientParam: templateResponse.isForExternalRecipient };
       }
     }
 
     if (queryLoaded.current && csrf) {
-      isTemplateValid().then(isValid => {
+      console.log("FeedbackRequestPage, queryLoaded, queryLoaded.current: ", queryLoaded.current);
+      isTemplateValid().then(({ isValid, templateIsForExternalRecipientParam: templateIsForExternalRecipientParam }) => {
         setTemplateIsValid(isValid);
+        setTemplateIsForExternalRecipient(templateIsForExternalRecipientParam);
       });
     } else {
       queryLoaded.current = true;
     }
   }, [csrf, query, queryLoaded]);
+
 
   useEffect(() => {
     if (!queryLoaded.current || templateIsValid === undefined) return;
@@ -401,79 +415,87 @@ const FeedbackRequestPage = () => {
   }, [canProceed]);
 
   return selectHasCreateFeedbackPermission(state) ? (
-    <Root className="feedback-request-page">
-      <div className="header-container">
-        <Typography className={classes.requestHeader} variant="h4">
-          Feedback Request for <b>{requestee?.name}</b>
-        </Typography>
-        <div>
-          <Button
-            className={`${classes.backButton} ${classes.actionButtons}`}
-            onClick={onBackClick}
-            disabled={activeStep <= 1}
-            variant="contained"
-          >
-            Back
-          </Button>
-          <Button
-            className={classes.actionButtons}
-            onClick={onNextClick}
-            variant="contained"
-            disabled={!readyToProceed}
-            color="primary"
-          >
-            {activeStep === steps.length ? 'Submit' : 'Next'}
-          </Button>
+      <Root className="feedback-request-page">
+        <div className="header-container">
+          <Typography className={classes.requestHeader} variant="h4">
+            Feedback Request for <b>{requestee?.name}</b>
+          </Typography>
+          <div>
+            <Button
+                className={`${classes.backButton} ${classes.actionButtons}`}
+                onClick={onBackClick}
+                disabled={activeStep <= 1}
+                variant="contained"
+            >
+              Back
+            </Button>
+            <Button
+                className={classes.actionButtons}
+                onClick={onNextClick}
+                variant="contained"
+                disabled={!readyToProceed}
+                color="primary"
+            >
+              {activeStep === steps.length ? 'Submit' : 'Next'}
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className={classes.stepContainer}>
-        <Stepper
-          activeStep={activeStep - 1}
-          className={classes.root}
-          style={{ padding: 24 }}
-        >
-          {steps.map(label => {
-            const stepProps = {};
-            const labelProps = {};
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps} key={label}>
-                  {label}
-                </StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
-      </div>
-      <div className="current-step-content">
-        {activeStep === 1 && (
-          <FeedbackTemplateSelector
-            changeQuery={(key, value) => handleQueryChange(key, value)}
-            query={query.template}
-          />
-        )}
-        {activeStep === 2 && (
-          <FeedbackRecipientSelector
-            forQuery={query.for}
-            changeQuery={(key, value) => handleQueryChange(key, value)}
-            fromQuery={
-              query.from
-                ? Array.isArray(query.from)
-                  ? query.from
-                  : [query.from]
-                : []
-            }
-          />
-        )}
-        {activeStep === 3 && (
-          <SelectDate
-            changeQuery={(key, value) => handleQueryChange(key, value)}
-            sendDateQuery={query.send}
-            dueDateQuery={query.due}
-          />
-        )}
-      </div>
-    </Root>
+        <div className={classes.stepContainer}>
+          <Stepper
+              activeStep={activeStep - 1}
+              className={classes.root}
+              style={{ padding: 24 }}
+          >
+            {steps.map(label => (
+                <Step key={label}>
+                  <StepLabel key={label}>{label}</StepLabel>
+                </Step>
+            ))}
+          </Stepper>
+        </div>
+        <div className="current-step-content">
+          {activeStep === 1 && (
+              <FeedbackTemplateSelector
+                  changeQuery={(key, value) => handleQueryChange(key, value)}
+                  query={query.template}
+              />
+          )}
+          {activeStep === 2 && (
+              templateIsForExternalRecipient ? (
+                  <FeedbackExternalRecipientSelector
+                      forQuery={query.for}
+                      changeQuery={(key, value) => handleQueryChange(key, value)}
+                      fromQuery={
+                        query.from
+                            ? Array.isArray(query.from)
+                                ? query.from
+                                : [query.from]
+                            : []
+                      }
+                  />
+              ) : (
+                  <FeedbackRecipientSelector
+                      forQuery={query.for}
+                      changeQuery={(key, value) => handleQueryChange(key, value)}
+                      fromQuery={
+                        query.from
+                            ? Array.isArray(query.from)
+                                ? query.from
+                                : [query.from]
+                            : []
+                      }
+                  />
+              )
+          )}
+          {activeStep === 3 && (
+              <SelectDate
+                  changeQuery={(key, value) => handleQueryChange(key, value)}
+                  sendDateQuery={query.send}
+                  dueDateQuery={query.due}
+              />
+          )}
+        </div>
+      </Root>
   ) : (
     <h3>{noPermission}</h3>
   );
