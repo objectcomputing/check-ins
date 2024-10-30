@@ -40,6 +40,7 @@ const FeedbackSubmitPage = () => {
   const location = useLocation();
   const history = useHistory();
   const query = queryString.parse(location?.search);
+  const tabs = query.tabs?.toString();
   const requestQuery = query.request?.toString();
   const selfRequestQuery = query.selfrequest?.toString();
   const [showTips, setShowTips] = useState(true);
@@ -123,7 +124,6 @@ const FeedbackSubmitPage = () => {
     ) {
       getFeedbackRequest(selfRequestQuery, csrf).then(request => {
         if (request) {
-          // Permission to view this feedback request will be checked later.
           setSelfReviewRequest(request);
         }
       });
@@ -169,13 +169,6 @@ const FeedbackSubmitPage = () => {
         selfReviewRequest?.recipientId
       );
       setRecipient(recipientProfile);
-
-      if (!isManager(recipientProfile)) {
-        // The current user is not the recipient's manager, we need to clear
-        // out the self review request so that we do not display something that
-        // we shouldn't, on the next page.
-        setSelfReviewRequest(null);
-      }
     }
   }, [feedbackRequest, selfReviewRequest, state]);
 
@@ -185,7 +178,7 @@ const FeedbackSubmitPage = () => {
         <Typography className={classes.announcement} variant="h3">
           This feedback request has been canceled.
         </Typography>
-      ) : requestSubmitted || selfReviewRequest ? (
+      ) : tabs || requestSubmitted || selfReviewRequest ? (
         <TeamMemberReview
           reviews={[feedbackRequest]}
           selfReview={selfReviewRequest}

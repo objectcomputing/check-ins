@@ -113,8 +113,8 @@ const GuildResults = () => {
         </div>
       </div>
       <div className="guilds">
-        {guilds?.length
-          ? guilds?.map((guild, index) =>
+        {guilds
+          ? guilds.map((guild, index) =>
               guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
                 <GuildSummaryCard
                   key={`guild-summary-${guild.id}`}
