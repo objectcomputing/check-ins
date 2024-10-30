@@ -44,7 +44,6 @@ public class VolunteeringOrganization {
     private String description;
 
     @Column(name = "website")
-    @NotBlank
     @Schema(description = "website for the volunteering organization")
     private String website;
 

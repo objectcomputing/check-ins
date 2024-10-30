@@ -735,15 +735,12 @@ const TeamReviews = ({ onBack, periodId }) => {
                       recipientProfile?.supervisorid === currentUser?.id;
       const selfSubmitted = selfReviewRequest?.status == 'submitted';
       if (manages) {
-        let separator = '?';
-        url = "/feedback/submit";
+        url = "/feedback/submit?tabs=true";
         if (request) {
-          url += `${separator}request=${request.id}`;
-          separator = '&';
+          url += `&request=${request.id}`;
         }
         if (selfSubmitted) {
-          url += `${separator}selfrequest=${selfReviewRequest.id}`;
-          separator = '&';
+          url += `&selfrequest=${selfReviewRequest.id}`;
         }
       }
     }
