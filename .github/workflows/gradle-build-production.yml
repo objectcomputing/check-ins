@@ -3,11 +3,11 @@ on:
   push:
     branches:
       - "master"
-
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-master
+  TARGET_URL: https://checkins.objectcomputing.com
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,12 +16,12 @@ jobs:
       packages: write
     environment:
       name: Production
-      url: https://checkins.objectcomputing.com/
+      url: ${{ env.TARGET_URL }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up Node Stable
+      - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -36,42 +36,29 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          arguments: assemble
-        env:
-          VITE_APP_API_URL: https://checkins.objectcomputing.com
-#      - name: Publish package
-#        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-#        with:
-#          arguments: publish
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GIT_HUB_TOKEN }}
-      - name: Setup python
-        run: |
-          sudo apt-get install python2.7
-      - name: Export gcloud related env variable
-        run: export CLOUDSDK_PYTHON="/usr/bin/python2"
-      - name: Setup gcloud CLI
-        uses: google-github-actions/setup-gcloud@v0
+          project_id: 'oci-intern-2019'
+          workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github/providers/my-repo'
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
         with:
-          version: "290.0.1"
-          service_account_key: ${{ secrets.RUN_SA_KEY }}
-          project_id: ${{ secrets.RUN_PROJECT }}
-      - name: Auth Configure Docker
+          version: '>= 363.0.0'
+      - name: 'Auth Configure Docker'
         run: |-
           gcloud --quiet auth configure-docker
       - name: Build the Docker image
         run: |-
+          ./gradlew assemble
           cd server
           docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
+        env:
+          VITE_APP_API_URL: ${{ env.TARGET_URL }}
       - name: Push the Docker image to Google Container Registry
-        run: |-
-          cd server
-          docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+        run: docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
       - name: Deploy image to Cloud Run
         run: |-
           gcloud run deploy "$SERVICE_NAME" \
@@ -89,21 +76,12 @@ jobs:
             --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
             --set-env-vars "OAUTH_CALLBACK_URI"=${{ secrets.OAUTH_CALLBACK_URI }} \
             --set-env-vars "DIRECTORY_ID=${{ secrets.DIRECTORY_ID }}" \
-            --set-env-vars "TYPE=${{ secrets.SA_KEY_TYPE }}" \
-            --set-env-vars "PROJECT_ID=${{ secrets.RUN_PROJECT }}" \
-            --set-env-vars "PRIVATE_KEY_ID=${{ secrets.SA_PRIVATE_KEY_ID }}" \
-            --set-env-vars "PRIVATE_KEY=${{ secrets.SA_PRIVATE_KEY }}" \
-            --set-env-vars "CLIENT_EMAIL=${{ secrets.SA_CLIENT_EMAIL }}" \
-            --set-env-vars "CLIENT_ID=${{ secrets.SA_CLIENT_ID }}" \
-            --set-env-vars "AUTH_URI=${{ secrets.SA_AUTH_URI }}" \
-            --set-env-vars "TOKEN_URI=${{ secrets.SA_TOKEN_URI }}" \
-            --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.SA_AUTH_PROVIDER_X509_CERT_URL }}" \
-            --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.SA_CLIENT_X509_CERT_URL }}" \
+            --set-env-vars "SERVICE_ACCOUNT_CREDENTIALS=${{ secrets.SERVICE_ACCOUNT_CREDENTIALS }}" \
             --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
             --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
-            --set-env-vars "WEB_ADDRESS=https://checkins.objectcomputing.com" \
+            --set-env-vars "WEB_ADDRESS=${{ env.TARGET_URL }}" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=cloud,google,gcp" \
