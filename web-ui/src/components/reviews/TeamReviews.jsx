@@ -12,7 +12,6 @@ import { useLocation, Link } from 'react-router-dom';
 import {
   AddCircle,
   Archive,
-  Delete,
   Search,
   Unarchive
 } from '@mui/icons-material';
@@ -50,7 +49,6 @@ import {
   updateReviewPeriod
 } from '../../api/reviewperiods.js';
 import {
-  DELETE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIODS,
   UPDATE_TOAST
@@ -61,7 +59,7 @@ import {
   selectCurrentMembers,
   selectCurrentUser,
   selectCurrentUserSubordinates,
-  selectHasDeleteReviewPeriodPermission,
+  selectHasCloseReviewPeriodPermission,
   selectHasLaunchReviewPeriodPermission,
   selectHasUpdateReviewPeriodPermission,
   selectReviewPeriod,
@@ -136,7 +134,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [nameQuery, setNameQuery] = useState('');
   const [query, setQuery] = useState({});
@@ -148,7 +146,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [showAll, setShowAll] = useState(false);
   const [hasShowAll, setHasShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [toDelete, setToDelete] = useState(null);
+  const [toClose, setToClose] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
   const [confirmRevieweesWithNoSupervisorOpen, setConfirmRevieweesWithNoSupervisorOpen] = useState(false);
@@ -348,31 +346,29 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   }, [csrf, dispatch]);
 
-  const confirmDelete = useCallback(() => {
-    setToDelete(period.id);
-    setConfirmDeleteOpen(true);
-  }, [period, setToDelete, setConfirmDeleteOpen]);
+  const confirmClose = useCallback(() => {
+    setToClose(period.id);
+    setConfirmCloseOpen(true);
+  }, [period, setToClose, setConfirmCloseOpen]);
 
-  const handleConfirmDeleteClose = useCallback(() => {
-    setToDelete(null);
-    setConfirmDeleteOpen(false);
-  }, [setToDelete, setConfirmDeleteOpen]);
+  const handleConfirmCloseClose = useCallback(() => {
+    setToClose(null);
+    setConfirmCloseOpen(false);
+  }, [setToClose, setConfirmCloseOpen]);
 
   const handleConfirmApproveAllClose = useCallback(() => {
     setConfirmApproveAllOpen(false);
-  }, [setToDelete, setConfirmApproveAllOpen]);
+  }, [setConfirmApproveAllOpen]);
 
-  const deleteReviewPeriod = useCallback(async () => {
+  const closeReviewPeriod = useCallback(async () => {
     if (!csrf) return;
 
-    await removeReviewPeriod(toDelete, csrf);
-    dispatch({
-      type: DELETE_REVIEW_PERIOD,
-      payload: toDelete
-    });
-    handleConfirmDeleteClose();
+    if (period.reviewStatus === ReviewStatus.OPEN) {
+      updateReviewPeriodStatus(ReviewStatus.CLOSED);
+    }
+    handleConfirmCloseClose();
     onBack();
-  }, [csrf, dispatch, toDelete, handleConfirmDeleteClose]);
+  }, [csrf, dispatch, toClose, handleConfirmCloseClose]);
 
   const getReviewers = useCallback(
     reviewee => {
@@ -829,13 +825,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
-  const approvalButton = () => {
+  const modifierButton = () => {
     switch (period.reviewStatus) {
       case ReviewStatus.PLANNING:
         return <Button onClick={requestApproval}>Request Approval</Button>;
       case ReviewStatus.AWAITING_APPROVAL:
         return selectHasLaunchReviewPeriodPermission(state) ? (
           <Button onClick={requestApproval}>Launch Review</Button>
+        ) : null;
+      case ReviewStatus.OPEN:
+        return selectHasCloseReviewPeriodPermission(state) ? (
+          <Button onClick={confirmClose}>Close Review</Button>
         ) : null;
       default:
         return null;
@@ -971,7 +971,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                 disabled={!canUpdate}
             />
           </div>
-          {approvalButton()}
+          {modifierButton()}
         </div>
       )}
       {validationMessage && (
@@ -1093,11 +1093,11 @@ const TeamReviews = ({ onBack, periodId }) => {
         }}
       />
       <ConfirmationDialog
-        open={confirmDeleteOpen}
-        onYes={deleteReviewPeriod}
-        question={`Are you sure you want to delete the review period ${selectReviewPeriod(state, toDelete)?.name}?`}
-        setOpen={setConfirmDeleteOpen}
-        title="Delete this review period?"
+        open={confirmCloseOpen}
+        onYes={closeReviewPeriod}
+        question={`Are you sure you want to close the review period ${selectReviewPeriod(state, toClose)?.name}?`}
+        setOpen={setConfirmCloseOpen}
+        title="Close this review period?"
       />
       <ConfirmationDialog
         open={confirmApproveAllOpen}
