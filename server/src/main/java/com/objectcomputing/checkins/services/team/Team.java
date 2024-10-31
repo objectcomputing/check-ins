@@ -1,28 +1,34 @@
 package com.objectcomputing.checkins.services.team;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import io.micronaut.core.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "team")
 public class Team {
     @Id
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the team", required = true)
+    @Schema(description = "the id of the team")
     private UUID id;
 
     @NotBlank
@@ -43,39 +49,19 @@ public class Team {
     @Schema(description = "description of the team", nullable = true)
     private String description;
 
+    @Column(name = "is_active")
+    @Schema(description = "whether the team is active")
+    private boolean active = true;
+
     public Team(String name, @Nullable String description) {
-        this(null, name, description);
+        this(null, name, description, true);
     }
 
-    public Team(UUID id, String name, @Nullable String description) {
+    public Team(UUID id, String name, @Nullable String description, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Nullable
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(@Nullable String description) {
-        this.description = description;
+        this.active = active;
     }
 
     @Override

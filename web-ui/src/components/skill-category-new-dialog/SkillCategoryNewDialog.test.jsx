@@ -1,18 +1,18 @@
-import React from "react";
-import SkillCategoryNewDialog from "./SkillCategoryNewDialog";
-import EnzymeToJson from 'enzyme-to-json';
-import { mount } from 'enzyme';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { AppContextProvider } from '../../context/AppContext';
+import SkillCategoryNewDialog from './SkillCategoryNewDialog';
 
-
-it("renders correctly", () => {
-  const dialog = mount(
-    <SkillCategoryNewDialog
-      isOpen={true}
-      onClose={jest.fn()}
-      onConfirm={jest.fn()}
-    />
-  );
-  expect(EnzymeToJson(dialog)).toMatchSnapshot({});
+describe('SkillCategoryNewDialog', () => {
+  it('renders correctly', () => {
+    snapshot(
+      <AppContextProvider>
+        <SkillCategoryNewDialog
+          isOpen={true}
+          onClose={vi.fn()}
+          onConfirm={vi.fn()}
+        />
+      </AppContextProvider>
+    );
+  });
 });
-
-

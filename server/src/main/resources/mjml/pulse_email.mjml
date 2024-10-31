@@ -1,0 +1,11 @@
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#2559a7"></mj-divider>
+        <mj-text font-size="16px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" color="#4d4c4f">Please fill out your Pulse survey, if you haven't already done so. We want to know how you're doing!</mj-text>
+        <mj-text font-size="16px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" color="#4d4c4f">Click <a href="%s/pulse" target="_blank">here</a> to begin.</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

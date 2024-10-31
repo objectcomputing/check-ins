@@ -1,14 +1,14 @@
 package com.objectcomputing.checkins.services.team;
 
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-import io.micronaut.core.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public interface TeamRepository extends CrudRepository<Team, UUID> {
     @Override
     <S extends Team> S save(@Valid @NotNull @NonNull S entity);
 
-    @Query(value = "SELECT t_.id, PGP_SYM_DECRYPT(cast(t_.name as bytea),'${aes.key}') as name, PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description  " +
+    @Query(value = "SELECT t_.id, PGP_SYM_DECRYPT(cast(t_.name as bytea),'${aes.key}') as name, PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description, is_active " +
             "FROM team t_ " +
             "LEFT JOIN team_member tm_ " +
             "   ON t_.id = tm_.teamid " +

@@ -1,0 +1,191 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-2bwzc-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-content TeamSummaryCard-header css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
+        >
+          string (Inactive)
+        </span>
+        <span
+          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
+        >
+          <div
+            aria-label="string"
+            class=""
+            data-mui-internal-clone-element="true"
+          >
+            string
+          </div>
+        </span>
+      </div>
+    </div>
+    <div
+      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+    >
+      <strong>
+        Team Leads: 
+      </strong>
+      None Assigned
+      <br />
+      <strong>
+        Team Members: 
+      </strong>
+      None Assigned
+    </div>
+    <div
+      class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+    />
+  </div>
+</div>
+`;
+
+exports[`renders correctly for ADMIN 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-2bwzc-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-content TeamSummaryCard-header css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
+        >
+          string (Inactive)
+        </span>
+        <span
+          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
+        >
+          <div
+            aria-label="string"
+            class=""
+            data-mui-internal-clone-element="true"
+          >
+            string
+          </div>
+        </span>
+      </div>
+    </div>
+    <div
+      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+    >
+      <strong>
+        Team Leads: 
+      </strong>
+      None Assigned
+      <br />
+      <strong>
+        Team Members: 
+      </strong>
+      None Assigned
+    </div>
+    <div
+      class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+    >
+      <div>
+        <div
+          aria-label="split button"
+          class="MuiButtonGroup-root MuiButtonGroup-contained css-1d9bq45-MuiButtonGroup-root"
+          role="group"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-firstButton css-sghohy-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            Edit Team
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            aria-haspopup="menu"
+            aria-label="select merge strategy"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-colorPrimary MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButtonGroup-lastButton css-11qr2p8-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+              data-testid="ArrowDropDownIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="m7 10 5 5 5-5z"
+              />
+            </svg>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly for team lead 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-2bwzc-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-content TeamSummaryCard-header css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
+        >
+          stuff (Inactive)
+        </span>
+        <span
+          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
+        >
+          <div
+            aria-label=""
+            class=""
+            data-mui-internal-clone-element="true"
+          />
+        </span>
+      </div>
+    </div>
+    <div
+      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+    >
+      <strong>
+        Team Leads: 
+      </strong>
+      <a
+        href="/profile/undefined"
+        style="text-decoration: none;"
+      >
+        testname
+      </a>
+      <br />
+      <strong>
+        Team Members: 
+      </strong>
+    </div>
+    <div
+      class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+    />
+  </div>
+</div>
+`;

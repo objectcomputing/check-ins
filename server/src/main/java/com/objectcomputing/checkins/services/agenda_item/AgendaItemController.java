@@ -1,47 +1,42 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.security.permissions.Permissions;
+import com.objectcomputing.checkins.services.checkins.CheckIn;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
-
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
-import jakarta.inject.Named;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
-import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
-@Controller("/services/agenda-items")
+@Controller(AgendaItemController.PATH)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "agenda-items")
-public class AgendaItemController {
+class AgendaItemController {
+    public static final String PATH = "/services/agenda-items";
 
     private final AgendaItemServices agendaItemServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public AgendaItemController(AgendaItemServices agendaItemServices,
-                                EventLoopGroup eventLoopGroup,
-                                @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    AgendaItemController(AgendaItemServices agendaItemServices) {
         this.agendaItemServices = agendaItemServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -51,61 +46,44 @@ public class AgendaItemController {
      * @return {@link HttpResponse <AgendaItem>}
      */
     @Post("/")
-    @RequiredPermission(Permissions.CAN_CREATE_CHECKINS)
-    public Mono<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
-                                                             HttpRequest<AgendaItemCreateDTO> request) {
-        return Mono
-            .just(agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid(), agendaItem.getDescription())))
-            .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-            .map(createAgendaItem -> {
-                    //Using code block rather than lambda so we can log what thread we're in
-                    return (HttpResponse<AgendaItem>) HttpResponse
-                            .created(createAgendaItem)
-                            .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createAgendaItem.getId()))
-                            ));
-            }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
+    HttpResponse<AgendaItem> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem) {
+        AgendaItem createAgendaItem = agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid(), agendaItem.getDescription()));
+        URI location = UriBuilder.of(PATH).path(createAgendaItem.getId().toString()).build();
+        return HttpResponse.created(createAgendaItem)
+                .headers(headers -> headers.location(location));
     }
 
      /**
      * Update a agenda item
      *
      * @param agendaItem, {@link AgendaItem}
-     * @return {@link HttpResponse< AgendaItem >}
+     * @return {@link HttpResponse<AgendaItem>}
      */
     @Put("/")
-    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
-    public Mono<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItem> request) {
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
+    HttpResponse<?> updateAgendaItem(@Body @Valid AgendaItem agendaItem) {
         if (agendaItem == null) {
-            return Mono.just(HttpResponse.ok());
+            return HttpResponse.ok();
         }
-        return Mono.fromCallable(() -> agendaItemServices.update(agendaItem))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedAgendaItem ->
-                        (HttpResponse<AgendaItem>) HttpResponse
-                                .ok()
-                                .headers(headers -> headers.location(
-                                        URI.create(String.format("%s/%s", request.getPath(), updatedAgendaItem.getId()))))
-                                .body(updatedAgendaItem))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+        AgendaItem updatedAgendaItem = agendaItemServices.update(agendaItem);
+        URI location = UriBuilder.of(PATH).path(updatedAgendaItem.getId().toString()).build();
+        return HttpResponse.ok(updatedAgendaItem)
+                .headers(headers -> headers.location(location));
     }
 
     /**
-     * Find agenda items that match all filled in parameters, return all results when given no params
+     * Find agenda items that match all filled in parameters, or return all results when provided no parameters, and
+     * the user has permission to view all checkin items
      *
      * @param checkinid   {@link UUID} of checkin
      * @param createdbyid {@link UUID} of member	
-     * @return {@link List <CheckIn > list of checkins
+     * @return a Set of {@link CheckIn}
      */
     @Get("/{?checkinid,createdbyid}")
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
-    public Mono<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
-                                                                 @Nullable UUID createdbyid) {
-        return Mono.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(agendaItems -> {
-                    return (HttpResponse<Set<AgendaItem>>) HttpResponse.ok(agendaItems);
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
+    Set<AgendaItem> findAgendaItems(@Nullable UUID checkinid, @Nullable UUID createdbyid) {
+        return agendaItemServices.findByFields(checkinid, createdbyid);
     }
 
      /**	
@@ -115,14 +93,13 @@ public class AgendaItemController {
      * @return {@link AgendaItem}
      */
     @Get("/{id}")
-    @RequiredPermission(Permissions.CAN_VIEW_CHECKINS)
-    public Mono<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
-        return Mono.fromCallable(() -> agendaItemServices.read(id))
-                .switchIfEmpty(Mono.error(new NotFoundException("No agennda item for UUID")))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(agendaItem -> (HttpResponse<AgendaItem>)HttpResponse.ok(agendaItem))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
-
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
+    AgendaItem readAgendaItem(UUID id) {
+        AgendaItem read = agendaItemServices.read(id);
+        if (read == null) {
+            throw new NotFoundException("No agenda item for UUID");
+        }
+        return read;
     }
 
     /**
@@ -131,11 +108,8 @@ public class AgendaItemController {
      * @param id, id of {@link AgendaItem} to delete
      */
     @Delete("/{id}")
-    @RequiredPermission(Permissions.CAN_UPDATE_CHECKINS)
-    public HttpResponse<?> deleteAgendaItem(UUID id) {
+    @Status(HttpStatus.OK)
+    void deleteAgendaItem(UUID id) {
         agendaItemServices.delete(id);
-        return HttpResponse
-                .ok();
     }
-
 }

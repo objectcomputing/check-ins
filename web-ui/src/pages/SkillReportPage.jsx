@@ -1,21 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from 'react';
 
-import { AppContext } from "../context/AppContext";
-import { reportSkills } from "../api/memberskill.js";
-import SearchResults from "../components/search-results/SearchResults";
+import { Button, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+
+import { UPDATE_TOAST } from '../context/actions';
+import { AppContext } from '../context/AppContext';
+import { reportSkills } from '../api/memberskill.js';
+import SearchResults from '../components/search-results/SearchResults';
+import { sortMembersBySkill } from '../helpers/checks.js';
 
 import {
   selectOrderedSkills,
   selectCsrfToken,
   selectCurrentMemberIds,
-} from "../context/selectors";
+  selectHasSkillsReportPermission,
+  noPermission,
+} from '../context/selectors';
 
-import { Button, TextField } from "@mui/material";
-import Autocomplete from '@mui/material/Autocomplete';
+import { useQueryParameters } from '../helpers/query-parameters';
 
-import "./SkillReportPage.css";
+import './SkillReportPage.css';
 
-const SkillReportPage = (props) => {
+const SkillReportPage = props => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
@@ -23,11 +29,32 @@ const SkillReportPage = (props) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchRequestDTO] = useState([]);
   const [searchSkills, setSearchSkills] = useState([]);
-  const [editedSearchRequest, setEditedSearchRequest] = useState(
-    searchRequestDTO
+  const [editedSearchRequest, setEditedSearchRequest] =
+    useState(searchRequestDTO);
+
+  const processedQPs = useRef(false);
+  useQueryParameters(
+    [
+      {
+        name: 'skills',
+        default: [],
+        value: searchSkills,
+        setter(ids) {
+          const searchSkills = ids.map(id =>
+            skills.find(skill => skill.id === id)
+          );
+          setSearchSkills(searchSkills);
+        },
+        toQP() {
+          return searchSkills.map(skill => skill.id).join(',');
+        }
+      }
+    ],
+    [skills],
+    processedQPs
   );
 
-  const handleSearch = async (searchRequestDTO) => {
+  const handleSearch = async searchRequestDTO => {
     let res = await reportSkills(searchRequestDTO, csrf);
     let memberSkillsFound;
     if (res && res.payload) {
@@ -37,11 +64,14 @@ const SkillReportPage = (props) => {
           : undefined;
     }
     // Filter out skills of terminated members
-    memberSkillsFound = memberSkillsFound.filter(memberSkill => memberIds.includes(memberSkill.id));
+    memberSkillsFound = memberSkillsFound.filter(memberSkill =>
+      memberIds.includes(memberSkill.id)
+    );
     if (memberSkillsFound && memberIds) {
-      setSearchResults(memberSkillsFound);
+      let newSort = sortMembersBySkill(memberSkillsFound);
+      setSearchResults(newSort);
     } else {
-      setSearchResults(undefined);
+      setSearchResults([]);
     }
   };
 
@@ -49,7 +79,7 @@ const SkillReportPage = (props) => {
     return skills.map((skill, index) => {
       let skillLevel = {
         id: skill.id,
-        level: skill.skilllevel,
+        level: skill.skilllevel
       };
       return skillLevel;
     });
@@ -62,7 +92,7 @@ const SkillReportPage = (props) => {
     let newSearchRequest = {
       skills: skills,
       members: members,
-      inclusive: inclusive,
+      inclusive: inclusive
     };
     setEditedSearchRequest(newSearchRequest);
     return newSearchRequest;
@@ -73,7 +103,7 @@ const SkillReportPage = (props) => {
     setSearchSkills([...skillsCopy]);
   }
 
-  return (
+  return selectHasSkillsReportPermission(state) ? (
     <div className="skills-report-page">
       <div className="SkillReportModal">
         <h2>Select desired skills...</h2>
@@ -84,8 +114,8 @@ const SkillReportPage = (props) => {
           filterSelectedOptions
           value={searchSkills ? searchSkills : []}
           onChange={onSkillsChange}
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
+          getOptionLabel={option => option.name}
+          renderInput={params => (
             <TextField
               {...params}
               className="fullWidth"
@@ -97,7 +127,17 @@ const SkillReportPage = (props) => {
         <div className="SkillsSearch-actions fullWidth">
           <Button
             onClick={() => {
-              handleSearch(createRequestDTO(editedSearchRequest));
+              if (!searchSkills.length) {
+                window.snackDispatch({
+                  type: UPDATE_TOAST,
+                  payload: {
+                    severity: 'error',
+                    toast: 'Must select a skill'
+                  }
+                });
+              } else {
+                handleSearch(createRequestDTO(editedSearchRequest));
+              }
             }}
             color="primary"
           >
@@ -107,6 +147,8 @@ const SkillReportPage = (props) => {
       </div>
       <SearchResults searchResults={searchResults} />
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

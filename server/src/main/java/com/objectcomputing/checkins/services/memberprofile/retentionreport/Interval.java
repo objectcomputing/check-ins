@@ -1,34 +1,25 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
 import io.micronaut.core.annotation.Introspected;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Introspected
 public class Interval {
 
     private LocalDate date;
 
-    private float value;
+    @NotNull
+    private Float value;
 
-    public Interval(LocalDate date, float value) {
+    public Interval(LocalDate date, Float value) {
         this.date = date;
         this.value = value;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public float getValue() {
-        return value;
-    }
-
-    public void setValue(float value) {
-        this.value = value;
-    }
 }

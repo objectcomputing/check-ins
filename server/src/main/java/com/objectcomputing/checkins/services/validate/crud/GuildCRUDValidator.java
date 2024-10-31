@@ -5,14 +5,15 @@ import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
-
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.UUID;
 
 @Named("Guild")
 public class GuildCRUDValidator implements CRUDValidator<Guild> {
+
     private final ArgumentsValidation argumentsValidation;
     private final PermissionsValidation permissionsValidation;
     private final CurrentUserServices currentUserServices;
@@ -87,7 +88,6 @@ public class GuildCRUDValidator implements CRUDValidator<Guild> {
     }
 
     private void validatePermissionCommon() {
-        permissionsValidation.validatePermissions(!currentUserServices.isAdmin(),
-                "You are not authorized to perform this operation");
+        permissionsValidation.validatePermissions(!currentUserServices.isAdmin());
     }
 }

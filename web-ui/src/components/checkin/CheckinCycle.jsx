@@ -1,7 +1,7 @@
-import React from "react";
-import cycle from "./checkin-cycle.png";
+import React from 'react';
+import cycle from './checkin-cycle.png';
 
-const CheckinCycle = ({ style = {height: "35vw", width: "35vw"} }) => (
+const CheckinCycle = ({ style = { height: '35vw', width: '35vw' } }) => (
   <div>
     <img
       style={style}

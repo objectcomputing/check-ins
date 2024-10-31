@@ -1,10 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.birthday;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
@@ -17,12 +12,18 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class BirthDayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+import java.util.List;
+import java.util.Map;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class BirthDayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/reports/birthdays")
@@ -34,7 +35,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    public void testGETFindByValueNameOfTheMonth() {
+    void testGETFindByValueNameOfTheMonth() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
@@ -51,8 +52,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    public void testGETFindByValueNameOfTheMonthAndDay() {
-
+    void testGETFindByValueNameOfTheMonthAndDay() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
 
@@ -69,7 +69,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    public void testGETFindByValueNameOfTheMonthNotAuthorized() {
+    void testGETFindByValueNameOfTheMonthNotAuthorized() {
 
         MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
         final HttpRequest<Object> request = HttpRequest.

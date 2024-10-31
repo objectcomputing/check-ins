@@ -1,70 +1,207 @@
-import { createSelector } from "reselect";
+import { createSelector } from 'reselect';
 
-export const selectMemberProfiles = (state) => state.memberProfiles;
-export const selectTerminatedMembers = (state) => state.terminatedMembers;
-export const selectMemberSkills = (state) => state.memberSkills;
-export const selectSkills = (state) => state.skills;
-export const selectTeamMembers = (state) => state.teamMembers;
-export const selectUserProfile = (state) => state.userProfile;
-export const selectCheckins = (state) => state.checkins;
-export const selectCsrfToken = (state) => state.csrf;
-export const selectRoles = (state) => state.roles;
-export const selectUserRoles = (state) => state.userRoles;
-export const selectTeams = (state) => state.teams;
-export const selectGuilds = (state) => state.guilds;
-export const selectLoading = (state) => state.loading;
-export const selectReviewPeriods = (state) => state.reviewPeriods;
-export const selectPermissions = (state) => state.permissions;
+export const selectMemberProfiles = state => state.memberProfiles || [];
+export const selectTerminatedMembers = state => state.terminatedMembers;
+export const selectMemberSkills = state => state.memberSkills || [];
+export const selectSkills = state => state.skills || [];
+export const selectTeamMembers = state => state.teamMembers;
+export const selectUserProfile = state => state.userProfile || {};
+export const selectCheckins = state => state.checkins || [];
+export const selectCsrfToken = state => state.csrf;
+export const selectRoles = state => state.roles || [];
+export const selectUserRoles = state => state.userRoles || [];
+export const selectTeams = state => state.teams || [];
+export const selectGuilds = state => state.guilds || [];
+export const selectLoading = state => state.loading;
+export const selectReviewPeriods = state => state.reviewPeriods;
+export const selectPermissions = state => state.permissions;
 
-export const selectTeamsLoading = createSelector (
+export const noPermission = 'You do not have permission to view this page.';
+
+const hasPermission = permissionName =>
+  createSelector(
+    selectUserProfile,
+    userProfile =>
+      userProfile &&
+      userProfile.role &&
+      userProfile.permissions?.some(p => p?.permission?.includes(permissionName))
+  );
+
+export const selectTeamsLoading = createSelector(selectLoading, loading => {
+  return loading.teams;
+});
+
+export const selectMemberProfilesLoading = createSelector(
   selectLoading,
-  loading =>  {
-    return loading.teams
-  }
-)
-export const selectMemberProfilesLoading = createSelector (
-  selectLoading,
-  (loading) =>
-  loading.memberProfiles
-
-)
+  loading => loading.memberProfiles
+);
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
-  (userProfile) =>
+  userProfile =>
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {}
 );
 
 export const selectIsAdmin = createSelector(
   selectUserProfile,
-  (userProfile) =>
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN")
+  userProfile =>
+    userProfile && userProfile.role && userProfile.role.includes('ADMIN')
 );
 
-export const selectHasPermissionAssignmentPermission = createSelector(
-    selectUserProfile,
-    (userProfile) =>
-        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("CAN_ASSIGN_ROLE_PERMISSIONS"))
+export const selectHasPermissionAssignmentPermission = hasPermission(
+  'CAN_ASSIGN_ROLE_PERMISSIONS'
 );
 
-export const selectHasReportPermission = createSelector(
-    selectUserProfile,
-    (userProfile) =>
-        userProfile && userProfile.role && userProfile.permissions.some((p) => p?.permission?.includes("REPORT"))
+export const selectHasReportPermission = hasPermission('REPORT');
+
+export const selectCanViewFeedbackAnswerPermission = hasPermission(
+  'CAN_VIEW_FEEDBACK_ANSWER'
+);
+
+export const selectCanViewFeedbackRequestPermission = hasPermission(
+  'CAN_VIEW_FEEDBACK_REQUEST'
+);
+
+export const selectCanViewReviewPeriodPermission = hasPermission(
+  'CAN_VIEW_REVIEW_PERIOD'
+);
+
+export const selectHasAnniversaryReportPermission = hasPermission(
+  'CAN_VIEW_ANNIVERSARY_REPORT'
+);
+
+export const selectHasBirthdayReportPermission = hasPermission(
+  'CAN_VIEW_BIRTHDAY_REPORT'
+);
+
+export const selectHasCheckinsReportPermission = hasPermission(
+  'CAN_VIEW_CHECKINS_REPORT'
+);
+
+export const selectHasProfileReportPermission = hasPermission(
+  'CAN_VIEW_PROFILE_REPORT'
+);
+
+export const selectHasViewPulseReportPermission = hasPermission(
+  'CAN_VIEW_ALL_PULSE_RESPONSES'
+);
+
+export const selectHasSkillsReportPermission = hasPermission(
+  'CAN_VIEW_SKILLS_REPORT'
+);
+
+export const selectHasTeamSkillsReportPermission = hasPermission(
+  'CAN_VIEW_SKILLS_REPORT'
+);
+
+export const selectHasCreateReviewAssignmentsPermission = hasPermission(
+  'CAN_CREATE_REVIEW_ASSIGNMENTS'
+);
+
+export const selectHasDeleteReviewAssignmentsPermission = hasPermission(
+  'CAN_DELETE_REVIEW_ASSIGNMENTS'
+);
+
+export const selectHasUpdateReviewAssignmentsPermission = hasPermission(
+  'CAN_UPDATE_REVIEW_ASSIGNMENTS'
+);
+
+export const selectHasViewReviewAssignmentsPermission = hasPermission(
+  'CAN_VIEW_REVIEW_ASSIGNMENTS'
+);
+
+export const selectHasCloseReviewPeriodPermission = hasPermission(
+  'CAN_CLOSE_REVIEW_PERIOD'
+);
+
+export const selectHasCreateReviewPeriodPermission = hasPermission(
+  'CAN_CREATE_REVIEW_PERIOD'
+);
+
+export const selectHasDeleteReviewPeriodPermission = hasPermission(
+  'CAN_DELETE_REVIEW_PERIOD'
+);
+
+export const selectHasLaunchReviewPeriodPermission = hasPermission(
+  'CAN_LAUNCH_REVIEW_PERIOD'
+);
+
+export const selectHasUpdateReviewPeriodPermission = hasPermission(
+  'CAN_UPDATE_REVIEW_PERIOD'
+);
+
+export const selectHasMeritReportPermission = hasPermission(
+  'CAN_CREATE_MERIT_REPORT'
+);
+
+export const selectHasEarnedCertificationsPermission = hasPermission(
+  'CAN_MANAGE_EARNED_CERTIFICATIONS'
+);
+
+export const selectHasVolunteeringEventsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_EVENTS'
+);
+
+export const selectHasVolunteeringOrganizationsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS'
+);
+
+export const selectHasVolunteeringRelationshipsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS'
+);
+
+export const selectHasRoleAssignmentPermission = hasPermission(
+  'CAN_ASSIGN_ROLE_PERMISSIONS'
+);
+
+export const selectHasCreateFeedbackPermission = hasPermission(
+  'CAN_CREATE_FEEDBACK_REQUEST'
+);
+
+export const selectHasAdministerKudosPermission = hasPermission(
+  'CAN_ADMINISTER_KUDOS'
+);
+
+export const selectHasDeleteMembersPermission = hasPermission(
+  'CAN_DELETE_ORGANIZATION_MEMBERS'
+);
+
+export const selectHasCreateMembersPermission = hasPermission(
+  'CAN_CREATE_ORGANIZATION_MEMBERS'
+);
+
+export const selectHasImpersonateMembersPermission = hasPermission(
+  'CAN_IMPERSONATE_MEMBERS'
+);
+
+export const selectHasViewSettingsPermission = hasPermission(
+  'CAN_VIEW_SETTINGS'
+);
+
+export const selectHasAdministerSettingsPermission = hasPermission(
+  'CAN_ADMINISTER_SETTINGS'
+);
+
+export const selectHasSendEmailPermission = hasPermission(
+  'CAN_SEND_EMAIL'
+);
+
+export const selectCanViewCheckinsPermission = hasPermission(
+  'CAN_VIEW_CHECKINS'
 );
 
 export const selectIsPDL = createSelector(
   selectUserProfile,
-  (userProfile) =>
-    userProfile && userProfile.role && userProfile.role.includes("PDL")
+  userProfile =>
+    userProfile && userProfile.role && userProfile.role.includes('PDL')
 );
 
 export const selectCurrentUserId = createSelector(
   selectCurrentUser,
-  (profile) => profile.id
+  profile => profile.id
 );
 
-export const selectOrderedSkills = createSelector(selectSkills, (skills) =>
+export const selectOrderedSkills = createSelector(selectSkills, skills =>
   skills.slice().sort((last, next) => {
     var lastName = last.name.toUpperCase(); // ignore upper and lowercase
     var nextName = next.name.toUpperCase(); // ignore upper and lowercase
@@ -82,9 +219,9 @@ export const selectOrderedSkills = createSelector(selectSkills, (skills) =>
 
 export const selectCurrentMembers = createSelector(
   selectMemberProfiles,
-  (memberProfiles) =>
+  memberProfiles =>
     memberProfiles
-      ?.filter((profile) => {
+      ?.filter(profile => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         return (
@@ -93,17 +230,22 @@ export const selectCurrentMembers = createSelector(
           today <= new Date(profile.terminationDate)
         );
       })
-      .sort((a, b) => a.lastName.localeCompare(b.lastName))
+      .sort((a, b) => a?.lastName?.localeCompare(b?.lastName))
 );
 
 export const selectCurrentMemberIds = createSelector(
   selectCurrentMembers,
-  (members) => members.map((member) => member.id)
+  members => members.map(member => member.id)
+);
+
+export const selectTerminatedMemberIds = createSelector(
+  selectTerminatedMembers,
+  members => members.map(member => member.id)
 );
 
 export const selectProfileMap = createSelector(
   selectCurrentMembers,
-  (currentMembers) => {
+  currentMembers => {
     if (currentMembers && currentMembers.length) {
       currentMembers = currentMembers.reduce((mappedById, member) => {
         mappedById[member.id] = member;
@@ -111,6 +253,19 @@ export const selectProfileMap = createSelector(
       }, {});
     }
     return currentMembers;
+  }
+);
+
+export const selectProfileMapForTerminatedMembers = createSelector(
+  selectTerminatedMembers,
+  terminatedMembers => {
+    if (terminatedMembers && terminatedMembers.length) {
+      terminatedMembers = terminatedMembers.reduce((mappedById, member) => {
+        mappedById[member.id] = member;
+        return mappedById;
+      }, {});
+    }
+    return terminatedMembers;
   }
 );
 
@@ -123,28 +278,77 @@ export const selectProfile = createSelector(
 export const selectSkill = createSelector(
   selectSkills,
   (state, skillId) => skillId,
-  (skills, skillId) => skills.find((skill) => skill.id === skillId)
+  (skills, skillId) => skills.find(skill => skill.id === skillId)
 );
 
 export const selectMySkills = createSelector(
   selectCurrentUserId,
   selectMemberSkills,
-  (id, skills) => skills?.filter((skill) => skill.memberid === id)
+  (id, skills) => skills?.filter(skill => skill.memberid === id)
 );
 
-export const selectPendingSkills = createSelector(selectSkills, (skills) =>
-  skills?.filter((skill) => skill.pending)
+export const selectPendingSkills = createSelector(selectSkills, skills =>
+  skills?.filter(skill => skill.pending)
 );
 
-export const selectPdlRoles = createSelector(selectRoles, (roles) =>
-  roles?.filter((role) => role.role?.includes("PDL"))
+export const selectPdlRoles = createSelector(selectRoles, roles =>
+  roles?.filter(role => role.role?.includes('PDL'))
+);
+
+export const selectTerminatedUserRoles = createSelector(
+  selectUserRoles,
+  selectTerminatedMemberIds,
+  (userRoles, memberIds) => {
+    return userRoles?.filter(userRole =>
+      memberIds.includes(userRole.memberRoleId.memberId)
+    );
+  }
+);
+
+export const selectTerminatedMembersAsOfDate = createSelector(
+  selectTerminatedMembers,
+  (_, date) => date,
+  (terminatedMembers, date) =>
+    terminatedMembers.filter(
+      member => new Date(member.terminationDate) >= new Date(date)
+    )
+);
+
+export const selectTerminatedMembersWithPDLRole = createSelector(
+  selectTerminatedUserRoles,
+  selectPdlRoles,
+  selectProfileMapForTerminatedMembers,
+  (userRoles, pdlRoles, terminatedMembersProfileMap) => {
+    const terminatedPDLs = userRoles?.filter(userRole =>
+      pdlRoles.find(role => role.id === userRole?.memberRoleId?.roleId)
+    );
+    /** @type {MemberProfile[]} */
+    const terminatedMembersWithPDLRole = terminatedPDLs?.map(
+      userRole => terminatedMembersProfileMap[userRole?.memberRoleId?.memberId]
+    );
+    return terminatedMembersWithPDLRole;
+  }
+);
+
+export const selectTerminatedMembersAsOfDateWithPDLRole = createSelector(
+  selectTerminatedMembersAsOfDate,
+  selectTerminatedMembersWithPDLRole,
+  (terminatedMembers, terminatedPDLs) => {
+    /** @type {MemberProfile[]} */
+    const terminatedMembersWithPDLRole = terminatedMembers.filter(
+      member => terminatedPDLs.find(pdl => pdl.id === member.id) !== undefined
+    );
+    return terminatedMembersWithPDLRole;
+  }
 );
 
 export const selectCurrentUserRoles = createSelector(
   selectUserRoles,
   selectCurrentMemberIds,
   (userRoles, memberIds) =>
-    userRoles?.filter((userRole) => memberIds.includes(userRole.memberRoleId.memberId))
+    userRoles?.filter(userRole =>
+      memberIds.includes(userRole.memberRoleId.memberId)
+    )
 );
 
 export const selectMappedUserRoles = createSelector(
@@ -169,28 +373,40 @@ export const selectMappedPdls = createSelector(
   selectPdlRoles,
   selectCurrentUserRoles,
   (memberProfileMap, roles, userRoles) =>
-    userRoles?.filter((userRole) => roles.find((role) => role.id === userRole?.memberRoleId?.roleId ) !== undefined)?.map((userRole) =>
-      userRole?.memberRoleId?.memberId in memberProfileMap ? memberProfileMap[userRole?.memberRoleId?.memberId] : {}
-    )
+    userRoles
+      ?.filter(
+        userRole =>
+          roles.find(role => role.id === userRole?.memberRoleId?.roleId) !==
+          undefined
+      )
+      ?.map(userRole =>
+        userRole?.memberRoleId?.memberId in memberProfileMap
+          ? memberProfileMap[userRole?.memberRoleId?.memberId]
+          : {}
+      )
 );
 
-export const selectOrderedPdls = createSelector(
-  selectMappedPdls,
-  (mappedPdls) =>
-    mappedPdls?.sort((a, b) => {
-      if (a.lastName < b.lastName) return -1;
-      if (a.lastName > b.lastName) return 1;
-      return 0;
-    })
+export const selectOrderedCurrentMemberProfiles = createSelector(
+  selectCurrentMembers,
+  (mappedMemberProfiles) =>
+    mappedMemberProfiles?.sort((a, b) => a.lastName.localeCompare(b.lastName))
+);
+
+export const selectOrderedPdls = createSelector(selectMappedPdls, mappedPdls =>
+  mappedPdls?.sort((a, b) => {
+    if (a.lastName < b.lastName) return -1;
+    if (a.lastName > b.lastName) return 1;
+    return 0;
+  })
 );
 
 export const selectOrderedMemberFirstName = createSelector(
   selectCurrentMembers,
-  (mappedMemberProfiles) =>
+  mappedMemberProfiles =>
     mappedMemberProfiles.sort((a, b) => a.firstName.localeCompare(b.firstName))
 );
 
-export const selectCheckinMap = createSelector(selectCheckins, (checkins) => {
+export const selectCheckinMap = createSelector(selectCheckins, checkins => {
   if (checkins && checkins.length) {
     checkins = checkins.reduce((mappedById, checkin) => {
       mappedById[checkin.id] = checkin;
@@ -214,27 +430,30 @@ export const selectCheckinsForMember = createSelector(
   (state, memberId) => memberId,
   (checkins, memberId) =>
     checkins
-      .filter((checkin) => checkin.teamMemberId === memberId)
+      .filter(checkin => checkin.teamMemberId === memberId)
       .sort((last, next) => toDate(last.checkInDate) - toDate(next.checkInDate))
 );
 
 export const selectOpenCheckinsForMember = createSelector(
   selectCheckinsForMember,
-  (checkins) => checkins.filter((checkin) => !checkin.completed)
+  checkins => checkins.filter(checkin => !checkin.completed)
 );
 
 export const selectMostRecentCheckin = createSelector(
   selectCheckinsForMember,
-  (checkins) => {
+  checkins => {
     if (checkins && checkins.length > 0) {
-      return checkins && checkins[checkins.length-1]
+      return checkins && checkins[checkins.length - 1];
     }
   }
 );
 
-export const selectPDLCheckinMap = createSelector(selectCheckins, (checkins) =>
+export const selectPDLCheckinMap = createSelector(selectCheckins, checkins =>
   checkins.reduce((accu, currentCheckin) => {
-    if (accu[currentCheckin.pdlId] === undefined) {
+    if (
+      accu[currentCheckin.pdlId] === undefined ||
+      accu[currentCheckin.pdlId] === null
+    ) {
       accu[currentCheckin.pdlId] = [];
     }
     accu[currentCheckin.pdlId].push(currentCheckin);
@@ -246,7 +465,9 @@ export const selectSupervisors = createSelector(
   selectCurrentMembers,
   selectProfileMap,
   (currentMembers, memberProfileMap) => {
-    const filteredMembers = currentMembers?.filter(member => member.supervisorid);
+    const filteredMembers = currentMembers?.filter(
+      member => member.supervisorid
+    );
 
     const supervisorIds = filteredMembers?.map(member => member.supervisorid);
     const uniqueSupervisorIds = [...new Set(supervisorIds)];
@@ -256,33 +477,46 @@ export const selectSupervisors = createSelector(
   }
 );
 
-const buildSupervisorHierarchy = (allSupervisors, member, supervisorChain ) => {
-  const memberSupervisor = allSupervisors?.find(supervisor => supervisor?.id === member?.supervisorid);
+const buildSupervisorHierarchy = (allSupervisors, member, supervisorChain) => {
+  const memberSupervisor = allSupervisors?.find(
+    supervisor => supervisor?.id === member?.supervisorid
+  );
   supervisorChain.push(memberSupervisor);
-  return !memberSupervisor?.supervisorid ? supervisorChain : buildSupervisorHierarchy(allSupervisors, memberSupervisor, supervisorChain);
-}
+  return !memberSupervisor?.supervisorid
+    ? supervisorChain
+    : buildSupervisorHierarchy(
+        allSupervisors,
+        memberSupervisor,
+        supervisorChain
+      );
+};
 
-export const selectSupervisorHierarchyIds = (selectedMember) => createSelector(
-  selectSupervisors,
-  (allSupervisors) => buildSupervisorHierarchy(allSupervisors, selectedMember, []).map(supervisor => supervisor?.id)
-);
+export const selectSupervisorHierarchyIds = selectedMember =>
+  createSelector(selectSupervisors, allSupervisors =>
+    buildSupervisorHierarchy(allSupervisors, selectedMember, []).map(
+      supervisor => supervisor?.id
+    )
+  );
 
 export const selectIsSupervisor = createSelector(
   selectCurrentUserId,
   selectSupervisors,
   (userId, supervisors) => {
-    const isSupervisor = supervisors?.find((supervisor) => supervisor?.id === userId)
+    const isSupervisor = supervisors?.find(
+      supervisor => supervisor?.id === userId
+    );
     if (isSupervisor !== undefined) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 );
 
-const filterMembersBySupervisor = (currentMembers, supervisorId) => currentMembers?.filter((currentTeamMember) =>  {
-  return currentTeamMember?.supervisorid === supervisorId;
-});
+const filterMembersBySupervisor = (currentMembers, supervisorId) =>
+  currentMembers?.filter(currentTeamMember => {
+    return currentTeamMember?.supervisorid === supervisorId;
+  });
 
 export const selectTeamMembersBySupervisorId = createSelector(
   selectCurrentMembers,
@@ -301,33 +535,52 @@ const selectSubordinatesPreventCycle = createSelector(
   selectTeamMembersBySupervisorId,
   (_, managerId) => managerId,
   (_, __, previouslyIncluded) => previouslyIncluded || [],
-  (state) => state,
-  (team, managerId, previouslyIncluded, state) => team.reduce((subordinates, teamMember) => {
-    if(previouslyIncluded.some((current) => current === teamMember.id))
-      return subordinates;
-    else return [...subordinates, ...selectSubordinatesPreventCycle(state, teamMember.id, [...previouslyIncluded, managerId])];
-  }, [...team])
+  state => state,
+  (team, managerId, previouslyIncluded, state) =>
+    team.reduce(
+      (subordinates, teamMember) => {
+        if (previouslyIncluded.some(current => current === teamMember.id))
+          return subordinates;
+        else
+          return [
+            ...subordinates,
+            ...selectSubordinatesPreventCycle(state, teamMember.id, [
+              ...previouslyIncluded,
+              managerId
+            ])
+          ];
+      },
+      [...team]
+    )
 );
 
 export const selectSubordinates = createSelector(
   selectTeamMembersBySupervisorId,
   (_, managerId) => managerId,
-  (state) => state,
-  (team, managerId, state) => team.reduce((subordinates, teamMember) => {
-    return [...subordinates, ...selectSubordinatesPreventCycle(state, teamMember.id, [managerId])];
-  }, [...team])
+  state => state,
+  (team, managerId, state) =>
+    team.reduce(
+      (subordinates, teamMember) => {
+        return [
+          ...subordinates,
+          ...selectSubordinatesPreventCycle(state, teamMember.id, [managerId])
+        ];
+      },
+      [...team]
+    )
 );
 
 export const selectCurrentUserSubordinates = createSelector(
   selectCurrentUserId,
-  (state) => state,
+  state => state,
   (currentUserId, state) => selectSubordinates(state, currentUserId)
 );
 
 export const selectIsSubordinateOfCurrentUser = createSelector(
   selectCurrentUserSubordinates,
   (_, teamMemberId) => teamMemberId,
-  (subordinates, teamMemberId) => subordinates.some((teamMember) => teamMember.id === teamMemberId)
+  (subordinates, teamMemberId) =>
+    subordinates.some(teamMember => teamMember.id === teamMemberId)
 );
 
 export const selectTeamMembersWithCheckinPDL = createSelector(
@@ -336,9 +589,9 @@ export const selectTeamMembersWithCheckinPDL = createSelector(
   selectProfileMap,
   (pdlId, pdlCheckinMap, profileMap) =>
     pdlCheckinMap[pdlId]
-      .map((checkin) => checkin.teamMemberId)
+      .map(checkin => checkin.teamMemberId)
       .reduce((accu, memberId) => {
-        if (!accu.find((e) => e?.id === memberId)) {
+        if (!accu.find(e => e?.id === memberId)) {
           accu.push(profileMap[memberId]);
         }
         return accu;
@@ -348,17 +601,16 @@ export const selectTeamMembersWithCheckinPDL = createSelector(
 export const selectCheckinsForTeamMemberAndPDL = createSelector(
   selectCheckinsForMember,
   (state, teamMemberId, pdlId) => pdlId,
-  (checkins, pdlId) => checkins.filter((checkin) => checkin.pdlId === pdlId)
+  (checkins, pdlId) => checkins.filter(checkin => checkin.pdlId === pdlId)
 );
 
-const getCheckinDate = (checkin) => {
+const getCheckinDate = checkin => {
   if (!checkin || !checkin.checkInDate) return;
   const [year, month, day, hour, minute] = checkin.checkInDate;
   return new Date(year, month - 1, day, hour, minute, 0);
 };
 
-const pastCheckin = (checkin) =>
-  Date.now() >= getCheckinDate(checkin).getTime();
+const pastCheckin = checkin => Date.now() >= getCheckinDate(checkin).getTime();
 
 export const selectFilteredCheckinsForTeamMemberAndPDL = createSelector(
   selectCheckinsForTeamMemberAndPDL,
@@ -366,8 +618,8 @@ export const selectFilteredCheckinsForTeamMemberAndPDL = createSelector(
   (state, teamMemberId, pdlId, includeClosed, includePlanned) => includePlanned,
   (checkins, includeClosed, includePlanned) =>
     checkins
-      .filter((checkin) => includeClosed || !checkin.completed)
-      .filter((checkin) => includePlanned || pastCheckin(checkin))
+      .filter(checkin => includeClosed || !checkin.completed)
+      .filter(checkin => includePlanned || pastCheckin(checkin))
 );
 
 export const selectCheckinPDLS = createSelector(
@@ -378,10 +630,10 @@ export const selectCheckinPDLS = createSelector(
   (memberProfiles, checkins, includeClosed, includePlanned) => {
     const pdlSet = new Set();
     checkins
-      .filter((checkin) => includeClosed || !checkin.completed)
-      .filter((checkin) => includePlanned || pastCheckin(checkin))
-      .forEach((checkin) => pdlSet.add(checkin.pdlId));
-    return memberProfiles.filter((member) => pdlSet.has(member.id));
+      .filter(checkin => includeClosed || !checkin.completed)
+      .filter(checkin => includePlanned || pastCheckin(checkin))
+      .forEach(checkin => pdlSet.add(checkin.pdlId));
+    return memberProfiles.filter(member => pdlSet.has(member.id));
   }
 );
 
@@ -389,15 +641,17 @@ export const selectNormalizedMembers = createSelector(
   selectCurrentMembers,
   (state, searchText) => searchText,
   (currentMembers, searchText) =>
-    currentMembers?.filter((member) => {
-      let normName = member.name
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      return normName.toLowerCase().includes(normSearchText.toLowerCase());
-    })
+    currentMembers
+      ?.filter(member => {
+        let normName = member.name
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        let normSearchText = searchText
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        return normName.toLowerCase().includes(normSearchText.toLowerCase());
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedMembersAdmin = createSelector(
@@ -407,13 +661,13 @@ export const selectNormalizedMembersAdmin = createSelector(
   (memberProfiles, terminatedProfiles, searchText) =>
     memberProfiles
       .concat(terminatedProfiles)
-      ?.filter((member) => {
+      ?.filter(member => {
         let normName = member.name
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
         let normSearchText = searchText
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
         return normName.toLowerCase().includes(normSearchText.toLowerCase());
       })
       .sort((a, b) => a.lastName.localeCompare(b.lastName))
@@ -423,11 +677,11 @@ export const selectNormalizedTeams = createSelector(
   selectTeams,
   (state, searchText) => searchText,
   (teams, searchText) =>
-    teams?.filter((team) => {
-      let normName = team.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    teams?.filter(team => {
+      let normName = team.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       let normSearchText = searchText
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
       return normName.toLowerCase().includes(normSearchText.toLowerCase());
     })
 );
@@ -436,8 +690,8 @@ export const selectMyGuilds = createSelector(
   selectCurrentUserId,
   selectGuilds,
   (id, guilds) =>
-    guilds?.filter((guild) =>
-      guild.guildMembers?.some((member) => member.memberId === id)
+    guilds?.filter(guild =>
+      guild.guildMembers?.some(member => member.memberId === id)
     )
 );
 
@@ -445,14 +699,14 @@ export const selectMyTeams = createSelector(
   selectCurrentUserId,
   selectTeams,
   (id, teams) =>
-    teams?.filter((team) =>
-      team.teamMembers?.some((member) => member.memberId === id)
+    teams?.filter(team =>
+      team.teamMembers?.some(member => member.memberId === id)
     )
 );
 
 export const selectReviewPeriodMap = createSelector(
   selectReviewPeriods,
-  (reviewPeriods) => {
+  reviewPeriods => {
     if (reviewPeriods && reviewPeriods.length) {
       reviewPeriods = reviewPeriods.reduce((mappedById, period) => {
         mappedById[period.id] = period;

@@ -1,61 +1,73 @@
 package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.Environments;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
-import com.objectcomputing.checkins.services.guild.member.*;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.guild.member.GuildMember;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class GuildServicesImpl implements GuildServices {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);;
+
     private final GuildRepository guildsRepo;
     private final GuildMemberRepository guildMemberRepo;
+    private final GuildMemberHistoryRepository guildMemberHistoryRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final GuildMemberServices guildMemberServices;
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
-    public static final String WEB_ADDRESS = "check-ins.web-address";
 
     public GuildServicesImpl(GuildRepository guildsRepo,
-                             GuildMemberRepository guildMemberRepo,
+                             GuildMemberRepository guildMemberRepo, GuildMemberHistoryRepository guildMemberHistoryRepository,
                              CurrentUserServices currentUserServices,
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
-                             @Named(MailJetConfig.HTML_FORMAT) EmailSender emailSender,
+                             @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              Environment environment,
-                             @Property(name = WEB_ADDRESS) String webAddress
+                             CheckInsConfiguration checkInsConfiguration
     ) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
+        this.guildMemberHistoryRepository = guildMemberHistoryRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.guildMemberServices = guildMemberServices;
         this.emailSender = emailSender;
-        this.webAddress = webAddress;
+        this.webAddress = checkInsConfiguration.getWebAddress();
         this.environment = environment;
-    }
-
-    public void setEmailSender (EmailSender emailSender){
-        this.emailSender = emailSender;
     }
 
     public boolean validateLink (String link ) {
@@ -90,7 +102,18 @@ public class GuildServicesImpl implements GuildServices {
             }
         }
 
-        return fromEntity(newGuildEntity, newMembers);
+        GuildResponseDTO guildResponse = fromEntity(newGuildEntity, newMembers);
+
+        Set<String> emailsOfNewGuildLeads = newMembers
+                .stream()
+                .filter(GuildMemberResponseDTO::isLead)
+                .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
+                .collect(Collectors.toSet());
+        if (!emailsOfNewGuildLeads.isEmpty()) {
+            emailGuildLeaders(emailsOfNewGuildLeads, newGuildEntity);
+        }
+
+        return guildResponse;
     }
 
     public GuildResponseDTO read(@NotNull UUID guildId) {
@@ -105,7 +128,7 @@ public class GuildServicesImpl implements GuildServices {
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(guildMember ->
-                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).toList();
 
         return fromEntity(foundGuild, guildMembers);
     }
@@ -132,8 +155,10 @@ public class GuildServicesImpl implements GuildServices {
                     // track membership changes for email notification
                     List<MemberProfile> addedMembers = new ArrayList<>();
                     List<MemberProfile> removedMembers = new ArrayList<>();
+                    Set<GuildMember> guildLeaders = new HashSet<>(guildMemberServices.findByFields(guildDTO.getId(), null, true));
+
                     // emails of guild leads excluding the one making the change request
-                    Set<String> emailsOfGuildLeads = guildMemberServices.findByFields(guildDTO.getId(), null, true)
+                    Set<String> emailsOfGuildLeadsExcludingChanger = guildLeaders
                             .stream()
                             .filter(lead -> !lead.getMemberId().equals(currentUser.getId()))
                             .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
@@ -143,11 +168,11 @@ public class GuildServicesImpl implements GuildServices {
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
                   
                     //add new members to the guild
-                    guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
-                        Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
+                    guildDTO.getGuildMembers().forEach(updatedMember -> {
+                        Optional<GuildMember> first = existingGuildMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
-                        if(!first.isPresent()) {
-                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
+                        if(first.isEmpty()) {
+                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId()), false), existingMember));
                             addedMembers.add(existingMember);
                         } else {
                             newMembers.add(fromMemberEntity(guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
@@ -155,16 +180,30 @@ public class GuildServicesImpl implements GuildServices {
                     });
 
                     //delete any removed members from guild
-                    existingGuildMembers.stream().forEach((existingMember) -> {
-                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
-                            guildMemberServices.delete(existingMember.getId());
+                    existingGuildMembers.forEach(existingMember -> {
+                        if(guildDTO.getGuildMembers().stream().noneMatch(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId()))) {
+                            guildMemberServices.delete(existingMember.getId(), false);
                             removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
                         }
                     });
                     updated = fromEntity(newGuildEntity, newMembers);
 
-                    if (!emailsOfGuildLeads.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
-                        sendGuildMemberChangeNotification(addedMembers, removedMembers, newGuildEntity.getName(), emailsOfGuildLeads);
+                    if (!emailsOfGuildLeadsExcludingChanger.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
+                        sendGuildMemberChangeNotification(addedMembers, removedMembers, newGuildEntity.getName(), emailsOfGuildLeadsExcludingChanger);
+                    }
+
+                    // Calculate the new set of guild leaders
+                    Set<GuildMember> newGuildLeaders = new HashSet<>(guildMemberServices.findByFields(guildDTO.getId(), null, true));
+                    // Determine the newly added guild leaders
+                    newGuildLeaders.removeAll(guildLeaders);
+
+                    if (!newGuildLeaders.isEmpty()) {
+                        Set<String> emailsOfNewGuildLeads = newGuildLeaders.stream()
+                                .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
+                                .collect(Collectors.toSet());
+                        if (!emailsOfNewGuildLeads.isEmpty()) {
+                            emailGuildLeaders(emailsOfNewGuildLeads, newGuildEntity);
+                        }
                     }
 
                 } else {
@@ -174,13 +213,13 @@ public class GuildServicesImpl implements GuildServices {
 
             return updated;
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
     }
 
 
-    public Set<GuildResponseDTO> findByFields(String name, UUID memberid) {
-        Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
+    public Set<GuildResponseDTO> findByFields(String name, UUID memberId) {
+        Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberId)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
             Set<GuildMember> foundMembers = guildMemberRepo.findByGuildId(foundGuild.getId()).stream().filter(guildMember -> {
@@ -200,10 +239,11 @@ public class GuildServicesImpl implements GuildServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (isAdmin || (currentUser != null && !guildMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
+            guildMemberHistoryRepository.deleteByGuildId(id);
             guildMemberRepo.deleteByGuildId(id.toString());
             guildsRepo.deleteById(id);
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         return true;
     }
@@ -212,7 +252,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink());
+        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
@@ -235,7 +275,8 @@ public class GuildServicesImpl implements GuildServices {
         if (entity == null) {
             return null;
         }
-        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(), entity.getLink());
+        GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(),
+                entity.getLink(), entity.isCommunity());
         dto.setGuildMembers(memberEntities);
         return dto;
     }
@@ -244,7 +285,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink());
+        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
     }
 
     private GuildMemberResponseDTO fromMemberEntity(GuildMember guildMember, MemberProfile memberProfile) {
@@ -252,7 +293,7 @@ public class GuildServicesImpl implements GuildServices {
             return null;
         }
         return new GuildMemberResponseDTO(guildMember.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
-                memberProfile.getId(), guildMember.isLead());
+                memberProfile.getId(), guildMember.getLead());
     }
 
 
@@ -289,5 +330,15 @@ public class GuildServicesImpl implements GuildServices {
         }
         emailHtml += "<a href=\"" + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
         return emailHtml;
+    }
+
+   public void emailGuildLeaders(Set<String> guildLeadersEmails, Guild guild) {
+        if (guild == null || guild.getName() == null || guild.getName().isEmpty()) {
+            LOG.warn("Guild name is missing or invalid");
+            return;
+        }
+       String subject = "You have been assigned as a guild leader of " + guild.getName();
+       String body = "Congratulations, you have been assigned as a guild leader of " + guild.getName();
+       emailSender.sendEmail(null, null, subject, body, guildLeadersEmails.toArray(new String[0]));
     }
 }

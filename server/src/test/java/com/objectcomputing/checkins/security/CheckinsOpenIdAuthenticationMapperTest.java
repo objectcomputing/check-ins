@@ -8,33 +8,33 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.authentication.Authentication;
-import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.oauth2.endpoint.token.response.JWTOpenIdClaims;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdAuthenticationMapper;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdClaims;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdTokenResponse;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import jakarta.inject.Inject;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
+import reactor.test.StepVerifier;
 
-import jakarta.inject.Inject;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@MicronautTest(environments = "prodtest", transactional = false)
-public class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+@MicronautTest(environments = {"prodtest","google"}, transactional = false)
+class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     OpenIdAuthenticationMapper openIdAuthenticationMapper;
 
     @Test
     void testInjection() {
-        assertTrue(openIdAuthenticationMapper instanceof CheckinsOpenIdAuthenticationMapper);
+        assertInstanceOf(CheckinsOpenIdAuthenticationMapper.class, openIdAuthenticationMapper);
     }
 
 
@@ -53,15 +53,16 @@ public class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite 
                         claim("email", memberProfile.getWorkEmail())
                         .claim("sub", MemberProfileUtils.getFullName(memberProfile))
                         .build());
-        AuthenticationResponse auth = checkinsOpenIdAuthenticationMapper.createAuthenticationResponse(provider,
-                openIdTokenResponse, openIdClaims, null);
 
-        assertNotNull(auth);
-        Authentication authentication = auth.getAuthentication().orElse(null);
-        assertNotNull(authentication);
-        assertEquals(MemberProfileUtils.getFullName(memberProfile), authentication.getName());
-        assertThat(authentication.getRoles(), CoreMatchers.hasItems(RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE));
-        assertTrue(roles.containsAll(authentication.getRoles()));
-        assertEquals(roles.size(), authentication.getRoles().size());
+        StepVerifier.create(checkinsOpenIdAuthenticationMapper.createAuthenticationResponse(provider, openIdTokenResponse, openIdClaims, null))
+                .assertNext(auth -> {
+                    assertNotNull(auth);
+                    Authentication authentication = auth.getAuthentication().orElse(null);
+                    assertNotNull(authentication);
+                    assertEquals(MemberProfileUtils.getFullName(memberProfile), authentication.getName());
+                    assertEquals(Set.of(RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE), new HashSet<>(authentication.getRoles()));
+                    assertTrue(roles.containsAll(authentication.getRoles()));
+                    assertEquals(roles.size(), authentication.getRoles().size());
+                }).verifyComplete();
     }
 }

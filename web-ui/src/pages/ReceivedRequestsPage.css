@@ -1,5 +1,4 @@
 .received-requests-page {
-  padding: 1rem;
   margin-top: 1rem;
   width: 100%;
   padding: 4em 2em 0 2em;
@@ -42,8 +41,8 @@
 }
 
 .received-requests-page .no-requests-message {
-  background-color: #e5e5e5;
-  color: gray;
+  background-color: var(--checkins-palette-gray-light);
+  color: var(--checkins-palette-gray-dark);
   border-radius: 4px;
   padding: 10px;
   text-align: center;
@@ -70,7 +69,7 @@
   padding: 5px 30px 5px 10px;
   margin: 10px;
   border-radius: 40px;
-  background-color: #e5e5e5;
+  background-color: var(--checkins-palette-gray-light);
 }
 
 .received-requests-page .card-content-grid .request-details-container {

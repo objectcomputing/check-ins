@@ -9,7 +9,6 @@ import com.objectcomputing.checkins.services.fixture.SkillFixture;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.skills.Skill;
-import com.objectcomputing.checkins.services.skills.SkillServices;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -18,9 +17,9 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
@@ -29,11 +28,12 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CombineSkillsControllerTest extends TestContainersSuite
+class CombineSkillsControllerTest extends TestContainersSuite
         implements MemberProfileFixture, RoleFixture, SkillFixture, MemberSkillFixture {
 
     @Inject
@@ -48,14 +48,15 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     @Client("/services/member-skills")
     private HttpClient memberSkillClient;
 
-    private final SkillServices skillServices;
-
-    public CombineSkillsControllerTest(SkillServices skillServices1) {
-        this.skillServices = skillServices1;
-    }
+//    @Inject
+//    private SkillServices skillServices;
+//
+//    public CombineSkillsControllerTest(SkillServices skillServices1) {
+//        this.skillServices = skillServices1;
+//    }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOne() {
+    void testPOSTCombine2SkillsIntoOne() {
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
 
@@ -98,7 +99,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOneNonAdmin() {
+    void testPOSTCombine2SkillsIntoOneNonAdmin() {
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
@@ -134,12 +135,12 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
     @Test
-    public void testPOSTCombineNonExistingSkillNameAdmin() {
+    void testPOSTCombineNonExistingSkillNameAdmin() {
 
         UUID[] newSkillsArray = new UUID[2];
         newSkillsArray[0] = UUID.randomUUID();
@@ -160,7 +161,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombineBlankSkillNameAdmin() {
+    void testPOSTCombineBlankSkillNameAdmin() {
 
         UUID[] newSkillsArray = new UUID[2];
         newSkillsArray[0] = UUID.randomUUID();
@@ -181,7 +182,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombineNonExistingSkillsAdmin() {
+    void testPOSTCombineNonExistingSkillsAdmin() {
 
         CombineSkillsDTO combineSkillsDTO =
              new CombineSkillsDTO("New Skill", "New Skill Desc", null);
@@ -199,7 +200,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOneCheckSkillsDeleted() {
+    void testPOSTCombine2SkillsIntoOneCheckSkillsDeleted() {
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
@@ -252,7 +253,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testPOSTCombine2SkillsIntoOneCheckMemberSkills() {
+    void testPOSTCombine2SkillsIntoOneCheckMemberSkills() {
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();

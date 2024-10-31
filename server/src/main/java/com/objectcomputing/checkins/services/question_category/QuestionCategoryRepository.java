@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface QuestionCategoryRepository extends CrudRepository<QuestionCategory, UUID> {
-    Set<QuestionCategory> findAll();
     Optional<QuestionCategory> findById(UUID id);
     Optional<QuestionCategory> findByName(String name);
     Set<QuestionCategory> findByNameIlike(String name);

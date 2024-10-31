@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
 import jakarta.inject.Singleton;
-import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +37,7 @@ public class MemberRoleServicesImpl implements MemberRoleServices {
     public Optional<MemberRole> findById(MemberRoleId memberRoleId) {
         return memberRoleRepository.findById(memberRoleId);
     }
+
 
     public void removeAllByRoleId(UUID roleId){
         memberRoleRepository.deleteByRoleId(roleId);

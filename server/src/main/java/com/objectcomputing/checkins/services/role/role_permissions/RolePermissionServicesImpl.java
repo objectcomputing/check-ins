@@ -1,17 +1,24 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
-
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.CacheInvalidate;
+import io.micronaut.cache.annotation.Cacheable;
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Singleton
+@CacheConfig("role-permission-cache")
 public class RolePermissionServicesImpl implements RolePermissionServices {
 
     private final RolePermissionRepository rolePermissionRepository;
@@ -36,7 +43,7 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
             List<Permission> permissionsAssociatedWithRole = new ArrayList<>();
             for(RolePermission rolePermission : records) {
                 if(role.getId().equals(rolePermission.getRoleId())) {
-                    Optional<Permission> permission = permissions.stream().filter(s-> s.getId().equals(rolePermission.getPermissionId())).findFirst();
+                    Optional<Permission> permission = permissions.stream().filter(s-> s.equals(rolePermission.getPermission())).findFirst();
                     permission.ifPresent(permissionsAssociatedWithRole::add);
                 }
             }
@@ -45,22 +52,49 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
             rolePermissionsResponseDTO.setRoleId(role.getId());
             rolePermissionsResponseDTO.setRole(role.getRole());
             rolePermissionsResponseDTO.setDescription(role.getDescription());
-            rolePermissionsResponseDTO.setPermissions(permissionsAssociatedWithRole);
+            rolePermissionsResponseDTO.setPermissions(permissionsAssociatedWithRole.stream().map(PermissionDTO::new).toList());
             roleInfo.add(rolePermissionsResponseDTO);
         }
 
         return roleInfo;
     }
 
+    @CacheInvalidate(all = true)
     @Override
-    public RolePermission save(UUID roleId, UUID permissionId) {
-        rolePermissionRepository.saveByIds(roleId.toString(), permissionId.toString());
-        RolePermission saved = rolePermissionRepository.findByIds(roleId.toString(), permissionId.toString()).get(0);
+    public RolePermission save(UUID roleId, Permission permissionId) {
+        rolePermissionRepository.saveByIds(roleId.toString(), permissionId);
+        RolePermission saved = rolePermissionRepository.findByIds(roleId.toString(), permissionId).get(0);
         return saved;
     }
 
+    @CacheInvalidate(all = true)
     @Override
-    public void delete(UUID roleId, UUID permissionId) {
-        rolePermissionRepository.deleteByIds(roleId.toString(), permissionId.toString());
+    public void delete(UUID roleId, Permission permissionId) {
+        rolePermissionRepository.deleteByIds(roleId.toString(), permissionId);
+    }
+
+    @Override
+    public List<RolePermission> findByRoleId(UUID roleId) {
+        return rolePermissionRepository.findByRoleId(roleId);
+    }
+
+
+    @Cacheable
+    @Override
+    public List<RolePermission> findByRole(String role) {
+        return rolePermissionRepository.findByRole(role);
+    }
+
+    @Cacheable
+    @Override
+    public List<Permission> findUserPermissions(@NotNull UUID id) {
+
+        Set<Role> memberRoles = roleServices.findUserRoles(id);
+
+        return memberRoles.stream().flatMap(role ->
+                findByRoleId(role.getId())
+                    .stream()
+                    .map(RolePermission::getPermission))
+            .toList();
     }
 }

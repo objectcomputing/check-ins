@@ -1,31 +1,28 @@
-import React, { useContext, useState, useCallback } from "react";
-import { AppContext } from "../../context/AppContext";
-import {
-  selectOrderedMemberFirstName,
-} from "../../context/selectors";
-import { Modal, TextField, Box } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Button } from "@mui/material";
-import { UPDATE_TOAST } from "../../context/actions";
+import React, { useContext, useState, useCallback } from 'react';
+import { AppContext } from '../../context/AppContext';
+import { selectOrderedMemberFirstName } from '../../context/selectors';
+import { Box, Button, Modal, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import { UPDATE_TOAST } from '../../context/actions';
 
 const modalStyles = {
-  position: "absolute",
-  minWidth: "400px",
-  maxWidth: "600px",
-  backgroundColor: "background.paper",
-  top: "50%",
-  left: "50%",
-  padding: "1rem",
-  transform: "translate(-50%, -50%)",
-  border: "2px solid #fff",
+  position: 'absolute',
+  minWidth: '400px',
+  maxWidth: '600px',
+  backgroundColor: 'background.paper',
+  top: '50%',
+  left: '50%',
+  padding: '1rem',
+  transform: 'translate(-50%, -50%)',
+  border: '2px solid #fff'
 };
 
 const modalActionStyles = {
-  marginTop: "1rem",
-  width: "calc(100% - 1rem)",
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "flex-end",
+  marginTop: '1rem',
+  width: 'calc(100% - 1rem)',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-end'
 };
 
 const SelectUserModal = ({ userLabel, open, onSelect, onClose }) => {
@@ -41,29 +38,24 @@ const SelectUserModal = ({ userLabel, open, onSelect, onClose }) => {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast:
-            "You must select a team member.",
-        },
+          severity: 'error',
+          toast: 'You must select a team member.'
+        }
       });
     } else {
       onSelect(member);
     }
-  }, [
-    onSelect,
-    dispatch,
-    member,
-  ]);
+  }, [onSelect, dispatch, member]);
 
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={modalStyles}>
         <Autocomplete
-          options={["", ...sortedMembers]}
+          options={['', ...sortedMembers]}
           value=""
           onChange={onUserChange}
-          getOptionLabel={(option) => option.name || ""}
-          renderInput={(params) => (
+          getOptionLabel={option => option.name || ''}
+          renderInput={params => (
             <TextField
               {...params}
               className="fullWidth"

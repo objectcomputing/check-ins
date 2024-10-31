@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -15,22 +14,19 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, RoleFixture {
+class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, RoleFixture {
 
     @Inject
     @Client("/services/check-ins")
@@ -40,8 +36,9 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     void createRolesAndPermissions() {
         createAndAssignRoles();
     }
+
     @Test
-    public void testCreateACheckInByAdmin() {
+    void testCreateACheckInByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         Role role = assignAdminRole(memberProfileOfUser);
@@ -65,7 +62,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCreateACheckInByMember() {
+    void testCreateACheckInByMember() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         Role role = assignMemberRole(memberProfileOfUser);
@@ -89,7 +86,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCreateACheckInByPDL() {
+    void testCreateACheckInByPDL() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         Role role = assignPdlRole(memberProfileOfPDL);
@@ -113,7 +110,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCreateACheckInByUnrelatedUser() {
+    void testCreateACheckInByUnrelatedUser() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
@@ -134,7 +131,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -176,7 +173,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
+                .stream().sorted().toList();
 
         assertEquals("checkIn.pdlId: must not be null", errorList.get(0));
         assertEquals("checkIn.teamMemberId: must not be null", errorList.get(1));
@@ -223,7 +220,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCreateACheckInForInvalidPdlID() {
+    void testCreateACheckInForInvalidPdlID() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         Role role = assignPdlRole(memberProfileOfPDL);
@@ -282,7 +279,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetReadByIdByAdmin() {
+    void testGetReadByIdByAdmin() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -301,7 +298,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetReadByIdByPDL() {
+    void testGetReadByIdByPDL() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -320,7 +317,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetReadByIdByMember() {
+    void testGetReadByIdByMember() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -339,7 +336,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetReadByIdByUnrelatedUser() {
+    void testGetReadByIdByUnrelatedUser() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
@@ -356,7 +353,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -375,7 +372,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin id %s", randomCheckinID), error);
+        assertEquals(String.format("Checkin not found by Id: %s.", randomCheckinID), error);
     }
 
     @Test
@@ -444,7 +441,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -508,7 +505,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Unable to find checkin record with id null", checkIn.getId()), error);
+        assertEquals("Unable to find checkin record with id null", error);
         assertEquals(request.getPath(), href);
     }
 
@@ -544,7 +541,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
+                .stream().sorted().toList();
         assertEquals("checkIn.pdlId: must not be null", errorList.get(0));
         assertEquals("checkIn.teamMemberId: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
@@ -569,10 +566,10 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testUpdateACheckInForInvalidPdlID() {
+    void testUpdateACheckInForInvalidPdlID() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = assignPdlRole(memberProfileOfPDL);
+        assignPdlRole(memberProfileOfPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         checkIn.setPdlId(UUID.randomUUID());
@@ -646,7 +643,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByTeamMemberIdByMember() {
+    void testGetFindByTeamMemberIdByMember() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -661,7 +658,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByTeamMemberIdByPdl() {
+    void testGetFindByTeamMemberIdByPdl() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -676,7 +673,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByTeamMemberIdByAdmin() {
+    void testGetFindByTeamMemberIdByAdmin() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -692,7 +689,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByTeamMemberIdByUnrelatedUser() {
+    void testGetFindByTeamMemberIdByUnrelatedUser() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -708,11 +705,11 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
-    public void testGetFindByPDLIdByMember() {
+    void testGetFindByPDLIdByMember() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -727,11 +724,11 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
-    public void testGetFindByPDLIdByPDL() {
+    void testGetFindByPDLIdByPDL() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -746,7 +743,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByPDLIdByAdmin() {
+    void testGetFindByPDLIdByAdmin() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -762,7 +759,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByPDLIdByUnrelatedUser() {
+    void testGetFindByPDLIdByUnrelatedUser() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -778,11 +775,11 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
-    public void testGetFindByCompletedByAdmin() {
+    void testGetFindByCompletedByAdmin() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -812,7 +809,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByCompletedByMember() {
+    void testGetFindByCompletedByMember() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -834,7 +831,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testGetFindByCompletedByPDL() {
+    void testGetFindByCompletedByPDL() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -875,7 +872,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         CheckIn checkIn2 = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
         CheckIn checkIn3 = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), role.getRole());
+        final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), role.getRole());
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         Set<CheckIn> expected = new HashSet<>();
@@ -894,7 +891,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
         Role role = assignMemberRole(memberProfileOfUnrelatedUser);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), role.getRole());
+        final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), role.getRole());
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -902,7 +899,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -911,14 +908,14 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
         Role role = assignPdlRole(memberProfileOfUnrelatedUser);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), role.getRole());
+        final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), role.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("You are not authorized to perform this operation"), error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -948,7 +945,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    public void testCheckInDoesNotExistForCompleted() {
+    void testCheckInDoesNotExistForCompleted() {
 
         MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
         Role role = assignMemberRole(memberProfileOfUnrelatedUser);

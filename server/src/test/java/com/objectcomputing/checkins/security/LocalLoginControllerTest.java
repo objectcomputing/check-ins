@@ -13,16 +13,13 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Map;
-import java.util.concurrent.Flow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest(environments = {Environments.LOCAL, Environments.LOCALTEST}, transactional = false)
-public class LocalLoginControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class LocalLoginControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Client("/oauth/login/google")
     @Inject

@@ -5,13 +5,13 @@ import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,17 +24,18 @@ public class Skill {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "The id of the skill", required = true)
+    @Schema(description = "The id of the skill")
     private UUID id;
 
     @NotBlank
     @Column(name = "name", unique = true)
-    @Schema(description = "The name of the skill", required = true)
+    @Schema(description = "The name of the skill")
     private String name;
 
+    @NotNull
     @Column(name = "pending")
     @Schema(description = "The pending status (approved or not) of the skill")
-    private boolean pending = true;
+    private Boolean pending = true;
 
     @Column(name = "description")
     @Schema(description = "The description of the skill")
@@ -42,8 +43,8 @@ public class Skill {
 
     @NotNull
     @Column(name = "extraneous")
-    @Schema(description = "The skill is extraneous (or not)", required = true)
-    private boolean extraneous = false;
+    @Schema(description = "The skill is extraneous (or not)")
+    private Boolean extraneous = false;
 
     public Skill() {
     }
@@ -87,11 +88,11 @@ public class Skill {
         this.name = name;
     }
 
-    public boolean isPending() {
+    public Boolean isPending() {
         return pending;
     }
 
-    public void setPending(boolean pending) {
+    public void setPending(Boolean pending) {
         this.pending = pending;
     }
 
@@ -103,11 +104,12 @@ public class Skill {
         this.description = description;
     }
 
-    public boolean isExtraneous() {
+    public Boolean isExtraneous() {
         return extraneous;
     }
 
-    public void setExtraneous(boolean extraneous) {
+    @SuppressWarnings("unused")
+    public void setExtraneous(Boolean extraneous) {
         this.extraneous = extraneous;
     }
 

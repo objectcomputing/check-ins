@@ -1,11 +1,16 @@
 plugins {
-    id "base"
-    id "com.github.node-gradle.node" version "2.2.3"
+    id "java"
+    id "com.github.node-gradle.node" version "7.0.2"
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("21")
+    targetCompatibility = JavaVersion.toVersion("21")
 }
 
 node {
-    version = '14.17.6' // https://nodejs.org/en/
-    yarnVersion = '1.22.5' // https://yarnpkg.com/en/
+    version = '20.11.1' // https://nodejs.org/en/
+    yarnVersion = '1.22.21' // https://yarnpkg.com/en/
     download = true
 }
 
@@ -14,15 +19,65 @@ yarn_run_coverage {
     outputs.dir 'coverage'
 }
 
-yarn_run_build {
+def yarn = tasks.named("yarn")
+
+def distDir = layout.projectDirectory.dir("dist")
+
+def yarnBuildTask = tasks.register("yarnBuild", YarnTask) {
     group 'build'
-    outputs.dir 'build'
+    inputs.files(fileTree('node_modules'))
+    inputs.files(fileTree('public'))
+    inputs.files(fileTree('src'))
+    inputs.file('index.html')
+    inputs.file('package.json')
+    inputs.file('tsconfig.json')
+    inputs.file('vite.config.ts')
+    inputs.file('yarn.lock')
+
+    outputs.dir(distDir)
+
+    dependsOn yarn
+    args = ['run', 'build']
 }
 
-check {
-    dependsOn yarn_run_coverage
+configurations {
+    yarnBuildElements {
+        canBeResolved = false
+        canBeConsumed = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "yarnBuild-elements"))
+        }
+    }
 }
 
 artifacts {
-    'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
+    yarnBuildElements(distDir) {
+        builtBy(yarnBuildTask)
+    }
 }
+
+sourceSets {
+    java {
+        main {
+            resources {
+                // This makes the processResources task automatically depend on the buildWebapp one
+                srcDir yarnBuildTask
+            }
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.sources", "src/"
+        property "sonar.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
+        property "sonar.coverage.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
+        property "sonar.javascript.lcov.reportPaths", layout.projectDirectory.file("coverage/coverage-final.json").getAsFile()
+    }
+}
+
+check {
+   dependsOn yarn_run_coverage
+}
+

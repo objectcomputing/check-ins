@@ -1,46 +1,39 @@
 package com.objectcomputing.checkins.services.tags;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.skills.Skill;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Named;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-
 
 @Controller("/services/tags")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @io.swagger.v3.oas.annotations.tags.Tag(name = "tags")
-
 public class TagController {
 
     private final TagServices tagServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public TagController(TagServices tagServices,
-                         EventLoopGroup eventLoopGroup,
-                         @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public TagController(TagServices tagServices) {
         this.tagServices = tagServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
-        }
+    }
 
     /**
      * Create and save a new tag.
@@ -48,16 +41,11 @@ public class TagController {
      * @param tag, {@link TagCreateDTO}
      * @return {@link HttpResponse<  Tag  >}
      */
-    @Post()
-    public Mono<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<TagCreateDTO> request) {
-
-        return Mono.fromCallable(() -> tagServices.save(new Tag(tag.getName())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(createdTag -> (HttpResponse<Tag>)HttpResponse
-                        .created(createdTag)
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), createdTag.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @Post
+    public HttpResponse<Tag> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<?> request) {
+        Tag createdTag = tagServices.save(new Tag(tag.getName()));
+        return HttpResponse.created(createdTag)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTag.getId()))));
     }
 
     /**
@@ -66,9 +54,9 @@ public class TagController {
      * @param id, id of {@link Tag} to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteTag(UUID id) {
+    @Status(HttpStatus.OK)
+    public void deleteTag(UUID id) {
         tagServices.delete(id);
-        return HttpResponse.ok();
     }
 
     /**
@@ -78,18 +66,12 @@ public class TagController {
      * @return {@link Tag}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<Tag>> readTag(@NotNull UUID id) {
-
-        return Mono.fromCallable(() -> {
-            Tag result = tagServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No tag for UUID");
-                }
-                return result;
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(tag -> (HttpResponse<Tag>)HttpResponse.ok(tag))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public Tag readTag(@NotNull UUID id) {
+        Tag result = tagServices.read(id);
+        if (result == null) {
+            throw new NotFoundException("No tag for UUID");
+        }
+        return result;
     }
 
     /**
@@ -99,11 +81,8 @@ public class TagController {
      * @return {@link Set <tag > set of tags
      */
     @Get("/{?name}")
-    public Mono<HttpResponse<Set<Tag>>> findtags(@Nullable String name) {
-        return Mono.fromCallable(() -> tagServices.findByFields(name))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(tag -> (HttpResponse<Set<Tag>>)HttpResponse
-                        .ok(tag)).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public Set<Tag> findTags(@Nullable String name) {
+        return tagServices.findByFields(name);
     }
 
     /**
@@ -112,17 +91,10 @@ public class TagController {
      * @param tag, {@link Tag}
      * @return {@link Tag}
      */
-    @Put()
-    public Mono<HttpResponse<Tag>> update(@Body @Valid Tag tag, HttpRequest<Skill> request) {
-
-        return Mono.fromCallable(() -> tagServices.update(tag))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(tag1 -> (HttpResponse<Tag>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), tag1.getId()))))
-                        .body(tag1))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @Put
+    public HttpResponse<Tag> update(@Body @Valid Tag tag, HttpRequest<?> request) {
+        Tag tag1 = tagServices.update(tag);
+        return HttpResponse.ok(tag1)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), tag1.getId()))));
     }
-
-
 }

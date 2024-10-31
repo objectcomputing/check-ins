@@ -19,15 +19,21 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EmployeeHoursControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, EmployeeHoursFixture {
+class EmployeeHoursControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, EmployeeHoursFixture {
 
     @Inject
     @Client("/services/employee/hours")
@@ -90,7 +96,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    void testFindAllRecordsWithAdminRole() {
+    void testFindAllRecordsWithAdminRole() throws IOException {
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile user = createAnUnrelatedUser();
@@ -107,10 +113,9 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    void testFindRecordsWithEmployeeId() {
+    void testFindRecordsWithEmployeeId() throws IOException {
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
-
         List<EmployeeHours> employeeHoursList = createEmployeeHours();
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?employeeId=%s",employeeHoursList.get(0).getEmployeeId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpResponse<Set<EmployeeHours>> response = client.toBlocking().exchange(request, Argument.setOf(EmployeeHours.class));
@@ -120,7 +125,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    void testFindAllRecordsWithNonAdminRole() {
+    void testFindAllRecordsWithNonAdminRole() throws IOException {
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
 
@@ -132,12 +137,12 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
     @Test
-    public void testGetByIdNotFound() {
+    void testGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);

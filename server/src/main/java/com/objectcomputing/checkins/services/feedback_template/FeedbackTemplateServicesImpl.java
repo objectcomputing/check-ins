@@ -8,8 +8,12 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import java.util.*;
-import java.util.stream.Collectors;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
@@ -58,23 +62,22 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setIsReview(originalTemplate.get().getIsReview());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return feedbackTemplateRepository.update(feedbackTemplate);
     }
 
     @Override
-    public Boolean delete(UUID id) {
+    public void delete(UUID id) {
         final FeedbackTemplate template = getById(id);
 
         if (!deleteIsPermitted(template.getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         // delete the template itself
         feedbackTemplateRepository.softDeleteById(Util.nullSafeUUIDToString(id));
-        return true;
     }
 
     @Override
@@ -96,13 +99,13 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
                 .stream()
                 .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
                 .filter(template -> !template.getIsReview() || isAdmin)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
-    public Boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
+    public boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
         if (!updateIsPermitted(creatorId)) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         feedbackTemplateRepository.setAdHocInactiveByCreator(Util.nullSafeUUIDToString(creatorId));
         return true;

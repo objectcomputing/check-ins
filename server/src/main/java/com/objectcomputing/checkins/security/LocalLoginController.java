@@ -3,15 +3,25 @@ package com.objectcomputing.checkins.security;
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.netty.cookies.NettyCookie;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
-import io.micronaut.http.*;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.*;
+import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.authentication.AuthenticationResponse;
+import io.micronaut.security.authentication.Authenticator;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.event.LoginFailedEvent;
 import io.micronaut.security.event.LoginSuccessfulEvent;
 import io.micronaut.security.handlers.LoginHandler;
@@ -22,10 +32,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Requires(env = Environments.LOCAL)
 @Controller("/oauth/login/google")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_ANONYMOUS)
 public class LocalLoginController {
 
@@ -56,9 +68,10 @@ public class LocalLoginController {
         return Collections.emptyMap();
     }
 
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
     @Post
-    public Mono<MutableHttpResponse<?>> auth(HttpRequest<?> request, String email, String role) {
+    public Mono<Object> auth(HttpRequest<?> request, String email, String role) {
         UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(email, role);
         Flux<AuthenticationResponse> authenticationResponseFlux =
                 Flux.from(authenticator.authenticate(request, usernamePasswordCredentials));
@@ -76,12 +89,15 @@ public class LocalLoginController {
                 newAttributes.put("picture", "");
                 Authentication updatedAuth = Authentication.build(authentication.getName(), authentication.getRoles(), newAttributes);
 
-                eventPublisher.publishEvent(new LoginSuccessfulEvent(updatedAuth));
-                return loginHandler.loginSuccess(updatedAuth, request);
+                eventPublisher.publishEvent(new LoginSuccessfulEvent(updatedAuth, null, Locale.getDefault()));
+
+                // Remove the original JWT on login.
+                return ((MutableHttpResponse)loginHandler.loginSuccess(updatedAuth, request))
+                           .cookie(new NettyCookie(ImpersonationController.originalJWT, "").path("/").maxAge(0));
             } else {
-                eventPublisher.publishEvent(new LoginFailedEvent(authenticationResponse));
+                eventPublisher.publishEvent(new LoginFailedEvent(authenticationResponse, null, null, Locale.getDefault()));
                 return loginHandler.loginFailed(authenticationResponse, request);
             }
-        }).single(HttpResponse.status(HttpStatus.UNAUTHORIZED));
+        }).single(Mono.just(HttpResponse.status(HttpStatus.UNAUTHORIZED)));
     }
 }

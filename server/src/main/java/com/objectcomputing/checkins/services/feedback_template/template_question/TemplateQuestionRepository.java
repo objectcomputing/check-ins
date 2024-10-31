@@ -1,17 +1,16 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface TemplateQuestionRepository extends CrudRepository<TemplateQuestion, UUID> {

@@ -1,94 +1,101 @@
-import { resolve } from "./api.js";
+import { resolve } from './api.js';
 
 const guildUrl = `/services/guilds`;
-const guildMemberUrl = `/services/guilds/members`;
+const guildMemberUrl = `${guildUrl}/members`;
+const guildLeadersUrl = `${guildUrl}/leaders`;
 
-export const getAllGuildMembers = async (cookie) => {
+export const getAllGuildMembers = async cookie => {
   return resolve({
     url: guildMemberUrl,
-    responseType: "json",
-    withCredentials: true,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
 export const getMembersByGuild = async (id, cookie) => {
   return resolve({
     url: guildMemberUrl,
-    responseType: "json",
     params: {
-      guildid: id,
+      guildid: id
     },
-    withCredentials: true,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
+export const getGuildLeaders = async (id, cookie) => {
+  return resolve({
+    url: `${guildLeadersUrl}/${id}`,
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
 export const updateGuild = async (guild, cookie) => {
   return resolve({
-    method: "put",
+    method: 'PUT',
     url: guildUrl,
-    responseType: "json",
     data: guild,
-    withCredentials: true,
-    headers: { "X-CSRF-Header": cookie },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
 export const getGuildsForMember = async (id, cookie) => {
   return resolve({
     url: guildUrl,
-    responseType: "json",
     params: {
-      memberid: id,
+      memberid: id
     },
-    withCredentials: true,
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
-export const getAllGuilds = async (cookie) => {
+export const getAllGuilds = async cookie => {
   return resolve({
     url: guildUrl,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
 export const createGuild = async (guild, cookie) => {
   return resolve({
-    method: "post",
+    method: 'POST',
     url: guildUrl,
-    responseType: "json",
     data: guild,
-    headers: { "X-CSRF-Header": cookie },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
 export const addGuildMember = async (id, isLead, guildId, cookie) => {
   return resolve({
-    method: "post",
+    method: 'POST',
     url: guildMemberUrl,
-    responseType: "json",
     data: { memberId: id, lead: isLead, guildId: guildId },
-    headers: { "X-CSRF-Header": cookie },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
 export const deleteGuildMember = async (id, cookie) => {
   return resolve({
-    method: "delete",
+    method: 'DELETE',
     url: guildMemberUrl + `/${id}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
 export const deleteGuild = async (id, cookie) => {
   return resolve({
-    method: "delete",
+    method: 'DELETE',
     url: `${guildUrl}/${id}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };

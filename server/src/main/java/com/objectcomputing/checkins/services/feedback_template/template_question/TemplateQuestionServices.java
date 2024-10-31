@@ -7,7 +7,7 @@ public interface TemplateQuestionServices {
 
     TemplateQuestion update(TemplateQuestion templateQuestion);
 
-    Boolean delete(UUID id);
+    void delete(UUID id);
 
     TemplateQuestion save(TemplateQuestion feedbackQuestion);
 

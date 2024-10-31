@@ -1,9 +1,9 @@
 import {
   getCheckinByMemberId,
   getAllCheckins,
-  createCheckin,
-} from "../api/checkins";
-import { UPDATE_CHECKINS, ADD_CHECKIN } from "./actions";
+  createCheckin
+} from '../api/checkins';
+import { UPDATE_CHECKINS, ADD_CHECKIN } from './actions';
 
 export const getCheckins = async (id, pdlId, dispatch, csrf) => {
   const res = await getCheckinByMemberId(id, csrf);
@@ -40,14 +40,14 @@ export const createNewCheckin = async (memberProfile, dispatch, csrf) => {
       today.getDate(),
       today.getHours(),
       today.getMinutes(),
-      today.getSeconds(),
+      today.getSeconds()
     ];
     const res = await createCheckin(
       {
         teamMemberId: memberProfile.id,
         pdlId: memberProfile.pdlId,
         checkInDate: dateTimeArray,
-        completed: false,
+        completed: false
       },
       csrf
     );

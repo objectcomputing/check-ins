@@ -1,12 +1,11 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.exceptions.BadArgException;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -17,14 +16,12 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     private final CheckinDocumentRepository checkinDocumentRepo;
     private final CheckInRepository checkinRepo;
-    private final CurrentUserServices currentUserServices;
 
     public CheckinDocumentServicesImpl(CheckinDocumentRepository checkinDocumentRepo,
                                        CheckInRepository checkinRepo,
                                        CurrentUserServices currentUserServices) {
         this.checkinDocumentRepo = checkinDocumentRepo;
         this.checkinRepo = checkinRepo;
-        this.currentUserServices = currentUserServices;
     }
 
     public Set<CheckinDocument> read(UUID checkinsId) {
@@ -54,7 +51,7 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
                 throw new BadArgException(String.format("Invalid CheckinDocument %s", checkinDocument));
             } else if (checkinDocument.getId() != null) {
                 throw new BadArgException(String.format("Found unexpected CheckinDocument id %s, please try updating instead", checkinDocument.getId()));
-            } else if (!checkinRepo.findById(checkinDocument.getCheckinsId()).isPresent()) {
+            } else if (checkinRepo.findById(checkinDocument.getCheckinsId()).isEmpty()) {
                 throw new BadArgException(String.format("CheckIn %s doesn't exist", checkinDocument.getCheckinsId()));
             } else if (checkinDocumentRepo.findByUploadDocId(checkinDocument.getUploadDocId()).isPresent()) {
                 throw new BadArgException(String.format("CheckinDocument with document ID %s already exists", checkinDocument.getUploadDocId()));
@@ -73,10 +70,10 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         if (checkinDocument != null) {
             if (checkinDocument.getCheckinsId() == null || checkinDocument.getUploadDocId() == null) {
                 throw new BadArgException(String.format("Invalid CheckinDocument %s", checkinDocument));
-            } else if (checkinDocument.getId() == null || !checkinDocumentRepo.findById(checkinDocument.getId()).isPresent()) {
+            } else if (checkinDocument.getId() == null || checkinDocumentRepo.findById(checkinDocument.getId()).isEmpty()) {
                 throw new BadArgException(String.format("CheckinDocument id %s not found, please try inserting instead",
                         checkinDocument.getId()));
-            } else if (!checkinRepo.findById(checkinDocument.getCheckinsId()).isPresent()) {
+            } else if (checkinRepo.findById(checkinDocument.getCheckinsId()).isEmpty()) {
                 throw new BadArgException(String.format("CheckIn %s doesn't exist", checkinDocument.getCheckinsId()));
             } else {
                 updatedCheckinDocument = checkinDocumentRepo.update(checkinDocument);
@@ -88,9 +85,7 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     public void deleteByCheckinId(@NotNull UUID checkinsId) {
 
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        } else if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
+        if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
             throw new BadArgException(String.format("CheckinDocument with CheckinsId %s does not exist", checkinsId));
         } else {
             checkinDocumentRepo.deleteByCheckinsId(checkinsId);
@@ -99,9 +94,7 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     public void deleteByUploadDocId(@NotNull String uploadDocId) {
 
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        } else if(!checkinDocumentRepo.existsByUploadDocId(uploadDocId)) {
+        if(!checkinDocumentRepo.existsByUploadDocId(uploadDocId)) {
             throw new BadArgException(String.format("CheckinDocument with uploadDocId %s does not exist", uploadDocId));
         } else {
             checkinDocumentRepo.deleteByUploadDocId(uploadDocId);

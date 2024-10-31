@@ -3,40 +3,40 @@
 body {
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
 
-.my-anniversary.open{
+.my-anniversary.open {
   animation: bg-change 1s 1;
   background-color: #72c8d5;
-  transition: 1s;
+  transition: var(--transition-timing-long);
 }
-@keyframes bg-change{
-  0%{
-      background-color: #F0E2DB;
+@keyframes bg-change {
+  0% {
+    background-color: #f0e2db;
   }
-  100%{
-      background-color: #72c8d5;
+  100% {
+    background-color: #72c8d5;
   }
 }
 .hide-my-anniversary {
-    display: flex;
-    justify-content: flex-end;
-    font-weight: bold;
-  }
+  display: flex;
+  justify-content: flex-end;
+  font-weight: bold;
+}
 .hide-my-anniversary:hover {
-    cursor: pointer;
-  }
+  cursor: pointer;
+}
 .my-anniversary-container {
-    position: relative;
+  position: relative;
 }
 .my-anniversary h1 {
-    color: #2559a7;
-    font-weight: bolder;
-    position: relative;
-    top: 10rem;
-    text-align: center;
-    font-size: 3.5em;
+  color: #2559a7;
+  font-weight: bolder;
+  position: relative;
+  top: 10rem;
+  text-align: center;
+  font-size: 3.5em;
 }
 .my-anniversary-gift {
   position: absolute;
@@ -47,10 +47,10 @@ body {
   transform-origin: 0% 0%;
   cursor: pointer;
   transform: translate(-50%, -50%);
-  transition: 1s;
+  transition: var(--transition-timing-long);
   animation: box 0.5s infinite;
 }
-.my-anniversary-gift .box{
+.my-anniversary-gift .box {
   transform-origin: 0% 0%;
   cursor: pointer;
   animation: box 0.5s infinite;
@@ -59,16 +59,16 @@ body {
   0% {
     transform: rotate(0deg) translate(-50%, -50%);
   }
-  25%{
+  25% {
     transform: rotate(1deg) translate(-50%, -50%);
   }
-  50%{
+  50% {
     transform: rotate(0deg) translate(-50%, -50%);
   }
-  70%{
+  70% {
     transform: rotate(-1deg) translate(-50%, -50%);
   }
-  100%{
+  100% {
     transform: rotate(0deg) translate(-50%, -50%);
   }
 }
@@ -79,34 +79,42 @@ body {
   background: #2559a7;
   border-radius: 5px 5px 0 0;
   transform: translate3d(-5%, 0, 0);
-  background-image: linear-gradient(to right, #2559a7 0%, #2559a7 44%, #feb672 44%, #feb672 56%, #2559a7 56%, #2559a7 100%);
-  transition: 1s;
+  background-image: linear-gradient(
+    to right,
+    #2559a7 0%,
+    #2559a7 44%,
+    #feb672 44%,
+    #feb672 56%,
+    #2559a7 56%,
+    #2559a7 100%
+  );
+  transition: var(--transition-timing-long);
 }
-.my-anniversary-gift-top.boxOpen{
-  animation: box-open 1s;
-  opacity:0;
+.my-anniversary-gift-top.boxOpen {
+  animation: box-open var(--transition-timing-long);
+  opacity: 0;
 }
-@keyframes box-open{
-  0%{
-    top:0px;
-    opacity:1;
+@keyframes box-open {
+  0% {
+    top: 0px;
+    opacity: 1;
   }
-  100%{
-    top:-50px;
-    opacity:0;
+  100% {
+    top: -50px;
+    opacity: 0;
   }
 }
 .my-anniversary-gift-top::before,
 .my-anniversary-gift-top::after {
-    content: "";
-    width: 15px;
-    height: 15px;
-    border: 10px solid #feb672;
-    border-radius: 50% 50% 0 50%;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translate3d(-100%, -100%, 0) skew(10deg, 10deg);
+  content: '';
+  width: 15px;
+  height: 15px;
+  border: 10px solid #feb672;
+  border-radius: 50% 50% 0 50%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate3d(-100%, -100%, 0) skew(10deg, 10deg);
 }
 
 .my-anniversary-gift-top::after {
@@ -123,7 +131,7 @@ body {
   transform: translate3d(-50%, 0, 0) scale(2.5);
   transform-origin: center center;
   z-index: -1;
-  opacity:1;
+  opacity: 1;
   transition: 3s;
 }
 .my-anniversary-gift-text.open span {
@@ -134,24 +142,32 @@ body {
 .my-anniversary-gift-box {
   width: 100%;
   height: 75%;
-  position:relative;
-  background-image: linear-gradient(to right, #2559a7 0%, #2559a7 45%, #feb672 45%, #feb672 55%, #2559a7 55%, #2559a7 100%);
+  position: relative;
+  background-image: linear-gradient(
+    to right,
+    #2559a7 0%,
+    #2559a7 45%,
+    #feb672 45%,
+    #feb672 55%,
+    #2559a7 55%,
+    #2559a7 100%
+  );
   border-radius: 0 0 5px 5px;
   transition: 1s;
 }
-.my-anniversary-gift-box.boxDown{
-  animation: box-down 1s; 
-  opacity:0; 
+.my-anniversary-gift-box.boxDown {
+  animation: box-down 1s;
+  opacity: 0;
 }
-@keyframes box-down{
-  0%{
-    top:0px;
-    opacity:1;
+@keyframes box-down {
+  0% {
+    top: 0px;
+    opacity: 1;
   }
-  100%{
-    top:50px;
-    opacity:0;
-  }  
+  100% {
+    top: 50px;
+    opacity: 0;
+  }
 }
 
 @media (max-width: 800px) {

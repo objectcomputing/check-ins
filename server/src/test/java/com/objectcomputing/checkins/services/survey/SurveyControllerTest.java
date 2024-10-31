@@ -2,10 +2,9 @@ package com.objectcomputing.checkins.services.survey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.SurveyFixture;
-import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -14,28 +13,34 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, SurveyFixture {
+class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, SurveyFixture {
 
     @Inject
     @Client("/services/surveys")
     private HttpClient client;
 
     @Test
-    public void testCreateASurvey(){
+    void testCreateASurvey(){
         MemberProfile user = createAnUnrelatedUser();
         createAndAssignAdminRole(user);
 
@@ -140,7 +145,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
-    public void testGETFindByValueName() {
+    void testGETFindByValueName() {
         MemberProfile user = createAnUnrelatedUser();
         createAndAssignAdminRole(user);
 
@@ -155,7 +160,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
-    public void testGetFindByCreatedBy() {
+    void testGetFindByCreatedBy() {
         MemberProfile user = createAnUnrelatedUser();
         createAndAssignAdminRole(user);
 
@@ -171,7 +176,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
-    public void testGetFindAll() {
+    void testGetFindAll() {
         MemberProfile user = createAnUnrelatedUser();
         createAndAssignAdminRole(user);
 
@@ -184,8 +189,24 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.getContentLength());
-        response.equals(surveyResponse);
+        assertTrue(Objects.requireNonNull(response.body()).contains(surveyResponse));
+    }
+
+    @Test
+    void testFindSurveyByCreateBy(){
+        MemberProfile user = createAnUnrelatedUser();
+        createAndAssignAdminRole(user);
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Survey expectedResponse  = createADefaultSurvey(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", expectedResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
+
+
+        assertTrue(Objects.requireNonNull(response.body()).contains(expectedResponse));
+        assertEquals(HttpStatus.OK,response.getStatus());
     }
 
     @Test
@@ -195,14 +216,30 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        Survey surveyResponse  = createADefaultSurvey(memberProfile);
+        Survey expectedResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&createdBy=%s", expectedResponse.getName(), expectedResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
-        assertEquals(Set.of(surveyResponse), response.body());
+        assertTrue(Objects.requireNonNull(response.body()).contains(expectedResponse));
         assertEquals(HttpStatus.OK,response.getStatus());
+    }
 
+    @Test
+    void testFindSurveyAllParams_WrongCreateByID(){
+        MemberProfile user = createAnUnrelatedUser();
+        createAndAssignAdminRole(user);
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Survey expectedResponse  = createADefaultSurvey(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&createdBy=%s", expectedResponse.getName(), UUID.randomUUID())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
+
+
+        assertFalse(Objects.requireNonNull(response.body()).contains(expectedResponse));
+        assertEquals(HttpStatus.OK,response.getStatus());
     }
 
     @Test
@@ -361,7 +398,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
-    public void testMemberCreateASurvey(){
+    void testMemberCreateASurvey(){
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
@@ -378,11 +415,11 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
-    public void testMemberGETFindByValueName() {
+    void testMemberGETFindByValueName() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -394,12 +431,12 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
     @Test
-    public void testMemberGetFindByCreatedBy() {
+    void testMemberGetFindByCreatedBy() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -412,7 +449,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -431,7 +468,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test

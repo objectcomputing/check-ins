@@ -1,12 +1,13 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Table;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Table;
 import java.util.UUID;
 
 @MappedEntity
@@ -20,18 +21,18 @@ public class RolePermission {
     @TypeDef(type= DataType.STRING)
     private final UUID roleId;
 
-    @Column(name = "permissionid")
+    @Column(name = "permission")
     @TypeDef(type= DataType.STRING)
-    private final UUID permissionId;
+    private final Permission permission;
 
-    public RolePermission(RolePermissionId rolePermissionId, UUID roleId, UUID permissionId) {
+    public RolePermission(RolePermissionId rolePermissionId, UUID roleId, Permission permission) {
         this.rolePermissionId = rolePermissionId;
         this.roleId = roleId;
-        this.permissionId = permissionId;
+        this.permission = permission;
     }
 
-    public RolePermission(UUID roleId, UUID permissionId) {
-        this(null, roleId, permissionId);
+    public RolePermission(UUID roleId, Permission permission) {
+        this(null, roleId, permission);
     }
 
     public RolePermissionId getRolePermissionId() {
@@ -42,7 +43,7 @@ public class RolePermission {
         return roleId;
     }
 
-    public UUID getPermissionId() {
-        return permissionId;
+    public Permission getPermission() {
+        return permission;
     }
 }

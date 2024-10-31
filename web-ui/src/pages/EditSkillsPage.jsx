@@ -1,19 +1,25 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import { AppContext } from "../context/AppContext";
-import { selectOrderedSkills, selectPendingSkills } from "../context/selectors";
-import EditSkillsCard from "../components/edit_skills/EditSkillsCard";
-import EditSkillsModal from "../components/edit_skills/EditSkillsModal";
-import {Link} from "react-router-dom";
+import { AppContext } from '../context/AppContext';
+import {
+  selectOrderedSkills,
+  selectPendingSkills,
+  selectHasSkillsReportPermission,
+  noPermission,
+} from '../context/selectors';
+import EditSkillsCard from '../components/edit_skills/EditSkillsCard';
+import EditSkillsModal from '../components/edit_skills/EditSkillsModal';
+import { useQueryParameters } from '../helpers/query-parameters';
 
-import { Button, TextField } from "@mui/material";
+import { Button, TextField } from '@mui/material';
 
-import "./EditSkillsPage.css";
+import './EditSkillsPage.css';
 
 const EditSkillsPage = () => {
   const { state } = useContext(AppContext);
 
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [showAllSkills, setShowAllSkills] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -26,7 +32,22 @@ const EditSkillsPage = () => {
 
   const handleClick = () => setShowAllSkills(!showAllSkills);
 
-  return (
+  useQueryParameters([
+    {
+      name: 'search',
+      default: '',
+      value: searchText,
+      setter: setSearchText
+    },
+    {
+      name: 'showAll',
+      default: false,
+      value: showAllSkills,
+      setter: setShowAllSkills
+    }
+  ]);
+
+  return selectHasSkillsReportPermission(state) ? (
     <div className="pending-skills-page">
       <div className="search">
         <div>
@@ -35,17 +56,17 @@ const EditSkillsPage = () => {
             placeholder="Skill"
             fullWidth={true}
             value={searchText}
-            onChange={(e) => {
+            onChange={e => {
               setSearchText(e.target.value);
             }}
           />
           <div className="show-all-skills">
             <label htmlFor="all-skills">Show all skills</label>
             <input
-              onClick={handleClick}
+              onChange={handleClick}
               id="all-skills"
               type="checkbox"
-              value={showAllSkills}
+              checked={showAllSkills}
             />
           </div>
         </div>
@@ -64,24 +85,26 @@ const EditSkillsPage = () => {
       />
       <div className="pending-skills-list">
         {!showAllSkills
-          ? pendingSkills.map((skill) =>
+          ? pendingSkills.map(skill =>
               skill.name.toLowerCase().includes(searchText.toLowerCase()) ? (
                 <EditSkillsCard
-                  key={"pending-skill-" + skill.id}
+                  key={'pending-skill-' + skill.id}
                   skill={skill}
                 />
               ) : null
             )
-          : allSkills.map((skill) =>
+          : allSkills.map(skill =>
               skill.name.toLowerCase().includes(searchText.toLowerCase()) ? (
                 <EditSkillsCard
-                  key={"pending-skill-" + skill.id}
+                  key={'pending-skill-' + skill.id}
                   skill={skill}
                 />
               ) : null
             )}
       </div>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

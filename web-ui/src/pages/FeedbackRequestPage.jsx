@@ -1,23 +1,36 @@
-import React, {useContext, useCallback, useEffect, useState, useRef} from "react";
+import React, {
+  useContext,
+  useCallback,
+  useEffect,
+  useState,
+  useRef
+} from 'react';
 import { styled } from '@mui/material/styles';
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { useLocation, useHistory } from 'react-router-dom';
-import { UPDATE_TOAST } from "../context/actions";
+import { UPDATE_TOAST } from '../context/actions';
 import queryString from 'query-string';
-import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
-import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
-import SelectDate from "../components/feedback_date_selector/SelectDate";
-import "./FeedbackRequestPage.css";
-import {AppContext} from "../context/AppContext";
-import { createFeedbackRequest } from "../api/feedback";
-import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMemberIds} from "../context/selectors";
-import DateFnsUtils from "@date-io/date-fns";
-import {getFeedbackTemplate} from "../api/feedbacktemplate";
-import {softDeleteAdHocTemplates} from "../api/feedbacktemplate";
+import FeedbackTemplateSelector from '../components/feedback_template_selector/FeedbackTemplateSelector';
+import FeedbackRecipientSelector from '../components/feedback_recipient_selector/FeedbackRecipientSelector';
+import SelectDate from '../components/feedback_date_selector/SelectDate';
+import { AppContext } from '../context/AppContext';
+import { createFeedbackRequest } from '../api/feedback';
+import {
+  selectProfile,
+  selectCsrfToken,
+  selectCurrentUser,
+  selectCurrentMemberIds,
+  selectHasCreateFeedbackPermission,
+  noPermission,
+} from '../context/selectors';
+import DateFnsUtils from '@date-io/date-fns';
+import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
+
+import './FeedbackRequestPage.css';
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'FeedbackRequestPage';
@@ -33,49 +46,54 @@ const classes = {
   backButton: `${PREFIX}-backButton`
 };
 
-const Root = styled('div')(({theme}) => ({
+const Root = styled('div')(({ theme }) => ({
   [`&.${classes.root}`]: {
-    backgroundColor: "transparent",
-    ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+    backgroundColor: 'transparent',
+    ['@media (max-width:767px)']: {
+      // eslint-disable-line no-useless-computed-key
       width: '100%',
-      padding: 0,
-    },
+      padding: 0
+    }
   },
   [`& .${classes.requestHeader}`]: {
-    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
-      fontSize: "x-large",
-      marginBottom: "1em",
-    },
+    ['@media (max-width:820px)']: {
+      // eslint-disable-line no-useless-computed-key
+      fontSize: 'x-large',
+      marginBottom: '1em'
+    }
   },
   [`& .${classes.stepContainer}`]: {
-    ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
-      width: '80%',
+    ['@media min-width(321px) and (max-width:767px)']: {
+      // eslint-disable-line no-useless-computed-key
+      width: '80%'
     },
-    ['@media max-width(320px)']: { // eslint-disable-line no-useless-computed-key
-      display: "none",
+    ['@media max-width(320px)']: {
+      // eslint-disable-line no-useless-computed-key
+      display: 'none'
     },
-    backgroundColor: "transparent"
+    backgroundColor: 'transparent'
   },
   [`& .${classes.appBar}`]: {
-    position: "relative",
+    position: 'relative'
   },
   [`& .${classes.media}`]: {
-    height: 0,
+    height: 0
   },
   [`& .${classes.expand}`]: {
-    justifyContent: "right",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest,
-    }),
+    justifyContent: 'right',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest
+    })
   },
   [`& .${classes.expandOpen}`]: {
-    justifyContent: "right",
+    justifyContent: 'right'
   },
   [`& .${classes.actionButtons}`]: {
-    margin: "0.5em 0 0 1em",
-    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
-      padding: "0",
-    },
+    margin: '0.5em 0 0 1em',
+    ['@media (max-width:820px)']: {
+      // eslint-disable-line no-useless-computed-key
+      padding: '0'
+    }
   },
   [`& .${classes.backButton}`]: {
     backgroundColor: '#e0e0e0',
@@ -87,11 +105,11 @@ const Root = styled('div')(({theme}) => ({
 }));
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set dates"];
+  return ['Select template', 'Select recipients', 'Set dates'];
 }
 
 const FeedbackRequestPage = () => {
-  const {state, dispatch} = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const steps = getSteps();
   const memberProfile = selectCurrentUser(state);
   const currentUserId = memberProfile?.id;
@@ -106,17 +124,19 @@ const FeedbackRequestPage = () => {
   const [memberIds, setMemberIds] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
 
-  const handleQueryChange = useCallback((key, value) => {
-    let newQuery = {
-      ...query,
-      [key]: value
-    }
-    history.push({ ...location, search: queryString.stringify(newQuery) });
-  }, [history, location, query]);
+  const handleQueryChange = useCallback(
+    (key, value) => {
+      let newQuery = {
+        ...query,
+        [key]: value
+      };
+      history.push({ ...location, search: queryString.stringify(newQuery) });
+    },
+    [history, location, query]
+  );
 
   const getStep = useCallback(() => {
-    if (!query.step || query.step < 1 || !/^\d+$/.test(query.step))
-      return 1;
+    if (!query.step || query.step < 1 || !/^\d+$/.test(query.step)) return 1;
     else return parseInt(query.step);
   }, [query.step]);
 
@@ -135,11 +155,11 @@ const FeedbackRequestPage = () => {
           dispatch({
             type: UPDATE_TOAST,
             payload: {
-              severity: "error",
-              toast: "Member ID in URL is invalid",
-            },
+              severity: 'error',
+              toast: 'Member ID in URL is invalid'
+            }
           });
-          handleQueryChange("from", undefined);
+          handleQueryChange('from', undefined);
           return false;
         }
       }
@@ -148,13 +168,11 @@ const FeedbackRequestPage = () => {
     return false;
   }, [memberIds, query, dispatch, handleQueryChange]);
 
-  const isValidDate = useCallback((dateString) => {
+  const isValidDate = useCallback(dateString => {
     const today = new Date().setHours(0, 0, 0, 0);
     const timeStamp = Date.parse(dateString);
-    if (timeStamp < today)
-      return false;
-    else
-      return !isNaN(timeStamp);
+    if (timeStamp < today) return false;
+    else return !isNaN(timeStamp);
   }, []);
 
   const hasSend = useCallback(() => {
@@ -162,7 +180,7 @@ const FeedbackRequestPage = () => {
     const sendTimestamp = Date.parse(query.send);
 
     const isValidPair = query.due ? dueTimestamp >= sendTimestamp : true;
-    return (query.send && isValidDate(query.send) && isValidPair)
+    return query.send && isValidDate(query.send) && isValidPair;
   }, [query.send, isValidDate, query.due]);
 
   const canProceed = useCallback(() => {
@@ -173,61 +191,89 @@ const FeedbackRequestPage = () => {
         return hasFor() && templateIsValid && hasFrom();
       } else if (activeStep === 3) {
         const dueQueryValid = query.due ? isValidDate(query.due) : true;
-        console.log({hasFor: hasFor(), templateIsValid, hasFrom: hasFrom(), hasSend: hasSend(), dueQueryValid});
-        return hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid;
+        console.log({
+          hasFor: hasFor(),
+          templateIsValid,
+          hasFrom: hasFrom(),
+          hasSend: hasSend(),
+          dueQueryValid
+        });
+        return (
+          hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid
+        );
       } else {
         return false;
       }
     }
     return false;
-  }, [hasFor, hasFrom, hasSend, isValidDate, query, templateIsValid, activeStep]);
+  }, [
+    hasFor,
+    hasFrom,
+    hasSend,
+    isValidDate,
+    query,
+    templateIsValid,
+    activeStep
+  ]);
 
-  const sendFeedbackRequest = async (feedbackRequest) => {
+  const sendFeedbackRequest = async feedbackRequest => {
     if (csrf) {
       let res = await createFeedbackRequest(feedbackRequest, csrf);
       let data =
-        res.payload && res.payload.data && !res.error
-          ? res.payload.data
-          : null;
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
       if (data) {
         // If the request was successful, set created ad-hoc templates to inactive
         await softDeleteAdHoc(currentUserId);
         const newLocation = {
-          pathname: "/feedback/request/confirmation",
-          search: queryString.stringify(query),
-        }
-        history.push(newLocation)
+          pathname: '/feedback/request/confirmation',
+          search: queryString.stringify(query)
+        };
+        history.push(newLocation);
       } else if (res.error || data === null) {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "An error has occurred while submitting your request.",
-          },
+            severity: 'error',
+            toast: 'An error has occurred while submitting your request.'
+          }
         });
       }
     }
-  }
+  };
 
   const handleSubmit = () => {
-    const from = query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : [];
-    const sendDate = query.send ? dateUtils.format(dateUtils.parse(query.send, "MM/dd/yyyy", new Date()), "yyyy-MM-dd") : new Date();
-    const dueDate = query.due ? dateUtils.format(dateUtils.parse(query.due, "MM/dd/yyyy", new Date()), "yyyy-MM-dd") : undefined;
+    const from = query.from
+      ? Array.isArray(query.from)
+        ? query.from
+        : [query.from]
+      : [];
+    const sendDate = query.send
+      ? dateUtils.format(
+          dateUtils.parse(query.send, 'MM/dd/yyyy', new Date()),
+          'yyyy-MM-dd'
+        )
+      : new Date();
+    const dueDate = query.due
+      ? dateUtils.format(
+          dateUtils.parse(query.due, 'MM/dd/yyyy', new Date()),
+          'yyyy-MM-dd'
+        )
+      : undefined;
     for (const recipient of from) {
-       const feedbackRequest = {
-         id: null,
-         creatorId: currentUserId,
-         requesteeId: query.for,
-         recipientId: recipient,
-         templateId: query.template,
-         sendDate,
-         dueDate,
-         status: "pending",
-         submitDate: null
-       };
-       sendFeedbackRequest(feedbackRequest);
+      const feedbackRequest = {
+        id: null,
+        creatorId: currentUserId,
+        requesteeId: query.for,
+        recipientId: recipient,
+        templateId: query.template,
+        sendDate,
+        dueDate,
+        status: 'pending',
+        submitDate: null
+      };
+      sendFeedbackRequest(feedbackRequest);
     }
-  }
+  };
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
@@ -236,9 +282,8 @@ const FeedbackRequestPage = () => {
       return;
     }
     query.step = `${activeStep + 1}`;
-    history.push({...location, search: queryString.stringify(query)});
-
-  }, [canProceed, steps.length, query, location, history]);     // eslint-disable-line react-hooks/exhaustive-deps
+    history.push({ ...location, search: queryString.stringify(query) });
+  }, [canProceed, steps.length, query, location, history]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
     if (activeStep === 1) return;
@@ -246,11 +291,14 @@ const FeedbackRequestPage = () => {
     history.push({ ...location, search: queryString.stringify(query) });
   }, [query, location, history, activeStep]);
 
-  const softDeleteAdHoc = useCallback(async (creatorId) => {
-    if (csrf) {
-      await softDeleteAdHocTemplates(creatorId, csrf);
-    }
-  }, [csrf]);
+  const softDeleteAdHoc = useCallback(
+    async creatorId => {
+      if (csrf) {
+        await softDeleteAdHocTemplates(creatorId, csrf);
+      }
+    },
+    [csrf]
+  );
 
   const urlIsValid = useCallback(() => {
     if (query) {
@@ -295,24 +343,23 @@ const FeedbackRequestPage = () => {
         res.payload.status === 200 &&
         !res.error
           ? res.payload.data
-          : null
+          : null;
       if (templateResponse === null) {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "The ID for the template you selected does not exist.",
-          },
+            severity: 'error',
+            toast: 'The ID for the template you selected does not exist.'
+          }
         });
         return false;
-      }
-      else {
+      } else {
         return true;
       }
     }
 
     if (queryLoaded.current && csrf) {
-      isTemplateValid().then((isValid) => {
+      isTemplateValid().then(isValid => {
         setTemplateIsValid(isValid);
       });
     } else {
@@ -330,24 +377,35 @@ const FeedbackRequestPage = () => {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "An error has occurred with the URL",
-        },
+          severity: 'error',
+          toast: 'An error has occurred with the URL'
+        }
       });
       softDeleteAdHoc(currentUserId).then(() => {
-        history.push("/checkins");
+        history.push('/checkins');
       });
     }
-  }, [history, state, query, currentUserId, dispatch, softDeleteAdHoc, urlIsValid, templateIsValid]);
+  }, [
+    history,
+    state,
+    query,
+    currentUserId,
+    dispatch,
+    softDeleteAdHoc,
+    urlIsValid,
+    templateIsValid
+  ]);
 
   useEffect(() => {
     setReadyToProceed(canProceed());
   }, [canProceed]);
 
-  return (
+  return selectHasCreateFeedbackPermission(state) ? (
     <Root className="feedback-request-page">
       <div className="header-container">
-        <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
+        <Typography className={classes.requestHeader} variant="h4">
+          Feedback Request for <b>{requestee?.name}</b>
+        </Typography>
         <div>
           <Button
             className={`${classes.backButton} ${classes.actionButtons}`}
@@ -357,32 +415,68 @@ const FeedbackRequestPage = () => {
           >
             Back
           </Button>
-          <Button className={classes.actionButtons} onClick={onNextClick}
-            variant="contained" disabled={!readyToProceed} color="primary">
-            {activeStep === steps.length ? "Submit" : "Next"}
+          <Button
+            className={classes.actionButtons}
+            onClick={onNextClick}
+            variant="contained"
+            disabled={!readyToProceed}
+            color="primary"
+          >
+            {activeStep === steps.length ? 'Submit' : 'Next'}
           </Button>
         </div>
       </div>
       <div className={classes.stepContainer}>
-        <Stepper activeStep={activeStep - 1} className={classes.root} style={{padding: 24}}>
-          {steps.map((label) => {
+        <Stepper
+          activeStep={activeStep - 1}
+          className={classes.root}
+          style={{ padding: 24 }}
+        >
+          {steps.map(label => {
             const stepProps = {};
             const labelProps = {};
             return (
               <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps} key={label}>{label}</StepLabel>
+                <StepLabel {...labelProps} key={label}>
+                  {label}
+                </StepLabel>
               </Step>
             );
           })}
         </Stepper>
       </div>
       <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={query.template} />}
-        {activeStep === 2 && <FeedbackRecipientSelector forQuery={query.for} changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
-        {activeStep === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={query.send} dueDateQuery={query.due}/>}
+        {activeStep === 1 && (
+          <FeedbackTemplateSelector
+            changeQuery={(key, value) => handleQueryChange(key, value)}
+            query={query.template}
+          />
+        )}
+        {activeStep === 2 && (
+          <FeedbackRecipientSelector
+            forQuery={query.for}
+            changeQuery={(key, value) => handleQueryChange(key, value)}
+            fromQuery={
+              query.from
+                ? Array.isArray(query.from)
+                  ? query.from
+                  : [query.from]
+                : []
+            }
+          />
+        )}
+        {activeStep === 3 && (
+          <SelectDate
+            changeQuery={(key, value) => handleQueryChange(key, value)}
+            sendDateQuery={query.send}
+            dueDateQuery={query.due}
+          />
+        )}
       </div>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
-}
+};
 
 export default FeedbackRequestPage;

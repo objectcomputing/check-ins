@@ -1,20 +1,31 @@
-import React from "react";
+import React from 'react';
 import { Link } from 'react-router-dom';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import "./GuideLink.css";
+import { ListItem, ListItemText } from '@mui/material';
+import PropTypes from 'prop-types';
 
-const GuideLink = (props) => {
-  const path = "/pdfs/";
-  const fileName = props.name;
-  let fullPath = path + fileName.split(" ").join("_") + ".pdf";
+import './GuideLink.css';
+
+const propTypes = {
+  props: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    description: PropTypes.string
+  })
+};
+
+const GuideLink = props => {
   return (
-    <ListItem key={`guides-{fileName.split(" ").join("_")}`} button component={Link} to={fullPath} target="_blank" >
-        <ListItem>
-          <ListItemText primary={fileName}/>
-        </ListItem>
+    <ListItem
+      key={`doc-${props.id}`}
+      to={props.url}
+      component={Link}
+      target="_blank"
+    >
+      <ListItemText primary={props.name} secondary={props.description} />
     </ListItem>
   );
 };
 
+GuideLink.propTypes = propTypes;
 export default GuideLink;

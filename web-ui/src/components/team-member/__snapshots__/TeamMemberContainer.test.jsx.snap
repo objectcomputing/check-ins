@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div>
+    <div
+      class="team-names"
+    />
+    <div
+      class="flex-row"
+      style="flex-wrap: wrap;"
+    />
+  </div>
+</div>
+`;

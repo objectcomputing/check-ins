@@ -1,49 +1,31 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@Setter
+@Getter
+@ToString
 @Introspected
 public class RolePermissionDTO {
 
     @NotNull
-    @Schema(description = "id of the role", required = true)
+    @Schema(description = "id of the role")
     private UUID roleId;
 
-    @NotNull
-    @Schema(description = "id of the permission", required = true)
-    private UUID permissionId;
+    @Schema(description = "the permission")
+    private String permission;
 
-    public RolePermissionDTO(UUID roleId, UUID permissionId) {
+    public RolePermissionDTO(UUID roleId, Permission permission) {
         this.roleId = roleId;
-        this.permissionId = permissionId;
+        this.permission = permission.name();
     }
 
-    public UUID getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(UUID roleId) {
-        this.roleId = roleId;
-    }
-
-    public UUID getPermissionId() {
-        return permissionId;
-    }
-
-    public void setPermissionId(UUID permissionId) {
-        this.permissionId = permissionId;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("RolePermissionCreateDTO{");
-        sb.append("roleId=").append(roleId);
-        sb.append(", permissionId=").append(permissionId);
-        sb.append('}');
-        return sb.toString();
-    }
 }

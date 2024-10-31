@@ -1,24 +1,39 @@
-import { resolve, BASE_API_URL } from "./api.js";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
+import { resolve } from './api.js';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+
+const successResult = { id: 123, name: 'test result' };
 
 const server = setupServer(
-    rest.get("http://localhost:8080/fail", (req, res, ctx) => {
-      return res(
-          ctx.status(500),
-          ctx.json({ message: 'Internal Server Error' }),
+  ...[
+    http.get('http://localhost:8080/fail', () => {
+      return HttpResponse.json(
+        { message: 'Internal Server PROBLEM' },
+        { status: 500 }
       );
+    }),
+    http.get('http://localhost:8080/success', () => {
+      return HttpResponse.json(successResult);
     })
+  ]
 );
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test("Error Resolve", async () => {
+test('Error Resolve', async () => {
   window.snackDispatch = () => {};
   let res = await resolve({
-    url: "/fail"
+    url: '/fail'
   });
-  expect(res.error.response.data.message).toStrictEqual("Internal Server Error");
+  expect(res.error.message).toStrictEqual('Internal Server PROBLEM');
+});
+
+test('Resolve', async () => {
+  window.snackDispatch = () => {};
+  let res = await resolve({
+    url: '/success'
+  });
+  expect(res.payload.data).toStrictEqual(successResult);
 });

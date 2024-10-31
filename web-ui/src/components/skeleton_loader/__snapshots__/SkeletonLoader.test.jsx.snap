@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly when 'feedback_requests' is passed as prop 1`] = `null`;
+
+exports[`renders correctly when 'guild' is passed as prop 1`] = `null`;
+
+exports[`renders correctly when 'people' is passed as prop 1`] = `null`;
+
+exports[`renders correctly when 'received_requests' is passed as prop 1`] = `null`;
+
+exports[`renders correctly when 'team' is passed as prop 1`] = `null`;
+
+exports[`renders correctly when 'view_feedback_requests' is passed as prop 1`] = `null`;

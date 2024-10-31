@@ -1,44 +1,34 @@
 package com.objectcomputing.checkins.services.questions;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Named;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
-import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-@Controller("/services/questions")
+@Controller(QuestionController.PATH)
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "questions")
-public class QuestionController {
+class QuestionController {
 
+    public static final String PATH = "/services/questions";
     private final QuestionServices questionService;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public QuestionController(QuestionServices questionService, EventLoopGroup eventLoopGroup,
-                              @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    QuestionController(QuestionServices questionService) {
         this.questionService = questionService;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -48,37 +38,27 @@ public class QuestionController {
      * @return {@link HttpResponse<QuestionResponseDTO>}
      */
 
-    @Post()
-    public Mono<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<QuestionCreateDTO> request) {
-
-        return Mono.fromCallable(() -> questionService.saveQuestion(toModel(question)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(newQuestion -> (HttpResponse<QuestionResponseDTO>) HttpResponse
-                        .created(fromModel(newQuestion))
-                        .headers(headers -> headers.location(
-                                URI.create(String.format("%s/%s", request.getPath(), newQuestion.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
-
+    @Post
+    HttpResponse<QuestionResponseDTO> createAQuestion(@Body @Valid QuestionCreateDTO question) {
+        Question newQuestion = questionService.saveQuestion(toModel(question));
+        URI location = UriBuilder.of(PATH).path(newQuestion.getId().toString()).build();
+        return HttpResponse.created(fromModel(newQuestion))
+                .headers(headers -> headers.location(location));
     }
 
     /**
      * Find and read a question given its id.
      *
      * @param id {@link UUID} of the question entry
-     * @return {@link HttpResponse< QuestionResponseDTO >}
+     * @return {@link QuestionResponseDTO}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<QuestionResponseDTO>> getById(UUID id) {
-        return Mono.fromCallable(() -> {
-            Question found = questionService.findById(id);
-            if (found == null) {
-                throw new NotFoundException("No question for UUID");
-            }
-            return found;
-        })
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(question -> (HttpResponse<QuestionResponseDTO>) HttpResponse.ok(fromModel(question)))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public QuestionResponseDTO getById(UUID id) {
+        Question found = questionService.findById(id);
+        if (found == null) {
+            throw new NotFoundException("No question for UUID");
+        }
+        return fromModel(found);
     }
 
     /**
@@ -86,27 +66,21 @@ public class QuestionController {
      *
      * @param text, the text of the question
      * @param categoryId, the category id of the question
-     * @return {@link List HttpResponse<QuestionResponseDTO >
+     * @return {@link Set<QuestionResponseDTO>}
      */
     @Get("/{?text,categoryId}")
-    public Mono<HttpResponse<Set<QuestionResponseDTO>>> findByText(@Nullable String text, @Nullable UUID categoryId) {
-        return Mono.fromCallable(() -> {
-            if (text != null) {
-                return questionService.findByText(text);
-            } else if (categoryId != null) {
-                return questionService.findByCategoryId(categoryId);
-            } else {
-                return questionService.readAllQuestions();
-            }
-        })
-        .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-        .map(questions -> {
-            Set<QuestionResponseDTO> responseBody = questions.stream()
-                    .map(question -> fromModel(question))
-                    .collect(Collectors.toSet());
-            return (HttpResponse<Set<QuestionResponseDTO>>) HttpResponse.ok(responseBody);
-        })
-        .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    Set<QuestionResponseDTO> findByText(@Nullable String text, @Nullable UUID categoryId) {
+        Set<Question> questions;
+        if (text != null) {
+             questions = questionService.findByText(text);
+        } else if (categoryId != null) {
+            questions = questionService.findByCategoryId(categoryId);
+        } else {
+            questions = questionService.readAllQuestions();
+        }
+        return questions.stream()
+                .map(this::fromModel)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -115,20 +89,15 @@ public class QuestionController {
      * @param question, {@link QuestionUpdateDTO}
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
-    @Put()
-    public Mono<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<QuestionCreateDTO> request) {
+    @Put
+    HttpResponse<QuestionResponseDTO> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<?> request) {
         if (question == null) {
-            return Mono.just(HttpResponse.ok());
+            return HttpResponse.ok();
         }
-        return Mono.fromCallable(() -> questionService.update(toModel(question)))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedQuestion ->
-                        (HttpResponse<QuestionResponseDTO>) HttpResponse
-                                .created(fromModel(updatedQuestion))
-                                .headers(headers -> headers.location(
-                                        URI.create(String.format("%s/%s", request.getPath(), updatedQuestion.getId())))))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
-
+        Question updatedQuestion = questionService.update(toModel(question));
+        URI location = UriBuilder.of(PATH).path(updatedQuestion.getId().toString()).build();
+        return HttpResponse.created(fromModel(updatedQuestion))
+                .headers(headers -> headers.location(location));
     }
 
     private QuestionResponseDTO fromModel(Question question) {

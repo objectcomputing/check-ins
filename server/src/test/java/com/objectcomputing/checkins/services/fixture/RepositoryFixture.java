@@ -1,5 +1,9 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.certification.CertificationRepository;
+import com.objectcomputing.checkins.services.certification.EarnedCertificationRepository;
+import com.objectcomputing.checkins.services.document.DocumentRepository;
+import com.objectcomputing.checkins.services.document.RoleDocumentationRepository;
 import com.objectcomputing.checkins.services.email.EmailRepository;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
@@ -14,13 +18,16 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateR
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
+import com.objectcomputing.checkins.services.kudos.KudosRepository;
+import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.permissions.PermissionRepository;
+import com.objectcomputing.checkins.services.memberprofile.csvreport.MemberProfileReportRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
+import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
@@ -34,6 +41,9 @@ import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
+import com.objectcomputing.checkins.services.volunteering.VolunteeringEventRepository;
+import com.objectcomputing.checkins.services.volunteering.VolunteeringOrganizationRepository;
+import com.objectcomputing.checkins.services.volunteering.VolunteeringRelationshipRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
@@ -165,10 +175,6 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(MemberRoleRepository.class);
     }
 
-    default PermissionRepository getPermissionRepository() {
-        return getEmbeddedServer().getApplicationContext().getBean(PermissionRepository.class);
-    }
-
     default RolePermissionRepository getRolePermissionRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(RolePermissionRepository.class);
     }
@@ -181,11 +187,55 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(ReviewPeriodRepository.class);
     }
 
+    default KudosRepository getKudosRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(KudosRepository.class);
+    }
+
+    default KudosRecipientRepository getKudosRecipientRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(KudosRecipientRepository.class);
+    }
+
+    default ReviewAssignmentRepository getReviewAssignmentRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(ReviewAssignmentRepository.class);
+    }
+
     default SkillCategoryRepository getSkillCategoryRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(SkillCategoryRepository.class);
     }
 
     default SkillCategorySkillRepository getSkillCategorySkillRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(SkillCategorySkillRepository.class);
+    }
+
+    default MemberProfileReportRepository getMemberProfileReportRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberProfileReportRepository.class);
+    }
+
+    default CertificationRepository getCertificationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(CertificationRepository.class);
+    }
+
+    default EarnedCertificationRepository getEarnedCertificationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EarnedCertificationRepository.class);
+    }
+
+    default VolunteeringOrganizationRepository getVolunteeringOrganizationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(VolunteeringOrganizationRepository.class);
+    }
+
+    default VolunteeringRelationshipRepository getVolunteeringRelationshipRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(VolunteeringRelationshipRepository.class);
+    }
+
+    default VolunteeringEventRepository getVolunteeringEventRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(VolunteeringEventRepository.class);
+    }
+
+    default DocumentRepository getDocumentRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(DocumentRepository.class);
+    }
+
+    default RoleDocumentationRepository getRoleDocumentationRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RoleDocumentationRepository.class);
     }
 }

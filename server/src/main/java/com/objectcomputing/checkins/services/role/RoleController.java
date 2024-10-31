@@ -3,43 +3,36 @@ package com.objectcomputing.checkins.services.role;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-import io.micronaut.core.annotation.Nullable;
-import jakarta.inject.Named;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/roles")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "roles")
 public class RoleController {
 
     private final RoleServices roleServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
 
-    public RoleController(RoleServices roleServices,
-                          EventLoopGroup eventLoopGroup,
-                          @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public RoleController(RoleServices roleServices) {
         this.roleServices = roleServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
     }
 
     /**
@@ -48,17 +41,12 @@ public class RoleController {
      * @param role, {@link RoleCreateDTO}
      * @return {@link HttpResponse <Role>}
      */
-    @Post()
+    @Post
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
-                                             HttpRequest<RoleCreateDTO> request) {
-        return Mono.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(userRole -> {
-                    return (HttpResponse<Role>) HttpResponse
-                            .created(userRole)
-                            .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId()))));
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public HttpResponse<Role> create(@Body @Valid RoleCreateDTO role, HttpRequest<?> request) {
+        Role userRole = roleServices.save(new Role(role.getRole(), role.getDescription()));
+        return HttpResponse.created(userRole)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId()))));
     }
 
     /**
@@ -67,16 +55,12 @@ public class RoleController {
      * @param role, {@link Role}
      * @return {@link HttpResponse<Role>}
      */
-    @Put()
+    @Put
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Mono<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<Role> request) {
-        return Mono.fromCallable(() -> roleServices.update(role))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedRole -> (HttpResponse<Role>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedRole.getId()))))
-                        .body(updatedRole))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public HttpResponse<Role> update(@Body @Valid @NotNull Role role, HttpRequest<?> request) {
+        Role updatedRole = roleServices.update(role);
+        return HttpResponse.ok(updatedRole)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedRole.getId()))));
     }
 
     /**
@@ -86,18 +70,13 @@ public class RoleController {
      * @return {@link Role}
      */
     @Get("/{id}")
-    public Mono<HttpResponse<Role>> readRole(@NotNull UUID id) {
-        return Mono.fromCallable(() -> {
-            Role result = roleServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No role item for UUID");
-            }
-            return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(userRole -> {
-                    return (HttpResponse<Role>) HttpResponse.ok(userRole);
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    public Role readRole(@NotNull UUID id) {
+        Role result = roleServices.read(id);
+        if (result == null) {
+            throw new NotFoundException("No role item for UUID");
+        }
+        return result;
     }
-
 
 
     /**
@@ -105,14 +84,9 @@ public class RoleController {
      *
      * @return {@link Role}
      */
-    @Get()
-    public Mono<HttpResponse<List<Role>>> findAll() {
-        return Mono.fromCallable(() -> {
-            List<Role> result = roleServices.findAllRoles();
-            return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(userRole -> {
-            return (HttpResponse<List<Role>>) HttpResponse.ok(userRole);
-        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @Get
+    public List<Role> findAll() {
+        return roleServices.findAllRoles();
     }
 
     /**
@@ -122,9 +96,8 @@ public class RoleController {
      */
     @Delete("/{id}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public HttpResponse<?> deleteRole(UUID id) {
+    @Status(HttpStatus.OK)
+    public void deleteRole(UUID id) {
         roleServices.delete(id);
-        return HttpResponse.ok();
     }
-
 }

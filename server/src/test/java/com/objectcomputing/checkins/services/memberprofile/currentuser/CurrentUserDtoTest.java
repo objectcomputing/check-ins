@@ -1,18 +1,17 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import javax.validation.ConstraintViolation;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-public class CurrentUserDtoTest {
+class CurrentUserDtoTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -32,7 +31,7 @@ public class CurrentUserDtoTest {
         CurrentUserDTO dto = new CurrentUserDTO();
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 4);
+        assertEquals(4, violations.size());
         int nullViolations = 0, blankViolations = 0;
         for (ConstraintViolation<CurrentUserDTO> violation : violations) {
             if (violation.getMessage().equals("must not be null")) {

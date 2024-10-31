@@ -9,7 +9,6 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -17,22 +16,25 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
-import static org.junit.Assert.assertNotNull;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
-public class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture, RoleFixture {
+class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture, RoleFixture {
 
     @Inject
     @Client("/services/checkin-notes")
@@ -233,7 +235,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -260,7 +262,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -287,7 +289,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You do not have permission to access this resource", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -392,7 +394,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -436,7 +438,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -497,7 +499,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -598,7 +600,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -639,7 +641,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -855,7 +857,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
         assertEquals(request.getPath(), href);
 
     }
@@ -899,6 +901,6 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 }

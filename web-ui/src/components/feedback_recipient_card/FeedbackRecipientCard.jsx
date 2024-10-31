@@ -1,16 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext } from 'react';
 import { styled } from '@mui/material/styles';
-import { AppContext } from "../../context/AppContext";
-import { selectProfileMap } from "../../context/selectors";
-import { getAvatarURL } from "../../api/api.js";
-import { Card, CardHeader } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import { green } from "@mui/material/colors";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import Divider from "@mui/material/Divider";
-import "./FeedbackRecipientCard.css";
-import { Box, CardContent, Container, Typography } from "@mui/material";
+import { AppContext } from '../../context/AppContext';
+import { selectProfileMap } from '../../context/selectors';
+import { getAvatarURL } from '../../api/api.js';
+import { Box, Card, CardHeader, CardContent, Container, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import { green } from '@mui/material/colors';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Divider from '@mui/material/Divider';
+
+import './FeedbackRecipientCard.css';
 
 const PREFIX = 'FeedbackRecipientCard';
 const classes = {
@@ -22,50 +22,51 @@ const classes = {
 };
 
 const StyledBox = styled(Box)({
-  [`&.${classes.root}`]: { // currently defined but not used
-    minWidth: "10em",
-    maxWidth: "20em",
-    marginRight: "2em",
-    marginBottom: "2em",
-    cursor: "pointer",
-    "@media (max-width:767px)": {
-      marginTop: "1em",
-      height: "40%",
-      width: "80%",
-    },
+  [`&.${classes.root}`]: {
+    // currently defined but not used
+    minWidth: '10em',
+    maxWidth: '20em',
+    marginRight: '2em',
+    marginBottom: '2em',
+    cursor: 'pointer',
+    '@media (max-width:767px)': {
+      marginTop: '1em',
+      height: '40%',
+      width: '80%'
+    }
   },
   [`& .${classes.header}`]: {
-    cursor: "pointer",
+    cursor: 'pointer'
   },
-  [`& .${classes.cardContent}`]: { // currently defined but not used
-    display: "flex",
-    alignItems: "center",
-    alignContent: "center",
-    flexDirection: "column",
-    justifyContent: "center",
-    textAlign: "center",
+  [`& .${classes.cardContent}`]: {
+    // currently defined but not used
+    display: 'flex',
+    alignItems: 'center',
+    alignContent: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    textAlign: 'center'
   },
   [`& .${classes.divider}`]: {
-    backgroundColor: "grey",
-    width: "90%",
-    marginBottom: "1em",
-    marginTop: "1em",
+    backgroundColor: 'grey',
+    width: '90%',
+    marginBottom: '1em',
+    marginTop: '1em'
   },
   [`& .${classes.recommendationText}`]: {
-    color: "#333333",
-  },
+    color: '#333333'
+  }
 });
 
 const FeedbackRecipientCard = ({
   recipientProfile,
   selected,
   reason = null,
-  onClick,
+  onClick
 }) => {
   const { state } = useContext(AppContext);
-  const supervisorProfile = selectProfileMap(state)[
-    recipientProfile?.supervisorid
-  ];
+  const supervisorProfile =
+    selectProfileMap(state)[recipientProfile?.supervisorid];
   const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
 
   return (

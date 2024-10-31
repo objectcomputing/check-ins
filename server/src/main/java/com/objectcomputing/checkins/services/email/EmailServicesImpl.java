@@ -2,17 +2,15 @@ package com.objectcomputing.checkins.services.email;
 
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
-import com.objectcomputing.checkins.notifications.email.MailJetConfig;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-
-import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,18 +18,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Singleton
 public class EmailServicesImpl implements EmailServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmailServicesImpl.class);
-    private EmailSender htmlEmailSender;
-    private EmailSender textEmailSender;
+
+    private final EmailSender htmlEmailSender;
+    private final EmailSender textEmailSender;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileRepository memberProfileRepository;
     private final EmailRepository emailRepository;
 
-    public EmailServicesImpl(@Named(MailJetConfig.HTML_FORMAT) EmailSender htmlEmailSender,
-                             @Named(MailJetConfig.TEXT_FORMAT) EmailSender textEmailSender,
+    public EmailServicesImpl(@Named(MailJetFactory.HTML_FORMAT) EmailSender htmlEmailSender,
+                             @Named(MailJetFactory.TEXT_FORMAT) EmailSender textEmailSender,
                              CurrentUserServices currentUserServices,
                              MemberProfileRepository memberProfileRepository,
                              EmailRepository emailRepository) {
@@ -42,22 +43,10 @@ public class EmailServicesImpl implements EmailServices {
         this.emailRepository = emailRepository;
     }
 
-    public void setHtmlEmailSender(EmailSender emailSender) {
-        this.htmlEmailSender = emailSender;
-    }
-
-    public void setTextEmailSender(EmailSender emailSender) {
-        this.textEmailSender = emailSender;
-    }
-
     @Override
     public List<Email> sendAndSaveEmail(String subject, String content, boolean html, String... recipients) {
 
         List<Email> sentEmails = new ArrayList<>();
-
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         String fromName = currentUser.getFirstName() + " " + currentUser.getLastName();
@@ -83,7 +72,7 @@ public class EmailServicesImpl implements EmailServices {
                         Email savedEmail = emailRepository.save(email);
                         sentEmails.add(savedEmail);
                     } else {
-                        LOG.warn(String.format("Prevented sending email to terminated member: %s", recipientEmail));
+                        LOG.warn("Prevented sending email to terminated member: {}", recipientEmail);
                     }
                 }
             }

@@ -15,22 +15,18 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import jakarta.inject.Inject;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+import static org.junit.jupiter.api.Assertions.*;
 
-
-public class AgendaItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, AgendaItemFixture, RoleFixture {
+class AgendaItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, AgendaItemFixture, RoleFixture {
 
     @Inject
     @Client("/services/agenda-items")
@@ -40,6 +36,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
     void createRolesAndPermissions() {
         createAndAssignRoles();
     }
+
     @Test
     void testCreateAgendaItemByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
@@ -218,7 +215,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -305,7 +302,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
 
     }
@@ -333,10 +330,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        AgendaItem agendaItem = createADefaultAgendaItem(checkIn, memberProfile);
-
         final HttpRequest<?> request = HttpRequest.GET("/")
                 .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
@@ -346,7 +339,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertTrue(error.contains(NOT_AUTHORIZED_MSG));
 
     }
 
@@ -442,7 +435,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -481,7 +474,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -680,7 +673,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
         assertEquals(request.getPath(), href);
 
     }
@@ -782,7 +775,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -803,7 +796,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 

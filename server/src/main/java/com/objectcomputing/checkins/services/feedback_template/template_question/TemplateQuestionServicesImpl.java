@@ -7,12 +7,14 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-
 import jakarta.inject.Singleton;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
@@ -53,7 +55,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         }
 
         if (!createIsPermitted(feedbackTemplate.get().getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return templateQuestionRepository.save(templateQuestion);
@@ -84,14 +86,14 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         }
 
         if (!updateIsPermitted(feedbackTemplate.get().getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return templateQuestionRepository.update(templateQuestion);
     }
 
     @Override
-    public Boolean delete(UUID id) {
+    public void delete(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
         if (templateQuestion.isEmpty()) {
             throw new NotFoundException("Could not find template question with ID " + id);
@@ -103,19 +105,18 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         if (feedbackTemplate.isEmpty()) {
             throw new NotFoundException("Could not find feedback template with ID " + templateQuestion.get().getTemplateId());
         } else if (!deleteIsPermitted(feedbackTemplate.get().getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         // Delete the question
         templateQuestionRepository.deleteById(id);
-        return true;
     }
 
     @Override
     public TemplateQuestion getById(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
         if (!getIsPermitted()) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (templateQuestion.isEmpty()) {
@@ -130,7 +131,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         if (templateId == null) {
             throw new BadArgException("Cannot find template questions for null template ID");
         } else if (!getIsPermitted()) {
-            throw new PermissionException("You are not authorized to do this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return new ArrayList<>(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));

@@ -1,43 +1,39 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
 
-import { styled } from "@mui/material/styles";
-import { getAvatarURL } from "../../api/api.js";
+import { styled } from '@mui/material/styles';
+import { getAvatarURL } from '../../api/api.js';
 import {
   selectMemberProfilesLoading,
-  selectProfile,
-} from "../../context/selectors";
-import SkeletonLoader from "../skeleton_loader/SkeletonLoader";
+  selectProfile
+} from '../../context/selectors';
+import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 
-import { Card, CardHeader } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
+import { Card, CardHeader, Grid, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 
-import { Grid } from "@mui/material";
+import './Anniversaries.css';
 
-import "./Anniversaries.css";
-
-import { Typography } from "@mui/material";
-
-const PREFIX = "MemberSummaryCard";
+const PREFIX = 'MemberSummaryCard';
 const classes = {
-  header: `${PREFIX}-header`,
+  header: `${PREFIX}-header`
 };
-const Root = styled("div")({
+const Root = styled('div')({
   [`& .${classes.search}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   [`& .${classes.searchInput}`]: {
-    width: "20em",
+    width: '20em'
   },
   [`& .${classes.members}`]: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    width: "100%",
-  },
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  }
 });
 
 const Anniversaries = ({ anniversaries }) => {
@@ -48,9 +44,9 @@ const Anniversaries = ({ anniversaries }) => {
   const createAnniversaryCards = anniversaries.map((anniv, index) => {
     let user = selectProfile(state, anniv.userId);
     return (
-      <Card className={"anniversaries-card"} key={index}>
+      <Card className={'anniversaries-card'} key={index}>
         <Link
-          style={{ color: "black", textDecoration: "none" }}
+          style={{ color: 'inherit', textDecoration: 'none' }}
           to={`/profile/${anniv.userId}`}
         >
           <CardHeader
@@ -62,10 +58,10 @@ const Anniversaries = ({ anniversaries }) => {
             }
             subheader={
               <Typography color="textSecondary" component="h3">
-                Thank you for{" "}
+                Thank you for{' '}
                 <span>
                   {anniv.yearsOfService.toFixed(0)}
-                  {anniv.yearsOfService > 1 ? " years" : " year"}{" "}
+                  {anniv.yearsOfService > 1 ? ' years' : ' year'}{' '}
                 </span>
                 of service!
               </Typography>
@@ -73,7 +69,7 @@ const Anniversaries = ({ anniversaries }) => {
             disableTypography
             avatar={
               <Avatar
-                className={"celebrations-avatar"}
+                className={'celebrations-avatar'}
                 src={getAvatarURL(user?.workEmail)}
               />
             }
@@ -85,10 +81,10 @@ const Anniversaries = ({ anniversaries }) => {
 
   return (
     <div className="anniversaries">
-      <div className={"anniversary-gift box"}>
-        <div className={"anniversary-gift-top open"}></div>
-        <div className={"anniversary-gift-text open"}></div>
-        <div className={"anniversary-gift-box"}></div>
+      <div className={'anniversary-gift box'}>
+        <div className={'anniversary-gift-top open'}></div>
+        <div className={'anniversary-gift-text open'}></div>
+        <div className={'anniversary-gift-box'}></div>
       </div>
       <Root>
         <div className="anniversary-title">
@@ -101,8 +97,8 @@ const Anniversaries = ({ anniversaries }) => {
                   <SkeletonLoader key={index} type="people" />
                 ))
               : !loading
-              ? createAnniversaryCards
-              : null}
+                ? createAnniversaryCards
+                : null}
           </Grid>
         </Grid>
       </Root>

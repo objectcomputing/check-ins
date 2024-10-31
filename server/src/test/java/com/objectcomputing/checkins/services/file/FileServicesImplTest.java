@@ -9,6 +9,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.google.common.io.ByteStreams;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -20,26 +21,50 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.authentication.Authentication;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class FileServicesImplTest {
+// Disabled in nativeTest, as we get an exception from Mockito
+//   => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
+@DisabledInNativeImage
+class FileServicesImplTest extends TestContainersSuite {
 
     private static File testFile;
     private final static String filePath = "testFile.txt";
@@ -111,10 +136,11 @@ public class FileServicesImplTest {
     @InjectMocks
     private FileServicesImpl services;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocksAndInitializeFile() throws IOException {
-        MockitoAnnotations.initMocks(this);
-
+        mockFinalizer = openMocks(this);
         testFile = new File(filePath);
         FileWriter myWriter = new FileWriter(testFile);
         myWriter.write("This.Is.A.Test.File");
@@ -122,39 +148,40 @@ public class FileServicesImplTest {
     }
 
     @AfterAll
-    void deleteTestFile() {
+    void deleteTestFile() throws Exception {
         testFile.deleteOnExit();
+        mockFinalizer.close();
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(authentication);
-        Mockito.reset(mockAttributes);
-        Mockito.reset(drive);
-        Mockito.reset(files);
-        Mockito.reset(list);
-        Mockito.reset(get);
-        Mockito.reset(delete);
-        Mockito.reset(create);
-        Mockito.reset(update);
-        Mockito.reset(fileToUpload);
-        Mockito.reset(testMemberProfile);
-        Mockito.reset(testCheckIn);
-        Mockito.reset(testCd);
-        Mockito.reset(mockInputStream);
-        Mockito.reset(checkInServices);
-        Mockito.reset(checkinDocumentServices);
-        Mockito.reset(mockGoogleApiAccess);
-        Mockito.reset(currentUserServices);
-        Mockito.reset(memberProfileServices);
-        Mockito.reset(completedFileUpload);
-        Mockito.reset(googleServiceConfiguration);
+        reset(authentication);
+        reset(mockAttributes);
+        reset(drive);
+        reset(files);
+        reset(list);
+        reset(get);
+        reset(delete);
+        reset(create);
+        reset(update);
+        reset(fileToUpload);
+        reset(testMemberProfile);
+        reset(testCheckIn);
+        reset(testCd);
+        reset(mockInputStream);
+        reset(checkInServices);
+        reset(checkinDocumentServices);
+        reset(mockGoogleApiAccess);
+        reset(currentUserServices);
+        reset(memberProfileServices);
+        reset(completedFileUpload);
+        reset(googleServiceConfiguration);
 
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
         when(mockAttributes.toString()).thenReturn("test.email");
         when(currentUserServices.findOrSaveUser(any(), any(), any())).thenReturn(testMemberProfile);
-        when(googleServiceConfiguration.getDirectory_id()).thenReturn("testDirectoryId");
+        when(googleServiceConfiguration.getDirectoryId()).thenReturn("testDirectoryId");
     }
 
     @Test
@@ -192,7 +219,7 @@ public class FileServicesImplTest {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.findFiles(null));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
     }
 
     @Test
@@ -211,7 +238,7 @@ public class FileServicesImplTest {
         when(files.get(any(String.class))).thenReturn(get);
         when(get.setSupportsAllDrives(any())).thenReturn(get);
         when(get.execute()).thenReturn(file);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(Boolean.TRUE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(true);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
@@ -233,7 +260,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberProfileId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(Boolean.TRUE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(true);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
@@ -252,7 +279,7 @@ public class FileServicesImplTest {
     void testFindByCheckinIdForUnauthorizedUser() {
         UUID testCheckinId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(Boolean.FALSE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(false);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
@@ -309,7 +336,7 @@ public class FileServicesImplTest {
 
         when(currentUserServices.isAdmin()).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(Boolean.TRUE);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(true);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
         when(testCd.getUploadDocId()).thenReturn("some.upload.doc.id");
@@ -421,7 +448,7 @@ public class FileServicesImplTest {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.downloadFiles(testUploadDocId));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         verify(mockGoogleApiAccess, times(0)).getDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
@@ -551,7 +578,7 @@ public class FileServicesImplTest {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.deleteFile(uploadDocId));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(mockGoogleApiAccess, times(0)).getDrive();
@@ -846,7 +873,7 @@ public class FileServicesImplTest {
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.uploadFile(testCheckinId, fileToUpload));
 
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(0)).getById(any(UUID.class));
         verify(mockGoogleApiAccess, times(0)).getDrive();

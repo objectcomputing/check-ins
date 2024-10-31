@@ -3,10 +3,10 @@ package com.objectcomputing.checkins.services.skill_record;
 import com.objectcomputing.checkins.services.skillcategory.skillcategory_skill.SkillCategorySkillId;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.MappedEntity;
-
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @MappedEntity
 @Introspected
@@ -23,11 +23,13 @@ public class SkillRecord {
     @Column(name = "description")
     private String description;
 
+    @NotNull
     @Column(name = "extraneous")
-    private boolean extraneous;
+    private Boolean extraneous;
 
+    @NotNull
     @Column(name = "pending")
-    private boolean pending;
+    private Boolean pending;
 
     @Column(name = "category_name")
     private String categoryName;
@@ -58,19 +60,19 @@ public class SkillRecord {
         this.description = description;
     }
 
-    public boolean isExtraneous() {
+    public Boolean isExtraneous() {
         return extraneous;
     }
 
-    public void setExtraneous(boolean extraneous) {
+    public void setExtraneous(Boolean extraneous) {
         this.extraneous = extraneous;
     }
 
-    public boolean isPending() {
+    public Boolean isPending() {
         return pending;
     }
 
-    public void setPending(boolean pending) {
+    public void setPending(Boolean pending) {
         this.pending = pending;
     }
 

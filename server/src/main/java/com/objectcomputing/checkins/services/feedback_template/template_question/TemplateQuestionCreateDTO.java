@@ -2,58 +2,32 @@ package com.objectcomputing.checkins.services.feedback_template.template_questio
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Introspected
 public class TemplateQuestionCreateDTO {
 
     @NotBlank
-    @Schema(description = "text of the question to receive feedback on", required = true)
+    @Schema(description = "text of the question to receive feedback on")
     private String question;
 
-    @NotBlank
-    @Schema(description = "id of the template this question is a part of", required = true)
+    @NotNull
+    @Schema(description = "id of the template this question is a part of")
     private UUID templateId;
 
-    @NotBlank
-    @Schema(description = "order of question in template", required = true)
+    @NotNull
+    @Schema(description = "order of question in template")
     private Integer questionNumber;
 
     @NotBlank
-    @Schema(description = "the type of input used to answer the question", required = true)
+    @Schema(description = "the type of input used to answer the question")
     public String inputType;
 
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public UUID getTemplateId() {
-        return templateId;
-    }
-
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
-    }
-
-    public Integer getQuestionNumber() {
-        return questionNumber;
-    }
-
-    public void setQuestionNumber(Integer questionNumber) {
-        this.questionNumber = questionNumber;
-    }
-
-    public String getInputType() {
-        return inputType;
-    }
-
-    public void setInputType(String inputType) {
-        this.inputType = inputType;
-    }
 }

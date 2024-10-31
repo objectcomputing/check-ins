@@ -1,18 +1,16 @@
 package com.objectcomputing.checkins.services.role;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import javax.validation.ConstraintViolation;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-class RoleCreateDTOTest {
+class RoleCreateDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -28,9 +26,9 @@ class RoleCreateDTOTest {
         RoleCreateDTO dto = new RoleCreateDTO();
 
         Set<ConstraintViolation<RoleCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 1);
+        assertEquals(1, violations.size());
         for (ConstraintViolation<RoleCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

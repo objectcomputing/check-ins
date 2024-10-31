@@ -1,37 +1,22 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
 import io.micronaut.core.annotation.Introspected;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
+@Getter
+@Setter
 @Introspected
 public class EmployeeHoursResponseDTO {
-    private long recordCountDeleted;
-    private long recordCountInserted;
-    private Set<EmployeeHours> employeehoursSet ;
 
-    public long getRecordCountDeleted() {
-        return recordCountDeleted;
-    }
+    @NotNull
+    private Long recordCountDeleted;
 
-    public Set<EmployeeHours> getEmployeehoursSet() {
-        return employeehoursSet;
-    }
+    @NotNull
+    private Long recordCountInserted;
 
-    public void setEmployeehoursSet(Set<EmployeeHours> employeehoursSet) {
-        this.employeehoursSet = employeehoursSet;
-    }
-
-    public void setRecordCountDeleted(long recordCountDeleted) {
-        this.recordCountDeleted = recordCountDeleted;
-    }
-
-    public long getRecordCountInserted() {
-        return recordCountInserted;
-    }
-
-    public void setRecordCountInserted(long recordCountInserted) {
-        this.recordCountInserted = recordCountInserted;
-    }
-
+    private Set<EmployeeHours> employeehoursSet;
 }

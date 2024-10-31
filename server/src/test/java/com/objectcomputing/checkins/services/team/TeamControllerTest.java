@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberUpdateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -23,6 +22,7 @@ import jakarta.inject.Inject;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -222,7 +222,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
         assertEquals(request.getPath(), href);
-        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -250,7 +250,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     void testUpdateTeamNullName() {
         Team teamEntity = createDefaultTeam();
 
-        TeamUpdateDTO requestBody = new TeamUpdateDTO(teamEntity.getId(), null, null);
+        TeamUpdateDTO requestBody = new TeamUpdateDTO(teamEntity.getId(), null, null, true);
         requestBody.setTeamMembers(new ArrayList<>());
 
         final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", requestBody)
@@ -288,7 +288,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         Team teamEntity = createDefaultTeam();
         UUID requestId = UUID.randomUUID();
-        TeamUpdateDTO requestBody = new TeamUpdateDTO(requestId.toString(), teamEntity.getName(), teamEntity.getDescription());
+        TeamUpdateDTO requestBody = new TeamUpdateDTO(requestId.toString(), teamEntity.getName(), teamEntity.getDescription(), teamEntity.isActive());
         requestBody.setTeamMembers(new ArrayList<>());
 
         final MutableHttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", requestBody)
@@ -321,7 +321,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
-        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(NOT_AUTHORIZED_MSG, errors.asText());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
@@ -373,7 +373,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
-        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(NOT_AUTHORIZED_MSG, errors.asText());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 

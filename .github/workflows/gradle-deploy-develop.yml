@@ -1,0 +1,115 @@
+name: Gradle Build & Deploy - Develop
+on:
+  push:
+    branches:
+      - 'develop'
+env:
+  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
+  RUN_REGION: us-central1
+  SERVICE_NAME: checkins-develop
+  TARGET_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node Stable
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up Temurin 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Run tests with Gradle
+        run: ./gradlew check
+  deploy:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    environment:
+      name: Development
+      url: ${{ env.TARGET_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up Temurin 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: 'oci-intern-2019'
+          workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github/providers/my-repo'
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 363.0.0'
+      - name: 'Auth Configure Docker'
+        run: |-
+          gcloud --quiet auth configure-docker
+      - name: Build the Docker image
+        run: |-
+          ./gradlew assemble
+          cd server
+          docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
+        env:
+          VITE_APP_API_URL: ${{ env.TARGET_URL }}
+      - name: Push the Docker image to Google Container Registry
+        run: docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+      - name: Deploy image to Cloud Run
+        run: |-
+          gcloud run deploy "$SERVICE_NAME" \
+            --quiet \
+            --region "$RUN_REGION" \
+            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --memory 1Gi \
+            --add-cloudsql-instances ${{ secrets.DB_CONNECTION_NAME }} \
+            --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DB_CONNECTION_NAME }}" \
+            --set-env-vars "DB_NAME=${{ secrets.DB_NAME }}" \
+            --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+            --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.DB_USERNAME }}" \
+            --set-env-vars "AES_KEY=${{ secrets.AES_KEY }}" \
+            --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
+            --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
+            --set-env-vars "OAUTH_CALLBACK_URI"=${{ secrets.OAUTH_CALLBACK_URI }} \
+            --set-env-vars "DIRECTORY_ID=${{ secrets.DIRECTORY_ID }}" \
+            --set-env-vars "SERVICE_ACCOUNT_CREDENTIALS=${{ secrets.SERVICE_ACCOUNT_CREDENTIALS }}" \
+            --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
+            --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
+            --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
+            --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
+            --set-env-vars "WEB_ADDRESS=${{ env.TARGET_URL }}" \
+            --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
+            --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
+            --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
+            --platform "managed" \
+            --max-instances 2 \
+            --allow-unauthenticated

@@ -2,25 +2,21 @@ package com.objectcomputing.checkins.services.refresh_token;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.DateCreated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "refresh_token")
 public class RefreshToken {
-
-  public RefreshToken() {}
-
-  public RefreshToken(String username, String refreshToken){
-    this.userName = username;
-    this.refreshToken = refreshToken;
-    this.revoked = false;
-  }
 
   @Id
   @Column(name = "id")
@@ -38,36 +34,12 @@ public class RefreshToken {
   @DateCreated
   private Instant dateCreated;
 
-  public String getRefreshToken() {
-    return refreshToken;
-  }
-  public void setRefreshToken(String refreshToken){
+  public RefreshToken() {}
+
+  public RefreshToken(String username, String refreshToken){
+    this.userName = username;
     this.refreshToken = refreshToken;
+    this.revoked = false;
   }
 
-  public String getUserName(){
-    return userName;
-  }
-  public void setUserName(String userName){
-    this.userName = userName;
-  }
-
-  public UUID getId(){return this.id;}
-  public void setId(UUID id){this.id = id;}
-
-  public Boolean getRevoked() {
-    return revoked;
-  }
-
-  public void setRevoked(Boolean revoked) {
-    this.revoked = revoked;
-  }
-
-  public Instant getDateCreated() {
-    return dateCreated;
-  }
-
-  public void setDateCreated(Instant dateCreated) {
-    this.dateCreated = dateCreated;
-  }
 }

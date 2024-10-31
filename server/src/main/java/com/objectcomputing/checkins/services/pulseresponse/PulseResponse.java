@@ -1,24 +1,28 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
-import java.time.LocalDate;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "pulse_response")
 public class PulseResponse {
@@ -27,23 +31,29 @@ public class PulseResponse {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "the id of the pulse_response", required = true)
+    @Schema(description = "the id of the pulse_response")
     private UUID id;
+
+    @Column(name="internal_score")
+    @NotNull
+    @Schema(description = "integer for internalScore", required = true)
+    private Integer internalScore;
+
+    @Column(name="external_score")
+    @Nullable
+    @Schema(description = "integer for externalScore", required = true)
+    private Integer externalScore;
 
     @Column(name="submissiondate")
     @NotNull
-    @Schema(description = "date for submissionDate", required = true)
+    @Schema(description = "date for submissionDate")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate submissionDate;
-
-    @Column(name="updateddate")
-    @NotNull
-    @Schema(description = "date for updatedDate", required = true)
-    private LocalDate updatedDate;
 
     @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
     @NotNull
-    @Schema(description = "id of the teamMember this entry is associated with", required = true)
+    @Schema(description = "id of the teamMember this entry is associated with")
     private UUID teamMemberId;
 
     @Column(name="internalfeelings")
@@ -51,8 +61,8 @@ public class PulseResponse {
             read =  "pgp_sym_decrypt(internalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
-    @Schema(description = "description of internalfeelings", required = true)
+    @Nullable
+    @Schema(description = "description of internalfeelings")
     private String internalFeelings;
 
     @Column(name="externalfeelings")
@@ -60,21 +70,25 @@ public class PulseResponse {
             read =  "pgp_sym_decrypt(externalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @NotNull
-    @Schema(description = "description of externalfeelings", required = true)
+    @Nullable
+    @Schema(description = "description of externalfeelings")
     private String externalFeelings;
 
-    public PulseResponse(UUID id,LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+    protected PulseResponse() {
+    }
+
+    public PulseResponse(UUID id, Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
+        this.internalScore = internalScore;
+        this.externalScore = externalScore;
         this.submissionDate = submissionDate;
-        this.updatedDate = updatedDate;
         this.teamMemberId = teamMemberId;
         this.internalFeelings = internalFeelings;
         this.externalFeelings = externalFeelings;
     }
 
-    public PulseResponse(LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
-        this(null,submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
+    public PulseResponse(Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+        this(null,internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 
     public UUID getId() {
@@ -85,20 +99,28 @@ public class PulseResponse {
         this.id = id;
     }
 
+    public Integer getInternalScore() {
+        return internalScore;
+    }
+
+    public void setInternalScore(Integer internalScore) {
+        this.internalScore = internalScore;
+    }
+
+    public Integer getExternalScore() {
+        return externalScore;
+    }
+
+    public void setExternalScore(Integer externalScore) {
+        this.externalScore = externalScore;
+    }
+
     public LocalDate getSubmissionDate() {
         return submissionDate;
     }
 
     public void setSubmissionDate(LocalDate submissionDate) {
         this.submissionDate = submissionDate;
-    }
-
-    public LocalDate getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(LocalDate updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public UUID getTeamMemberId() {
@@ -131,6 +153,8 @@ public class PulseResponse {
         if (o == null || getClass() != o.getClass()) return false;
         PulseResponse that = (PulseResponse) o;
         return Objects.equals(id, that.id) &&
+                Objects.equals(internalScore, that.internalScore) &&
+                Objects.equals(externalScore, that.externalScore) &&
                 Objects.equals(submissionDate, that.submissionDate) &&
                 Objects.equals(teamMemberId, that.teamMemberId) &&
                 Objects.equals(internalFeelings, that.internalFeelings) &&
@@ -141,8 +165,9 @@ public class PulseResponse {
     public String toString() {
         return "PulseResponse{" +
                 "id=" + id +
+                ", internalScore" + internalScore +
+                ", externalScore" + externalScore +
                 ", submissionDate=" + submissionDate +
-                ", updatedDate=" + updatedDate +
                 ", teamMemberId=" + teamMemberId +
                 ", internalFeelings=" + internalFeelings +
                 ", externalFeelings=" + externalFeelings +
@@ -150,7 +175,7 @@ public class PulseResponse {
     }
     @Override
     public int hashCode() {
-        return Objects.hash(id, submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
+        return Objects.hash(id, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 }
 

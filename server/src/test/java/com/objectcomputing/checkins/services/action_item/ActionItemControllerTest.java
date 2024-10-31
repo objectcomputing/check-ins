@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.action_item;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -9,6 +8,8 @@ import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -16,19 +17,16 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, CheckInFixture, ActionItemFixture {
 
@@ -40,6 +38,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void createRolesAndPermissions() {
         createAndAssignRoles();
     }
+
     @Test
     void testCreateAnActionItemByAdmin() {
 
@@ -169,8 +168,8 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin id %s", actionItemCreateDTO.getCheckinid()), error);
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(String.format("Checkin not found by Id: %s.", actionItemCreateDTO.getCheckinid()), error);
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
 
     }
 
@@ -219,7 +218,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -243,7 +242,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -351,7 +350,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -372,7 +371,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -427,7 +426,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -486,18 +485,18 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void testFindAllActionItemsByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForAdmin = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = assignAdminRole(memberProfileForAdmin);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForAdmin);
 
         ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForAdmin.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForAdmin.getWorkEmail(), role.getRole());
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -518,7 +517,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
 
     }
 
@@ -605,7 +604,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("User is unauthorized to do this operation", errors.asText());
+        assertEquals(NOT_AUTHORIZED_MSG, errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
 
@@ -725,7 +724,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin id %s", actionItem.getCheckinid()), error);
+        assertEquals(String.format("Checkin not found by Id: %s.", actionItem.getCheckinid()), error);
 
     }
 

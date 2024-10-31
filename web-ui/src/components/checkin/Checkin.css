@@ -1,9 +1,4 @@
-.arrow.disabled {
-  opacity: 0.3;
-}
-
 .arrow {
-  color: black;
   text-decoration: none;
 }
 
@@ -17,7 +12,7 @@
 .date-input {
   display: flex;
   align-items: center;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .info {

@@ -7,15 +7,19 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class DemographicsServicesImpl implements DemographicsServices{
+
     private final DemographicsRepository demographicsRepository;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
@@ -33,7 +37,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
         if (!currentUserServices.isAdmin() &&
                 (demographics!= null && demographics.getMemberId() != null &&
                         !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
-            throw new PermissionException("You are not authorized to access this Demographics");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return demographics;
@@ -50,7 +54,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
                                           @Nullable String militaryBranch) {
 
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("Requires admin privileges");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return new ArrayList<>(demographicsRepository.searchByValues(nullSafeUUIDToString(memberId),
@@ -68,7 +72,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
         if (!currentUserServices.isAdmin() &&
                 (demographics.getMemberId() != null &&
                         !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
-            throw new PermissionException("You are not authorized to update this demographic");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         Demographics newDemographics;
@@ -86,7 +90,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
         if (!currentUserServices.isAdmin() &&
                 (demographics.getMemberId() != null &&
                         !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
-            throw new PermissionException("You are not authorized to create this Demographic");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         Demographics demographicsRet;
@@ -108,16 +112,16 @@ public class DemographicsServicesImpl implements DemographicsServices{
     @Override
     public List<Demographics> findAll() {
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("Requires admin privileges");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return demographicsRepository.findAll();
     }
 
     @Override
-    public Boolean deleteDemographics(@NotNull UUID id) {
+    public void deleteDemographics(@NotNull UUID id) {
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("Requires admin privileges");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (demographicsRepository.findById(id).isEmpty()) {
@@ -125,6 +129,5 @@ public class DemographicsServicesImpl implements DemographicsServices{
         }
 
         demographicsRepository.deleteById(id);
-        return true;
     }
 }

@@ -1,17 +1,18 @@
-import React, { useState } from "react";
-import { styled } from '@mui/material/styles';
-import "./SkillSlider.css";
+import { debounce } from 'lodash/function';
+import React, { useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  IconButton
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import TextField from "@mui/material/TextField";
-import { debounce } from "lodash/function";
-import DiscreteSlider from "../discrete_slider/DiscreteSlider";
-import Typography from "@mui/material/Typography";
+  IconButton,
+  TextField,
+  Typography
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import DiscreteSlider from '../discrete_slider/DiscreteSlider';
+
+import './SkillSlider.css';
 
 const PREFIX = 'SkillSlider';
 const classes = {
@@ -20,10 +21,10 @@ const classes = {
 
 const Root = styled('span')(() => ({
   [`& .${classes.hidden}`]: {
-    display: "none",
+    display: 'none'
   },
   '@media screen and (max-width: 900px)': {
-    width: "100%"
+    width: '100%'
   }
 }));
 
@@ -33,7 +34,7 @@ const SkillSlider = ({
   startLevel,
   lastUsedDate,
   onDelete,
-  onUpdate,
+  onUpdate
 }) => {
   let [currCheck, setCurrCheck] = useState(!lastUsedDate);
   let [lastUsed, setLastUsed] = useState(lastUsedDate);
@@ -49,25 +50,25 @@ const SkillSlider = ({
     onUpdate(lastUsed, value, id);
   }, 1500);
 
-  const updateLastUsed = debounce((value) => {
+  const updateLastUsed = debounce(value => {
     setLastUsed(value);
     onUpdate(value, skillLevel, id);
   }, 1500);
 
-  const formatDate = (date) => {
-    if (!date) {
-      return;
-    }
-    let dateString = date[0] + "-";
-    dateString = dateString + (date[1] < 10 ? "0" + date[1] : date[1]) + "-";
-    dateString = dateString + (date[2] < 10 ? "0" + date[2] : date[2]);
+  const formatDate = date => {
+    if (!date) return;
+    let dateString = date[0] + '-';
+    dateString = dateString + (date[1] < 10 ? '0' + date[1] : date[1]) + '-';
+    dateString = dateString + (date[2] < 10 ? '0' + date[2] : date[2]);
     return dateString;
   };
 
   return (
     <>
       <Root>
-        <Typography variant="body1" className="skill-slider-title">{name}</Typography>
+        <Typography variant="body1" className="skill-slider-title">
+          {name}
+        </Typography>
         <div className="skill-slider-container">
           <DiscreteSlider
             inStartPos={skillLevel}

@@ -1,27 +1,31 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   findActionItem,
   deleteActionItem,
   updateActionItem,
-  createActionItem,
-} from "../../api/actionitem.js";
-import { AppContext } from "../../context/AppContext";
-import { UPDATE_TOAST } from "../../context/actions";
-import { selectCsrfToken, selectCurrentUser, selectCheckin } from "../../context/selectors";
-import { debounce } from "lodash/function";
-import DragIndicator from "@mui/icons-material/DragIndicator";
+  createActionItem
+} from '../../api/actionitem.js';
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_TOAST } from '../../context/actions';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectCheckin
+} from '../../context/selectors';
+import { debounce } from 'lodash/function';
+import DragIndicator from '@mui/icons-material/DragIndicator';
 import Skeleton from '@mui/material/Skeleton';
-import IconButton from "@mui/material/IconButton";
-import SaveIcon from "@mui/icons-material/Done";
-import RemoveIcon from "@mui/icons-material/Remove";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import IconButton from '@mui/material/IconButton';
+import SaveIcon from '@mui/icons-material/Done';
+import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 
-import "./ActionItemsPanel.css";
+import './ActionItemsPanel.css';
 
 const doUpdate = async (actionItem, csrf) => {
   if (actionItem && csrf) {
@@ -40,7 +44,7 @@ const ActionItemsPanel = () => {
   const currentCheckin = selectCheckin(state, checkinId);
 
   const [actionItems, setActionItems] = useState([]);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const getActionItems = async (checkinId, csrf) => {
@@ -82,12 +86,12 @@ const ActionItemsPanel = () => {
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    display: "flex",
-    background: isDragging ? "lightgreen" : undefined,
-    ...draggableStyle,
+    display: 'flex',
+    background: isDragging ? 'lightgreen' : undefined,
+    ...draggableStyle
   });
 
-  const onDragEnd = (result) => {
+  const onDragEnd = result => {
     if (!result || !result.destination) {
       return;
     }
@@ -108,7 +112,7 @@ const ActionItemsPanel = () => {
         newPriority += 1;
       }
 
-      setActionItems((actionItems) => {
+      setActionItems(actionItems => {
         actionItems[sourceIndex].priority = newPriority;
         reorder(actionItems, sourceIndex, index);
         return actionItems;
@@ -119,19 +123,19 @@ const ActionItemsPanel = () => {
   };
 
   const makeActionItem = async () => {
-    if (!checkinId || !currentUserId || description === "" || !csrf) {
+    if (!checkinId || !currentUserId || description === '' || !csrf) {
       return;
     }
     let newActionItem = {
       checkinid: checkinId,
       createdbyid: currentUserId,
-      description: description,
+      description: description
     };
     const res = await createActionItem(newActionItem, csrf);
     if (!res.error && res.payload && res.payload.data) {
       newActionItem.id = res.payload.data.id;
       newActionItem.priority = res.payload.data.priority;
-      setDescription("");
+      setDescription('');
       setActionItems([...actionItems, newActionItem]);
     }
   };
@@ -141,9 +145,9 @@ const ActionItemsPanel = () => {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "Action Items can only be edited by creator",
-        },
+          severity: 'error',
+          toast: 'Action Items can only be edited by creator'
+        }
       });
       return;
     }
@@ -155,10 +159,10 @@ const ActionItemsPanel = () => {
     });
   };
 
-  const killActionItem = (id) => {
+  const killActionItem = id => {
     if (csrf) {
       deleteItem(id, csrf);
-      let newItems = actionItems.filter((actionItem) => {
+      let newItems = actionItems.filter(actionItem => {
         return actionItem.id !== id;
       });
       setActionItems(newItems);
@@ -185,20 +189,20 @@ const ActionItemsPanel = () => {
               )}
             >
               <div className="description-field">
-                <span style={{ cursor: "grab" }} {...provided.dragHandleProps}>
+                <span style={{ cursor: 'grab' }} {...provided.dragHandleProps}>
                   <DragIndicator />
                 </span>
                 {isLoading ? (
                   <div className="skeleton">
-                    <Skeleton className="test" variant="text" height={"2rem"} />
-                    <Skeleton variant="text" height={"2rem"} />
-                    <Skeleton variant="text" height={"2rem"} />
+                    <Skeleton className="test" variant="text" height={'2rem'} />
+                    <Skeleton variant="text" height={'2rem'} />
+                    <Skeleton variant="text" height={'2rem'} />
                   </div>
                 ) : (
                   <input
                     disabled={currentCheckin?.completed}
                     className="text-input"
-                    onChange={(e) => handleDescriptionChange(index, e)}
+                    onChange={e => handleDescriptionChange(index, e)}
                     value={actionItem.description}
                   />
                 )}
@@ -208,7 +212,8 @@ const ActionItemsPanel = () => {
                     aria-label="delete"
                     className="delete-icon"
                     onClick={() => killActionItem(actionItem.id)}
-                    size="large">
+                    size="large"
+                  >
                     <RemoveIcon />
                   </IconButton>
                 </div>
@@ -222,10 +227,17 @@ const ActionItemsPanel = () => {
 
   return (
     <Card className="action-items">
-      <CardHeader avatar={<ArrowForwardIcon  />} title="Action Items" titleTypographyProps={{variant: "h5", component: "h2"}} />
+      <CardHeader
+        avatar={<ArrowForwardIcon />}
+        title="Action Items"
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
       <CardContent className="action-items-container">
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable isDropDisabled={currentCheckin?.completed} droppableId="droppable">
+          <Droppable
+            isDropDisabled={currentCheckin?.completed}
+            droppableId="droppable"
+          >
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createActionItemEntries()}
@@ -239,21 +251,21 @@ const ActionItemsPanel = () => {
             disabled={currentCheckin?.completed}
             className="text-input"
             placeholder="Add action item"
-            onChange={(e) => setDescription(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && description !== "") {
+            onChange={e => setDescription(e.target.value)}
+            onKeyPress={e => {
+              if (e.key === 'Enter' && description !== '') {
                 makeActionItem();
               }
             }}
-
-            value={description ? description : ""}
+            value={description ? description : ''}
           />
           <IconButton
             disabled={currentCheckin?.completed}
             aria-label="create"
             className="edit-icon"
             onClick={() => makeActionItem()}
-            size="large">
+            size="large"
+          >
             <SaveIcon />
           </IconButton>
         </div>

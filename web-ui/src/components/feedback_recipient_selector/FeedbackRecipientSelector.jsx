@@ -1,19 +1,20 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { styled } from '@mui/material/styles';
-import "./FeedbackRecipientSelector.css";
-import FeedbackRecipientCard from "../feedback_recipient_card/FeedbackRecipientCard";
-import { AppContext } from "../../context/AppContext";
+import FeedbackRecipientCard from '../feedback_recipient_card/FeedbackRecipientCard';
+import { AppContext } from '../../context/AppContext';
 import {
   selectProfile,
   selectCsrfToken,
-  selectNormalizedMembers,
-} from "../../context/selectors";
-import { getFeedbackSuggestion } from "../../api/feedback";
-import { selectCurrentUser } from "../../context/selectors";
-import Typography from "@mui/material/Typography";
-import { TextField, Grid, InputAdornment } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import PropTypes from "prop-types";
+  selectCurrentUser,
+  selectNormalizedMembers
+} from '../../context/selectors';
+import { getFeedbackSuggestion } from '../../api/feedback';
+import Typography from '@mui/material/Typography';
+import { TextField, Grid, InputAdornment } from '@mui/material';
+import { Search } from '@mui/icons-material';
+import PropTypes from 'prop-types';
+
+import './FeedbackRecipientSelector.css';
 
 const PREFIX = 'FeedbackRecipientSelector';
 const classes = {
@@ -26,28 +27,28 @@ const classes = {
 
 const StyledGrid = styled(Grid)({
   [`& .${classes.search}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   [`& .${classes.searchInput}`]: {
-    width: "20em",
+    width: '20em'
   },
   [`& .${classes.searchInputIcon}`]: {
-    color: "gray",
+    color: 'gray'
   },
   [`& .${classes.members}`]: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    width: "100%",
-  },
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  }
 });
 
 const propTypes = {
   changeQuery: PropTypes.func.isRequired,
   fromQuery: PropTypes.array.isRequired,
-  forQuery: PropTypes.string.isRequired,
+  forQuery: PropTypes.string.isRequired
 };
 
 const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
@@ -57,7 +58,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
   const { id } = userProfile;
   const searchTextUpdated = useRef(false);
   const hasRenewedFromURL = useRef(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [profiles, setProfiles] = useState([]);
   const normalizedMembers = selectNormalizedMembers(state, searchText);
 
@@ -65,15 +66,15 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
     if (
       !searchTextUpdated.current &&
       searchText.length !== 0 &&
-      searchText !== "" &&
+      searchText !== '' &&
       searchText
     ) {
       if (fromQuery !== undefined) {
-        let selectedMembers = profiles.filter((profile) =>
+        let selectedMembers = profiles.filter(profile =>
           fromQuery.includes(profile.id)
         );
-        let filteredNormalizedMembers = normalizedMembers.filter((member) => {
-          return !selectedMembers.some((selectedMember) => {
+        let filteredNormalizedMembers = normalizedMembers.filter(member => {
+          return !selectedMembers.some(selectedMember => {
             return selectedMember.id === member.id;
           });
         });
@@ -93,11 +94,10 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
         fromQuery !== undefined
       ) {
         let profileCopy = profiles;
-        if (typeof fromQuery === "string") {
+        if (typeof fromQuery === 'string') {
           let newProfile = { id: fromQuery };
           if (
-            profiles.filter((member) => member.id === newProfile.id).length ===
-            0
+            profiles.filter(member => member.id === newProfile.id).length === 0
           ) {
             profileCopy.push(newProfile);
           }
@@ -105,8 +105,8 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
           for (let i = 0; i < fromQuery.length; ++i) {
             let newProfile = { id: fromQuery[i] };
             if (
-              profiles.filter((member) => member.id === newProfile.id)
-                .length === 0
+              profiles.filter(member => member.id === newProfile.id).length ===
+              0
             ) {
               profileCopy.push(newProfile);
             }
@@ -128,12 +128,12 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
       return null;
     }
 
-    if (csrf && (searchText === "" || searchText.length === 0)) {
-      getSuggestions().then((res) => {
+    if (csrf && (searchText === '' || searchText.length === 0)) {
+      getSuggestions().then(res => {
         bindFromURL();
         if (res !== undefined && res !== null) {
-          let filteredProfileCopy = profiles.filter((member) => {
-            return !res.some((suggestedMember) => {
+          let filteredProfileCopy = profiles.filter(member => {
+            return !res.some(suggestedMember => {
               return suggestedMember.id === member.id;
             });
           });
@@ -144,7 +144,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, csrf, searchText]);
 
-  const cardClickHandler = (id) => {
+  const cardClickHandler = id => {
     if (!Array.isArray(fromQuery)) {
       fromQuery = fromQuery ? [fromQuery] : [];
     }
@@ -154,7 +154,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
       fromQuery.push(id);
     }
 
-    changeQuery("from", fromQuery);
+    changeQuery('from', fromQuery);
     hasRenewedFromURL.current = false;
   };
 
@@ -162,11 +162,11 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
     if (fromQuery) {
       const title = (
         <Typography
-          style={{ fontWeight: "bold", color: "#454545", marginBottom: "1em" }}
+          style={{ fontWeight: 'bold', color: '#454545', marginBottom: '1em' }}
           variant="h5"
         >
           {fromQuery.length} recipient
-          {fromQuery.length === 1 ? "" : "s"} selected
+          {fromQuery.length === 1 ? '' : 's'} selected
         </Typography>
       );
 
@@ -175,7 +175,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
         return (
           <>
             {title}
-            <p style={{ color: "gray" }}>
+            <p style={{ color: 'gray' }}>
               Click on recipients to request feedback from them
             </p>
           </>
@@ -187,7 +187,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
         <>
           {title}
           <div className="recipient-card-container">
-            {fromQuery.map((id) => (
+            {fromQuery.map(id => (
               <FeedbackRecipientCard
                 key={id}
                 profileId={id}
@@ -211,7 +211,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
             label="Search employees..."
             placeholder="Member Name"
             value={searchText}
-            onChange={(e) => {
+            onChange={e => {
               setSearchText(e.target.value);
               searchTextUpdated.current = false;
             }}
@@ -223,7 +223,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
                 >
                   <Search />
                 </InputAdornment>
-              ),
+              )
             }}
           />
         </Grid>
@@ -234,11 +234,11 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
           <div className="recipient-card-container">
             {profiles
               .filter(
-                (profile) =>
+                profile =>
                   !fromQuery ||
                   (!fromQuery.includes(profile.id) && profile.id !== forQuery)
               )
-              .map((profile) => (
+              .map(profile => (
                 <FeedbackRecipientCard
                   key={profile.id}
                   recipientProfile={selectProfile(state, profile.id)}

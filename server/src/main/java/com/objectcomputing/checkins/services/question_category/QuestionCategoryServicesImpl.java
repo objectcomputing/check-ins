@@ -5,13 +5,15 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
@@ -43,7 +45,7 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
     @Override
     public QuestionCategory saveQuestionCategory(QuestionCategory questionCategory) {
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         if (questionCategory.getId() != null) {
@@ -79,7 +81,7 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
         }
         if (updatedQuestionCategory != null) {
             if (!currentUserServices.isAdmin()) {
-                throw new PermissionException("You do not have permission to access this resource");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
             return questionCategoryRepository.update(questionCategory);
         } else {
@@ -88,13 +90,13 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
     }
 
     @Override
-    public Boolean delete(@NotNull UUID id) {
+    public boolean delete(@NotNull UUID id) {
         final Optional<QuestionCategory> questionCategory = questionCategoryRepository.findById(id);
         if (questionCategory.isEmpty()) {
             throw new NotFoundException("No question category with id " + id);
         }
         if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         questionCategoryRepository.deleteById(id);
         return true;

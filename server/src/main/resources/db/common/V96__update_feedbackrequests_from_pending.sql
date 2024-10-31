@@ -1,0 +1,1 @@
+update feedback_requests set status = 'sent' where status = 'pending';

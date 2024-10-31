@@ -1,49 +1,48 @@
 package com.objectcomputing.checkins.services.request_notifications;
 
-import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import io.micronaut.context.annotation.Property;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
+import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
+import com.objectcomputing.checkins.services.pulse.PulseServices;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
 @Singleton
 public class CheckServicesImpl implements CheckServices {
-    private final FeedbackRequestRepository feedbackReqRepository;
-    public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
-    public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
-    public static final String submitURL = "https://checkins.objectcomputing.com/feedback/submit?requestId=";
-    private EmailSender emailSender;
-    private String notificationSubject;
-    private String notificationContent;
-    private final MemberProfileServices memberProfileServices;
 
-    public CheckServicesImpl(FeedbackRequestRepository feedbackReqRepository, EmailSender emailSender,
-                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
-                             MemberProfileServices memberProfileServices) {
-        this.feedbackReqRepository = feedbackReqRepository;
-        this.emailSender = emailSender;
-        this.notificationContent = notificationContent;
-        this.notificationSubject = notificationSubject;
-        this.memberProfileServices = memberProfileServices;
+    private static final Logger LOG = LoggerFactory.getLogger(CheckServicesImpl.class);
+    private final FeedbackRequestServicesImpl feedbackRequestServices;
+    private final FeedbackRequestRepository feedbackRequestRepository;
+    private final PulseServices pulseServices;
+    private final ReviewPeriodServices reviewPeriodServices;
+
+    public CheckServicesImpl(FeedbackRequestServicesImpl feedbackRequestServices,
+                             FeedbackRequestRepository feedbackRequestRepository,
+                             PulseServices pulseServices,
+                             ReviewPeriodServices reviewPeriodServices) {
+        this.feedbackRequestServices = feedbackRequestServices;
+        this.feedbackRequestRepository = feedbackRequestRepository;
+        this.pulseServices = pulseServices;
+        this.reviewPeriodServices = reviewPeriodServices;
     }
 
     @Override
-    public boolean GetTodaysRequests() {
+    public boolean sendScheduledEmails() {
         LocalDate today = LocalDate.now();
-        List<FeedbackRequest> todaysRequests = new ArrayList<>();
-        todaysRequests.addAll(feedbackReqRepository.findByValues(null, null, null, today, null, null));
-        for (FeedbackRequest req: todaysRequests) {
-            MemberProfile from = memberProfileServices.getById(req.getCreatorId());
-            String fromName  = from.getFirstName() + " " + from.getLastName();
-            String newContent =  notificationContent + "<a href=\""+submitURL+req.getId()+"\">Check-Ins application</a>.";
-            emailSender.sendEmail(fromName, from.getWorkEmail(), notificationSubject, newContent);
+        List<FeedbackRequest> feedbackRequests = feedbackRequestRepository.findBySendDateNotAfterAndStatusEqual(today, "pending");
+        LOG.info("About to send {} emails", feedbackRequests.size());
+        for (FeedbackRequest req: feedbackRequests) {
+            feedbackRequestServices.sendNewRequestEmail(req);
+            req.setStatus("sent");
+            feedbackRequestRepository.update(req);
         }
-
+        pulseServices.sendPendingEmail(today);
+        reviewPeriodServices.sendNotifications(today);
         return true;
     }
 

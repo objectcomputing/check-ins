@@ -1,23 +1,31 @@
-import axios from "axios";
-import { UPDATE_TOAST } from "../context/actions";
+import { UPDATE_TOAST } from '../context/actions';
+import qs from 'qs';
 
-export const BASE_API_URL = process.env.REACT_APP_API_URL
-  ? process.env.REACT_APP_API_URL
-  : "http://localhost:8080";
+export const BASE_API_URL = import.meta.env.VITE_APP_API_URL
+  ? import.meta.env.VITE_APP_API_URL
+  : 'http://localhost:8080';
 
-export const getAvatarURL = (email) =>
+export const getAvatarURL = email =>
   BASE_API_URL +
-  "/services/member-profiles/member-photos/" +
+  '/services/member-profiles/member-photos/' +
   encodeURIComponent(email);
 
-let myAxios = null;
+function fetchAbsolute(fetch) {
+  return baseUrl => (url, otherParams) =>
+    url.startsWith('/')
+      ? fetch(baseUrl + url, { credentials: 'include', ...otherParams })
+      : fetch(url, { credentials: 'include', ...otherParams });
+}
 
-export const getMyAxios = async () => {
-  if (!myAxios) {
-    myAxios = axios.create({
-      baseURL: BASE_API_URL,
-      withCredentials: true,
-    });
+let myFetch = null;
+
+export const getMyFetch = async () => {
+  if (!myFetch) {
+    myFetch = fetchAbsolute(fetch)(BASE_API_URL);
+
+    /*
+   I'm not sure this was working before, but we need to figure out an approach for fetch. I will
+   open an issue for this.
 
     myAxios.interceptors.response.use(
       // Any status code that lie within the range of 2xx cause this function to trigger
@@ -45,32 +53,61 @@ export const getMyAxios = async () => {
           })
       }
     );
+  */
   }
-  return myAxios;
+  return myFetch;
 };
 
-export const resolve = async (payload) => {
-  const myAxios = await getMyAxios();
-  const promise = myAxios(payload);
+export const resolve = async payload => {
+  let { url } = payload;
+  const { params = null, data = null, ...rest } = payload;
+  const myFetch = await getMyFetch();
+
+  // Convert params to fetch style...
+  params && (url = `${url}?` + qs.stringify(params, { arrayFormat: 'repeat' }));
+
+  // Convert data to body...
+  data && (rest.body = JSON.stringify(data));
+
+  const promise = myFetch(url, rest);
   const resolved = {
     payload: null,
-    error: null,
+    error: null
   };
 
-  try {
-    resolved.payload = await promise;
-  } catch (e) {
-    resolved.error = e;
+  resolved.payload = await promise;
+
+  if (!resolved.payload.ok) {
+    try {
+      resolved.error = await resolved.payload.json();
+    } catch (error) {
+      resolved.error = resolved.payload.statusText;
+      console.error(error);
+    }
+
     if (window.snackDispatch) {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: e?.response?.data?.message || e?.message,
-        },
+          severity: 'error',
+          toast: resolved?.error
+        }
       });
     }
+  } else {
+    const contentType = resolved.payload.headers.get('Content-Type');
+    const contentLength = resolved.payload.headers.get('Content-Length');
+    if (contentType && contentType.indexOf('text/csv') !== -1) {
+      resolved.payload.data = await resolved.payload.blob();
+    } else if (contentLength && contentLength > 0) {
+      if (contentType && contentType.indexOf('application/json') !== -1) {
+        resolved.payload.data = await resolved.payload.json();
+      } else {
+        resolved.payload.data = await resolved.payload.text();
+      }
+    } else {
+      resolved.payload.data = null;
+    }
   }
-
   return resolved;
 };

@@ -1,59 +1,64 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MockBean;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
 import jakarta.inject.Inject;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
+
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class MemberPhotoControllerTest {
+// Disabled in nativeTest, as we get an exception from Mockito
+//   => Message: Could not initialize class org.mockito.Mockito
+@DisabledInNativeImage
+class MemberPhotoControllerTest extends TestContainersSuite {
 
     @Inject
     @Client("/services/member-profiles/member-photos")
     private HttpClient client;
 
     @Inject
-    private MemberPhotoService memberPhotoService;
+    GooglePhotoAccessor googlePhotoAccessor;
 
-    //Happy path
     @Test
-    public void testGetForValidInput() throws IOException {
+    void testGetForValidInput() {
 
         String testEmail = "test@test.com";
-        String testPhotoData = "test.photo.data";
-        byte[] testData = Base64.getUrlEncoder().encode(testPhotoData.getBytes());
+        byte[] testData = Base64.getUrlEncoder().encode("test.photo.data".getBytes());
 
-        when(memberPhotoService.getImageByEmailAddress(testEmail)).thenReturn(testData);
+        when(googlePhotoAccessor.getPhotoData(testEmail)).thenReturn(testData);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", testEmail)).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<byte[]> response = client.toBlocking().exchange(request, byte[].class);
+        client.toBlocking().exchange(request, byte[].class);
+        client.toBlocking().exchange(request, byte[].class);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
         byte[] result = response.getBody().get();
         assertEquals(new String(testData), new String(result));
+
+        // Only called once due to the cache
+        verify(googlePhotoAccessor, times(1)).getPhotoData(testEmail);
     }
 
-    @MockBean(MemberPhotoServiceImpl.class)
-    public MemberPhotoService memberPhotoService() {
-        return mock(MemberPhotoService.class);
+    @MockBean(GooglePhotoAccessorImpl.class)
+    public GooglePhotoAccessor googlePhotoAccessor() {
+        return mock(GooglePhotoAccessor.class);
     }
-
 }

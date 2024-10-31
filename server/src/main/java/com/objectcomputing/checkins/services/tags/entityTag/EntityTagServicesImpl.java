@@ -5,14 +5,13 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
-
 
 @Singleton
 public class EntityTagServicesImpl implements EntityTagServices {
@@ -35,7 +34,7 @@ public class EntityTagServicesImpl implements EntityTagServices {
     public EntityTag save(EntityTag entityTag) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         EntityTag entityTagToReturn = null;
         if (entityTag != null) {
@@ -66,7 +65,7 @@ public class EntityTagServicesImpl implements EntityTagServices {
     public EntityTag update(@NotNull EntityTag entityTag) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         EntityTag newEntityTag = null;
 
@@ -84,7 +83,7 @@ public class EntityTagServicesImpl implements EntityTagServices {
     public void delete(@NotNull UUID id) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         entityTagRepository.deleteById(id);
     }

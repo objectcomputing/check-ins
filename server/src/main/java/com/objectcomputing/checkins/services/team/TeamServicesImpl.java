@@ -6,14 +6,21 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.team.member.*;
-
+import com.objectcomputing.checkins.services.team.member.TeamMember;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
+import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
@@ -68,7 +75,8 @@ public class TeamServicesImpl implements TeamServices {
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(teamMember ->
-                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId()))).collect(Collectors.toList());
+                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId())))
+                .toList();
 
         return fromEntity(foundTeam, teamMembers);
     }
@@ -94,9 +102,9 @@ public class TeamServicesImpl implements TeamServices {
 
                     Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
                     //add any new members & updates
-                    teamDTO.getTeamMembers().stream().forEach((updatedMember) -> {
-                        Optional<TeamMember> first = existingTeamMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
-                        if (!first.isPresent()) {
+                    teamDTO.getTeamMembers().forEach(updatedMember -> {
+                        Optional<TeamMember> first = existingTeamMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
+                        if (first.isEmpty()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
                         } else {
@@ -106,8 +114,8 @@ public class TeamServicesImpl implements TeamServices {
                     });
 
                     //delete any removed members
-                    existingTeamMembers.stream().forEach((existingMember) -> {
-                        if (!teamDTO.getTeamMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
+                    existingTeamMembers.forEach(existingMember -> {
+                        if (teamDTO.getTeamMembers().stream().noneMatch(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId()))) {
                             teamMemberServices.delete(existingMember.getId());
                         }
                     });
@@ -119,7 +127,7 @@ public class TeamServicesImpl implements TeamServices {
             }
             return updated;
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
     }
 
@@ -147,7 +155,7 @@ public class TeamServicesImpl implements TeamServices {
             teamMemberServices.deleteByTeam(id);
             teamsRepo.deleteById(id);
         } else {
-            throw new PermissionException("You are not authorized to perform this operation");
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         return true;
     }
@@ -156,7 +164,7 @@ public class TeamServicesImpl implements TeamServices {
         if (dto == null) {
             return null;
         }
-        return new Team(dto.getId(), dto.getName(), dto.getDescription());
+        return new Team(dto.getId(), dto.getName(), dto.getDescription(), dto.isActive());
     }
 
     private TeamMember fromMemberDTO(TeamCreateDTO.TeamMemberCreateDTO memberDTO, UUID teamId) {
@@ -175,7 +183,7 @@ public class TeamServicesImpl implements TeamServices {
         if (entity == null) {
             return null;
         }
-        TeamResponseDTO dto = new TeamResponseDTO(entity.getId(), entity.getName(), entity.getDescription());
+        TeamResponseDTO dto = new TeamResponseDTO(entity.getId(), entity.getName(), entity.getDescription(), entity.isActive());
         dto.setTeamMembers(memberEntities);
         return dto;
     }
@@ -184,7 +192,7 @@ public class TeamServicesImpl implements TeamServices {
         if (dto == null) {
             return null;
         }
-        return new Team(null, dto.getName(), dto.getDescription());
+        return new Team(null, dto.getName(), dto.getDescription(), dto.isActive());
     }
 
     private TeamMemberResponseDTO fromMemberEntity(TeamMember teamMember, MemberProfile memberProfile) {

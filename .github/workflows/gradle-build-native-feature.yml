@@ -1,0 +1,39 @@
+name: Gradle Build - Native - Feature / Bug
+on:
+  push:
+    branches:
+      - 'feature-**/*'
+      - 'bugfix-**/*'
+      - 'chore-**/*'
+      - 'doc-**/*'
+      - 'hotfix-**/*'
+      - 'dependabot/**/*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node Stable
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up GraalVM 21
+        uses: graalvm/setup-graalvm@v1.1.8
+        with:
+          distribution: 'graalvm'
+          java-version: '21'
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Gradle runs tests
+        uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+        with:
+          arguments: nativeTest

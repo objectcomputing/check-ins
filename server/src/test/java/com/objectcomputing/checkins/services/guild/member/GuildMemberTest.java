@@ -1,25 +1,21 @@
 package com.objectcomputing.checkins.services.guild.member;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
 import jakarta.inject.Inject;
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GuildMemberTest {
+class GuildMemberTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
-
 
     @Test
     void testGuildMemberInstantiation() {
@@ -29,7 +25,7 @@ class GuildMemberTest {
         GuildMember guildMember = new GuildMember(guildId, memberId, lead);
         assertEquals(guildId, guildMember.getGuildId());
         assertEquals(memberId, guildMember.getMemberId());
-        assertEquals(lead, guildMember.isLead());
+        assertEquals(lead, guildMember.getLead());
     }
 
     @Test
@@ -42,7 +38,7 @@ class GuildMemberTest {
         assertEquals(id, guildMember.getId());
         assertEquals(guildId, guildMember.getGuildId());
         assertEquals(memberId, guildMember.getMemberId());
-        assertEquals(guildMember.isLead(), lead);
+        assertEquals(guildMember.getLead(), lead);
 
         Set<ConstraintViolation<GuildMember>> violations = validator.validate(guildMember);
         assertTrue(violations.isEmpty());
@@ -63,7 +59,7 @@ class GuildMemberTest {
         Set<ConstraintViolation<GuildMember>> violations = validator.validate(guildMember);
         assertEquals(2, violations.size());
         for (ConstraintViolation<GuildMember> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

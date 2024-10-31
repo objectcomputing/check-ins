@@ -11,28 +11,36 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Singleton
-public class SkillRecordServicesImpl implements SkillRecordServices {
+class SkillRecordServicesImpl implements SkillRecordServices {
 
     private final SkillRecordRepository skillRecordRepository;
+    private final SkillRecordFileProvider skillRecordFileProvider;
 
-    public SkillRecordServicesImpl(SkillRecordRepository skillRecordRepository) {
+    public SkillRecordServicesImpl(SkillRecordRepository skillRecordRepository, SkillRecordFileProvider skillRecordFileProvider) {
         this.skillRecordRepository = skillRecordRepository;
+        this.skillRecordFileProvider = skillRecordFileProvider;
     }
 
     @Override
-    public File generateFile() {
+    public File generateFile() throws IOException {
         List<SkillRecord> skillRecords = skillRecordRepository.findAll();
 
-        String[] headers = { "name", "description", "extraneous", "pending", "category_name" };
-        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(headers).withQuote('"');
+        String[] headers = {"name", "description", "extraneous", "pending", "category_name"};
+        CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setHeader(headers).setQuote('"').build();
 
-        File csvFile = new File("skill_records.csv");
-        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csvFile, StandardCharsets.UTF_8), csvFormat)) {
-            for (SkillRecord record : skillRecords) {
-                printer.printRecord(record.getName(), record.getDescription(), record.isExtraneous(), record.isPending(), record.getCategoryName());
+        File csvFile = skillRecordFileProvider.provideFile();
+        try (FileWriter fileWriter = new FileWriter(csvFile, StandardCharsets.UTF_8);
+             CSVPrinter printer = new CSVPrinter(fileWriter, csvFormat)
+        ) {
+            for (SkillRecord skillRecord : skillRecords) {
+                printer.printRecord(
+                        skillRecord.getName(),
+                        skillRecord.getDescription(),
+                        skillRecord.isExtraneous(),
+                        skillRecord.isPending(),
+                        skillRecord.getCategoryName()
+                );
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
         return csvFile;

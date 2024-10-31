@@ -1,19 +1,16 @@
 package com.objectcomputing.checkins.services.team;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
 import jakarta.inject.Inject;
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
+import org.junit.jupiter.api.Test;
+
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TeamCreateDTOTest {
+class TeamCreateDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -34,7 +31,7 @@ class TeamCreateDTOTest {
         Set<ConstraintViolation<TeamCreateDTO>> violations = validator.validate(dto);
         assertEquals(1, violations.size());
         for (ConstraintViolation<TeamCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be blank");
+            assertEquals("must not be blank", violation.getMessage());
         }
     }
 

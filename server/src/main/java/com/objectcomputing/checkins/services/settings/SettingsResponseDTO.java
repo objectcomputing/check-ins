@@ -1,51 +1,50 @@
 package com.objectcomputing.checkins.services.settings;
 
-import java.util.UUID;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.UUID;
+import java.util.List;
+
+@Setter
+@Getter
 @Introspected
+@AllArgsConstructor
 public class SettingsResponseDTO {
 
     @NotNull
-    @Schema(required = true, description = "id of the setting")
+    @Schema(description = "id of the setting")
     private UUID id;
 
-    @NotNull
     @NotBlank
-    @Schema(required = true, description = "name of the setting")
+    @Schema(description = "name of the setting")
     private String name;
-    
-    @NotNull
+
     @NotBlank
-    @Schema(required = true, description = "value of the setting")
-    private String value; 
+    @Schema(description = "description for the setting")
+    private String description;
 
-    public UUID getId() {
-        return this.id;
-    }
+    @NotNull
+    @Schema(description = "category of the setting")
+    private SettingOption.Category category;
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    @NotNull
+    @Schema(description = "type of the setting")
+    private SettingOption.Type type;
 
-    public String getName() {
-        return this.name;
-    }
+    @NotNull
+    @Schema(description = "possible values for the setting")
+    private List<String> values;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @NotBlank
+    @Schema(description = "value of the setting")
+    private String value;
 
-    public String getValue() {
-        return this.value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public SettingsResponseDTO() {
     }
 }

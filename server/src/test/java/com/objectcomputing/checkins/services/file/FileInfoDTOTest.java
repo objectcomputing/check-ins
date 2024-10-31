@@ -1,18 +1,17 @@
 package com.objectcomputing.checkins.services.file;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import javax.validation.ConstraintViolation;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-public class FileInfoDTOTest {
+class FileInfoDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -31,9 +30,9 @@ public class FileInfoDTOTest {
         FileInfoDTO dto = new FileInfoDTO();
 
         Set<ConstraintViolation<FileInfoDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 4);
+        assertEquals(4, violations.size());
         for (ConstraintViolation<FileInfoDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 
@@ -44,10 +43,10 @@ public class FileInfoDTOTest {
         UUID testCheckinId = UUID.randomUUID();
 
         dto.setFileId("some.file.id");
-        assertEquals(dto.getFileId(), "some.file.id");
+        assertEquals("some.file.id", dto.getFileId());
 
         dto.setName("some.file.name");
-        assertEquals(dto.getName(), "some.file.name");
+        assertEquals("some.file.name", dto.getName());
 
         dto.setCheckInId(testCheckinId);
         assertEquals(dto.getCheckInId(), testCheckinId);

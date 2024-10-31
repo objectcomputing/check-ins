@@ -4,12 +4,11 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Set;
 import java.util.UUID;
-
 
 @Singleton
 public class TagServicesImpl implements TagServices {
@@ -27,7 +26,7 @@ public class TagServicesImpl implements TagServices {
     public Tag save(Tag tag) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         Tag tagToReturn = null;
         if (tag != null) {
@@ -54,7 +53,7 @@ public class TagServicesImpl implements TagServices {
     public Tag update(@NotNull Tag tag) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         Tag newTag = null;
 
@@ -71,7 +70,7 @@ public class TagServicesImpl implements TagServices {
     public void delete(@NotNull UUID id) {
 
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
 
         tagRepository.deleteById(id);
     }

@@ -5,30 +5,20 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
-import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import jakarta.inject.Inject;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.containers.PostgreSQLContainer;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MicronautTest(environments = {Environment.TEST}, transactional = false)
-@Testcontainers
 public abstract class TestContainersSuite implements RepositoryFixture, TestPropertyProvider {
 
-    @Container
-    private static final PostgreSQLContainer<?> postgres;
-
-    static {
-        postgres = new PostgreSQLContainer<>("postgres:11.16");
-        postgres.waitingFor(Wait.forLogMessage(".*database system is ready to accept connections\\n", 1));
-        postgres.start();
-//        System.setProperties("FROM_ADDRESS", "moshirim@objectcomputing.com");
-    }
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:11.6");
 
     @Inject
     private EmbeddedServer embeddedServer;
@@ -36,38 +26,78 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
     @Inject
     private Flyway flyway;
 
-    private final boolean shouldResetDBAfterEachTest;
+    public TestContainersSuite() {}
 
-    public TestContainersSuite() {
-        this(true);
-    }
-
-    public TestContainersSuite(boolean shouldResetDBAfterEachTest) {
-        this.shouldResetDBAfterEachTest = shouldResetDBAfterEachTest;
+    private void deleteAllEntities() {
+        // Note order can matter here.
+        getVolunteeringEventRepository().deleteAll();
+        getVolunteeringRelationshipRepository().deleteAll();
+        getVolunteeringOrganizationRepository().deleteAll();
+        getEarnedCertificationRepository().deleteAll();
+        getCertificationRepository().deleteAll();
+        getEntityTagRepository().deleteAll();
+        getTagRepository().deleteAll();
+        getPulseResponseRepository().deleteAll();
+        getCheckInNoteRepository().deleteAll();
+        getPrivateNoteRepository().deleteAll();
+        getCheckInDocumentRepository().deleteAll();
+        getActionItemRepository().deleteAll();
+        getAgendaItemRepository().deleteAll();
+        getQuestionRepository().deleteAll();
+        getMemberHistoryRepository().deleteAll();
+        getMemberSkillRepository().deleteAll();
+        getSkillCategorySkillRepository().deleteAll();
+        getSkillCategoryRepository().deleteAll();
+        getSkillRepository().deleteAll();
+        getQuestionCategoryRepository().deleteAll();
+        getSurveyRepository().deleteAll();
+        getEmployeeHoursRepository().deleteAll();
+        getFeedbackAnswerRepository().deleteAll();
+        getTemplateQuestionRepository().deleteAll();
+        getSettingsRepository().deleteAll();
+        getOpportunitiesRepository().deleteAll();
+        getDemographicsRepository().deleteAll();
+        getRolePermissionRepository().deleteAll();
+        getEmailRepository().deleteAll();
+        getGuildMemberRepository().deleteAll();
+        getGuildMemberHistoryRepository().deleteAll();
+        getGuildRepository().deleteAll();
+        getKudosRecipientRepository().deleteAll();
+        getKudosRepository().deleteAll();
+        getTeamMemberRepository().deleteAll();
+        getTeamRepository().deleteAll();
+        getMemberRoleRepository().deleteAll();
+        getRoleDocumentationRepository().deleteAll();
+        getDocumentRepository().deleteAll();
+        getRoleRepository().deleteAll();
+        getCheckInRepository().deleteAll();
+        getFeedbackRequestRepository().deleteAll();
+        getReviewPeriodRepository().deleteAll();
+        getFeedbackTemplateRepository().deleteAll();
+        getMemberProfileRepository().deleteAll();
+        getReviewAssignmentRepository().deleteAll();
     }
 
     @BeforeEach
-    private void setup() {
+    public void setup() {
+        deleteAllEntities();
         flyway.migrate();
-    }
-
-    @AfterEach
-    private void teardown() {
-        if(shouldResetDBAfterEachTest) {
-            flyway.clean();
-        }
     }
 
     @Override
     public Map<String, String> getProperties() {
+        if (!postgres.isRunning()) {
+            postgres.start();
+        }
         HashMap<String, String> properties = new HashMap<>();
         properties.put("datasources.default.url", getJdbcUrl());
         properties.put("datasources.default.username", getUsername());
         properties.put("datasources.default.password", getPassword());
         properties.put("datasources.default.dialect", "POSTGRES");
-        properties.put("datasources.default.driverClassName", "org.testcontainers.jdbc.ContainerDatabaseDriver");
-        properties.put("mail-jet.from_address", "someEmail@gmail.com");
-        properties.put("mail-jet.from_name", "John Doe");
+        properties.put("datasources.default.driverClassName", "org.postgresql.Driver");
+        properties.put("flyway.datasources.default.clean-schema", "true"); // Needed to run Flyway.clean()
+        properties.put("mail-jet.from-address", "someEmail@gmail.com");
+        properties.put("mail-jet.from-name", "John Doe");
         return properties;
     }
 

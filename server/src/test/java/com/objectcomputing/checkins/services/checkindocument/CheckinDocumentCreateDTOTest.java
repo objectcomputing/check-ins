@@ -1,18 +1,17 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import io.micronaut.validation.validator.Validator;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import javax.validation.ConstraintViolation;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-public class CheckinDocumentCreateDTOTest {
+class CheckinDocumentCreateDTOTest extends TestContainersSuite {
 
     @Inject
     private Validator validator;
@@ -29,9 +28,9 @@ public class CheckinDocumentCreateDTOTest {
         CheckinDocumentCreateDTO dto = new CheckinDocumentCreateDTO();
 
         Set<ConstraintViolation<CheckinDocumentCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 2);
+        assertEquals(2, violations.size());
         for (ConstraintViolation<CheckinDocumentCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            assertEquals("must not be null", violation.getMessage());
         }
     }
 

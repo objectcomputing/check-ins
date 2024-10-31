@@ -1,48 +1,51 @@
-import { resolve } from "./api.js";
+import { resolve } from './api.js';
 
-const reviewPeriodsUrl = "/services/review-periods";
+const reviewPeriodsUrl = '/services/review-periods';
 
-export const getReviewPeriods = async (cookie) => {
+export const getReviewPeriods = async cookie => {
   return resolve({
     url: reviewPeriodsUrl,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
 export const getReviewPeriod = async (id, cookie) => {
   return resolve({
     url: `${reviewPeriodsUrl}/${id}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
 export const createReviewPeriod = async (reviewPeriod, cookie) => {
   return resolve({
-    method: "post",
+    method: 'POST',
     url: reviewPeriodsUrl,
-    responseType: "json",
     data: reviewPeriod,
-    headers: { "X-CSRF-Header": cookie },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
 export const updateReviewPeriod = async (reviewPeriod, cookie) => {
   return resolve({
-    method: "put",
+    method: 'PUT',
     url: reviewPeriodsUrl,
-    responseType: "json",
     data: reviewPeriod,
-    headers: { "X-CSRF-Header": cookie },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
 export const removeReviewPeriod = async (id, cookie) => {
   return resolve({
-    method: "delete",
+    method: 'DELETE',
     url: `${reviewPeriodsUrl}/${id}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };

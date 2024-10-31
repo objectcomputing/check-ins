@@ -8,41 +8,41 @@ import com.objectcomputing.checkins.services.refresh_token.RefreshToken;
 import com.objectcomputing.checkins.services.refresh_token.RefreshTokenRepository;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.token.event.RefreshTokenGeneratedEvent;
 import io.micronaut.security.token.refresh.RefreshTokenPersistence;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Singleton
 public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
 
-    final Logger LOG = LoggerFactory.getLogger(CustomRefreshTokenPersistence.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomRefreshTokenPersistence.class);
+
     final MemberProfileRepository memberProfileRepo;
     final RefreshTokenRepository refreshTokenRepo;
     final PermissionServices permissionServices;
     final RoleServices roleServices;
 
+    final RolePermissionServices rolePermissionServices;
 
-    public CustomRefreshTokenPersistence(
-            MemberProfileRepository memberProfileRepo,
-            RefreshTokenRepository refreshTokenRepo,
-            PermissionServices permissionServices,
-            RoleServices roleServices
-            )
-    {
+    public CustomRefreshTokenPersistence(MemberProfileRepository memberProfileRepo, RefreshTokenRepository refreshTokenRepo, PermissionServices permissionServices, RoleServices roleServices, RolePermissionServices rolePermissionServices) {
         this.memberProfileRepo = memberProfileRepo;
         this.refreshTokenRepo = refreshTokenRepo;
         this.permissionServices = permissionServices;
         this.roleServices = roleServices;
+        this.rolePermissionServices = rolePermissionServices;
     }
 
     @Override
@@ -71,17 +71,17 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
         }
     }
 
-        public Authentication createAuthentication(MemberProfile memberProfile) {
-            List<Permission> permissions = permissionServices.findUserPermissions(memberProfile.getId());
-            List<String> permissionsAsString = permissions.stream().map(Permission::getPermission).collect(Collectors.toList());
+    public Authentication createAuthentication(MemberProfile memberProfile) {
+        List<Permission> permissions = rolePermissionServices.findUserPermissions(memberProfile.getId());
+        List<String> permissionsAsString = permissions.stream().map(Permission::name).toList();
 
-            Set<Role> userRoles = roleServices.findUserRoles(memberProfile.getId());
-            List<String> rolesAsString = userRoles.stream().map(Role::getRole).collect(Collectors.toList());
+        Set<Role> userRoles = roleServices.findUserRoles(memberProfile.getId());
+        List<String> rolesAsString = userRoles.stream().map(Role::getRole).toList();
 
-            Map<String, Object> attributes = new HashMap<>();
-            attributes.put("permissions", permissionsAsString);
-            attributes.put("email", memberProfile.getWorkEmail());
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("permissions", permissionsAsString);
+        attributes.put("email", memberProfile.getWorkEmail());
 
-            return Authentication.build(memberProfile.getWorkEmail(), rolesAsString, attributes);
+        return Authentication.build(memberProfile.getWorkEmail(), rolesAsString, attributes);
     }
 }

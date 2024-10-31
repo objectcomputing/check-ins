@@ -2,32 +2,32 @@ package com.objectcomputing.checkins.services.employee_hours;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.memberprofile.memberphoto.MemberPhotoServiceImpl;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
-    private final MemberProfileRepository memberRepo;
-    private final CurrentUserServices currentUserServices;
-    private final EmployeeHoursRepository employeehourRepo;
     private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
 
+    private final CurrentUserServices currentUserServices;
+    private final EmployeeHoursRepository employeehourRepo;
 
-
-    public EmployeeHoursServicesImpl(MemberProfileRepository memberRepo,
-                                     CurrentUserServices currentUserServices,
+    public EmployeeHoursServicesImpl(CurrentUserServices currentUserServices,
                                      EmployeeHoursRepository employeehourRepo) {
-        this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
         this.employeehourRepo = employeehourRepo;
     }
@@ -40,16 +40,16 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
         List<EmployeeHours> employeeHoursList = new ArrayList<>();
         Set<EmployeeHours> employeeHours = new HashSet<>();
         EmployeeHoursResponseDTO responseDTO = new EmployeeHoursResponseDTO();
-        validate(!isAdmin, "You are not authorized to perform this operation");
+        validate(!isAdmin, NOT_AUTHORIZED_MSG);
         responseDTO.setRecordCountDeleted(employeehourRepo.count());
         employeehourRepo.deleteAll();
         try {
-           employeeHoursList = EmployeeaHoursCSVHelper.employeeHrsCsv(file.getInputStream());
+           employeeHoursList = EmployeeHoursCSVHelper.employeeHrsCsv(file.getInputStream());
             employeehourRepo.saveAll(employeeHoursList);
             for(EmployeeHours hours: employeeHoursList) {
                 employeeHours.add(hours);
             }
-            responseDTO.setRecordCountInserted(employeeHours.size());
+            responseDTO.setRecordCountInserted((long) employeeHours.size());
             responseDTO.setEmployeehoursSet(employeeHours);
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
@@ -60,9 +60,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
     @Override
     public EmployeeHours read(UUID id) {
-        EmployeeHours result = employeehourRepo.findById(id).orElse(null);
-
-        return result;
+        return employeehourRepo.findById(id).orElse(null);
     }
 
     @Override
@@ -75,10 +73,10 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
         if(employeeId !=null) {
             validate((!isAdmin && currentUser!=null&& !currentUser.getEmployeeId().equals(employeeId)),
-                       "You are not authorized to perform this operation");
+                       NOT_AUTHORIZED_MSG);
             employeeHours.retainAll(employeehourRepo.findByEmployeeId(employeeId));
         } else {
-            validate(!isAdmin, "You are not authorized to perform this operation");
+            validate(!isAdmin, NOT_AUTHORIZED_MSG);
         }
 
 

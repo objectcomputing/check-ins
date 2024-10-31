@@ -1,42 +1,43 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.inject.Named;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 @Controller("/services/review-periods")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "reviews")
 public class ReviewPeriodController {
 
     private final ReviewPeriodServices reviewPeriodServices;
-    private final EventLoopGroup eventLoopGroup;
-    private final ExecutorService ioExecutorService;
+    private final ReviewAssignmentServices reviewAssignmentServices;
 
-    public ReviewPeriodController(ReviewPeriodServices reviewPeriodServices, EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public ReviewPeriodController(ReviewPeriodServices reviewPeriodServices, ReviewAssignmentServices reviewAssignmentServices) {
         this.reviewPeriodServices = reviewPeriodServices;
-        this.eventLoopGroup = eventLoopGroup;
-        this.ioExecutorService = ioExecutorService;
+        this.reviewAssignmentServices = reviewAssignmentServices;
     }
 
     /**
@@ -45,17 +46,20 @@ public class ReviewPeriodController {
      * @param period  a {@link ReviewPeriodCreateDTO} representing the desired review period
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
-    @Post()
-    public Mono<HttpResponse<ReviewPeriod>> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<ReviewPeriodCreateDTO> request) {
+    @Post
+    @RequiredPermission(Permission.CAN_CREATE_REVIEW_PERIOD)
+    public HttpResponse<ReviewPeriod> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
+        HttpResponse httpResponse;
+        Set<ReviewAssignment> reviewAssignments;
 
-        return Mono.fromCallable(() -> reviewPeriodServices.save(new ReviewPeriod(period.getName(), period.isOpen(), period.getReviewTemplateId(), period.getSelfReviewTemplateId())))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(reviewPeriod -> {
-                    return (HttpResponse<ReviewPeriod>) HttpResponse.created(reviewPeriod)
-                            .headers(headers -> headers.location(
-                                    URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId()))));
-                }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
-
+        ReviewPeriod reviewPeriod = reviewPeriodServices.save(period.convertToEntity());
+        httpResponse = HttpResponse.created(reviewPeriod)
+                        .headers(headers -> headers
+                                .location(URI.create(String.format("%s/%s", request.getPath(), reviewPeriod.getId())))
+                        );
+        reviewAssignments = reviewAssignmentServices.defaultReviewAssignments(reviewPeriod.getId());
+        reviewAssignmentServices.saveAll(reviewPeriod.getId(), reviewAssignments.stream().toList(), true);
+        return httpResponse;
     }
 
     /**
@@ -64,37 +68,27 @@ public class ReviewPeriodController {
      * @param id {@link UUID} of the review entry
      * @return a streamable response containing the found {@link ReviewPeriod} with the given ID
      */
-
     @Get("/{id}")
-    public Mono<HttpResponse<ReviewPeriod>> getById(@NotNull UUID id) {
-
-        return Mono.fromCallable(() -> {
-            ReviewPeriod result = reviewPeriodServices.findById(id);
-            if (result == null) {
-                throw new NotFoundException("No review period for UUID");
-            }
-            return result;
-        }).publishOn(Schedulers.fromExecutor(eventLoopGroup)).map(reviewPeriod -> {
-            return (HttpResponse<ReviewPeriod>) HttpResponse.ok(reviewPeriod);
-        }).subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
+    public ReviewPeriod getById(@NotNull UUID id) {
+        ReviewPeriod result = reviewPeriodServices.findById(id);
+        if (result == null) {
+            throw new NotFoundException("No review period for UUID");
+        }
+        return result;
     }
 
     /**
      * Find {@link ReviewPeriod}s by name and/or open status, if both are blank get all review periods.
      *
      * @param name, name of the review period
-     * @param open, whether the review period remains open
+     * @param reviewStatus, the current {@link ReviewStatus} of the review (
      * @return a streamable response containing a {@link Set} of {@link ReviewPeriod}s that match the given criteria
      */
-
-    @Get("/{?name,pending}")
-    public Mono<HttpResponse<Set<ReviewPeriod>>> findByValue(@Nullable String name,
-                                                      @Nullable Boolean open) {
-
-        return Mono.fromCallable(() -> reviewPeriodServices.findByValue(name, open))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(reviewPeriods -> (HttpResponse<Set<ReviewPeriod>>) HttpResponse.ok(reviewPeriods))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @Get("/{?name,reviewStatus}")
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
+    public Set<ReviewPeriod> findByValue(@Nullable String name, @Nullable ReviewStatus reviewStatus) {
+        return reviewPeriodServices.findByValue(name, reviewStatus);
     }
 
     /**
@@ -103,16 +97,14 @@ public class ReviewPeriodController {
      * @param reviewPeriod  the updated {@link ReviewPeriod}
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
-    @Put()
-    public Mono<HttpResponse<ReviewPeriod>> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<ReviewPeriod> request) {
-
-        return Mono.fromCallable(() -> reviewPeriodServices.update(reviewPeriod))
-                .publishOn(Schedulers.fromExecutor(eventLoopGroup))
-                .map(updatedReviewPeriod -> (HttpResponse<ReviewPeriod>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewPeriod.getId()))))
-                        .body(updatedReviewPeriod))
-                .subscribeOn(Schedulers.fromExecutor(ioExecutorService));
+    @Put
+    @RequiredPermission(Permission.CAN_UPDATE_REVIEW_PERIOD)
+    public HttpResponse<ReviewPeriod> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
+        ReviewPeriod updatedReviewPeriod = reviewPeriodServices.update(reviewPeriod);
+        return HttpResponse.ok(updatedReviewPeriod)
+                        .headers(headers -> headers
+                                .location(URI.create(String.format("%s/%s", request.getPath(), updatedReviewPeriod.getId())))
+                        );
     }
 
     /**
@@ -121,10 +113,9 @@ public class ReviewPeriodController {
      * @param id  the id of the review period to be deleted to delete
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteReviewPeriod(@NotNull UUID id) {
+    @RequiredPermission(Permission.CAN_DELETE_REVIEW_PERIOD)
+    @Status(HttpStatus.OK)
+    public void deleteReviewPeriod(@NotNull UUID id) {
         reviewPeriodServices.delete(id);
-        return HttpResponse
-                .ok();
     }
-
 }

@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -13,11 +14,15 @@ public interface MemberProfileServices {
 
     MemberProfile saveProfile(MemberProfile memberProfile);
 
-    Boolean deleteProfile(UUID id);
+    boolean deleteProfile(UUID id);
 
     MemberProfile findByName(@NotNull String firstName, @NotNull String lastName);
 
     List<MemberProfile> findAll();
 
     List<MemberProfile> getSupervisorsForId(UUID id);
+
+    List<MemberProfile> getSubordinatesForId(UUID id);
+
+    MemberProfile updateProfile(MemberProfile memberProfile);
 }

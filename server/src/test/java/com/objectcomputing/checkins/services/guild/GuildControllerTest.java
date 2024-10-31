@@ -1,7 +1,8 @@
 package com.objectcomputing.checkins.services.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
@@ -10,7 +11,9 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberServicesImpl;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -18,19 +21,30 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
-import jakarta.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfileFixture, RoleFixture, GuildMemberFixture {
 
@@ -38,8 +52,9 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Client("/services/guilds")
     HttpClient client;
 
-    @Mock
-    private final EmailSender emailSender = mock(EmailSender.class);
+    @Inject
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
     private GuildServicesImpl guildServicesImpl;
@@ -49,9 +64,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(emailSender);
-        guildServicesImpl.setEmailSender(emailSender);
-        guildMemberServicesImpl.setEmailSender(emailSender);
+        emailSender.reset();
     }
 
     @Test
@@ -60,6 +73,10 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         Guild guildEntity = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
         GuildMember guildLead = createLeadGuildMember(guildEntity, memberProfile);
+
+        // create another guild and guild lead to test the guild leads email...
+        MemberProfile memberProfile2 = memberWithoutBoss("barry");
+        GuildMember guildLead2 = createLeadGuildMember(guildEntity, memberProfile2);
 
         // Create an admin to request the changes
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
@@ -74,16 +91,20 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         // create list of existing guild lead and new member and add it to the request
         List<GuildUpdateDTO.GuildMemberUpdateDTO> newAndExistingMembers = new ArrayList<>();
         newAndExistingMembers.add(newMemberDTO);
-        newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.isLead()));
+        newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.getLead()));
+        newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead2, guildLead2.getLead()));
         requestBody.setGuildMembers(newAndExistingMembers);
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        verify(emailSender).sendEmail(null, null,
-                "Membership Changes have been made to the Ninja guild",
-                "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been added:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
-                "billm@objectcomputing.com"
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of(
+                        // Email to both the Guild leads
+                        List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the Ninja guild", "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been added:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile.getWorkEmail() + "," + memberProfile2.getWorkEmail())
+                ),
+                emailSender.events
         );
     }
 
@@ -104,18 +125,19 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         // create a guildUpdateDTO from existing guild
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
         // only include the guild lead in the request (effectively removes the guild member)
-        requestBody.setGuildMembers(Collections.singletonList(updateDefaultGuildMemberDto(guildLead, guildLead.isLead())));
+        requestBody.setGuildMembers(Collections.singletonList(updateDefaultGuildMemberDto(guildLead, guildLead.getLead())));
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        verify(emailSender).sendEmail(null, null,
-                "Membership Changes have been made to the Ninja guild",
-                "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been removed:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
-                "billm@objectcomputing.com"
+        assertEquals(1, emailSender.events.size());
+        assertEquals(List.of(
+                        List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the Ninja guild", "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been removed:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", memberProfile.getWorkEmail())
+                ),
+                emailSender.events
         );
     }
-    
+
     @Test
     void testCreateAGuild() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
@@ -123,17 +145,17 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
 
-        GuildResponseDTO guildEntity = response.body();
-
+        assertTrue(response.getBody().isPresent());
+        GuildResponseDTO guildEntity = response.getBody().get();
         assertEquals(guildCreateDTO.getDescription(), guildEntity.getDescription());
         assertEquals(guildCreateDTO.getName(), guildEntity.getName());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), guildEntity.getId()), response.getHeaders().get("location"));
-
     }
 
     @Test
@@ -143,6 +165,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("wwwu.fakelink.com");
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -155,8 +178,8 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         assertEquals("Link is invalid", errors.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals(request.getPath(), href.asText());
-
     }
+
     @Test
     void testCreateGuildNoLeads() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
@@ -164,6 +187,8 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setDescription("description");
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
+        guildCreateDTO.setCommunity(false);
+
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -181,6 +206,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testCreateAnInvalidGuild() {
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -196,7 +222,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
     @Test
     void testCreateANullGuild() {
-
         final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -211,7 +236,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
     @Test
     void testCreateAGuildWithExistingName() {
-
         Guild guildEntity = createDefaultGuild();
 
         GuildCreateDTO guildCreateDTO = new GuildCreateDTO();
@@ -220,6 +244,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildCreateDTO.setLink("https://www.compass.objectcomputing.com/guilds/name");
         guildCreateDTO.setGuildMembers(new ArrayList<>());
         guildCreateDTO.setGuildMembers(List.of(createDefaultGuildMemberDto(createADefaultMemberProfile(), true)));
+        guildCreateDTO.setCommunity(false);
 
         final HttpRequest<GuildCreateDTO> request = HttpRequest.POST("", guildCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -235,7 +260,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
     @Test
     void testReadGuild() {
-        Guild guildEntity = createDefaultGuild() ;
+        Guild guildEntity = createDefaultGuild();
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", guildEntity.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
         assertEntityDTOEqual(guildEntity, response.body());
@@ -244,7 +269,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
     @Test
     void testReadGuildNotFound() {
-
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Guild.class));
 
@@ -253,27 +277,24 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
     @Test
     void testFindAllGuilds() {
-
         Guild guildEntity = createDefaultGuild();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(GuildResponseDTO.class));
 
         assertEntityDTOEqual(Set.of(guildEntity), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
     void testFindByName() {
-        Guild guildEntity = createDefaultGuild() ;
+        Guild guildEntity = createDefaultGuild();
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", guildEntity.getName())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(GuildResponseDTO.class));
 
         assertEntityDTOEqual(Set.of(guildEntity), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -288,7 +309,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         assertEntityDTOEqual(Set.of(guildEntity), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -304,7 +324,6 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         assertEntityDTOEqual(Set.of(guildEntity), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -314,7 +333,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         GuildMember guildMember = createDefaultGuildMember(guildEntity, memberProfile);
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember, true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
@@ -327,7 +346,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
         assertEquals(request.getPath(), href);
-        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(NOT_AUTHORIZED_MSG, error);
     }
 
     @Test
@@ -340,7 +359,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         createAndAssignAdminRole(memberProfileOfAdmin);
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember, true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
@@ -365,7 +384,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
 
-        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember, true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -380,7 +399,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdateGuildNullName() {
         Guild guildEntity = createDefaultGuild();
 
-        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null,null);
+        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null, null, false);
         requestBody.setGuildMembers(new ArrayList<>());
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("", requestBody)
@@ -410,12 +429,12 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
-
     @Test
     void testUpdateGuildNotExist() {
         Guild guildEntity = createDefaultGuild();
         UUID requestId = UUID.randomUUID();
-        GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(), guildEntity.getDescription(), guildEntity.getLink());
+        GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(),
+                guildEntity.getDescription(), guildEntity.getLink(), guildEntity.isCommunity());
         requestBody.setGuildMembers(new ArrayList<>());
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
@@ -451,7 +470,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
-        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(NOT_AUTHORIZED_MSG, errors.asText());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
@@ -466,7 +485,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         createDefaultGuildMember(guildEntity, memberProfileOfAdmin);
 
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", guildEntity.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
-        final HttpResponse response = client.toBlocking().exchange(request);
+        final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
     }
@@ -482,7 +501,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         // createDefaultGuildMember(guild, memberProfileOfGuildMember);
 
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", guildEntity.getId())).basicAuth(memberProfileofGuildLeadEntity.getWorkEmail(), MEMBER_ROLE);
-        final HttpResponse response = client.toBlocking().exchange(request);
+        final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
     }
@@ -502,7 +521,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
-        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(NOT_AUTHORIZED_MSG, errors.asText());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 

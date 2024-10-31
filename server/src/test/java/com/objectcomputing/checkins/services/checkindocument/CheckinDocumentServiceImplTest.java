@@ -1,30 +1,40 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CheckinDocumentServiceImplTest {
+// Disabled in nativeTest, as we get an exception from Mockito
+// => org.graalvm.nativeimage.MissingReflectionRegistrationError: The program tried to reflectively access the proxy class
+// inheriting [org.mockito.plugins.MockMaker] without it being registered for runtime reflection
+@DisabledInNativeImage
+class CheckinDocumentServiceImplTest extends TestContainersSuite {
 
     @Mock
     private CheckInRepository checkinRepository;
@@ -38,14 +48,21 @@ public class CheckinDocumentServiceImplTest {
     @InjectMocks
     private CheckinDocumentServicesImpl services;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(checkinRepository, checkinDocumentRepository, currentUserServices);
+        reset(checkinRepository, checkinDocumentRepository, currentUserServices);
+    }
+
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test
@@ -96,8 +113,8 @@ public class CheckinDocumentServiceImplTest {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "docId");
         CheckIn checkin = new CheckIn();
 
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.of(checkin));
-        when(checkinDocumentRepository.save(eq(cd))).thenReturn(cd);
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.of(checkin));
+        when(checkinDocumentRepository.save(cd)).thenReturn(cd);
 
         assertEquals(cd, services.save(cd));
 
@@ -150,7 +167,7 @@ public class CheckinDocumentServiceImplTest {
     void testSaveCheckinDocumentNonExistingCheckIn() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "docId");
 
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("CheckIn %s doesn't exist", cd.getCheckinsId()), exception.getMessage());
@@ -165,8 +182,8 @@ public class CheckinDocumentServiceImplTest {
 
         CheckIn checkin = new CheckIn();
 
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.of(checkin));
-        when(checkinDocumentRepository.findByUploadDocId(eq(cd.getUploadDocId()))).thenReturn(Optional.of(cd));
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.of(checkin));
+        when(checkinDocumentRepository.findByUploadDocId(cd.getUploadDocId())).thenReturn(Optional.of(cd));
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("CheckinDocument with document ID %s already exists", cd.getUploadDocId()), exception.getMessage());
@@ -230,7 +247,7 @@ public class CheckinDocumentServiceImplTest {
     @Test
     void testUpdateCheckinDocumentDoesNotExist() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "docId");
-        when(checkinDocumentRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
+        when(checkinDocumentRepository.findById(cd.getCheckinsId())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("CheckinDocument id %s not found, please try inserting instead", cd.getId()), exception.getMessage());
@@ -243,8 +260,8 @@ public class CheckinDocumentServiceImplTest {
     @Test
     void testUpdateCheckInDoesNotExist() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "docId");
-        when(checkinDocumentRepository.findById(eq(cd.getId()))).thenReturn(Optional.of(cd));
-        when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
+        when(checkinDocumentRepository.findById(cd.getId())).thenReturn(Optional.of(cd));
+        when(checkinRepository.findById(cd.getCheckinsId())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("CheckIn %s doesn't exist", cd.getCheckinsId()), exception.getMessage());
@@ -270,7 +287,6 @@ public class CheckinDocumentServiceImplTest {
 
         services.deleteByCheckinId(UUID.randomUUID());
 
-        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(1)).deleteByCheckinsId(any(UUID.class));
     }
 
@@ -284,7 +300,6 @@ public class CheckinDocumentServiceImplTest {
         BadArgException exception = assertThrows(BadArgException.class, () -> services.deleteByCheckinId(uuid));
         assertEquals(String.format("CheckinDocument with CheckinsId %s does not exist", uuid), exception.getMessage());
 
-        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(0)).deleteByCheckinsId(any(UUID.class));
     }
 
@@ -296,7 +311,6 @@ public class CheckinDocumentServiceImplTest {
 
         services.deleteByUploadDocId("Test.Upload.Doc.Id");
 
-        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(1)).deleteByUploadDocId(any(String.class));
         verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
     }
@@ -310,8 +324,8 @@ public class CheckinDocumentServiceImplTest {
         BadArgException exception = assertThrows(BadArgException.class, () -> services.deleteByUploadDocId(id));
 
         assertEquals(String.format("CheckinDocument with uploadDocId %s does not exist", id), exception.getMessage());
-        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(0)).deleteByUploadDocId(any(String.class));
         verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
     }
 }
+

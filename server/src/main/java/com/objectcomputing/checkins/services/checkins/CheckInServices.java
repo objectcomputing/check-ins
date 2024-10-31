@@ -1,7 +1,10 @@
 package com.objectcomputing.checkins.services.checkins;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+
 import java.util.Set;
 import java.util.UUID;
+
 
 public interface CheckInServices {
 
@@ -13,5 +16,13 @@ public interface CheckInServices {
 
     Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed);
 
-    Boolean accessGranted(UUID checkin, UUID member);
+    boolean hasPermission(UUID memberId, Permission permission);
+
+    boolean accessGranted(UUID checkinId, UUID memberId);
+
+    boolean doesUserHaveViewAccess(UUID currentUserId, UUID checkinId, UUID createdById);
+
+    boolean canViewAllCheckins(UUID memberId);
+
+    boolean canUpdateAllCheckins(UUID memberId);
 }

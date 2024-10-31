@@ -14,7 +14,9 @@ public interface RoleFixture extends RepositoryFixture, PermissionFixture, Membe
     }
 
     default Role createAndAssignAdminRole(MemberProfile memberProfile) {
-        return createAndAssignRole(RoleType.ADMIN, memberProfile);
+        Role role = createAndAssignRole(RoleType.ADMIN, memberProfile);
+        setPermissionsForAdmin(role.getId());
+        return role;
     }
 
     // TODO phase out RoleType
@@ -65,9 +67,6 @@ public interface RoleFixture extends RepositoryFixture, PermissionFixture, Membe
         Role adminRole = createRole(new Role(RoleType.ADMIN.name(), "Admin Role"));
         Role pdlRole = createRole(new Role(RoleType.PDL.name(), "Pdl Role"));
         Role memberRole = createRole(new Role(RoleType.MEMBER.name(), "Member Role"));
-
-        //Save permissions
-        saveAllPermissions();
 
         //Setup permissions for Roles
         setPermissionsForAdmin(adminRole.getId());

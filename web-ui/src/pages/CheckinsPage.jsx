@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import {styled} from '@mui/material/styles';
-import { useParams, useHistory } from "react-router-dom";
-import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
-import AgendaItems from "../components/agenda/Agenda";
-import { AppContext } from "../context/AppContext";
+import React, { useContext, useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { useParams, useHistory } from 'react-router-dom';
+import ActionItemsPanel from '../components/action_item/ActionItemsPanel';
+import AgendaItems from '../components/agenda/Agenda';
+import { AppContext } from '../context/AppContext';
 import {
   selectMostRecentCheckin,
   selectCurrentUser,
@@ -13,22 +13,23 @@ import {
   selectCheckin,
   selectProfile,
   selectCheckinsForMember,
-} from "../context/selectors";
-import { getCheckins, createNewCheckin } from "../context/thunks";
-import { UPDATE_CHECKIN, UPDATE_TOAST } from "../context/actions";
-import CheckinDocs from "../components/checkin/documents/CheckinDocs";
-import CheckinsHistory from "../components/checkin/CheckinHistory";
-import Profile from "../components/profile/Profile";
-import GuidesPanel from "../components/guides/GuidesPanel";
-import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
-import Note from "../components/notes/Note";
-import PrivateNote from "../components/private-note/PrivateNote";
-import Personnel from "../components/personnel/Personnel";
-import { Button, Grid, Modal, Tooltip } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+  selectCanViewCheckinsPermission,
+} from '../context/selectors';
+import { getCheckins, createNewCheckin } from '../context/thunks';
+import { UPDATE_CHECKIN, UPDATE_TOAST } from '../context/actions';
+import CheckinDocs from '../components/checkin/documents/CheckinDocs';
+import CheckinsHistory from '../components/checkin/CheckinHistory';
+import Profile from '../components/profile/Profile';
+import GuidesPanel from '../components/guides/GuidesPanel';
+import PDLGuidesPanel from '../components/guides/PDLGuidesPanel';
+import Note from '../components/notes/Note';
+import PrivateNote from '../components/private-note/PrivateNote';
+import Personnel from '../components/personnel/Personnel';
+import { Button, Grid, Modal, Tooltip } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-import "./CheckinsPage.css";
-import { updateCheckin } from "../api/checkins";
+import './CheckinsPage.css';
+import { updateCheckin } from '../api/checkins';
 
 const PREFIX = 'CheckinsPage';
 const classes = {
@@ -39,17 +40,17 @@ const classes = {
 
 const Root = styled('div')(() => ({
   [`&.${classes.root}`]: {
-    padding: '12px',
+    padding: '12px'
   },
   [`& .${classes.navigate}`]: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "baseline",
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline'
   },
   [`& .${classes.addButton}`]: {
-    height: "3em",
-  },
+    height: '3em'
+  }
 }));
 
 const CheckinsPage = () => {
@@ -68,11 +69,11 @@ const CheckinsPage = () => {
     state,
     selectedProfile ? selectedProfile.id : currentUserId
   );
-  const hasOpenCheckins = memberCheckins.some((checkin) => !checkin.completed);
+  const hasOpenCheckins = memberCheckins.some(checkin => !checkin.completed);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   useEffect(() => {
-    if (selectedProfile) {
+    if (selectedProfile && selectCanViewCheckinsPermission(state)) {
       getCheckins(memberId, selectedProfile.pdlId, dispatch, csrf);
     }
   }, [memberId, selectedProfile, csrf, dispatch]);
@@ -115,9 +116,9 @@ const CheckinsPage = () => {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "You must have an assigned PDL in order to create a Check In",
-        },
+          severity: 'error',
+          toast: 'You must have an assigned PDL in order to create a Check In'
+        }
       });
       return;
     }
@@ -126,13 +127,14 @@ const CheckinsPage = () => {
   };
 
   return (
-    <Root className={classes.root} >
+    <Root className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={9}>
           <Profile
             memberId={selectedProfile?.id || currentUserId}
             pdlId={selectedProfile ? selectedProfile.pdlId : null}
             checkinPdlId={currentCheckin ? currentCheckin.pdlId : null}
+            showButtons={false}
           />
           <div className={classes.navigate}>
             <CheckinsHistory
@@ -147,7 +149,7 @@ const CheckinsPage = () => {
               enterTouchDelay={0}
               placement="top-start"
               title={
-                "This is disabled because there is already an open Check-In"
+                'This is disabled because there is already an open Check-In'
               }
             >
               <div

@@ -1,135 +1,109 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
+import com.objectcomputing.checkins.converter.LocalDateConverter;
+import com.objectcomputing.checkins.util.Util;
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@Introspected
 @Table(name = "employee_hours")
 public class EmployeeHours {
+
     @Id
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "UUID of employee hours", required = true)
+    @Schema(description = "UUID of employee hours")
     private UUID id;
 
     @NotNull
     @Column(name="employeeid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "employee id", required = true)
+    @Schema(description = "employee id")
     private String employeeId;
-
 
     @NotNull
     @Column(name="contributionhours")
     @TypeDef(type = DataType.FLOAT)
-    @Schema(description ="contribution hours of employee", required=true)
-    private float contributionHours;
+    @Schema(description ="contribution hours of employee")
+    private Float contributionHours;
 
+    @NotNull
     @Column(name="billablehours")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="billable hours of employee")
-    private float billableHours;
+    private Float billableHours;
 
+    @NotNull
     @Column(name="ptohours")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="PTO hours of employee")
-    private float ptoHours;
+    private Float ptoHours;
 
     @Column(name="updateddate")
     @NotNull
-    @Schema(description = "date for updatedDate", required = true)
+    @Schema(description = "date for updatedDate")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate updatedDate;
 
     @Column(name="targethours")
     @NotNull
-    @Schema(description = "Target hours for an employee", required = true)
-    private float targetHours;
+    @Schema(description = "Target hours for an employee")
+    private Float targetHours;
 
     @Column(name="asofdate")
     @Schema(description = "as of Date")
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate asOfDate;
 
+    @Column(name="billable_utilization")
+    @TypeDef(type = DataType.FLOAT)
+    @Schema(description ="Billable utilization hours")
+    @Nullable
+    private Float billableUtilization;
 
+    @Column(name="overtime_worked")
+    @TypeDef(type = DataType.FLOAT)
+    @Schema(description ="Number of hours of overtime worked")
+    @Nullable
+    private Float overtimeWorked;
 
-    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate,float targetHours, LocalDate asOfDate) {
+    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull Float contributionHours, Float billableHours, Float ptoHours, LocalDate updatedDate, Float targetHours, LocalDate asOfDate, @Nullable Float billableUtilization, @Nullable Float overtimeWorked) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
         this.billableHours = billableHours;
         this.ptoHours = ptoHours;
-        this.updatedDate=updatedDate;
-        this.targetHours= targetHours;
-        this.asOfDate= asOfDate;
+        this.updatedDate = updatedDate;
+        this.targetHours = targetHours;
+        this.asOfDate = asOfDate;
+        this.billableUtilization = billableUtilization;
+        this.overtimeWorked = overtimeWorked;
     }
 
-    public EmployeeHours(@NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate, float targetHours, LocalDate asOfDate) {
-        this(null,employeeId,contributionHours,billableHours,ptoHours,updatedDate,targetHours,asOfDate);
+    public EmployeeHours(@NotNull String employeeId, @NotNull Float contributionHours, @NotNull Float billableHours, @NotNull Float ptoHours, LocalDate updatedDate, @NotNull Float targetHours, LocalDate asOfDate, @Nullable Float billableUtilization, @Nullable Float overtimeWorked) {
+        this(null, employeeId, contributionHours, billableHours, ptoHours, updatedDate, targetHours, asOfDate, billableUtilization, overtimeWorked);
     }
-
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public float getContributionHours() {
-        return contributionHours;
-    }
-
-    public void setContributionHours(float contributionHours) {
-        this.contributionHours = contributionHours;
-    }
-
-    public float getBillableHours() {
-        return billableHours;
-    }
-
-    public void setBillableHours(float billableHours) {
-        this.billableHours = billableHours;
-    }
-
-    public float getPtoHours() {
-        return ptoHours;
-    }
-
-    public void setPtoHours(float ptoHours) {
-        this.ptoHours = ptoHours;
-    }
-
-    public LocalDate getUpdatedDate() { return updatedDate; }
-
-    public void setUpdatedDate(LocalDate updatedDate) { this.updatedDate = updatedDate; }
-
-    public float getTargetHours() { return targetHours; }
-
-    public void setTargetHours(float targetHours) { this.targetHours = targetHours; }
-
-    public LocalDate getAsOfDate() { return asOfDate; }
-
-    public void setAsOfDate(LocalDate asOfDate) { this.asOfDate = asOfDate; }
 
     @Override
     public boolean equals(Object o) {
@@ -143,12 +117,15 @@ public class EmployeeHours {
                 employeeId.equals(that.employeeId) &&
                 updatedDate.equals(that.updatedDate) &&
                 Float.compare(that.targetHours, targetHours) == 0 &&
-                asOfDate.equals(that.asOfDate) ;
+                asOfDate.equals(that.asOfDate) &&
+                Util.floatCompareNullSafeAndEqualWhenBothNull(that.billableUtilization, this.billableUtilization) == 0 &&
+                Util.floatCompareNullSafeAndEqualWhenBothNull(that.overtimeWorked, this.overtimeWorked) == 0
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours, asOfDate);
+        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours, asOfDate, billableUtilization, overtimeWorked);
     }
 
     @Override
@@ -162,6 +139,8 @@ public class EmployeeHours {
                 ", updatedDate=" + updatedDate +
                 ", targetHours=" + targetHours +
                 ", asOfDate=" + asOfDate +
+                ", billableUtilization=" + this.billableUtilization +
+                ", overtimeWorked=" + this.overtimeWorked +
                 '}';
     }
 }

@@ -1,43 +1,41 @@
-import React, { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
-import PdfIcon from '@mui/icons-material/PictureAsPdf';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import List from '@mui/material/List';
-import "./GuidesPanel.css";
-import GuideLink from "./GuideLink";
+import { useContext, useState } from 'react';
+
+import { AppContext } from '../../context/AppContext';
+import { selectCsrfToken, selectRoles, selectUserProfile } from '../../context/selectors.js';
+
+import { fetchDocumentsForRole, generate } from './GuidesPanel.jsx';
+import './GuidesPanel.css';
+
+const fallbackPdfs = [
+  {
+    id: '1',
+    name: 'Development Discussion Guide for PDLs',
+    url: '/pdfs/Development_Discussion_Guide_for_PDLs.pdf'
+  },
+  {
+    id: '2',
+    name: 'Expectations Discussion Guide for PDLs',
+    url: '/pdfs/Expectations_Discussion_Guide_for_PDLs.pdf'
+  },
+  {
+    id: '3',
+    name: 'Feedback Discussion Guide for PDLs',
+    url: '/pdfs/Feedback_Discussion_Guide_for_PDLs.pdf'
+  }
+];
 
 const PDLGuidesPanel = () => {
   const { state } = useContext(AppContext);
-  const { userProfile } = state;
-  const isPdl =
-    userProfile &&
-    userProfile.role &&
-    userProfile.role.length > 0 &&
-    userProfile.role.includes("PDL");
+  const csrf = selectCsrfToken(state);
+  const isPdl = selectUserProfile(state)?.role?.includes('PDL');
+  const [documents, setDocuments] = useState(fallbackPdfs);
 
-  const pdlPDFs = [
-    {
-      name: "Development Discussion Guide for PDLs",
-    },
-    {
-      name: "Expectations Discussion Guide for PDLs",
-    },
-    {
-      name: "Feedback Discussion Guide for PDLs",
-    },
-  ];
-
-  return isPdl ? (
-    <Card>
-      <CardHeader avatar={<PdfIcon />} title="Development Lead Guides" />
-      <List dense>
-        {pdlPDFs.map((pdlPDF) => (
-          <GuideLink key={pdlPDF.name} name={pdlPDF.name} />
-        ))}
-      </List>
-    </Card>
-  ) : null;
+  if (isPdl) {
+    fetchDocumentsForRole('PDL', selectRoles(state), csrf, setDocuments, fallbackPdfs, state.mockuments);
+    return generate('Development Lead Guides', documents);
+  } else {
+    return null;
+  }
 };
 
 export default PDLGuidesPanel;

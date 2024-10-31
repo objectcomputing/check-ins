@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
@@ -18,21 +17,22 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Inject;
-
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class FeedbackTemplateControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, TemplateQuestionFixture, FeedbackTemplateFixture {
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+import static org.junit.jupiter.api.Assertions.*;
+
+class FeedbackTemplateControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, TemplateQuestionFixture, FeedbackTemplateFixture {
 
     @Inject
     @Client("/services/feedback/templates")
@@ -41,12 +41,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackTemplateControllerTest.class);
 
     private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            LOG.error(e.getMessage());
-            return "";
-        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     FeedbackTemplate saveDefaultFeedbackTemplate(UUID creatorId) {
@@ -79,6 +74,8 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         dto.setCreatorId(feedbackTemplate.getCreatorId());
         dto.setIsPublic(feedbackTemplate.getIsPublic());
         dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
+        dto.setIsReview(feedbackTemplate.getIsReview());
+        dto.setActive(true);
         return dto;
     }
 
@@ -104,8 +101,6 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     void assertUnauthorized(HttpClientResponseException exception) {
-        final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
-        assertNull(body);
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
         assertEquals("Unauthorized", exception.getMessage());
     }
@@ -224,7 +219,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
     }
 
@@ -242,7 +237,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals("Attempted to update template with null ID", exception.getMessage());
+        assertTrue(exception.getResponse().body().toString().contains("requestBody.id: must not be null"));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
 
@@ -621,7 +616,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
     }
 
     @Test
@@ -683,6 +678,6 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(NOT_AUTHORIZED_MSG, exception.getMessage());
     }
 }

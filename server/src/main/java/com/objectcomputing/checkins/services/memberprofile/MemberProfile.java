@@ -1,23 +1,26 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.objectcomputing.checkins.converter.LocalDateConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "member_profile")
 public class MemberProfile {
@@ -26,7 +29,7 @@ public class MemberProfile {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of the member profile this entry is associated with", required = true)
+    @Schema(description = "id of the member profile this entry is associated with")
     private UUID id;
 
     @NotBlank
@@ -95,7 +98,7 @@ public class MemberProfile {
             read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com")
     private String workEmail;
 
     @Column(name="employeeid")
@@ -106,6 +109,7 @@ public class MemberProfile {
     @Column(name="startdate")
     @Schema(description = "employee's date of hire")
     @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate startDate;
 
     @Column(name="biotext")
@@ -126,11 +130,13 @@ public class MemberProfile {
     @Column(name="terminationdate")
     @Schema(description = "employee's date of termination")
     @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate terminationDate;
 
     @Column(name="birthdate")
     @Schema(description = "employee's birthdate")
     @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate birthDate;
 
     @Column(name="voluntary", columnDefinition = "boolean default false")
@@ -142,6 +148,12 @@ public class MemberProfile {
     @Schema(description = "employee is excluded from retention reports")
     @Nullable
     private Boolean excluded;
+
+    @Column(name="last_seen")
+    @Schema(description = "employee's last login")
+    @Nullable
+    @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
+    private LocalDate lastSeen;
 
     public MemberProfile(@NotBlank String firstName,
                          @Nullable String middleName,
@@ -158,9 +170,10 @@ public class MemberProfile {
                          @Nullable LocalDate terminationDate,
                          @Nullable LocalDate birthDate,
                          @Nullable Boolean voluntary,
-                         @Nullable Boolean excluded) {
+                         @Nullable Boolean excluded,
+                         @Nullable LocalDate lastSeen) {
         this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded);
+                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded, lastSeen);
     }
 
     public MemberProfile(UUID id,
@@ -179,7 +192,8 @@ public class MemberProfile {
                          @Nullable LocalDate terminationDate,
                          @Nullable LocalDate birthDate,
                          @Nullable Boolean voluntary,
-                         @Nullable Boolean excluded) {
+                         @Nullable Boolean excluded,
+                         @Nullable LocalDate lastSeen) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -197,150 +211,17 @@ public class MemberProfile {
         this.birthDate = birthDate;
         this.voluntary = voluntary;
         this.excluded = excluded;
+        this.lastSeen = lastSeen;
     }
 
     public MemberProfile() {
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public UUID getPdlId() {
-        return pdlId;
-    }
-
-    public void setPdlId(UUID pdlId) {
-        this.pdlId = pdlId;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getWorkEmail() {
-        return workEmail;
-    }
-
-    public void setWorkEmail(String workEmail) {
-        this.workEmail = workEmail;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getBioText() {
-        return bioText;
-    }
-
-    public void setBioText(String bioText) {
-        this.bioText = bioText;
-    }
-
-    @Nullable
-    public UUID getSupervisorid() {
-        return supervisorid;
-    }
-
-    public void setSupervisorid(@Nullable UUID supervisorid) {
-        this.supervisorid = supervisorid;
-    }
-
-    @Nullable
-    public LocalDate getTerminationDate() {
-        return terminationDate;
-    }
-
-    public void setTerminationDate(LocalDate terminationDate) {
-        this.terminationDate = terminationDate;
-    }
-
-    @Nullable
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(@Nullable LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    @Nullable
-    public Boolean getVoluntary() {
-        return voluntary;
-    }
-
-    public void setVoluntary(@Nullable Boolean voluntary) {
-        this.voluntary = voluntary;
-    }
-
-    @Nullable
-    public Boolean getExcluded() {
-        return excluded;
-    }
-
-    public void setExcluded(@Nullable Boolean excluded) {
-        this.excluded = excluded;
+    @Transient
+    public void clearBirthYear() {
+        if (Objects.nonNull(this.birthDate)) {
+            birthDate = birthDate.withYear(1900);
+        }
     }
 
     @Override
@@ -364,14 +245,15 @@ public class MemberProfile {
                 Objects.equals(terminationDate, that.terminationDate) &&
                 Objects.equals(birthDate, that.birthDate) &&
                 Objects.equals(voluntary, that.voluntary) &&
-                Objects.equals(excluded, that.excluded);
+                Objects.equals(excluded, that.excluded) &&
+                Objects.equals(lastSeen, that.lastSeen);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
                 workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate,
-                voluntary, excluded);
+                voluntary, excluded, lastSeen);
     }
 
     @Override
@@ -391,6 +273,7 @@ public class MemberProfile {
                 ", birthDate=" + birthDate +
                 ", voluntary=" + voluntary +
                 ", excluded=" + excluded +
+                ", lastSeen=" + lastSeen +
                 '}';
     }
 }

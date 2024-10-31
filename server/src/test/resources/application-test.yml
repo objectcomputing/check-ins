@@ -5,14 +5,9 @@ micronaut:
     oauth2:
       enabled: false
 ---
-datasources:
-  default:
-    url:  jdbc:tc:postgresql:11.16:///
-    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
----
 mail-jet:
-  from_address: "someEmail@test.com"
-  from_name: "John Doe"
+  from-address: "someEmail@test.com"
+  from-name: "John Doe"
 ---
 credentials:
   roles:
@@ -38,9 +33,14 @@ flyway:
       placeholder-replacement: true
       placeholders:
         aeskey: BOGUS_TEST_KEY
+      clean-schema: true # needed to run Flyway.clean()
+
 ---
 check-ins:
   web-address: "https://checkins.objectcomputing.com"
+  application:
+    google-api:
+      delegated-user: test@objectcomputing.com
 ---
 aes:
   key: BOGUS_TEST_KEY

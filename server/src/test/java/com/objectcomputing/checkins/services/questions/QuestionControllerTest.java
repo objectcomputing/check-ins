@@ -13,46 +13,44 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.JsonError;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class QuestionControllerTest extends TestContainersSuite implements QuestionFixture, QuestionCategoryFixture {
+class QuestionControllerTest extends TestContainersSuite implements QuestionFixture, QuestionCategoryFixture {
 
     @Inject
     @Client("/services/questions")
     private HttpClient client;
 
     private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     @Test
-    public void testGETNonExistingEndpointReturns404() {
-
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET((String.format("/%s", UUID.randomUUID().toString())))
-            .basicAuth(MEMBER_ROLE,MEMBER_ROLE));
-        });
-
+    void testGETNonExistingEndpointReturns404() {
+        HttpRequest<Object> request = HttpRequest.GET((String.format("/%s", UUID.randomUUID())))
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request)
+        );
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     @Test
-    public void testGETreadAllQuestions() {
-
+    void testGETreadAllQuestions() {
         Question question = createADefaultQuestion();
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -60,14 +58,12 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
         final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        response.equals(question);
-        assertNotNull(response.getContentLength());
-
+        assertEquals(Set.of(question), response.body());
+        assertTrue(response.getContentLength() > 0, "response.getContentLength() > 0");
     }
 
     @Test
-    public void testGETFindQuestionsSimilar() {
-
+    void testGETFindQuestionsSimilar() {
         Question question = createADefaultQuestion();
         String partOfQuestion = question.getText().substring(0,3);
         final HttpRequest<Object> request = HttpRequest.
@@ -75,15 +71,13 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
 
         final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
 
-        assertNotNull(response.getContentLength());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(Set.of(question), response.getBody().get());
-
+        assertEquals(Set.of(question), response.body());
+        assertTrue(response.getContentLength() > 0, "response.getContentLength() > 0");
     }
 
     @Test
-    public void testGETGetByIdHappyPath() {
-
+    void testGETGetByIdHappyPath() {
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         Question question = createADefaultQuestionWithCategory(questionCategory.getId());
 
@@ -95,26 +89,23 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
         assertEquals(question.getCategoryId(), response.body().getCategoryId());
         assertEquals(question.getText(), response.body().getText());
         assertEquals(HttpStatus.OK,response.getStatus());
-
     }
 
     @Test
-    public void testGETGetByIdNotFound() {
+    void testGETGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
-
     }
 
     @Test
-    public void testPUTSuccessfulUpdate() {
-
+    void testPUTSuccessfulUpdate() {
         Question question = createADefaultQuestion();
 
         final HttpRequest<Question> request = HttpRequest.
@@ -127,16 +118,14 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPUTNoIDSupplied() {
-
+    void testPUTNoIDSupplied() {
         QuestionCreateDTO requestBody = new QuestionCreateDTO();
         requestBody.setText("Fake Question");
-
+        HttpRequest<QuestionCreateDTO> request = HttpRequest.PUT("/", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+            client.toBlocking().exchange(request);
         });
-
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors").get(0).get("message");
         assertEquals("question.id: must not be null", error.asText());
@@ -144,15 +133,15 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPUTQuestionNotFound() {
-
+    void testPUTQuestionNotFound() {
         QuestionUpdateDTO requestBody = new QuestionUpdateDTO();
         requestBody.setId(UUID.randomUUID());
         requestBody.setText("Fake Question");
 
+        HttpRequest<QuestionUpdateDTO> request = HttpRequest.PUT("/", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+            client.toBlocking().exchange(request);
         });
 
         JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
@@ -162,24 +151,21 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     }
 
     @Test
-    public void testPOSTCreateAQuestion() {
-
-        Question question = createADefaultQuestion();
+    void testPOSTCreateAQuestion() {
+        createADefaultQuestion();
         QuestionCreateDTO newQuestion = new QuestionCreateDTO();
         newQuestion.setText("How do you like working with Mr. Hands?");
 
         final HttpRequest<QuestionCreateDTO> request = HttpRequest.
                 POST("/", newQuestion).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        final HttpResponse<Question> response = client.toBlocking().exchange(request,Question.class);
+        final HttpResponse<Question> response = client.toBlocking().exchange(request, Question.class);
 
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(newQuestion.getText(), response.body().getText());
     }
 
     @Test
-    public void testPOSTCreateAQuestionAlreadyExists() {
-
+    void testPOSTCreateAQuestionAlreadyExists() {
         Question question = createADefaultQuestion();
         QuestionCreateDTO newQuestion = new QuestionCreateDTO();
         newQuestion.setText(question.getText());
@@ -190,13 +176,11 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
-
+        assertEquals(HttpStatus.CONFLICT, responseException.getStatus());
     }
 
     @Test
-    public void testPOSTCreateAQuestionNullQuestion() {
-
+    void testPOSTCreateAQuestionNullQuestion() {
         QuestionCreateDTO newQuestion = new QuestionCreateDTO();
 
         final HttpRequest<QuestionCreateDTO> request = HttpRequest.
@@ -206,12 +190,10 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
-
     }
 
     @Test
-    public void testGETFindQuestionWithCategory() {
-
+    void testGETFindQuestionWithCategory() {
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         Question question = createADefaultQuestionWithCategory(questionCategory.getId());
 
@@ -221,14 +203,13 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
 
         final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
 
-        assertNotNull(response.getContentLength());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(Set.of(question), response.getBody().get());
-
+        assertEquals(Set.of(question), response.body());
+        assertTrue(response.getContentLength() > 0, "response.getContentLength() > 0");
     }
 
     @Test
-    public void testGETFindQuestionWithCategoryNotFound() {
+    void testGETFindQuestionWithCategoryNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?categoryId=%s", encodeValue(String.valueOf(UUID.randomUUID())))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -238,5 +219,4 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
         assertEquals(HttpStatus.OK, response.getStatus());
         assert(response.body().isEmpty());
     }
-
 }

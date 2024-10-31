@@ -2,29 +2,41 @@ package com.objectcomputing.checkins.services.member_skill;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MemberSkillServiceImplTest {
+// Disabled in nativeTest, as we get an exception from Mockito
+//    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
+@DisabledInNativeImage
+class MemberSkillServiceImplTest extends TestContainersSuite {
 
     @Mock
     private MemberSkillRepository memberSkillRepository;
@@ -38,14 +50,21 @@ class MemberSkillServiceImplTest {
     @InjectMocks
     private MemberSkillServiceImpl memberSkillsServices;
 
+    private AutoCloseable mockFinalizer;
+
     @BeforeAll
     void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        mockFinalizer = MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(memberSkillRepository, skillRepository, memberProfileRepository);
+        reset(memberSkillRepository, skillRepository, memberProfileRepository);
+    }
+
+    @AfterAll
+    void closeMocks() throws Exception {
+        mockFinalizer.close();
     }
 
     @Test
@@ -71,9 +90,9 @@ class MemberSkillServiceImplTest {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
         Skill skill = new Skill();
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(skill));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
-        when(memberSkillRepository.save(eq(memberSkill))).thenReturn(memberSkill);
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.of(skill));
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.of(new MemberProfile()));
+        when(memberSkillRepository.save(memberSkill)).thenReturn(memberSkill);
 
         assertEquals(memberSkill, memberSkillsServices.save(memberSkill));
 
@@ -131,9 +150,9 @@ class MemberSkillServiceImplTest {
     void testSaveMemberSkillAlreadyExistingSkill() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
-        when(memberSkillRepository.findByMemberidAndSkillid(eq(memberSkill.getMemberid()), eq(memberSkill.getSkillid())))
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.of(new Skill()));
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.of(new MemberProfile()));
+        when(memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(), memberSkill.getSkillid()))
         .thenReturn(Optional.of(memberSkill));
 
         AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> memberSkillsServices.save(memberSkill));
@@ -150,8 +169,8 @@ class MemberSkillServiceImplTest {
     void testSaveMemberSkillNonExistingSkill() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.empty());
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.empty());
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.of(new MemberProfile()));
 
         BadArgException exception = assertThrows(BadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Skill %s doesn't exist", memberSkill.getSkillid()), exception.getMessage());
@@ -165,8 +184,8 @@ class MemberSkillServiceImplTest {
     void testSaveMemberSkillNonExistingMember() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
-        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.empty());
+        when(skillRepository.findById(memberSkill.getSkillid())).thenReturn(Optional.of(new Skill()));
+        when(memberProfileRepository.findById(memberSkill.getMemberid())).thenReturn(Optional.empty());
 
         BadArgException exception = assertThrows(BadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Member Profile %s doesn't exist", memberSkill.getMemberid()), exception.getMessage());
@@ -184,7 +203,7 @@ class MemberSkillServiceImplTest {
                 new MemberSkill(UUID.randomUUID(), UUID.randomUUID())
         );
 
-        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet);
+        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet.stream().toList());
 
         assertEquals(memberSkillSet, memberSkillsServices.findByFields(null, null));
 
@@ -266,7 +285,7 @@ class MemberSkillServiceImplTest {
                 new MemberSkill(UUID.randomUUID(), UUID.randomUUID())
         );
 
-        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet);
+        when(memberSkillRepository.findAll()).thenReturn(memberSkillSet.stream().toList());
 
         assertEquals(memberSkillSet, memberSkillsServices.findByFields(null,null));
 

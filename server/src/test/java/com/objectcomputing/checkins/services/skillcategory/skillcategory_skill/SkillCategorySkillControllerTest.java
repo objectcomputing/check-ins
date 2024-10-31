@@ -38,7 +38,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         SkillCategory defaultSkillCategory = createDefaultSkillCategory();
         Skill aDefaultSkill = createADefaultSkill();
         SkillCategorySkill skillCategorySkill = new SkillCategorySkill(defaultSkillCategory.getId(),aDefaultSkill.getId());
@@ -54,7 +54,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testCreateFail() {
+    void testCreateFail() {
         Skill aDefaultSkill = createADefaultSkill();
         createDefaultSkillCategory();
         UUID id = UUID.randomUUID();
@@ -69,7 +69,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testCreateNullIds() {
+    void testCreateNullIds() {
         createADefaultSkill();
         createDefaultSkillCategory();
         SkillCategorySkill skillCategorySkill = new SkillCategorySkill(null, null);
@@ -83,7 +83,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testCreateNotAllowed() {
+    void testCreateNotAllowed() {
         HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
                 .POST("/", new SkillCategorySkillId())
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -94,7 +94,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         SkillCategory defaultSkillCategory = createDefaultSkillCategory();
         Skill aDefaultSkill = createADefaultSkill();
         SkillCategorySkill skillCategorySkill = createSkillCategorySkill(defaultSkillCategory.getId(), aDefaultSkill.getId());
@@ -111,7 +111,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
 
 
     @Test
-    public void testDeleteDontExist() {
+    void testDeleteDontExist() {
         SkillCategorySkillId skillCategorySkillId =  new SkillCategorySkillId(UUID.randomUUID(),UUID.randomUUID());
         HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
                 .DELETE("/", skillCategorySkillId)
@@ -122,7 +122,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
     }
 
     @Test
-    public void testDeleteNotAllowed() {
+    void testDeleteNotAllowed() {
         HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
                 .DELETE("/", new SkillCategorySkillId())
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);

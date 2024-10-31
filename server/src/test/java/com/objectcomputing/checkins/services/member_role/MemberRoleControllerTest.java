@@ -22,7 +22,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MemberRoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+class MemberRoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/roles/members")

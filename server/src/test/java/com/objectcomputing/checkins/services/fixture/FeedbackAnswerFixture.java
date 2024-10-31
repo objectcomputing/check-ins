@@ -10,4 +10,8 @@ public interface FeedbackAnswerFixture extends RepositoryFixture {
         return new FeedbackAnswer("I am doing just fine", questionId, requestId, 0.5);
     }
 
+    default FeedbackAnswer saveSampleFeedbackAnswer(UUID questionId, UUID requestId) {
+        return getFeedbackAnswerRepository().save(new FeedbackAnswer("I am doing just fine", questionId, requestId, 0.6));
+    }
+
 }

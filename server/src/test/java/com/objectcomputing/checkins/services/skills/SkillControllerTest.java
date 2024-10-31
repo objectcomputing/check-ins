@@ -12,10 +12,9 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -24,26 +23,20 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class SkillControllerTest extends TestContainersSuite implements SkillFixture, MemberProfileFixture, RoleFixture {
+class SkillControllerTest extends TestContainersSuite implements SkillFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/skills")
     private HttpClient client;
 
     private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     @Test
-    public void testGETNonExistingEndpointReturns404() {
+    void testGETNonExistingEndpointReturns404() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc")
@@ -55,7 +48,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETFindByNameReturnsEmptyBody() {
+    void testGETFindByNameReturnsEmptyBody() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -67,7 +60,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETFindByValueName() {
+    void testGETFindByValueName() {
 
         Skill skill = createADefaultSkill();
         final HttpRequest<Object> request = HttpRequest.
@@ -81,7 +74,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETFindByValuePending() {
+    void testGETFindByValuePending() {
 
         Skill skill = createADefaultSkill();
         final HttpRequest<Object> request = HttpRequest.
@@ -95,7 +88,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETGetByIdHappyPath() {
+    void testGETGetByIdHappyPath() {
 
         Skill skill = createADefaultSkill();
 
@@ -110,7 +103,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testGETGetByIdNotFound() {
+    void testGETGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -124,7 +117,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateASkill() {
+    void testPOSTCreateASkill() {
 
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
         skillCreateDTO.setName("reincarnation");
@@ -145,7 +138,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateASkillAlreadyExists() {
+    void testPOSTCreateASkillAlreadyExists() {
 
         Skill skill = createADefaultSkill();
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
@@ -163,7 +156,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateASkillAlreadyExistsWhenPending() {
+    void testPOSTCreateASkillAlreadyExistsWhenPending() {
 
         Skill skill = createADefaultSkill();
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
@@ -181,7 +174,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPOSTCreateANullSkill() {
+    void testPOSTCreateANullSkill() {
 
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
 
@@ -214,7 +207,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPUTUpdateSkillNonAdmin() {
+    void testPUTUpdateSkillNonAdmin() {
 
         Skill skill = createADefaultSkill();
 
@@ -228,7 +221,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPUTUpdateNonexistentSkill() {
+    void testPUTUpdateNonexistentSkill() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         createAndAssignAdminRole(memberProfileOfAdmin);
@@ -248,7 +241,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    public void testPUTUpdateNullSkill() {
+    void testPUTUpdateNullSkill() {
 
         final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,

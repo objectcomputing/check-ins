@@ -4,12 +4,12 @@ import Header from './Header';
 
 export default {
   title: 'Check-Ins/Header',
-  component: Header,
+  component: Header
 };
 
-const Template = (args) => <Header {...args} />;
+const Template = args => <Header {...args} />;
 
 export const Simple = Template.bind({});
 Simple.args = {
-  title: 'Test Title',
+  title: 'Test Title'
 };

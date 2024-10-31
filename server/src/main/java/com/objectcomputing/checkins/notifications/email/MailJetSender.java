@@ -5,39 +5,40 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
+import ch.digitalfondue.mjml4j.Mjml4j;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.*;
-import java.util.stream.Collectors;
 
-@Requires(property = MailJetSender.FROM_ADDRESS)
-@Requires(property = MailJetSender.FROM_NAME)
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Prototype
+@Requires(bean = MailJetConfiguration.class)
 public class MailJetSender implements EmailSender {
+    public static final String MJMLPART = "MJMLPART";
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
 
-    public static final String FROM_ADDRESS = "mail-jet.from_address";
-    public static final String FROM_NAME = "mail-jet.from_name";
     public static final int MAILJET_RECIPIENT_LIMIT = 49;
 
     private final String fromAddress;
     private final String fromName;
     private String emailFormat;
 
-    public MailJetSender(MailjetClient client,
-                         @Property(name = FROM_ADDRESS) String fromAddress,
-                         @Property(name = FROM_NAME) String fromName) {
+    public MailJetSender(
+            MailjetClient client,
+            MailJetConfiguration configuration
+    ) {
         this.client = client;
-        this.fromAddress = fromAddress;
-        this.fromName = fromName;
+        this.fromAddress = configuration.getFromAddress();
+        this.fromName = configuration.getFromName();
         this.emailFormat = Emailv31.Message.HTMLPART;
     }
 
@@ -55,7 +56,7 @@ public class MailJetSender implements EmailSender {
             // Get only the first n elements limited by MailJet's API
             List<String> limitedRecipients = recipientList.stream()
                     .limit(MAILJET_RECIPIENT_LIMIT)
-                    .collect(Collectors.toList());
+                    .toList();
 
             // Add each recipient to a JSON array to be sent in a MailJet request
             JSONArray recipientArray = new JSONArray();
@@ -84,11 +85,26 @@ public class MailJetSender implements EmailSender {
         if(fromName == null) fromName = this.fromName;
         if(fromAddress == null) fromAddress = this.fromAddress;
 
+        if(System.getenv("MJ_APIKEY_PUBLIC") == null || System.getenv("MJ_APIKEY_PRIVATE") == null) {
+            LOG.error("API key(s) are missing for MailJetSender");
+            return;
+        }
+
         List<JSONArray> emailBatches = getEmailBatches(recipients);
         List<JSONArray> failedBatches = new ArrayList<>();
         JSONObject sender = new JSONObject()
                 .put("Email", fromAddress)
                 .put("Name", fromName);
+
+        String modifiedEmailFormat = emailFormat;
+        if (modifiedEmailFormat.equals(MJMLPART)) {
+            // Convert the MJML to HTML and update the local email format.
+            var configuration = new Mjml4j.Configuration("en");
+            content = Mjml4j.render(content, configuration);
+            modifiedEmailFormat = Emailv31.Message.HTMLPART;
+        }
+        final String localEmailFormat = modifiedEmailFormat;
+        final String localContent = content;
 
         emailBatches.forEach((recipientList) -> {
             MailjetRequest request = new MailjetRequest(Emailv31.resource)
@@ -98,13 +114,13 @@ public class MailJetSender implements EmailSender {
                                     .put(Emailv31.Message.TO, new JSONArray().put(sender))
                                     .put(Emailv31.Message.BCC, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(emailFormat, content)));
+                                    .put(localEmailFormat, localContent)));
             try {
                 MailjetResponse response = client.post(request);
-                LOG.info("Mailjet response status: " + response.getStatus());
-                LOG.info("Mailjet response data: " + response.getData());
+                LOG.info("Mailjet response status: {}", response.getStatus());
+                LOG.info("Mailjet response data: {}", response.getData());
             } catch (MailjetException e) {
-                LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+                LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
                 failedBatches.add(recipientList);
             }
         });
@@ -119,10 +135,10 @@ public class MailJetSender implements EmailSender {
         try {
             sendEmail(fromName, fromAddress, subject, content, recipients);
         } catch (Exception e){
-            LOG.error("An unexpected exception occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+            LOG.error("An unexpected exception occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
             return false;
         } catch (Error e) {
-            LOG.error("An unexpected error occurred while sending the upload notification: " + e.getLocalizedMessage(), e);
+            LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
             return false;
         }
         return true;
@@ -130,10 +146,12 @@ public class MailJetSender implements EmailSender {
 
     @Override
     public void setEmailFormat(String format) {
-        if (format.equals(Emailv31.Message.HTMLPART) || format.equals(Emailv31.Message.TEXTPART)) {
+        if (format.equals(MJMLPART) ||
+            format.equals(Emailv31.Message.HTMLPART) ||
+            format.equals(Emailv31.Message.TEXTPART)) {
             this.emailFormat = format;
         } else {
-            throw new BadArgException(String.format("Email format must be either HTMLPART or TEXTPART, got %s", format));
+            throw new BadArgException(String.format("Email format must be either HTMLPART, MJMLPART or TEXTPART, got %s", format));
         }
     }
 }

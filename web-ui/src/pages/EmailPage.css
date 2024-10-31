@@ -1,84 +1,89 @@
 .email-page .stepper-button-container {
-    margin-top: 1rem;
-    text-align: right;
+  margin-top: 1rem;
+  text-align: right;
 }
 
 .email-page .stepper-button {
-    margin-left: 1rem;
+  margin-left: 1rem;
 }
 
 .email-page .current-step-content-card {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .email-page .email-format-container {
-    width: 100%;
-    text-align: center;
+  width: 100%;
+  text-align: center;
 }
 
 .email-page .email-format-container .email-format-button {
-    color: #313131;
-    border: 2px solid #313131;
-    text-align: center;
-    margin: 0.5rem 3rem;
+  color: #313131;
+  border: 2px solid #313131;
+  text-align: center;
+  margin: 0.5rem 3rem;
 }
 
-.email-page .email-format-container .email-format-button .email-format-button-content {
-    width: 250px;
-    height: 250px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.email-page
+  .email-format-container
+  .email-format-button
+  .email-format-button-content {
+  width: 250px;
+  color: var(--checkins-palette-primary-text);
+  height: 250px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .email-page .current-step-content-card .email-subject-container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
 .email-page .current-step-content-card .missing-preview-message {
-    background-color: #eaeaea;
-    border: 1px dashed gray;
-    color: gray;
-    border-radius: 4px;
-    text-align: center;
-    padding: 3rem;
+  background-color: #eaeaea;
+  border: 1px dashed gray;
+  color: gray;
+  border-radius: 4px;
+  text-align: center;
+  padding: 3rem;
 }
 
 .email-page .current-step-content-card .send-test-email-container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    margin-top: 0.5rem;
-    margin-bottom: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .email-page .current-step-content-card .send-test-email-input {
-    width: 400px;
+  width: 400px;
 }
 
 .email-page .current-step-content-card .send-test-email-button {
-    height: 56px;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
+  height: 56px;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
 }
 
-.send-email-to-all-confirmation-dialog, .change-email-format-confirmation-dialog {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 700px;
-    padding:0.5rem;
+.send-email-to-all-confirmation-dialog,
+.change-email-format-confirmation-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 700px;
+  padding: 0.5rem;
 }
 
 .send-email-to-all-confirmation-dialog .recipient-group-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
 }

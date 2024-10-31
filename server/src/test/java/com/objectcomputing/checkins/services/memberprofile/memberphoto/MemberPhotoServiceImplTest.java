@@ -1,38 +1,36 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.services.admin.directory.Directory;
-import com.google.api.services.admin.directory.model.UserPhoto;
+import com.google.api.services.directory.Directory;
+import com.google.api.services.directory.model.UserPhoto;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.context.env.Environment;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class MemberPhotoServiceImplTest {
+// Disabled in nativeTest, as we get an exception from Mockito
+//    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
+@DisabledInNativeImage
+class MemberPhotoServiceImplTest extends TestContainersSuite {
 
     @Mock
     private MemberProfileServices mockMemberProfileServices;
@@ -56,27 +54,37 @@ public class MemberPhotoServiceImplTest {
     private Environment mockEnvironment;
 
     @InjectMocks
-    private MemberPhotoServiceImpl services;
+    private GooglePhotoAccessorImpl accessor;
+
+    private MemberPhotoServiceImpl service;
+
+    private AutoCloseable mockFinalizer;
 
     @BeforeAll
-    void initMocks() throws IOException {
-        MockitoAnnotations.openMocks(this);
+    void initMocks() {
+        mockFinalizer = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterAll
+    void close() throws Exception {
+        mockFinalizer.close();
     }
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(mockMemberProfileServices);
-        Mockito.reset(mockGoogleApiAccess);
-        Mockito.reset(mockDirectory);
-        Mockito.reset(mockUsers);
-        Mockito.reset(mockPhotos);
-        Mockito.reset(mockGet);
-        Mockito.reset(mockEnvironment);
+        reset(mockMemberProfileServices);
+        reset(mockGoogleApiAccess);
+        reset(mockDirectory);
+        reset(mockUsers);
+        reset(mockPhotos);
+        reset(mockGet);
+        reset(mockEnvironment);
+        service = new MemberPhotoServiceImpl(accessor);
     }
 
     // happy path
     @Test
-    public void testGetImageByEmailAddress() throws IOException {
+    void testGetImageByEmailAddress() throws IOException {
         String testEmail = "test@test.com";
         String testPhotoData = "test.photo.data";
         byte[] testData = Base64.getUrlEncoder().encode(testPhotoData.getBytes());
@@ -95,7 +103,7 @@ public class MemberPhotoServiceImplTest {
         when(mockPhotos.get(testEmail)).thenReturn(mockGet);
         when(mockGet.execute()).thenReturn(testUserPhoto);
 
-        final byte[] result = services.getImageByEmailAddress(testEmail);
+        final byte[] result = service.getImageByEmailAddress(testEmail);
 
         assertNotNull(result);
         assertEquals(testPhotoData, new String(result, StandardCharsets.UTF_8));
@@ -104,7 +112,7 @@ public class MemberPhotoServiceImplTest {
     }
 
     @Test
-    public void testDirectoryServiceThrowsGoogleJsonResponseException() throws IOException {
+    void testDirectoryServiceThrowsGoogleJsonResponseException() throws IOException {
         String testEmail = "test@test.com";
 
         when(mockGoogleApiAccess.getDirectory()).thenReturn(mockDirectory);
@@ -113,25 +121,11 @@ public class MemberPhotoServiceImplTest {
         when(mockPhotos.get(testEmail)).thenReturn(mockGet);
         when(mockGet.execute()).thenThrow(GoogleJsonResponseException.class);
 
-        final byte[] result = services.getImageByEmailAddress(testEmail);
+        final byte[] result = service.getImageByEmailAddress(testEmail);
 
         assertNotNull(result);
         assertEquals("", new String(result, StandardCharsets.UTF_8));
         verify(mockGoogleApiAccess, times(1)).getDirectory();
         verify(mockGet, times(1)).execute();
-    }
-
-    private URL setupUrl() throws IOException {
-        //URL is a final class and cannot be mocked directly
-        final URLConnection mockConnection = Mockito.mock(URLConnection.class);
-        final URLStreamHandler handler = new URLStreamHandler() {
-
-            @Override
-            protected URLConnection openConnection(final URL arg0) {
-                return mockConnection;
-            }
-        };
-
-        return new URL("http://foo.bar", "foo.bar", 80, "", handler);
     }
 }

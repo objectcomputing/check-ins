@@ -8,14 +8,19 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
-
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 public class TeamMemberServicesImpl implements TeamMemberServices {
@@ -63,7 +68,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
         } else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-            throw new BadArgException("You are not authorized to perform this operation");
+            throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
 
         TeamMember newTeamMember = teamMemberRepo.save(teamMember);
@@ -98,7 +103,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
         } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-            throw new BadArgException("You are not authorized to perform this operation");
+            throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
 
         TeamMember teamMemberUpdate = teamMemberRepo.update(teamMember);
@@ -132,7 +137,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamId(), null, true);
 
             if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-                throw new PermissionException("You are not authorized to perform this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             } else {
                 teamMemberRepo.deleteById(id);
             }
@@ -150,10 +155,10 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         List<TeamMember> teamMembers = teamMemberRepo.findByTeamId(id);
         if (teamMembers != null) {
-            List<TeamMember> teamLeads = teamMembers.stream().filter((member) -> member.isLead()).collect(Collectors.toList());
+            List<TeamMember> teamLeads = teamMembers.stream().filter(TeamMember::isLead).toList();
 
             if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-                throw new PermissionException("You are not authorized to perform this operation");
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
             } else {
                 teamMembers.forEach(member -> {
                     teamMemberRepo.deleteById(member.getId());

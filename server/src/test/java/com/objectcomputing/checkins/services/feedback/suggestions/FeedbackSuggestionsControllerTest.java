@@ -1,7 +1,11 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.fixture.*;
+import com.objectcomputing.checkins.services.fixture.FeedbackFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.fixture.TeamFixture;
+import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.Team;
@@ -12,32 +16,25 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import java.util.*;
+import java.util.List;
 
-import org.mortbay.util.ajax.JSON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class FeedbackSuggestionsControllerTest extends TestContainersSuite implements MemberProfileFixture, TeamMemberFixture, TeamFixture, FeedbackFixture, RoleFixture {
-    private static final Logger LOG = LoggerFactory.getLogger(FeedbackSuggestionsControllerTest.class);
+
     private final String supervisorReason = "Supervisor of requestee";
     private final String teamLeadReason = "Team lead for requestee";
     private final String teamMemberReason = "Team member for requestee";
     private final String pdlReason = "PDL of requestee";
 
-
     @Inject
     @Client("/services/feedback/suggestions")
     HttpClient client;
 
-    void assertContentEqualsEntity(FeedbackSuggestionDTO ideal, FeedbackSuggestionDTO actualResponse) {
-        assertEquals(ideal.getReason(), actualResponse.getReason());
-        assertEquals(ideal.getId(), actualResponse.getId());
-    }
     @Test
     void testGetRecsIfPdl() {
         Team team = createDefaultTeam();
@@ -59,9 +56,9 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(supervisorReason, supervisor.getId());
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.getBody().get().size(), 2 );
+        assertEquals(2, response.getBody().get().size());
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 
@@ -87,9 +84,9 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.getBody().get().size(), 2 );
+        assertEquals(2, response.getBody().get().size());
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 
@@ -117,9 +114,9 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(supervisorReason, supervisor.getId());
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(response.getBody().get().size(), 2 );
+        assertEquals(2, response.getBody().get().size());
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 
@@ -149,7 +146,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
         FeedbackSuggestionDTO idealThree = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals( 3, response.getBody().get().size() );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
@@ -184,11 +181,16 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
         FeedbackSuggestionDTO idealThree = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
 
-        assertNotNull(JSON.toString(response.getBody().get()));
+        assertNotNull(response.getBody().get());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals( 3, response.getBody().get().size() );
         assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
         assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
         assertContentEqualsEntity(idealThree, response.getBody().get().get(2));
+    }
+
+    private void assertContentEqualsEntity(FeedbackSuggestionDTO ideal, FeedbackSuggestionDTO actualResponse) {
+        assertEquals(ideal.getReason(), actualResponse.getReason());
+        assertEquals(ideal.getId(), actualResponse.getId());
     }
 }

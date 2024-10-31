@@ -1,43 +1,50 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceGrinBeam, faSmile, faMeh, faFrown, faFaceSadCry } from "@fortawesome/free-regular-svg-icons";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faFaceGrinBeam,
+  faSmile,
+  faMeh,
+  faFrown,
+  faFaceSadCry
+} from '@fortawesome/free-regular-svg-icons';
 
 const propTypes = {
   message: PropTypes.string,
-  onSelect: PropTypes.func,
+  onSelect: PropTypes.func
 };
-const displayName = "Feelings";
+const displayName = 'Feelings';
 
 const Feelings = ({ onSelect, message }) => {
   const inputs = [
-    ["Terrible", faFaceSadCry],
-    ["Bad", faFrown],
-    ["Okay", faMeh],
-    ["Good", faSmile],
-    ["Great", faFaceGrinBeam],
+    ['Terrible', faFaceSadCry],
+    ['Bad', faFrown],
+    ['Okay', faMeh],
+    ['Good', faSmile],
+    ['Great', faFaceGrinBeam]
   ];
-  const onChange = (e) => {
+  const onChange = e => {
     onSelect(e.target.value);
   };
 
   return (
     <div>
       <h4>{message}</h4>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: 'flex' }}>
         {inputs.map(([text, icon], i) => (
           <div
             key={`feelings-${i}`}
             style={{
-              margin: "10px",
-              display: icon === undefined ? "flex" : "",
-              alignItems: "flex-end",
+              margin: '10px',
+              display: icon === undefined ? 'flex' : '',
+              alignItems: 'flex-end'
             }}
           >
             <div>
               <FontAwesomeIcon icon={icon} size="3x" />
             </div>
             <input
+              data-testid={`feelings-input-${i}`}
               id={`feelings-input-${i}`}
               type="radio"
               name="feeling"

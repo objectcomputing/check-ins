@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <a
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    href="/pdfs/myFileName.pdf"
+    target="_blank"
+  >
+    <div
+      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+    >
+      <span
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+      >
+        myFileName
+      </span>
+    </div>
+  </a>
+</div>
+`;
+
+exports[`renders descriptions 1`] = `
+<div>
+  <a
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    href="/pdfs/myFileName.pdf"
+    target="_blank"
+  >
+    <div
+      class="MuiListItemText-root MuiListItemText-multiline css-konndc-MuiListItemText-root"
+    >
+      <span
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+      >
+        myFileName
+      </span>
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+      >
+        My description
+      </p>
+    </div>
+  </a>
+</div>
+`;

@@ -1,30 +1,29 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { debounce } from "lodash/function";
-import { AppContext } from "../context/AppContext";
+import { debounce } from 'lodash/function';
+import { AppContext } from '../context/AppContext';
 import {
   selectCurrentUser,
   selectMyGuilds,
   selectUserProfile,
-  selectMyTeams,
-} from "../context/selectors";
-import {
-  UPDATE_GUILD,
-  UPDATE_USER_BIO,
-} from "../context/actions";
-import { addGuildMember, deleteGuildMember } from "../api/guild";
-import { updateMember } from "../api/member";
-import { getEmployeeHours } from "../api/hours";
-import Profile from "../components/profile/Profile";
-import SkillSection from "../components/skills/SkillSection";
-import ProgressBar from "../components/contribution_hours/ProgressBar";
+  selectMyTeams
+} from '../context/selectors';
+import { UPDATE_GUILD, UPDATE_USER_BIO } from '../context/actions';
+import { addGuildMember, deleteGuildMember } from '../api/guild';
+import { updateMember } from '../api/member';
+import { getEmployeeHours } from '../api/hours';
+import EarnedCertificationsTable from '../components/certifications/EarnedCertificationsTable';
+import Profile from '../components/profile/Profile';
+import SkillSection from '../components/skills/SkillSection';
+import ProgressBar from '../components/contribution_hours/ProgressBar';
+import VolunteerTables from '../components/volunteer/VolunteerTables';
 
-import { Info } from "@mui/icons-material";
-import {Card, CardContent, CardHeader, Chip, TextField} from "@mui/material";
-import GroupIcon from "@mui/icons-material/Group";
+import { Info } from '@mui/icons-material';
+import { Card, CardContent, CardHeader, Chip, TextField, Avatar } from '@mui/material';
+import GroupIcon from '@mui/icons-material/Group';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import "./ProfilePage.css";
+import './ProfilePage.css';
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
@@ -65,14 +64,14 @@ const ProfilePage = () => {
     updateBio();
   }, [bioText]);
 
-  const updateProfile = (newBio) => {
+  const updateProfile = newBio => {
     dispatch({
       type: UPDATE_USER_BIO,
-      payload: newBio,
+      payload: newBio
     });
   };
 
-  const handleBioChange = (e) => {
+  const handleBioChange = e => {
     if (!csrf) {
       return;
     }
@@ -83,24 +82,24 @@ const ProfilePage = () => {
   };
 
   const addOrDeleteGuildMember = useCallback(
-    async (newVal) => {
+    async newVal => {
       if (!csrf) {
         return;
       }
 
-      const myGuildsSet = new Set(myGuilds?.map((guild) => guild.id));
-      const newValSet = new Set(newVal?.map((val) => val.id));
+      const myGuildsSet = new Set(myGuilds?.map(guild => guild.id));
+      const newValSet = new Set(newVal?.map(val => val.id));
 
       const newInSet1 = new Set(
-        [...myGuildsSet].filter((x) => !newValSet.has(x))
+        [...myGuildsSet].filter(x => !newValSet.has(x))
       );
       const newInSet2 = new Set(
-        [...newValSet].filter((x) => !myGuildsSet.has(x))
+        [...newValSet].filter(x => !myGuildsSet.has(x))
       );
 
       for (const guildId of newInSet2.values()) {
         let res = await addGuildMember(id, false, guildId, csrf);
-        const match = newVal.find((guild) => guild.id === guildId);
+        const match = newVal.find(guild => guild.id === guildId);
         let data =
           res.payload && res.payload.data && !res.error
             ? res.payload.data
@@ -120,17 +119,17 @@ const ProfilePage = () => {
       }
 
       for (const guildId of newInSet1.values()) {
-        const match = myGuilds.find((guild) => guild.id === guildId);
+        const match = myGuilds.find(guild => guild.id === guildId);
         if (match) {
           const { guildMembers } = match;
           const memberToDelete = guildMembers.find(
-            (member) => member.memberId === id
+            member => member.memberId === id
           );
           let res = await deleteGuildMember(memberToDelete.id, csrf);
           let success = res.payload && !res.error ? true : false;
           if (success) {
             const newGuildMembers = match.guildMembers.filter(
-              (member) => member.memberId !== id
+              member => member.memberId !== id
             );
             let newGuild = { ...match };
             newGuild.guildMembers = newGuildMembers;
@@ -150,9 +149,9 @@ const ProfilePage = () => {
         <div className="profile-page-bio">
           <Card>
             <CardHeader
-              avatar={<Info />}
+              avatar={<Avatar sx={{ mr: 1 }}><Info /></Avatar>}
               title="Bio"
-              titleTypographyProps={{ variant: "h5", component: "h2" }}
+              titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
             <CardContent>
               <TextField
@@ -172,7 +171,7 @@ const ProfilePage = () => {
             {myHours && (
               <Card>
                 <CardHeader
-                  avatar={<Info />}
+                  avatar={<Avatar sx={{ mr: 1 }}><Info /></Avatar>}
                   subheader={`As Of: ${new Date(
                     myHours?.asOfDate
                   ).toLocaleDateString()}`}
@@ -185,20 +184,20 @@ const ProfilePage = () => {
             )}
           </div>
         ) : (
-          ""
+          ''
         )}
         <div className="profile-guilds">
           <Card style={{ minHeight: 150 }}>
             <CardHeader
-              avatar={<GroupIcon />}
-              title="Guilds"
-              titleTypographyProps={{ variant: "h5", component: "h2" }}
+              avatar={<Avatar sx={{ mr: 1 }}><GroupIcon /></Avatar>}
+              title="Guilds & Communities"
+              titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
             <CardContent>
               <Autocomplete
                 disableClearable
                 id="guildsSelect"
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={option => option.name}
                 isOptionEqualToValue={(option, value) =>
                   value && value.id === option.id
                 }
@@ -206,10 +205,10 @@ const ProfilePage = () => {
                 onChange={(event, newVal) => {
                   addOrDeleteGuildMember(newVal);
                 }}
-                options={guilds}
+                options={guilds || []}
                 required
                 value={myGuilds}
-                renderInput={(params) => (
+                renderInput={params => (
                   <TextField {...params} placeholder="Join a guild..." />
                 )}
               />
@@ -219,14 +218,14 @@ const ProfilePage = () => {
         <div className="profile-teams">
           <Card>
             <CardHeader
-              avatar={<GroupIcon />}
+              avatar={<Avatar sx={{ mr: 1 }}><GroupIcon /></Avatar>}
               title="Teams"
-              titleTypographyProps={{ variant: "h5", component: "h1" }}
+              titleTypographyProps={{ variant: 'h5', component: 'h1' }}
             />
             <CardContent>
               <div className="profile-teams">
                 {myTeams.length > 0 ? (
-                  myTeams.map((team) => (
+                  myTeams.map(team => (
                     <Chip
                       className="chip"
                       // color="primary"
@@ -242,6 +241,8 @@ const ProfilePage = () => {
           </Card>
         </div>
       </div>
+      <VolunteerTables onlyMe />
+      <EarnedCertificationsTable onlyMe />
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>

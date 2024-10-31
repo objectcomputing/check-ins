@@ -1,21 +1,26 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.annotation.sql.ColumnTransformer;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 @Introspected
 @Table(name = "agenda_items")
 public class AgendaItem {
@@ -24,19 +29,19 @@ public class AgendaItem {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "UUID of agenda item", required = true)
+    @Schema(description = "UUID of agenda item")
     private UUID id;
 
     @NotNull
     @Column(name = "checkinid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the checkin this entry is associated with", required = true)
+    @Schema(description = "id of the checkin this entry is associated with")
     private UUID checkinid;
 
     @NotNull
     @Column(name = "createdbyid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
+    @Schema(description = "id of the member this entry is associated with")
     private UUID createdbyid;
 
     @Nullable
@@ -48,9 +53,10 @@ public class AgendaItem {
     @Schema(description = "description of the agenda item")
     private String description;
 
+    @NotNull
     @Column(name = "priority")
     @Schema(description = "Allow for a user defined display order")
-    private double priority;
+    private Double priority;
 
     public AgendaItem(UUID checkinid, UUID createdbyid, String description) {
         this(null, checkinid, createdbyid, description);
@@ -60,55 +66,13 @@ public class AgendaItem {
         this(id, checkinid, createdbyid, description, 1.0);
     }
 
-    public AgendaItem(UUID checkinid, UUID createdbyid, String description, double priority) {
-        this(null, checkinid, createdbyid, description, priority);
-    }
+    public AgendaItem() {}
 
-    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description, double priority) {
+    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, @Nullable String description, Double priority) {
         this.id = id;
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
         this.description = description;
-        this.priority = priority;
-    }
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getCheckinid() {
-        return this.checkinid;
-    }
-
-    public void setCheckinid(UUID checkinid) {
-        this.checkinid = checkinid;
-    }
-
-    public UUID getCreatedbyid() {
-        return this.createdbyid;
-    }
-
-    public void setCreatedbyid(UUID createdbyid) {
-        this.createdbyid = createdbyid;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public double getPriority() {
-        return priority;
-    }
-
-    public void setPriority(double priority) {
         this.priority = priority;
     }
 

@@ -5,11 +5,13 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
-
 import jakarta.inject.Singleton;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
+
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
@@ -50,7 +52,7 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     @Override
     public Opportunities update(Opportunities opportunitiesResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         Opportunities opportunitiesResponseRet = null;
         if(opportunitiesResponse!=null){
             final UUID id = opportunitiesResponse.getId();
@@ -74,13 +76,12 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     @Override
     public void delete(@NotNull UUID id) {
         final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        permissionsValidation.validatePermissions(!isAdmin);
         opportunitiesResponseRepo.deleteById(id);
     }
 
     @Override
-    public ArrayList<Opportunities> findByFields(String name, String description,UUID submittedBy) {
-        final ArrayList<Opportunities> opportunitiesResponse = new ArrayList<>(opportunitiesResponseRepo.searchByValues(name, description, nullSafeUUIDToString(submittedBy)));
-        return opportunitiesResponse;
+    public List<Opportunities> findByFields(String name, String description,UUID submittedBy) {
+        return opportunitiesResponseRepo.searchByValues(name, description, nullSafeUUIDToString(submittedBy));
     }
 }

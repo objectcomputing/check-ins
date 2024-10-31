@@ -1,0 +1,226 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MemberSelector > renders correctly as a controlled component 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-outlined MuiPaper-rounded MuiCard-root member-selector-card test-class css-1v5z4dq-MuiPaper-root-MuiCard-root"
+    style="margin: 10px;"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+        >
+          <div
+            class="member-selector-card-title-container"
+          >
+            <h5
+              class="MuiTypography-root MuiTypography-h5 MuiTypography-noWrap member-selector-card-title css-1961ak2-MuiTypography-root"
+            >
+              Custom Title
+            </h5>
+            <h6
+              class="MuiTypography-root MuiTypography-h6 member-selector-card-count css-r8391j-MuiTypography-root"
+            >
+              (
+              2
+              )
+            </h6>
+          </div>
+        </span>
+      </div>
+      <div
+        class="MuiCardHeader-action css-sgoict-MuiCardHeader-action"
+      >
+        <div
+          class="MuiBox-root css-1ay9vb9"
+        >
+          <button
+            aria-label="Change Members"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+            data-mui-internal-clone-element="true"
+            style="margin: 4px 8px 0px 0px;"
+            tabindex="0"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+              data-testid="AddIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+              />
+            </svg>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            aria-label="Download"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-1yq5fb3-MuiButtonBase-root-MuiIconButton-root"
+            data-mui-internal-clone-element="true"
+            tabindex="0"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+              data-testid="FileDownloadIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 9h-4V3H9v6H5l7 7zM5 18v2h14v-2z"
+              />
+            </svg>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MemberSelector > renders correctly when disabled 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root member-selector-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+        >
+          <div
+            class="member-selector-card-title-container"
+          >
+            <h5
+              class="MuiTypography-root MuiTypography-h5 MuiTypography-noWrap member-selector-card-title css-1961ak2-MuiTypography-root"
+            >
+              Selected Members
+            </h5>
+            <h6
+              class="MuiTypography-root MuiTypography-h6 member-selector-card-count css-r8391j-MuiTypography-root"
+            >
+              (
+              2
+              )
+            </h6>
+          </div>
+        </span>
+      </div>
+      <div
+        class="MuiCardHeader-action css-sgoict-MuiCardHeader-action"
+      >
+        <div
+          class="MuiBox-root css-1ay9vb9"
+        >
+          <button
+            aria-label="Change Members"
+            class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+            data-mui-internal-clone-element="true"
+            disabled=""
+            style="margin: 4px 8px 0px 0px;"
+            tabindex="-1"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+              data-testid="AddIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MemberSelector > renders correctly with default props 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root member-selector-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+        >
+          <div
+            class="member-selector-card-title-container"
+          >
+            <h5
+              class="MuiTypography-root MuiTypography-h5 MuiTypography-noWrap member-selector-card-title css-1961ak2-MuiTypography-root"
+            >
+              Selected Members
+            </h5>
+            <h6
+              class="MuiTypography-root MuiTypography-h6 member-selector-card-count css-r8391j-MuiTypography-root"
+            >
+              (
+              0
+              )
+            </h6>
+          </div>
+        </span>
+      </div>
+      <div
+        class="MuiCardHeader-action css-sgoict-MuiCardHeader-action"
+      >
+        <div
+          class="MuiBox-root css-1ay9vb9"
+        >
+          <button
+            aria-label="Change Members"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+            data-mui-internal-clone-element="true"
+            style="margin: 4px 8px 0px 0px;"
+            tabindex="0"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+              data-testid="AddIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+              />
+            </svg>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

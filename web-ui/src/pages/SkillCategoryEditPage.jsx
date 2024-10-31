@@ -1,12 +1,16 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import {AppContext} from "../context/AppContext";
-import {styled} from "@mui/material/styles";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
+import { styled } from '@mui/material/styles';
 
 import {
   Button,
   Card,
-  CardHeader, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  CardHeader,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   List,
   ListItem,
@@ -14,38 +18,38 @@ import {
   TextField,
   Tooltip,
   Typography
-} from "@mui/material";
-import RemoveIcon from "@mui/icons-material/Remove";
+} from '@mui/material';
+import RemoveIcon from '@mui/icons-material/Remove';
 import {
   createSkillCategorySkills,
   deleteSkillCategorySkill,
   getSkillCategory,
   updateSkillCategory
-} from "../api/skillcategory";
-import {selectCsrfToken, selectOrderedSkills} from "../context/selectors";
-import {Add} from "@mui/icons-material";
-import SelectSkillsDialog from "../components/select-skills-dialog/SelectSkillsDialog";
-import {UPDATE_TOAST} from "../context/actions";
-import Dialog from "@mui/material/Dialog";
+} from '../api/skillcategory';
+import { selectCsrfToken, selectOrderedSkills } from '../context/selectors';
+import { Add } from '@mui/icons-material';
+import SelectSkillsDialog from '../components/select-skills-dialog/SelectSkillsDialog';
+import { UPDATE_TOAST } from '../context/actions';
+import Dialog from '@mui/material/Dialog';
 
-import "./SkillCategoryEditPage.css";
+import './SkillCategoryEditPage.css';
 
 const PREFIX = 'SkillCategoryEditPage';
 const classes = {
-  root: `${PREFIX}-root`,
+  root: `${PREFIX}-root`
 };
 
 const Root = styled('div')({
   [`&.${classes.root}`]: {
-    backgroundColor: "transparent",
-    margin: "4rem 2rem 2rem 2rem",
-    height: "100%",
-    maxWidth: "100%",
+    backgroundColor: 'transparent',
+    margin: '4rem 2rem 2rem 2rem',
+    height: '100%',
+    maxWidth: '100%',
     '@media (max-width: 800px)': {
-      display: "flex",
-      flexDirection: "column",
-      overflowX: "hidden",
-      margin: "2rem 5% 0 5%",
+      display: 'flex',
+      flexDirection: 'column',
+      overflowX: 'hidden',
+      margin: '2rem 5% 0 5%'
     }
   }
 });
@@ -74,10 +78,13 @@ const SkillCategoryEditPage = () => {
     return [];
   }, [category, skills]);
 
-  const retrieveSkillCategory = useCallback(async (categoryId) => {
-    const res = await getSkillCategory(categoryId, csrf);
-    return !res.error ? res.payload.data : null;
-  }, [csrf]);
+  const retrieveSkillCategory = useCallback(
+    async categoryId => {
+      const res = await getSkillCategory(categoryId, csrf);
+      return !res.error ? res.payload.data : null;
+    },
+    [csrf]
+  );
 
   useEffect(() => {
     if (categoryId) {
@@ -93,42 +100,49 @@ const SkillCategoryEditPage = () => {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "Failed to refresh category"
+            severity: 'error',
+            toast: 'Failed to refresh category'
           }
         });
       }
     });
   }, [categoryId, dispatch, retrieveSkillCategory]);
 
-  const saveCategorySkillIds = useCallback(async (skillIds) => {
-    if (categoryId) {
-      const res = await createSkillCategorySkills(categoryId, skillIds, csrf);
-      if (res.error) {
-        dispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast: "Failed to add skill(s) to category"
-          }
+  const saveCategorySkillIds = useCallback(
+    async skillIds => {
+      if (categoryId) {
+        const res = await createSkillCategorySkills(categoryId, skillIds, csrf);
+        if (res.error) {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast: 'Failed to add skill(s) to category'
+            }
+          });
+        }
+
+        refreshSkillCategory().then(() => {
+          setAddSkillsDialogOpen(false);
         });
       }
-
-      refreshSkillCategory().then(() => {
-        setAddSkillsDialogOpen(false);
-      });
-    }
-  }, [categoryId, csrf, dispatch, refreshSkillCategory]);
+    },
+    [categoryId, csrf, dispatch, refreshSkillCategory]
+  );
 
   const removeSkillFromCategory = useCallback(async () => {
     if (skillToRemove) {
-      const res = await deleteSkillCategorySkill(categoryId, skillToRemove.id, csrf);
+      const res = await deleteSkillCategorySkill(
+        categoryId,
+        skillToRemove.id,
+        csrf
+      );
       if (res.payload.status !== 200) {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "Failed to remove skill from category"
+            severity: 'error',
+            toast: 'Failed to remove skill from category'
           }
         });
       }
@@ -145,8 +159,8 @@ const SkillCategoryEditPage = () => {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "Failed to update category"
+          severity: 'error',
+          toast: 'Failed to update category'
         }
       });
     }
@@ -158,9 +172,9 @@ const SkillCategoryEditPage = () => {
       <div className="edit-skill-category-fields">
         <TextField
           label="Name"
-          style={{ width: "250px" }}
-          value={category ? category.name : ""}
-          onChange={(event) => {
+          style={{ width: '250px' }}
+          value={category ? category.name : ''}
+          onChange={event => {
             setCategory({
               ...category,
               name: event.target.value
@@ -170,9 +184,9 @@ const SkillCategoryEditPage = () => {
         />
         <TextField
           label="Description"
-          style={{ width: "400px" }}
-          value={category ? category.description : ""}
-          onChange={(event) => {
+          style={{ width: '400px' }}
+          value={category ? category.description : ''}
+          onChange={event => {
             setCategory({
               ...category,
               description: event.target.value
@@ -186,53 +200,60 @@ const SkillCategoryEditPage = () => {
           title="Category Skills"
           action={
             <Tooltip title="Add skills to this category" arrow>
-              <IconButton onClick={() => setAddSkillsDialogOpen(true)}><Add/></IconButton>
+              <IconButton onClick={() => setAddSkillsDialogOpen(true)}>
+                <Add />
+              </IconButton>
             </Tooltip>
           }
         />
-        <List
-          dense
-          role="list"
-          >
-          {category && (
-            category.skills.length ? (
-              category.skills.map(skill =>
+        <List dense role="list">
+          {category &&
+            (category.skills.length ? (
+              category.skills.map(skill => (
                 <ListItem
                   key={skill.id}
                   role="listitem"
                   secondaryAction={
                     <Tooltip title="Remove skill from category" arrow>
-                      <IconButton onClick={() => setSkillToRemove(skill)}><RemoveIcon/></IconButton>
+                      <IconButton onClick={() => setSkillToRemove(skill)}>
+                        <RemoveIcon />
+                      </IconButton>
                     </Tooltip>
                   }
                 >
                   <ListItemText
                     primary={skill.name}
-                    secondary={<Typography color="textSecondary" component="h6">{skill.description}</Typography>}
+                    secondary={
+                      <Typography color="textSecondary" component="h6">
+                        {skill.description}
+                      </Typography>
+                    }
                   />
                 </ListItem>
-              )
+              ))
             ) : (
-              <ListItem><ListItemText>This category contains no skills</ListItemText></ListItem>
-            )
-          )}
+              <ListItem>
+                <ListItemText>This category contains no skills</ListItemText>
+              </ListItem>
+            ))}
         </List>
       </Card>
-      {addSkillsDialogOpen &&
+      {addSkillsDialogOpen && (
         <SelectSkillsDialog
           isOpen={addSkillsDialogOpen}
           onClose={() => setAddSkillsDialogOpen(false)}
           selectableSkills={getSelectableSkills()}
           onSave={saveCategorySkillIds}
         />
-      }
-      {skillToRemove &&
-        <Dialog
-          open={!!skillToRemove}
-          onClose={() => setSkillToRemove(null)}>
+      )}
+      {skillToRemove && (
+        <Dialog open={!!skillToRemove} onClose={() => setSkillToRemove(null)}>
           <DialogTitle>Remove Skill?</DialogTitle>
           <DialogContent>
-            <DialogContentText>Are you sure you want to remove "{skillToRemove.name}" from {category.name}? The skill itself will not be deleted.</DialogContentText>
+            <DialogContentText>
+              Are you sure you want to remove "{skillToRemove.name}" from{' '}
+              {category.name}? The skill itself will not be deleted.
+            </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setSkillToRemove(null)} color="primary">
@@ -243,9 +264,9 @@ const SkillCategoryEditPage = () => {
             </Button>
           </DialogActions>
         </Dialog>
-      }
+      )}
     </Root>
-  )
+  );
 };
 
 export default SkillCategoryEditPage;

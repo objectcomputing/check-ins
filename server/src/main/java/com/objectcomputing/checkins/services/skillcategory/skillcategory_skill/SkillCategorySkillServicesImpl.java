@@ -2,9 +2,12 @@ package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
+import jakarta.validation.Valid;
 
-import javax.validation.Valid;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Singleton
 public class SkillCategorySkillServicesImpl implements SkillCategorySkillServices {

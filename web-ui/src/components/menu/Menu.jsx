@@ -1,19 +1,32 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { postEmployeeHours } from "../../api/hours";
-import { reportMemberCsv } from "../../api/member"
-import {selectCsrfToken, selectHasReportPermission, selectIsAdmin, selectIsSupervisor} from "../../context/selectors";
-import { UPDATE_TOAST } from "../../context/actions";
+import { postEmployeeHours } from '../../api/hours';
+import {
+  selectCanViewFeedbackAnswerPermission,
+  selectCanViewFeedbackRequestPermission,
+  selectCanViewReviewPeriodPermission,
+  selectCsrfToken,
+  selectHasAnniversaryReportPermission,
+  selectHasBirthdayReportPermission,
+  selectHasCheckinsReportPermission,
+  selectHasReportPermission,
+  selectHasSkillsReportPermission,
+  selectHasTeamSkillsReportPermission,
+  selectHasViewPulseReportPermission,
+  selectIsAdmin,
+  selectHasEarnedCertificationsPermission,
+  selectHasMeritReportPermission,
+  selectHasVolunteeringEventsPermission,
+  selectHasVolunteeringRelationshipsPermission,
+} from '../../context/selectors';
+import { UPDATE_TOAST } from '../../context/actions';
 
-import fileDownload from 'js-file-download';
+import { useLocation, Link } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
+import { getAvatarURL } from '../../api/api';
 
-import { useLocation, Link } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
-import { getAvatarURL } from "../../api/api";
-import AvatarMenu from "@mui/material/Menu";
-
-import MenuIcon from "@mui/icons-material/Menu";
-import { styled, useTheme } from "@mui/material/styles";
+import MenuIcon from '@mui/icons-material/Menu';
+import { useTheme } from '@mui/material/styles';
 import {
   AppBar,
   Avatar,
@@ -23,14 +36,12 @@ import {
   Drawer,
   IconButton,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
-  MenuItem,
   Modal,
-  Toolbar,
-} from "@mui/material";
-
-import "./Menu.css";
+  Toolbar
+} from '@mui/material';
+import './Menu.css';
 
 const drawerWidth = 150;
 const PREFIX = 'Menu';
@@ -41,88 +52,50 @@ const classes = {
   menuButton: `${PREFIX}-menuButton`,
   drawerPaper: `${PREFIX}-drawerPaper`,
   content: `${PREFIX}-content`,
+  listItem: `${PREFIX}-listItem`,
   listStyle: `${PREFIX}-listStyle`,
   nested: `${PREFIX}-nested`,
   subListItem: `${PREFIX}-subListItem`
 };
 
-const Root = styled('div')(({theme}) => ({
-  [`&.${classes.root}`]: {
-    display: 'flex',
-    paddingRight: `${drawerWidth}px`
-  },
-  [`& .${classes.drawer}`]: {
-    [theme.breakpoints.up("sm")]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-  },
-  [`& .${classes.appBar}`]: {
-    [theme.breakpoints.up("sm")]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-      ['@media print']: { // eslint-disable-line no-useless-computed-key
-        width: `100%`,
-        marginLeft: "0px",
-      }
-    },
-  },
-  [`& .${classes.menuButton}`]: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up("sm")]: {
-      display: "none",
-    },
-  },
-  // necessary for content to be below app bar
-  // toolbar: theme.mixins.toolbar,
-  [`& .${classes.drawerPaper}`]: {
-    width: drawerWidth,
-  },
-  [`& .${classes.content}`]: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
-  [`& .${classes.listStyle}`]: {
-    textDecoration: "none",
-    textAlign: "left",
-  },
-  [`& .${classes.nested}`]: {
-    paddingLeft: theme.spacing(4),
-  },
-  [`& .${classes.subListItem}`]: {
-    fontSize: "0.9rem",
-  }
-}));
-
 const adminLinks = [
-  ["/admin/permissions", "Permissions"],
-  ["/admin/roles", "Roles"],
-  ["/admin/users", "Users"],
-  ["/admin/email", "Send Email"],
-  ["/admin/edit-skills", "Skills"],
+  ['/admin/manage-kudos', 'Manage Kudos'],
+  ['/admin/permissions', 'Permissions'],
+  ['/admin/roles', 'Roles'],
+  ['/admin/users', 'Users'],
+  ['/admin/email', 'Send Email'],
+  ['/admin/edit-skills', 'Skills'],
+  ['/admin/settings', 'Settings']
+];
+
+const checkInLinks = [
+  ['/pulse', 'Pulse'],
+  ['/checkins', 'Quarterly']
 ];
 
 const directoryLinks = [
-  ["/guilds", "Guilds"],
-  ["/people", "People"],
-  ["/teams", "Teams"],
+  ['/guilds', 'Guilds & Communities'],
+  ['/people', 'People'],
+  ['/teams', 'Teams']
 ];
 
-const getFeedbackLinks = (isAdmin, isPDL, isSupervisor) => {
+const getFeedbackLinks = (
+  canViewFeedbackAnswer,
+  canViewFeedbackRequest,
+  canViewReviewPeriod
+) => {
   const links = [];
-  if(isAdmin || isPDL) links.push(["/feedback/view", "View Feedback"]);
-  links.push(["/feedback/received-requests", "Received Requests"]);
-  if(isSupervisor || isAdmin) links.push(["/feedback/reviews", "Reviews"])
-  links.push(["/feedback/self-reviews", "Self-Reviews"]);
+  links.push(['/kudos', 'Kudos']);
+  if (canViewFeedbackAnswer) links.push(['/feedback/view', 'View Feedback']);
+  if (canViewFeedbackRequest)
+    links.push(['/feedback/received-requests', 'Received Requests']);
+  if (canViewReviewPeriod)
+    links.push(
+      ['/feedback/reviews', 'Reviews'],
+      ['/feedback/self-reviews', 'Self-Reviews']
+    );
   return links;
 };
-
-const reportsLinks = [
-  ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
-  ["/checkins-reports", "Check-ins"],
-  ["/skills-reports", "Skills"],
-  ["/team-skills-reports", "Team Skills"],
-];
 
 const isCollapsibleListOpen = (linksArr, loc) => {
   for (let i = 0; i < linksArr.length; i++) {
@@ -131,7 +104,7 @@ const isCollapsibleListOpen = (linksArr, loc) => {
   return false;
 };
 
-function Menu() {
+function Menu({ children }) {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const csrf = selectCsrfToken(state);
@@ -139,64 +112,80 @@ function Menu() {
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin = selectIsAdmin(state);
   const hasReportPermission = selectHasReportPermission(state);
-  const isPDL =
-    userProfile && userProfile.role && userProfile.role.includes("PDL");
-  const isSupervisor = selectIsSupervisor(state);
-
+  const canViewFeedbackAnswer = selectCanViewFeedbackAnswerPermission(state);
+  const canViewFeedbackRequest = selectCanViewFeedbackRequestPermission(state);
+  const canViewReviewPeriod = selectCanViewReviewPeriodPermission(state);
 
   const theme = useTheme();
   const location = useLocation();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const feedbackLinks = getFeedbackLinks(isAdmin, isPDL, isSupervisor);
+  const feedbackLinks = getFeedbackLinks(
+    canViewFeedbackAnswer,
+    canViewFeedbackRequest,
+    canViewReviewPeriod
+  );
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const getReportLinks = () => {
+    const links = [];
 
-  const downloadMembers = async () => {
-    let res = await reportMemberCsv(csrf);
-    if (res?.error) {
-
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Hmm...Something went wrong.",
-        },
-      });
-    } else {
-
-      fileDownload(res?.payload?.data, "members.csv");
-
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "success",
-          toast: `Member export has been saved!`,
-        },
-      });
+    if (selectHasAnniversaryReportPermission(state)) {
+      links.push(['/anniversary-reports', 'Anniversaries']);
     }
+
+    if (selectHasBirthdayReportPermission(state)) {
+      links.push(['/birthday-reports', 'Birthdays']);
+    }
+
+    if (selectHasEarnedCertificationsPermission(state)) {
+      links.push(['/certification-reports', 'Certifications']);
+    }
+
+    if (selectHasCheckinsReportPermission(state)) {
+      links.push(['/checkins-reports', 'Check-ins']);
+    }
+
+    if (selectHasViewPulseReportPermission(state)) {
+      links.push(['/pulse-reports', 'Pulses']);
+    }
+
+    if (selectHasSkillsReportPermission(state)) {
+      links.push(['/skills-reports', 'Skills']);
+    }
+
+    if (selectHasTeamSkillsReportPermission(state)) {
+      links.push(['/team-skills-reports', 'Team Skills']);
+    }
+
+    if (selectHasMeritReportPermission(state)) {
+      links.push(['/merit-reports', 'Merit Report']);
+    }
+
+    if (selectHasVolunteeringEventsPermission(state) ||
+        selectHasVolunteeringRelationshipsPermission(state)) {
+      links.push(['/volunteer-reports', 'Volunteering']);
+    }
+
+    return links;
   };
 
-  const uploadFile = async (file) => {
+  const uploadFile = async file => {
     if (!file) {
       return;
     }
     let formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     let res = await postEmployeeHours(csrf, formData);
     if (res?.error) {
       let error = res?.error?.response?.data?.message;
       //parse employee id from error
-      let tmpError = error.includes("Detail: Key (employeeid)=(")
-        ? error.split("Detail: Key (employeeid)=(")
+      let tmpError = error.includes('Detail: Key (employeeid)=(')
+        ? error.split('Detail: Key (employeeid)=(')
         : null;
-      tmpError = tmpError && tmpError[1].split(" ")[0].slice(0, -1);
+      tmpError = tmpError && tmpError[1].split(' ')[0].slice(0, -1);
       let newError;
       if (tmpError) {
         newError = `Employee id ${tmpError} doesn't exist in system, please fix the .csv file and upload again`;
@@ -206,9 +195,9 @@ function Menu() {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: newError,
-        },
+          severity: 'error',
+          toast: newError
+        }
       });
     }
     const data = res?.payload?.data;
@@ -216,14 +205,17 @@ function Menu() {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "success",
-          toast: `File was successfully uploaded`,
-        },
+          severity: 'success',
+          toast: `File was successfully uploaded`
+        }
       });
       closeHoursUpload();
     }
   };
 
+  const [checkInOpen, setCheckInOpen] = useState(
+    isCollapsibleListOpen(checkInLinks, location.pathname)
+  );
   const [directoryOpen, setDirectoryOpen] = useState(
     isCollapsibleListOpen(directoryLinks, location.pathname)
   );
@@ -231,14 +223,14 @@ function Menu() {
     isCollapsibleListOpen(adminLinks, location.pathname)
   );
   const [reportsOpen, setReportsOpen] = useState(
-    isCollapsibleListOpen(reportsLinks, location.pathname)
+    isCollapsibleListOpen(getReportLinks(), location.pathname)
   );
   const [feedbackOpen, setFeedbackOpen] = useState(
     isCollapsibleListOpen(feedbackLinks, location.pathname)
-  )
+  );
   const anchorRef = useRef(null);
   const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+    setOpen(prevOpen => !prevOpen);
   };
 
   // return focus to the button when we transitioned from !open -> open
@@ -261,7 +253,11 @@ function Menu() {
 
   const toggleFeedback = () => {
     setFeedbackOpen(!feedbackOpen);
-  }
+  };
+
+  const toggleCheckIn = () => {
+    setCheckInOpen(!checkInOpen);
+  };
 
   const toggleDirectory = () => {
     setDirectoryOpen(!directoryOpen);
@@ -277,10 +273,6 @@ function Menu() {
     setFeedbackOpen(false);
   };
 
-  const closeAvatarMenu = () => {
-    setAnchorEl(null);
-  };
-
   const closeHoursUpload = () => {
     setShowHoursUpload(false);
     setSelectedFile(null);
@@ -290,21 +282,20 @@ function Menu() {
     setShowHoursUpload(true);
   };
 
-  const isLinkSelected = (path) => {
+  const isLinkSelected = path => {
     // /checkins route is special case as additional info is added to url
-    if (path === "/checkins" && location.pathname.includes(`${path}/`))
+    if (path === '/checkins' && location.pathname.includes(`${path}/`))
       return true;
     return location.pathname === path ? true : false;
   };
 
   const createLinkJsx = (path, name, isSubLink) => {
     return (
-      <ListItem
+      <ListItemButton
         key={path}
         component={Link}
         to={path}
         className={isSubLink ? classes.nested : null}
-        button
         onClick={
           isSubLink
             ? undefined
@@ -318,16 +309,16 @@ function Menu() {
           classes={isSubLink ? { primary: classes.subListItem } : null}
           primary={name}
         />
-      </ListItem>
+      </ListItemButton>
     );
   };
 
-  const onFileSelected = (e) => {
+  const onFileSelected = e => {
     setSelectedFile(e.target.files[0]);
   };
 
   const createListJsx = (listArr, isSublink) => {
-    return listArr.map((listItem) => {
+    return listArr.map(listItem => {
       const [path, name] = listItem;
       return createLinkJsx(path, name, isSublink);
     });
@@ -336,63 +327,88 @@ function Menu() {
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <img
           alt="Object Computing, Inc."
           src="/img/ocicube-color.png"
-          style={{ width: "50%" }}
+          style={{ width: '50%' }}
         />
       </div>
 
       <List component="nav" className={classes.listStyle}>
-        {createLinkJsx("/", "HOME", false)}
-        {isAdmin && (
-          <>
-            <ListItem button onClick={toggleAdmin} className={classes.listItem}>
-              <ListItemText primary="ADMIN" />
-            </ListItem>
-            <Collapse in={adminOpen} timeout="auto" unmountOnExit>
-              {createListJsx(adminLinks, true)}
-            </Collapse>
-          </>
-        )}
-        {createLinkJsx("/checkins", "CHECK-INS", false)}
-        <ListItem button onClick={toggleDirectory} className={classes.listItem}>
-          <ListItemText primary="DIRECTORY" />
-        </ListItem>
-        <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-          {createListJsx(directoryLinks, true)}
-        </Collapse>
-        <ListItem
-          button
-          onClick={toggleFeedback}
-          className={classes.listItem}
-        >
-          <ListItemText primary="FEEDBACK" />
-        </ListItem>
-        <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
-          {createListJsx(feedbackLinks, true)}
-        </Collapse>
-        {hasReportPermission && (
-          <React.Fragment>
-            <ListItem
-              button
-              onClick={toggleReports}
-              className={classes.listItem}
-            >
-              <ListItemText primary="REPORTS" />
-            </ListItem>
-            <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-              {createListJsx(reportsLinks, true)}
-            </Collapse>
-          </React.Fragment>
-        )}
+        <div>
+          <span className="Menu-listItem">
+            {createLinkJsx('/', 'HOME', false)}
+          </span>
+
+          {isAdmin && (
+            <>
+              <ListItemButton
+                onClick={toggleAdmin}
+                className={classes.listItem}
+              >
+                <ListItemText primary="ADMIN" />
+              </ListItemButton>
+              <Collapse in={adminOpen} timeout="auto" unmountOnExit>
+                {createListJsx(adminLinks, true)}
+                {isAdmin && (
+                  <ListItemButton
+                    sx={{ pl: 4, py: 1.5 }}
+                    className={classes.listItem}
+                    onClick={openHoursUpload}
+                  >
+                    Upload Hours
+                  </ListItemButton>
+                )}
+              </Collapse>
+            </>
+          )}
+
+          <ListItemButton onClick={toggleCheckIn} className={classes.listItem}>
+            <ListItemText primary="CHECK-IN" />
+          </ListItemButton>
+          <Collapse in={checkInOpen} timeout="auto" unmountOnExit>
+            {createListJsx(checkInLinks, true)}
+          </Collapse>
+
+          <ListItemButton
+            onClick={toggleDirectory}
+            className={classes.listItem}
+          >
+            <ListItemText primary="DIRECTORY" />
+          </ListItemButton>
+          <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+            {createListJsx(directoryLinks, true)}
+          </Collapse>
+
+          <ListItemButton onClick={toggleFeedback} className={classes.listItem}>
+            <ListItemText primary="FEEDBACK" />
+          </ListItemButton>
+          <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
+            {createListJsx(feedbackLinks, true)}
+          </Collapse>
+
+          {hasReportPermission && (
+            <React.Fragment>
+              <ListItemButton
+                onClick={toggleReports}
+                className={classes.listItem}
+              >
+                <ListItemText primary="REPORTS" />
+              </ListItemButton>
+              <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+                {createListJsx(getReportLinks(), true)}
+              </Collapse>
+            </React.Fragment>
+          )}
+        </div>
+        {children}
       </List>
     </div>
   );
 
   return (
-    <Root className={classes.root}>
+    <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -402,88 +418,49 @@ function Menu() {
             edge="start"
             onClick={handleDrawerToggle}
             className={classes.menuButton}
-            size="large">
+            size="large"
+          >
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <div
-          ref={anchorRef}
-          aria-controls={open ? "menu-list-grow" : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
+        <Link to={`/profile/${id}`}>
           <Avatar
-            onClick={handleClick}
             src={getAvatarURL(workEmail)}
             style={{
-              position: "absolute",
-              cursor: "pointer",
-              right: "5px",
-              top: "10px",
-              textDecoration: "none",
+              position: 'absolute',
+              cursor: 'pointer',
+              right: '5px',
+              top: '10px',
+              textDecoration: 'none'
             }}
+            alt={`${userProfile?.name}'s avatar`}
           />
-          <AvatarMenu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={closeAvatarMenu}
-          >
-            <MenuItem
-              component={Link}
-              onClick={closeAvatarMenu}
-              to={`/profile/${id}`}
-            >
-              Profile
-            </MenuItem>
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  openHoursUpload();
-                }}
-              >
-                Upload Hours
-              </MenuItem>
-            )}
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  closeAvatarMenu();
-                  downloadMembers();
-                }}
-              >
-                Download Members
-              </MenuItem>
-            )}
-          </AvatarMenu>
-        </div>
+        </Link>
       </AppBar>
       <nav className={classes.drawer}>
         <Drawer
-          sx={{display: {sm: 'none', xs: 'block'}}}
+          sx={{ display: { sm: 'none', xs: 'block' } }}
           variant="temporary"
           disablePortal
-          anchor={theme.direction === "rtl" ? "right" : "left"}
+          anchor={theme.direction === 'rtl' ? 'right' : 'left'}
           open={mobileOpen}
           onClose={handleDrawerToggle}
           classes={{
-            paper: classes.drawerPaper,
+            paper: classes.drawerPaper
           }}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true // Better open performance on mobile.
           }}
         >
           {drawer}
         </Drawer>
         <Drawer
           classes={{
-            paper: classes.drawerPaper,
+            paper: classes.drawerPaper
           }}
           variant="permanent"
           open
-          sx={{display: { xs: 'none', sm: 'block'}}}
+          sx={{ display: { xs: 'none', sm: 'block' } }}
         >
           {drawer}
         </Drawer>
@@ -499,8 +476,8 @@ function Menu() {
                 <input
                   accept=".csv"
                   id="file-upload"
-                  onChange={(e) => onFileSelected(e)}
-                  style={{ display: "none" }}
+                  onChange={e => onFileSelected(e)}
+                  style={{ display: 'none' }}
                   type="file"
                 />
               </label>
@@ -524,7 +501,7 @@ function Menu() {
       <main className={classes.content}>
         <div className={classes.toolbar} />
       </main>
-    </Root>
+    </div>
   );
 }
 

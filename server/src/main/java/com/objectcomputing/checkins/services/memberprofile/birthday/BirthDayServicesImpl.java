@@ -3,41 +3,33 @@ package com.objectcomputing.checkins.services.memberprofile.birthday;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import jakarta.inject.Singleton;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Singleton
 public class BirthDayServicesImpl implements BirthDayServices{
 
     private final MemberProfileServices memberProfileServices;
-    private final CurrentUserServices currentUserServices;
 
-    public BirthDayServicesImpl(MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
+    public BirthDayServicesImpl(MemberProfileServices memberProfileServices) {
         this.memberProfileServices = memberProfileServices;
-        this.currentUserServices = currentUserServices;
     }
 
     @Override
     public List<BirthDayResponseDTO> findByValue(String[] months, Integer[] daysOfMonth) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource.");
-        }
-
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
-        List<MemberProfile> memberProfileAll = memberProfiles.stream().collect(Collectors.toList());
+        List<MemberProfile> memberProfileAll = new ArrayList<>(memberProfiles);
         if (months != null) {
             for (String month : months) {
                 if (month != null) {
                     memberProfileAll = memberProfileAll
                             .stream()
                             .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null)
-                            .collect(Collectors.toList());
+                            .toList();
                 }
             }
         }
@@ -47,21 +39,22 @@ public class BirthDayServicesImpl implements BirthDayServices{
                     memberProfileAll = memberProfiles
                             .stream()
                             .filter(member -> member.getBirthDate() != null && day.equals(member.getBirthDate().getDayOfMonth()) && member.getTerminationDate() == null)
-                            .collect(Collectors.toList());
+                            .toList();
                 }
             }
         }
 
         return profileToBirthDateResponseDto(memberProfileAll);
     }
+
     @Override
     public List<BirthDayResponseDTO> getTodaysBirthdays() {
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
         LocalDate today = LocalDate.now();
         List<MemberProfile> results = memberProfiles
                 .stream()
-                .filter(member -> member.getBirthDate() != null && today.getDayOfMonth() == member.getBirthDate().getDayOfMonth() && today.getMonthValue() == member.getBirthDate().getMonthValue())
-                .collect(Collectors.toList());
+                .filter(member -> member.getBirthDate() != null && today.getMonthValue() == member.getBirthDate().getMonthValue())
+                .toList();
         return profileToBirthDateResponseDto(results);
     }
 
