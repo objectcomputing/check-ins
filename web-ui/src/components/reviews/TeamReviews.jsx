@@ -219,6 +219,18 @@ const TeamReviews = ({ onBack, periodId }) => {
       source = showAll
         ? selectCurrentUserSubordinates(state)
         : selectTeamMembersBySupervisorId(state, myId);
+
+      // And others that the current user may be assigned to review.
+      assignments.filter(a => a.reviewerId == currentUser.id)
+                 .forEach(a => {
+        if (!source.some(s => s.id == a.revieweeId)) {
+          // Add this user to the list of members to show by default.
+          const member = currentMembers.find(m => m.id == a.revieweeId);
+          if (member) {
+            source.push(member);
+          }
+        }
+      });
     }
 
     // Always filter the members down to existing selected assignments.
@@ -802,7 +814,9 @@ const TeamReviews = ({ onBack, periodId }) => {
   const renderSelfReviewStatus = member => {
     const recipientProfile = selectProfile(state, member.id);
     const manages = recipientProfile.supervisorid == currentUser?.id;
-    if (manages) {
+    const request = getReviewRequest(member, currentUser);
+    const isReviewer = request?.recipientId == currentUser?.id;
+    if (manages || isReviewer) {
       const selfReviewRequest = getSelfReviewRequest(member);
       return (
         <Chip
