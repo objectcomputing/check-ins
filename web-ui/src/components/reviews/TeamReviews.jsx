@@ -186,8 +186,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                   selectHasUpdateReviewAssignmentsPermission(state));
 
 
-    setHasShowAll((isManager || selectHasUpdateReviewPeriodPermission(state)) &&
-                  (approvalState || openMode));
+    setHasShowAll((isManager || selectHasUpdateReviewPeriodPermission(state)));
   }, [state]);
 
   useEffect(() => {
