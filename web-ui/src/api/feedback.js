@@ -5,6 +5,7 @@ const feedbackSuggestionURL = '/services/feedback/suggestions';
 const feedbackRequestURL = '/services/feedback/requests';
 const answerURL = '/services/feedback/answers';
 const questionAndAnswerURL = '/services/feedback/questions-and-answers';
+const feedbackExternalRecipientsURL = '/services/feedback/external/recipients';
 
 export const findReviewRequestsByPeriodAndTeamMembers = async (
   period,
@@ -288,6 +289,13 @@ export const getFeedbackRequestsByRequestees = async (
       requesteeIds,
       oldestDate
     },
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
+export const getExternalRecipients = async (cookie) => {
+  return resolve({
+    url: `${feedbackExternalRecipientsURL}/findAll`,
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
