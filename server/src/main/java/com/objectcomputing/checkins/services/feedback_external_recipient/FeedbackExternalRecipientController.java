@@ -55,6 +55,41 @@ public class FeedbackExternalRecipientController {
                 .headers(headers -> headers.location(URI.create("/feedback_external_recipient/" + savedFeedbackExternalRecipient.getId())));
     }
 
+    /*
+    @Get("/{?email, firstName, lastName, companyName}")
+    public List<FeedbackExternalRecipientResponseDTO> findByValues(@Nullable String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName) {
+        return this.feedbackExternalRecipientServices.findByValues(email, firstName, lastName, companyName)
+                .stream()
+                .map(this::fromEntity)
+                .toList();
+    }
+    */
+
+    /**
+     * Return list of all external-recipients used for feedback-requests
+     *
+     * @return list of {@link FeedbackExternalRecipientResponseDTO}
+     */
+    @Get("/findAll")
+    public List<FeedbackExternalRecipientResponseDTO> findAll() {
+        return this.feedbackExternalRecipientServices.findAll()
+                .stream()
+                .map(this::fromEntity)
+                .toList();
+    }
+
+    /**
+     * Get external recipient (for feedback requests) by ID
+     *
+     * @param id {@link UUID} ID of the external-recipient
+     * @return {@link FeedbackExternalRecipientResponseDTO}
+     */
+    @Get("/{id}")
+    public HttpResponse<FeedbackExternalRecipientResponseDTO> getById(UUID id) {
+        FeedbackExternalRecipient feedbackExternalRecipient = this.feedbackExternalRecipientServices.getById(id);
+        return HttpResponse.created(fromEntity(feedbackExternalRecipient));
+    }
+
     private FeedbackExternalRecipient fromDTO(FeedbackExternalRecipientCreateDTO dto) {
         FeedbackExternalRecipient object = new FeedbackExternalRecipient();
         object.setEmail(dto.getEmail());

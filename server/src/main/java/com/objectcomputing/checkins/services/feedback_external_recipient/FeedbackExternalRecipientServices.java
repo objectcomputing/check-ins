@@ -13,6 +13,8 @@ public interface FeedbackExternalRecipientServices {
 
     FeedbackExternalRecipient getById(UUID id);
 
-    List<FeedbackExternalRecipient> findByValues(String email, String firstName, String lastName, String companyName);
+    //List<FeedbackExternalRecipient> findByValues(String email, String firstName, String lastName, String companyName);
+
+    List<FeedbackExternalRecipient> findAll();
 
 }

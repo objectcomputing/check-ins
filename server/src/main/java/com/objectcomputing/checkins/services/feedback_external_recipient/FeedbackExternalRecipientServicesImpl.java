@@ -1,11 +1,10 @@
 package com.objectcomputing.checkins.services.feedback_external_recipient;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class FeedbackExternalRecipientServicesImpl implements FeedbackExternalRecipientServices {
@@ -42,7 +41,17 @@ public class FeedbackExternalRecipientServicesImpl implements FeedbackExternalRe
     }
 
     @Override
-    public List<FeedbackExternalRecipient> findByValues(String email, String firstName, String lastName, String companyName) {
-        return List.of();
+    public List<FeedbackExternalRecipient> findAll() {
+        return feedbackExternalRecipientRepository.findAll();
     }
+
+    /*
+    @Override
+    public List<FeedbackExternalRecipient> findByValues(@Nullable String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName) {
+        List<FeedbackExternalRecipient> feedbackExternalRecipients = new ArrayList<>(feedbackExternalRecipientRepository.search());
+
+        return feedbackExternalRecipients;
+    }
+    */
+
 }
