@@ -701,7 +701,7 @@ class ReviewPeriodControllerTest
 
     @Test
     void testOpenAReviewPeriodWithBadLaunchTime() {
-        LocalDateTime launchDate = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime launchDate = LocalDateTime.now().minusDays(1);
         LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
         LocalDateTime startDate = launchDate.minusDays(30);
