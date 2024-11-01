@@ -239,8 +239,20 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateTeamMembers = async teamMembers => {
-    // First, create a set of team members, each with a default reviewer.
-    const data = teamMembers.map(tm => ({
+    // First, get the list of review assignements.
+    let res = await getReviewAssignments(periodId, csrf);
+    if (res.error) return;
+
+    // Match up the review assignments with the team members.
+    const existing = res.payload.data
+                     .filter(a => teamMembers.find(m => m.id == a.revieweeId));
+
+    // Create a set of team members that do not yet have review assignments,
+    // each with a default reviewer.
+    const mem = teamMembers.filter(
+      m => !existing.find(a => a.revieweeId == m.id)
+    );
+    const data = mem.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
       reviewPeriodId: periodId,
@@ -248,7 +260,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     }));
 
     // Set those on the server as the review assignments.
-    let res = await createReviewAssignments(periodId, data, csrf);
+    res = await createReviewAssignments(periodId, data, csrf);
     if (res.error) return;
 
     // Get the list of review assignments from the server to ensure that we are
