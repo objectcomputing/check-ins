@@ -40,12 +40,17 @@ public class GuildResponseDTO {
     @Schema(description = "Is the guild a community")
     private boolean community;
 
-    public GuildResponseDTO(UUID id, String name, @Nullable String description, @Nullable String link, boolean community) {
+    @NotNull
+    @Schema(description = "whether the guild is active")
+    private boolean active;
+
+    public GuildResponseDTO(UUID id, String name, @Nullable String description, @Nullable String link, boolean community, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.link = link;
         this.community = community;
+        this.active = active;
     }
 
     public List<GuildMemberResponseDTO> getGuildMembers() {
