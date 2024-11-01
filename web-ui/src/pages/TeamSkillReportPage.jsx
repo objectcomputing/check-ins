@@ -82,6 +82,11 @@ const TeamSkillReportPage = () => {
           : undefined;
     }
     if (memberSkillsFound && memberProfiles) {
+      // Filter the member skill down to only members that are not terminated.
+      memberSkillsFound = memberSkillsFound.filter(
+        mSkill => memberProfiles.find(member => member.id == mSkill.id)
+      );
+
       setAllSearchResults(memberSkillsFound);
       let membersSelected = memberSkillsFound.filter(mSkill =>
         selectedMembers.some(member => member.id === mSkill.id)
