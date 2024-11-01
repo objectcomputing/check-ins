@@ -239,8 +239,20 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateTeamMembers = async teamMembers => {
-    // First, create a set of team members, each with a default reviewer.
-    const data = teamMembers.map(tm => ({
+    // First, get the list of review assignements.
+    let res = await getReviewAssignments(periodId, csrf);
+    if (res.error) return;
+
+    // Match up the review assignments with the team members.
+    const existing = res.payload.data
+                     .filter(a => teamMembers.find(m => m.id == a.revieweeId));
+
+    // Create a set of team members that do not yet have review assignments,
+    // each with a default reviewer.
+    const mem = teamMembers.filter(
+      m => !existing.find(a => a.revieweeId == m.id)
+    );
+    const data = mem.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
       reviewPeriodId: periodId,
@@ -248,13 +260,25 @@ const TeamReviews = ({ onBack, periodId }) => {
     }));
 
     // Set those on the server as the review assignments.
-    let res = await createReviewAssignments(periodId, data, csrf);
+    res = await createReviewAssignments(periodId, data, csrf);
     if (res.error) return;
 
     // Get the list of review assignments from the server to ensure that we are
     // reflecting what was actually created.
     res = await getReviewAssignments(periodId, csrf);
-    const assignments = res.error ? [] : res.payload.data;
+    let assignments = res.error ? [] : res.payload.data;
+
+    // Remove review assignments for members no longer selected.
+    for(let assignment of assignments) {
+      if (!teamMembers.find(m => m.id == assignment.revieweeId)) {
+        // Delete review assignments if we do not have the matching member.
+        await removeReviewAssignment(assignment.id, csrf);
+      }
+    }
+
+    // Get the review assignments from the server one more time.
+    res = await getReviewAssignments(periodId, csrf);
+    assignments = res.error ? [] : res.payload.data;
 
     // Update our reactive assignment and member lists.
     setAssignments(assignments);
