@@ -188,17 +188,17 @@ const FeedbackSubmitForm = ({
         {isReviewing ? 'Reviewing' : 'Submitting'} Feedback on{' '}
         <b>{requesteeName}</b>
       </Typography>
-      {!isReviewing && (
-        <div className="wrapper">
-          <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>
-            info-icon
-          </InfoIcon>
-          <Typography className={classes.tip}>
-            <b>Tip of the day: </b>
-            {tip}
-          </Typography>
-        </div>
-      )}
+{/*       {!isReviewing && ( */}
+{/*         <div className="wrapper"> */}
+{/*           <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}> */}
+{/*             info-icon */}
+{/*           </InfoIcon> */}
+{/*           <Typography className={classes.tip}> */}
+{/*             <b>Tip of the day: </b> */}
+{/*             {tip} */}
+{/*           </Typography> */}
+{/*         </div> */}
+{/*       )} */}
       {!isReviewing && (
         <Alert className={classes.warning} severity="warning">
           <AlertTitle>Notice!</AlertTitle>

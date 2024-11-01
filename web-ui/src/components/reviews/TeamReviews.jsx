@@ -12,7 +12,6 @@ import { useLocation, Link } from 'react-router-dom';
 import {
   AddCircle,
   Archive,
-  Delete,
   Search,
   Unarchive
 } from '@mui/icons-material';
@@ -50,7 +49,6 @@ import {
   updateReviewPeriod
 } from '../../api/reviewperiods.js';
 import {
-  DELETE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIODS,
   UPDATE_TOAST
@@ -61,10 +59,9 @@ import {
   selectCurrentMembers,
   selectCurrentUser,
   selectCurrentUserSubordinates,
-  selectHasDeleteReviewPeriodPermission,
+  selectHasCloseReviewPeriodPermission,
   selectHasLaunchReviewPeriodPermission,
   selectHasUpdateReviewPeriodPermission,
-  selectIsAdmin,
   selectReviewPeriod,
   selectSupervisors,
   selectProfile,
@@ -130,7 +127,6 @@ const TeamReviews = ({ onBack, periodId }) => {
   const location = useLocation();
 
   const [openMode, setOpenMode] = useState(false);
-  const [managerApprovalMode, setManagerApprovalMode] = useState(false);
   const [approvalState, setApprovalState] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const [canUpdate, setCanUpdate] = useState(false);
@@ -138,7 +134,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [nameQuery, setNameQuery] = useState('');
   const [query, setQuery] = useState({});
@@ -148,8 +144,9 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selfReviews, setSelfReviews] = useState({});
   const [showAll, setShowAll] = useState(false);
+  const [hasShowAll, setHasShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [toDelete, setToDelete] = useState(null);
+  const [toClose, setToClose] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
   const [confirmRevieweesWithNoSupervisorOpen, setConfirmRevieweesWithNoSupervisorOpen] = useState(false);
@@ -165,7 +162,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     return map;
   }, {});
   const currentUser = selectCurrentUser(state);
-  const isAdmin = selectIsAdmin(state);
   const period = selectReviewPeriod(state, periodId);
 
   useEffect(() => {
@@ -179,7 +175,6 @@ const TeamReviews = ({ onBack, periodId }) => {
     const period = selectReviewPeriod(state, periodId);
     if (period) {
       setApprovalState(period.reviewStatus === ReviewStatus.AWAITING_APPROVAL);
-      setManagerApprovalMode(isManager && approvalState);
     }
 
     setOpenMode(period?.reviewStatus === ReviewStatus.OPEN);
@@ -189,11 +184,12 @@ const TeamReviews = ({ onBack, periodId }) => {
                   selectHasUpdateReviewAssignmentsPermission(state));
 
 
+    setHasShowAll((isManager || selectHasUpdateReviewPeriodPermission(state)));
   }, [state]);
 
   useEffect(() => {
     loadTeamMembers();
-  }, [managerApprovalMode, assignments, showAll]);
+  }, [assignments, showAll]);
 
   const editReviewers = member => {
     setSelectedMember(member);
@@ -213,7 +209,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const loadTeamMembers = () => {
     let source;
-    if (!managerApprovalMode || (isAdmin && showAll)) {
+    if (selectHasUpdateReviewPeriodPermission(state) && showAll) {
       source = currentMembers;
     } else {
       // Get the direct reports of the current user who is a manager.
@@ -221,6 +217,18 @@ const TeamReviews = ({ onBack, periodId }) => {
       source = showAll
         ? selectCurrentUserSubordinates(state)
         : selectTeamMembersBySupervisorId(state, myId);
+
+      // And others that the current user may be assigned to review.
+      assignments.filter(a => a.reviewerId == currentUser.id)
+                 .forEach(a => {
+        if (!source.some(s => s.id == a.revieweeId)) {
+          // Add this user to the list of members to show by default.
+          const member = currentMembers.find(m => m.id == a.revieweeId);
+          if (member) {
+            source.push(member);
+          }
+        }
+      });
     }
 
     // Always filter the members down to existing selected assignments.
@@ -338,31 +346,29 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   }, [csrf, dispatch]);
 
-  const confirmDelete = useCallback(() => {
-    setToDelete(period.id);
-    setConfirmDeleteOpen(true);
-  }, [period, setToDelete, setConfirmDeleteOpen]);
+  const confirmClose = useCallback(() => {
+    setToClose(period.id);
+    setConfirmCloseOpen(true);
+  }, [period, setToClose, setConfirmCloseOpen]);
 
-  const handleConfirmDeleteClose = useCallback(() => {
-    setToDelete(null);
-    setConfirmDeleteOpen(false);
-  }, [setToDelete, setConfirmDeleteOpen]);
+  const handleConfirmCloseClose = useCallback(() => {
+    setToClose(null);
+    setConfirmCloseOpen(false);
+  }, [setToClose, setConfirmCloseOpen]);
 
   const handleConfirmApproveAllClose = useCallback(() => {
     setConfirmApproveAllOpen(false);
-  }, [setToDelete, setConfirmApproveAllOpen]);
+  }, [setConfirmApproveAllOpen]);
 
-  const deleteReviewPeriod = useCallback(async () => {
+  const closeReviewPeriod = useCallback(async () => {
     if (!csrf) return;
 
-    await removeReviewPeriod(toDelete, csrf);
-    dispatch({
-      type: DELETE_REVIEW_PERIOD,
-      payload: toDelete
-    });
-    handleConfirmDeleteClose();
+    if (period.reviewStatus === ReviewStatus.OPEN) {
+      updateReviewPeriodStatus(ReviewStatus.CLOSED);
+    }
+    handleConfirmCloseClose();
     onBack();
-  }, [csrf, dispatch, toDelete, handleConfirmDeleteClose]);
+  }, [csrf, dispatch, toClose, handleConfirmCloseClose]);
 
   const getReviewers = useCallback(
     reviewee => {
@@ -804,7 +810,9 @@ const TeamReviews = ({ onBack, periodId }) => {
   const renderSelfReviewStatus = member => {
     const recipientProfile = selectProfile(state, member.id);
     const manages = recipientProfile.supervisorid == currentUser?.id;
-    if (manages) {
+    const request = getReviewRequest(member, currentUser);
+    const isReviewer = request?.recipientId == currentUser?.id;
+    if (manages || isReviewer) {
       const selfReviewRequest = getSelfReviewRequest(member);
       return (
         <Chip
@@ -817,13 +825,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
-  const approvalButton = () => {
+  const modifierButton = () => {
     switch (period.reviewStatus) {
       case ReviewStatus.PLANNING:
         return <Button onClick={requestApproval}>Request Approval</Button>;
       case ReviewStatus.AWAITING_APPROVAL:
         return selectHasLaunchReviewPeriodPermission(state) ? (
           <Button onClick={requestApproval}>Launch Review</Button>
+        ) : null;
+      case ReviewStatus.OPEN:
+        return selectHasCloseReviewPeriodPermission(state) ? (
+          <Button onClick={confirmClose}>Close Review</Button>
         ) : null;
       default:
         return null;
@@ -907,7 +919,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const visibleTeamMembers = () => {
     const query = nameQuery.trim().toLowerCase();
-    if (!managerApprovalMode || query.length === 0) return teamMembers;
+    if (query.length === 0) return teamMembers;
 
     return teamMembers.filter(member =>
       member.name.toLowerCase().includes(query)
@@ -959,7 +971,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                 disabled={!canUpdate}
             />
           </div>
-          {approvalButton()}
+          {modifierButton()}
         </div>
       )}
       {validationMessage && (
@@ -968,7 +980,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         </Alert>
       )}
 
-      {approvalState && (
+      {(approvalState || hasShowAll) && (
           <div id="approval-row" style={{ display: 'flex', alignItems: 'center' }}>
             {/* Wrapper div for TextField and Switch */}
             <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
@@ -989,7 +1001,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                   style={{ flexGrow: 1, maxWidth: '400px' }}
               />
               {/* Add the Switch right next to the TextField */}
-              {period && isAdmin && (
+              {period && hasShowAll && (
                   <FormControlLabel
                       control={
                         <Switch
@@ -1081,11 +1093,11 @@ const TeamReviews = ({ onBack, periodId }) => {
         }}
       />
       <ConfirmationDialog
-        open={confirmDeleteOpen}
-        onYes={deleteReviewPeriod}
-        question={`Are you sure you want to delete the review period ${selectReviewPeriod(state, toDelete)?.name}?`}
-        setOpen={setConfirmDeleteOpen}
-        title="Delete this review period?"
+        open={confirmCloseOpen}
+        onYes={closeReviewPeriod}
+        question={`Are you sure you want to close the review period ${selectReviewPeriod(state, toClose)?.name}?`}
+        setOpen={setConfirmCloseOpen}
+        title="Close this review period?"
       />
       <ConfirmationDialog
         open={confirmApproveAllOpen}

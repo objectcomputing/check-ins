@@ -26,6 +26,7 @@ const SettingsBoolean = ({ name, description, value, handleChange }) => {
       </label>
       {description && <p>{description}</p>}
       <Switch
+        disableRipple
         id={labelId}
         className="settings-control"
         type="checkbox"

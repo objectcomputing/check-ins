@@ -552,7 +552,7 @@ class ReviewPeriodControllerTest
         assertEquals(2, emailSender.events.size());
         EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
                                   "It's time for performance reviews!",
-                                  "Help us make this a valuable experience for everyone!",
+                                  "Your feedback helps us improve as a team!",
                                   member.getWorkEmail() + "," + supervisor.getWorkEmail(),
                                   emailSender.events.get(1)
         );
@@ -701,7 +701,7 @@ class ReviewPeriodControllerTest
 
     @Test
     void testOpenAReviewPeriodWithBadLaunchTime() {
-        LocalDateTime launchDate = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime launchDate = LocalDateTime.now().minusDays(1);
         LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
         LocalDateTime startDate = launchDate.minusDays(30);
