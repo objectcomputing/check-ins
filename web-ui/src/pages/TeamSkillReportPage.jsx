@@ -82,6 +82,10 @@ const TeamSkillReportPage = () => {
           : undefined;
     }
     if (memberSkillsFound && memberProfiles) {
+      memberSkillsFound = memberSkillsFound.filter(
+        mSkill => memberProfiles.find(member => member.id == mSkill.id)
+      );
+
       setAllSearchResults(memberSkillsFound);
       let membersSelected = memberSkillsFound.filter(mSkill =>
         selectedMembers.some(member => member.id === mSkill.id)
