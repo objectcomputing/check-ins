@@ -18,6 +18,7 @@ import {
   noPermission,
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 
 const months = [
   'January',
@@ -43,6 +44,7 @@ const AnniversaryReportPage = () => {
   const [searchAnniversaryResults, setSearchAnniversaryResults] = useState([]);
   const [selectedMonths, setSelectedMonths] = useState(defaultMonths);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useQueryParameters([
     {
@@ -57,9 +59,22 @@ const AnniversaryReportPage = () => {
   ]);
 
   const handleSearch = async monthsToSearch => {
-    const anniversaryResults = await getAnniversaries(monthsToSearch, csrf);
-    setSearchAnniversaryResults(sortAnniversaries(anniversaryResults));
-    setHasSearched(true);
+    setLoading(true);
+    try {
+      const anniversaryResults = await getAnniversaries(monthsToSearch, csrf);
+      setSearchAnniversaryResults(sortAnniversaries(anniversaryResults));
+      setHasSearched(true);
+    } catch(e) {
+      console.error(e);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: e,
+        }
+      });
+    }
+    setLoading(false);
   };
 
   function onMonthChange(event, newValue) {
@@ -111,6 +126,10 @@ const AnniversaryReportPage = () => {
       </div>
       <div>
         {
+          loading ?
+          Array.from({ length: 10 }).map((_, index) => (
+                        <SkeletonLoader key={index} type="feedback_requests" />
+                     )) :
           <div className="search-results">
             <SearchBirthdayAnniversaryResults
               hasSearched={hasSearched}
