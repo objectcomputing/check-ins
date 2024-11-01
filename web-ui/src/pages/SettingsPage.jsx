@@ -214,6 +214,7 @@ const SettingsPage = () => {
        selectHasAdministerSettingsPermission(state) &&
       <div className="buttons">
         <Button
+          disableRipple
           color="primary"
           onClick={save}>
           Save
