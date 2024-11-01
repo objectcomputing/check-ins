@@ -6,6 +6,7 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.cache.annotation.CacheInvalidate;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class MemberRoleController {
     }
 
     @Post
+    @CacheInvalidate(cacheNames = {"role-permission-cache"})
     HttpResponse<MemberRole> saveMemberRole(@NotNull @Body MemberRoleId id){
         MemberRole memberRole = memberRoleServices.saveByIds(id.getMemberId(), id.getRoleId());
         return HttpResponse.ok(memberRole);
