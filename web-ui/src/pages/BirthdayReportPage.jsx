@@ -11,6 +11,7 @@ import { getBirthdays } from '../api/birthdayanniversary';
 import { UPDATE_TOAST } from '../context/actions';
 import SearchBirthdayAnniversaryResults from '../components/search-results/SearchBirthdayAnniversaryResults';
 import { sortBirthdays } from '../context/util';
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 
 import {
   selectCsrfToken,
@@ -43,6 +44,7 @@ const BirthdayReportPage = () => {
   const [searchBirthdayResults, setSearchBirthdayResults] = useState([]);
   const [selectedMonths, setSelectedMonths] = useState(defaultMonths);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useQueryParameters([
     {
@@ -57,9 +59,21 @@ const BirthdayReportPage = () => {
   ]);
 
   const handleSearch = async monthsToSearch => {
-    const birthdayResults = await getBirthdays(monthsToSearch, csrf);
-    setSearchBirthdayResults(sortBirthdays(birthdayResults));
-    setHasSearched(true);
+    setLoading(true);
+    try {
+      const birthdayResults = await getBirthdays(monthsToSearch, csrf);
+      setSearchBirthdayResults(sortBirthdays(birthdayResults));
+      setHasSearched(true);
+    } catch(e) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: e,
+        }
+      });
+    }
+    setLoading(false);
   };
 
   function onMonthChange(event, newValue) {
@@ -111,6 +125,10 @@ const BirthdayReportPage = () => {
       </div>
       <div>
         {
+          loading ?
+          Array.from({ length: 10 }).map((_, index) => (
+                        <SkeletonLoader key={index} type="feedback_requests" />
+                     )) :
           <div className="search-results">
             <SearchBirthdayAnniversaryResults
               hasSearched={hasSearched}
