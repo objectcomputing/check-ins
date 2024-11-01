@@ -266,7 +266,19 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Get the list of review assignments from the server to ensure that we are
     // reflecting what was actually created.
     res = await getReviewAssignments(periodId, csrf);
-    const assignments = res.error ? [] : res.payload.data;
+    let assignments = res.error ? [] : res.payload.data;
+
+    // Remove review assignments for members no longer selected.
+    for(let assignment of assignments) {
+      if (!teamMembers.find(m => m.id == assignment.revieweeId)) {
+        // Delete review assignments if we do not have the matching member.
+        await removeReviewAssignment(assignment.id, csrf);
+      }
+    }
+
+    // Get the review assignments from the server one more time.
+    res = await getReviewAssignments(periodId, csrf);
+    assignments = res.error ? [] : res.payload.data;
 
     // Update our reactive assignment and member lists.
     setAssignments(assignments);
