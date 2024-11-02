@@ -708,27 +708,31 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     // Remove all assignments for this member.
     newAssignments = newAssignments.filter(a => a.revieweeId !== memberId);
-
-    // Add assignments for these reviewers if they don't already exist.
-    // All objects in the assignments array are for the current review period.
-    for (const reviewer of reviewers) {
-      const exists = newAssignments.some(
-        a => a.reviewerId === reviewer.id && a.revieweeId === memberId
-      );
-      if (!exists) {
-        newAssignments.push({
-          reviewPeriodId: periodId,
-          reviewerId: reviewer.id,
-          revieweeId: member.id
-        });
+    for(let assignment of assignments) {
+      if (!newAssignments.find(a => a.id == assignment.id)) {
+        await removeReviewAssignment(assignment.id, csrf);
       }
     }
 
-    const res = await createReviewAssignments(periodId, newAssignments, csrf);
+    // Add assignments for these reviewers if they don't already exist.
+    // All objects in the assignments array are for the current review period.
+    const additional = [];
+    for (const reviewer of reviewers) {
+      additional.push({
+        reviewPeriodId: periodId,
+        reviewerId: reviewer.id,
+        revieweeId: member.id
+      });
+    }
+
+    // Create only the new assignments.
+    let res = await createReviewAssignments(periodId, additional, csrf);
     if (res.error) return;
 
-    newAssignments = sortMembers(res.payload.data);
-    setAssignments(newAssignments);
+    // Get the actual list of assignments back from the server.
+    res = await getReviewAssignments(periodId, csrf);
+    newAssignments = res.error ? [] : res.payload.data;
+    setAssignments(sortMembers(newAssignments));
   };
 
   const closeReviewerDialog = () => {
