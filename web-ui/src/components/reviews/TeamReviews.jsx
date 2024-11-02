@@ -239,8 +239,20 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateTeamMembers = async teamMembers => {
-    // First, create a set of team members, each with a default reviewer.
-    const data = teamMembers.map(tm => ({
+    // First, get the list of review assignements.
+    let res = await getReviewAssignments(periodId, csrf);
+    if (res.error) return;
+
+    // Match up the review assignments with the team members.
+    const existing = res.payload.data
+                     .filter(a => teamMembers.find(m => m.id == a.revieweeId));
+
+    // Create a set of team members that do not yet have review assignments,
+    // each with a default reviewer.
+    const mem = teamMembers.filter(
+      m => !existing.find(a => a.revieweeId == m.id)
+    );
+    const data = mem.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
       reviewPeriodId: periodId,
@@ -248,13 +260,25 @@ const TeamReviews = ({ onBack, periodId }) => {
     }));
 
     // Set those on the server as the review assignments.
-    let res = await createReviewAssignments(periodId, data, csrf);
+    res = await createReviewAssignments(periodId, data, csrf);
     if (res.error) return;
 
     // Get the list of review assignments from the server to ensure that we are
     // reflecting what was actually created.
     res = await getReviewAssignments(periodId, csrf);
-    const assignments = res.error ? [] : res.payload.data;
+    let assignments = res.error ? [] : res.payload.data;
+
+    // Remove review assignments for members no longer selected.
+    for(let assignment of assignments) {
+      if (!teamMembers.find(m => m.id == assignment.revieweeId)) {
+        // Delete review assignments if we do not have the matching member.
+        await removeReviewAssignment(assignment.id, csrf);
+      }
+    }
+
+    // Get the review assignments from the server one more time.
+    res = await getReviewAssignments(periodId, csrf);
+    assignments = res.error ? [] : res.payload.data;
 
     // Update our reactive assignment and member lists.
     setAssignments(assignments);
@@ -684,27 +708,31 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     // Remove all assignments for this member.
     newAssignments = newAssignments.filter(a => a.revieweeId !== memberId);
-
-    // Add assignments for these reviewers if they don't already exist.
-    // All objects in the assignments array are for the current review period.
-    for (const reviewer of reviewers) {
-      const exists = newAssignments.some(
-        a => a.reviewerId === reviewer.id && a.revieweeId === memberId
-      );
-      if (!exists) {
-        newAssignments.push({
-          reviewPeriodId: periodId,
-          reviewerId: reviewer.id,
-          revieweeId: member.id
-        });
+    for(let assignment of assignments) {
+      if (!newAssignments.find(a => a.id == assignment.id)) {
+        await removeReviewAssignment(assignment.id, csrf);
       }
     }
 
-    const res = await createReviewAssignments(periodId, newAssignments, csrf);
+    // Add assignments for these reviewers if they don't already exist.
+    // All objects in the assignments array are for the current review period.
+    const additional = [];
+    for (const reviewer of reviewers) {
+      additional.push({
+        reviewPeriodId: periodId,
+        reviewerId: reviewer.id,
+        revieweeId: member.id
+      });
+    }
+
+    // Create only the new assignments.
+    let res = await createReviewAssignments(periodId, additional, csrf);
     if (res.error) return;
 
-    newAssignments = sortMembers(res.payload.data);
-    setAssignments(newAssignments);
+    // Get the actual list of assignments back from the server.
+    res = await getReviewAssignments(periodId, csrf);
+    newAssignments = res.error ? [] : res.payload.data;
+    setAssignments(sortMembers(newAssignments));
   };
 
   const closeReviewerDialog = () => {
