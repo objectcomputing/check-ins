@@ -32,6 +32,11 @@ exports[`renders correctly 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-19pemnp-MuiTypography-root"
+      >
+        Inactive
+      </p>
       <strong>
         Guild Leads: 
       </strong>
@@ -94,6 +99,11 @@ exports[`renders correctly for ADMIN 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-19pemnp-MuiTypography-root"
+      >
+        Inactive
+      </p>
       <strong>
         Guild Leads: 
       </strong>
