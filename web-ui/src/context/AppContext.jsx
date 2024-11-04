@@ -14,7 +14,7 @@ import {
   UPDATE_CERTIFICATIONS,
   UPDATE_TEAMS,
   UPDATE_PEOPLE_LOADING,
-  UPDATE_TEAMS_LOADING
+  UPDATE_TEAMS_LOADING, UPDATE_EXTERNAL_RECIPIENTS, UPDATE_EXTERNAL_RECIPIENTS_LOADING
 } from './actions';
 import {
   getCurrentUser,
@@ -31,6 +31,7 @@ import { getAllGuilds } from '../api/guild';
 import { getSkills } from '../api/skill';
 import { getAllTeams } from '../api/team';
 import {getCertifications} from "../api/certification.js";
+import { getExternalRecipients } from '../api/feedback.js';
 
 const AppContext = React.createContext();
 
@@ -54,6 +55,7 @@ const AppContextProvider = props => {
     teams,
     memberSkills,
     memberProfiles,
+      feedbackExternalRecipients,
     checkins,
     skills,
     certifications,
@@ -145,7 +147,28 @@ const AppContextProvider = props => {
     if (csrf && !memberSkills) {
       getAllMemberSkills();
     }
-  }, [csrf, memberSkills]);
+  }
+  , [csrf, memberSkills])
+  ;
+
+  useEffect(() => {
+    async function getAllExternalRecipients() {
+      let res = await getExternalRecipients(csrf);
+      let externalRecipients =
+          res.payload && res.payload.data && !res.error
+              ? res.payload.data
+              : undefined
+      ;
+      if (externalRecipients) {
+        dispatch({ type: UPDATE_EXTERNAL_RECIPIENTS, payload: externalRecipients });
+        dispatch({ type: UPDATE_EXTERNAL_RECIPIENTS_LOADING, payload: false });
+      }
+    }
+    if (csrf && !feedbackExternalRecipients) {
+      getAllExternalRecipients();
+    }
+  }, [csrf, feedbackExternalRecipients])
+  ;
 
   useEffect(() => {
     async function getMemberProfiles() {
@@ -178,7 +201,8 @@ const AppContextProvider = props => {
         getTerminatedMembers();
       }
     }
-  }, [csrf, userProfile, memberProfiles]);
+  }
+  , [csrf, userProfile, memberProfiles]);
 
   useEffect(() => {
     function getAllTheCheckins() {

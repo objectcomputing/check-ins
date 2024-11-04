@@ -6,7 +6,7 @@ import {
   selectProfile,
   selectCsrfToken,
   selectCurrentUser,
-  selectNormalizedMembers
+  selectNormalizedMembers, selectFeedbackExternalRecipient
 } from '../../context/selectors';
 import {getExternalRecipients} from '../../api/feedback';
 import Typography from '@mui/material/Typography';
@@ -194,7 +194,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
                   <FeedbackExternalRecipientCard
                       key={id}
                       profileId={id}
-                      recipientProfile={selectProfile(state, id)}
+                      recipientProfile={selectFeedbackExternalRecipient(state, id)}
                       selected
                       onClick={() => cardClickHandler(id)}
                   />

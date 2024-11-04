@@ -25,7 +25,7 @@ import {
   selectCurrentUser,
   selectCurrentMemberIds,
   selectHasCreateFeedbackPermission,
-  noPermission,
+  noPermission, selectFeedbackExternalRecipientIds,
 } from '../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
 import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
@@ -126,6 +126,7 @@ const FeedbackRequestPage = () => {
   const [templateIsForExternalRecipient, setTemplateIsForExternalRecipient] = useState();
   const [requestee, setRequestee] = useState({});
   const [memberIds, setMemberIds] = useState([]);
+  const [externalRecipientIds, setExternalRecipientIds] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
 
   const handleQueryChange = useCallback(
@@ -151,27 +152,51 @@ const FeedbackRequestPage = () => {
   }, [query.for, memberIds]);
 
   const hasFrom = useCallback(() => {
-    if (!memberIds.length) return true;
-    let from = query.from;
-    if (from) {
-      from = Array.isArray(from) ? from : [from];
-      for (let recipientId of from) {
-        if (!memberIds.includes(recipientId)) {
-          dispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: 'error',
-              toast: 'Member ID in URL is invalid'
-            }
-          });
-          handleQueryChange('from', undefined);
-          return false;
+    if (templateIsForExternalRecipient) {
+      if (!externalRecipientIds.length) return true;
+      let from = query.from;
+      if (from) {
+        from = Array.isArray(from) ? from : [from];
+        for (let externalRecipientId of from) {
+          if (!externalRecipientIds.includes(externalRecipientId)) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'External Recipient ID in URL is invalid'
+              }
+            });
+            handleQueryChange('from', undefined);
+            return false;
+          }
         }
+        return true;
       }
-      return true;
+      return false;
+    } else {
+      if (!memberIds.length) return true;
+      let from = query.from;
+      if (from) {
+        from = Array.isArray(from) ? from : [from];
+        for (let recipientId of from) {
+          if (!memberIds.includes(recipientId)) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'Member ID in URL is invalid'
+              }
+            });
+            handleQueryChange('from', undefined);
+            return false;
+          }
+        }
+        return true;
+      }
+      return false;
     }
-    return false;
-  }, [memberIds, query, dispatch, handleQueryChange]);
+
+  }, [memberIds, query, dispatch, handleQueryChange, externalRecipientIds]);
 
   const isValidDate = useCallback(dateString => {
     const today = new Date().setHours(0, 0, 0, 0);
@@ -269,7 +294,8 @@ const FeedbackRequestPage = () => {
         id: null,
         creatorId: currentUserId,
         requesteeId: query.for,
-        recipientId: recipient,
+        recipientId: (templateIsForExternalRecipient) ? null : recipient,
+        externalRecipientId: (templateIsForExternalRecipient) ? recipient : null,
         templateId: query.template,
         sendDate,
         dueDate,
@@ -328,6 +354,14 @@ const FeedbackRequestPage = () => {
     const members = selectCurrentMemberIds(state);
     if (members) {
       setMemberIds(members);
+    }
+  }, [state]);
+
+  useEffect(() => {
+    const feedbackExternalRecipients = selectFeedbackExternalRecipientIds(state);
+    console.log("FeedbackRequestPage, useEffect, feedbackExternalRecipients: ", feedbackExternalRecipients);
+    if (feedbackExternalRecipients) {
+      setExternalRecipientIds(feedbackExternalRecipients);
     }
   }, [state]);
 

@@ -25,14 +25,14 @@ export const UPDATE_SKILLS = '@@check-ins/update_skills';
 export const UPDATE_CERTIFICATIONS = '@@check-ins/update_certifications';
 export const UPDATE_TEAM_MEMBERS = '@@check-ins/update_team_members';
 export const UPDATE_TEAMS = '@@check-ins/update_teams';
-export const UPDATE_TERMINATED_MEMBERS =
-  '@@check-ins/update_terminated_members';
+export const UPDATE_TERMINATED_MEMBERS = '@@check-ins/update_terminated_members';
 export const UPDATE_TOAST = '@@check-ins/update_toast';
 export const UPDATE_USER_BIO = '@@check-ins/update_bio';
-export const UPDATE_FEEEDBACK_SUGGESTIONS =
-  '@@check-ins/update_feedback_suggestions';
+export const UPDATE_FEEEDBACK_SUGGESTIONS = '@@check-ins/update_feedback_suggestions';
 export const UPDATE_PEOPLE_LOADING = '@@check-ins/update_people_loading';
 export const UPDATE_TEAMS_LOADING = '@@check-ins/update_teams_loading';
 export const UPDATE_REVIEW_PERIOD = '@@check-ins/update_review_period';
 export const UPDATE_REVIEW_PERIODS = '@@check-ins/update_review_periods';
 export const ADD_REVIEW_PERIOD = '@@check-ins/add_review_period';
+export const UPDATE_EXTERNAL_RECIPIENTS = '@@check-ins/update_external_recipients';
+export const UPDATE_EXTERNAL_RECIPIENTS_LOADING = '@@check-ins/update_external_recipients_loading';

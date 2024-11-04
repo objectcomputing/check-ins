@@ -32,7 +32,7 @@ import {
   UPDATE_TEAMS_LOADING,
   UPDATE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIODS,
-  ADD_REVIEW_PERIOD
+  ADD_REVIEW_PERIOD, UPDATE_EXTERNAL_RECIPIENTS, UPDATE_EXTERNAL_RECIPIENTS_LOADING
 } from './actions';
 
 export const initialState = {
@@ -46,6 +46,7 @@ export const initialState = {
   memberProfiles: null,
   terminatedMembers: [],
   memberSkills: null,
+  feedbackExternalRecipients: null,
   roles: null,
   userRoles: null,
   skills: null,
@@ -247,6 +248,12 @@ export const reducer = (state, action) => {
       break;
     case UPDATE_REVIEW_PERIODS:
       state.reviewPeriods = action.payload;
+      break;
+    case UPDATE_EXTERNAL_RECIPIENTS:
+      state.feedbackExternalRecipients = action.payload;
+      break;
+    case UPDATE_EXTERNAL_RECIPIENTS_LOADING:
+      state.loading = { ...state.loading, feedbackExternalRecipients: action.payload };
       break;
     default:
   }

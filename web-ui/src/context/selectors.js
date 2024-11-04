@@ -15,6 +15,7 @@ export const selectGuilds = state => state.guilds || [];
 export const selectLoading = state => state.loading;
 export const selectReviewPeriods = state => state.reviewPeriods;
 export const selectPermissions = state => state.permissions;
+export const selectFeedbackExternalRecipients = state => state.feedbackExternalRecipients || [];
 
 export const noPermission = 'You do not have permission to view this page.';
 
@@ -723,4 +724,15 @@ export const selectReviewPeriod = createSelector(
   selectReviewPeriodMap,
   (state, periodId) => periodId,
   (periodMap, periodId) => periodMap[periodId]
+);
+
+export const selectFeedbackExternalRecipientIds = createSelector(
+    selectFeedbackExternalRecipients,
+    externalRecipients => externalRecipients.map(externalRecipient => externalRecipient.id)
+);
+
+export const selectFeedbackExternalRecipient = createSelector(
+    selectFeedbackExternalRecipients,
+    (state, feedbackExternalRecipientId) => feedbackExternalRecipientId,
+    (feedbackExternalRecipients, feedbackExternalRecipientId) => feedbackExternalRecipients.find(feedbackExternalRecipient => feedbackExternalRecipient.id === feedbackExternalRecipientId)
 );
