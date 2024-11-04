@@ -135,7 +135,6 @@ const FeedbackRequestPage = () => {
         ...query,
         [key]: value
       };
-      console.log("FeedbackRequestPage, handleQueryChange, query: ", query);
       history.push({ ...location, search: queryString.stringify(newQuery) });
     },
     [history, location, query]
@@ -221,7 +220,7 @@ const FeedbackRequestPage = () => {
         return hasFor() && templateIsValid && hasFrom();
       } else if (activeStep === 3) {
         const dueQueryValid = query.due ? isValidDate(query.due) : true;
-        console.log({
+        console.log("FeedbackRequestPage, canProceed: ",{
           hasFor: hasFor(),
           templateIsValid,
           hasFrom: hasFrom(),
@@ -359,7 +358,6 @@ const FeedbackRequestPage = () => {
 
   useEffect(() => {
     const feedbackExternalRecipients = selectFeedbackExternalRecipientIds(state);
-    console.log("FeedbackRequestPage, useEffect, feedbackExternalRecipients: ", feedbackExternalRecipients);
     if (feedbackExternalRecipients) {
       setExternalRecipientIds(feedbackExternalRecipients);
     }
@@ -367,7 +365,6 @@ const FeedbackRequestPage = () => {
 
   useEffect(() => {
     const params = queryString.parse(location?.search);
-    console.log("FeedbackRequestPage, useEffect, setQuery, params: ", params);
     setQuery(params);
   }, [location.search]);
 
@@ -398,13 +395,11 @@ const FeedbackRequestPage = () => {
       } else {
         // Set additionalData based on the res.payload.data content
         const additionalData = templateResponse.someField; // Replace with the actual data you want to return
-        console.log("FeedbackRequestPage, isTemplateValid, templateResponse.isForExternalRecipient: ", templateResponse.isForExternalRecipient);
         return { isValid: true, templateIsForExternalRecipientParam: templateResponse.isForExternalRecipient };
       }
     }
 
     if (queryLoaded.current && csrf) {
-      console.log("FeedbackRequestPage, queryLoaded, queryLoaded.current: ", queryLoaded.current);
       isTemplateValid().then(({ isValid, templateIsForExternalRecipientParam: templateIsForExternalRecipientParam }) => {
         setTemplateIsValid(isValid);
         setTemplateIsForExternalRecipient(templateIsForExternalRecipientParam);
@@ -412,8 +407,8 @@ const FeedbackRequestPage = () => {
     } else {
       queryLoaded.current = true;
     }
-  }, [csrf, query, queryLoaded]);
-
+  }, [csrf, query, queryLoaded])
+  ;
 
   useEffect(() => {
     if (!queryLoaded.current || templateIsValid === undefined) return;

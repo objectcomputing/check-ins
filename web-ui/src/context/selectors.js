@@ -247,14 +247,12 @@ export const selectTerminatedMemberIds = createSelector(
 export const selectProfileMap = createSelector(
   selectCurrentMembers,
   currentMembers => {
-      console.log("selectors, currentMembers 01, currentMembers: ", currentMembers);
     if (currentMembers && currentMembers.length) {
       currentMembers = currentMembers.reduce((mappedById, member) => {
         mappedById[member.id] = member;
         return mappedById;
       }, {});
     }
-      console.log("selectors, currentMembers 02, currentMembers: ", currentMembers);
     return currentMembers;
   }
 );
