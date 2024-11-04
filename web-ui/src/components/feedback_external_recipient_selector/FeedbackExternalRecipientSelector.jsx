@@ -83,7 +83,9 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
       }
       searchTextUpdated.current = true;
     }
-  }, [searchText, profiles, fromQuery, state, userProfile, normalizedMembers]);
+  }
+  , [searchText, profiles, fromQuery, state, userProfile, normalizedMembers])
+  ;
 
   useEffect(() => {
     function bindFromURL() {
@@ -93,20 +95,18 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
           fromQuery !== undefined
       ) {
         let profileCopy = profiles;
+        console.log("FeedbackExternalRecipientSelector, bindFromURL, profiles: ", profiles);
+        console.log("FeedbackExternalRecipientSelector, bindFromURL, fromQuery: ", fromQuery);
         if (typeof fromQuery === 'string') {
           let newProfile = { id: fromQuery };
-          if (
-              profiles.filter(member => member.id === newProfile.id).length === 0
-          ) {
+          console.log("FeedbackExternalRecipientSelector, bindFromURL, newProfile: ", newProfile);
+          if (profiles.filter(member => member.id === newProfile.id).length === 0) {
             profileCopy.push(newProfile);
           }
         } else if (Array.isArray(fromQuery)) {
           for (let i = 0; i < fromQuery.length; ++i) {
             let newProfile = { id: fromQuery[i] };
-            if (
-                profiles.filter(member => member.id === newProfile.id).length ===
-                0
-            ) {
+            if (profiles.filter(member => member.id === newProfile.id).length === 0) {
               profileCopy.push(newProfile);
             }
           }
@@ -116,7 +116,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
       }
     }
 
-    async function getSuggestions() {
+    async function getExternalRecipientsForSelector() {
       if (forQuery === undefined || forQuery === null) {
         return;
       }
@@ -128,7 +128,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
     }
 
     if (csrf && (searchText === '' || searchText.length === 0)) {
-      getSuggestions().then(res => {
+      getExternalRecipientsForSelector().then(res => {
         bindFromURL();
         if (res !== undefined && res !== null) {
           let filteredProfileCopy = profiles.filter(member => {
@@ -137,13 +137,17 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
             });
           });
           let newProfiles = filteredProfileCopy.concat(res);
+          console.log("FeedbackExternalRecipientSelector, getExternalRecipientsForSelector, newProfiles: ", newProfiles);
           setProfiles(newProfiles);
         }
       });
     } // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, csrf, searchText]);
+  }, [id, csrf, searchText])
+  ;
 
   const cardClickHandler = id => {
+    console.log("FeedbackExternalRecipientSelector, cardClickHandler, id: ", id);
+    console.log("FeedbackExternalRecipientSelector, cardClickHandler, fromQuery: ", fromQuery);
     if (!Array.isArray(fromQuery)) {
       fromQuery = fromQuery ? [fromQuery] : [];
     }
@@ -240,8 +244,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
                     .map(profile => (
                         <FeedbackExternalRecipientCard
                             key={profile.id}
-                            recipientProfile={selectProfile(state, profile.id)}
-                            reason={profile?.reason ? profile.reason : null}
+                            recipientProfile={profile}
                             onClick={() => cardClickHandler(profile.id)}
                         />
                     ))}
@@ -252,6 +255,9 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
         </div>
       </StyledGrid>
   );
+
+  //recipientProfile={selectProfile(state, profile.id)}
+
 };
 
 FeedbackExternalRecipientSelector.propTypes = propTypes;

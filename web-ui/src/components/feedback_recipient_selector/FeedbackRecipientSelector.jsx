@@ -138,6 +138,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
             });
           });
           let newProfiles = filteredProfileCopy.concat(res);
+          console.log("FeedbackRecipientSelector, getSuggestions, newProfiles: ", newProfiles);
           setProfiles(newProfiles);
         }
       });
@@ -145,6 +146,8 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
   }, [id, csrf, searchText]);
 
   const cardClickHandler = id => {
+    console.log("FeedbackRecipientSelector, cardClickHandler, id: ", id);
+    console.log("FeedbackRecipientSelector, cardClickHandler, fromQuery: ", fromQuery);
     if (!Array.isArray(fromQuery)) {
       fromQuery = fromQuery ? [fromQuery] : [];
     }

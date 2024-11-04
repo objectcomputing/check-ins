@@ -61,7 +61,6 @@ const StyledBox = styled(Box)({
 const FeedbackExternalRecipientCard = ({
   recipientProfile,
   selected,
-  reason = null,
   onClick
 }) => {
   const { state } = useContext(AppContext);
@@ -85,24 +84,7 @@ const FeedbackExternalRecipientCard = ({
               </CheckCircleIcon>
             ) : null
           }
-          subheader={
-            <Typography color="textSecondary" component="h3">
-              {recipientProfile?.title}
-            </Typography>
-          }
           disableTypography
-          avatar={
-            !recipientProfile?.terminationDate ? (
-              <Avatar
-                className="large"
-                src={getAvatarURL(recipientProfile?.email)}
-              />
-            ) : (
-              <Avatar className="large">
-                <PriorityHighIcon />
-              </Avatar>
-            )
-          }
         />
         <CardContent>
           <Container fixed className="info-container">
@@ -115,31 +97,15 @@ const FeedbackExternalRecipientCard = ({
                 {recipientProfile?.email}
               </a>
               <br />
-              Location: {recipientProfile?.location}
-              <br />
-              Supervisor: {supervisorProfile?.name}
-              <br />
-              PDL: {pdlProfile?.name}
+              Company: {recipientProfile?.companyName}
               <br />
             </Typography>
-            {reason && (
-              <div className="reason">
-                <Divider variant="middle" className={classes.divider} />
-                <Typography
-                  id="rec_reason"
-                  name="rec_reason"
-                  component="p"
-                  className={classes.recommendationText}
-                >
-                  {reason}
-                </Typography>
-              </div>
-            )}
           </Container>
         </CardContent>
       </Card>
     </StyledBox>
   );
+
 };
 
 export default FeedbackExternalRecipientCard;

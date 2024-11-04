@@ -59,7 +59,7 @@ public class FeedbackExternalRecipient {
 
     @Column(name = "company_name")
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(lastName::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(company_name::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "company of the feedback external recipient")
