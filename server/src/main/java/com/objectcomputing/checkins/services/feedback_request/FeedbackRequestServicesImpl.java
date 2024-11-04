@@ -152,19 +152,21 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         String senderName = MemberProfileUtils.getFullName(creator);
         UUID recipientOrExternalRecipientId;
-        String reviewerFirstName, reviewerEmail;
+        String reviewerFirstName, reviewerEmail, urlFeedbackSubmit;
 
         if (storedRequest.getExternalRecipientId() != null) {
             recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
             reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
             reviewerFirstName = reviewerExternalRecipient.getFirstName();
             reviewerEmail = reviewerExternalRecipient.getEmail();
+            urlFeedbackSubmit = "/feedback/submitForExternalRecipient?request=";
         } else {
             recipientOrExternalRecipientId = storedRequest.getRecipientId();
             reviewerMemberProfile = memberProfileServices.getById(recipientOrExternalRecipientId);
             recipientOrExternalRecipientId = storedRequest.getRecipientId();
             reviewerFirstName = reviewerMemberProfile.getFirstName();
             reviewerEmail = reviewerMemberProfile.getWorkEmail();
+            urlFeedbackSubmit = "/feedback/submit?request=";
         }
 
         String newContent = String.format(
@@ -177,7 +179,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                                   storedRequest.getDueDate().getMonth(),
                                                   storedRequest.getDueDate().getDayOfMonth(),
                                                   storedRequest.getDueDate().getYear()),
-                                String.format("%s/feedback/submit?request=%s",
+                                String.format("%s" + urlFeedbackSubmit + "%s",
                                               webURL, storedRequest.getId().toString())
         );
         emailSender.sendEmail(

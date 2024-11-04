@@ -32,8 +32,7 @@ import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbackte
 
 import './FeedbackRequestPage.css';
 import FeedbackRequestForExternalRecipientPage from "./FeedbackRequestForExternalRecipientPage.jsx";
-import FeedbackExternalRecipientSelector
-  from "../components/feedback_external_recipient_selector/FeedbackExternalRecipientSelector.jsx";
+import FeedbackExternalRecipientSelector from "../components/feedback_external_recipient_selector/FeedbackExternalRecipientSelector.jsx";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'FeedbackRequestPage';
@@ -393,8 +392,6 @@ const FeedbackRequestPage = () => {
         });
         return { isValid: false, templateIsForExternalRecipientParam: false };
       } else {
-        // Set additionalData based on the res.payload.data content
-        const additionalData = templateResponse.someField; // Replace with the actual data you want to return
         return { isValid: true, templateIsForExternalRecipientParam: templateResponse.isForExternalRecipient };
       }
     }

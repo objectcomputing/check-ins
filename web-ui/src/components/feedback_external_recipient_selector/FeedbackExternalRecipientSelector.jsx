@@ -95,11 +95,8 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
           fromQuery !== undefined
       ) {
         let profileCopy = profiles;
-        console.log("FeedbackExternalRecipientSelector, bindFromURL, profiles: ", profiles);
-        console.log("FeedbackExternalRecipientSelector, bindFromURL, fromQuery: ", fromQuery);
         if (typeof fromQuery === 'string') {
           let newProfile = { id: fromQuery };
-          console.log("FeedbackExternalRecipientSelector, bindFromURL, newProfile: ", newProfile);
           if (profiles.filter(member => member.id === newProfile.id).length === 0) {
             profileCopy.push(newProfile);
           }
@@ -137,7 +134,6 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
             });
           });
           let newProfiles = filteredProfileCopy.concat(res);
-          console.log("FeedbackExternalRecipientSelector, getExternalRecipientsForSelector, newProfiles: ", newProfiles);
           setProfiles(newProfiles);
         }
       });
@@ -146,8 +142,6 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
   ;
 
   const cardClickHandler = id => {
-    console.log("FeedbackExternalRecipientSelector, cardClickHandler, id: ", id);
-    console.log("FeedbackExternalRecipientSelector, cardClickHandler, fromQuery: ", fromQuery);
     if (!Array.isArray(fromQuery)) {
       fromQuery = fromQuery ? [fromQuery] : [];
     }

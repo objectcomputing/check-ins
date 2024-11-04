@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -47,11 +47,16 @@ const FeedbackRequestConfirmation = () => {
   const forQuery = query.for?.toString();
   const fromQuery = query.from?.toString();
   const sendQuery = query.send?.toString();
+  const templateQuery = query.template?.toString();
   const requestee = selectProfile(state, forQuery);
   let recipientInfo = getRecipientNames();
   let sendDate = dateUtils.parse(sendQuery, 'MM/dd/yyyy', new Date());
 
   function getRecipientNames() {
+
+    console.log("FeedbackRequestConfirmation, getRecipientNames(), query: ", query);
+
+
     if (fromQuery !== undefined) {
       let fromArray = fromQuery.split(',');
       let recipientProfiles = [];
@@ -85,7 +90,10 @@ const FeedbackRequestConfirmation = () => {
         <b>Sent to: </b>
         {recipientInfo?.map(
           (member, index) =>
-            `${selectProfile(state, member)?.name}${index === recipientInfo.length - 1 ? '' : ', '}`
+            `
+            ${selectProfile(state, member)?.name} - id: ${member} - templateQuery: ${templateQuery}
+            ${index === recipientInfo.length - 1 ? '' : ', '}
+            `
         )}
       </Typography>
       <Link style={{ marginTop: '4em', textDecoration: 'none' }} to="/">
