@@ -12,7 +12,6 @@ import { useLocation, Link } from 'react-router-dom';
 import {
   AddCircle,
   Archive,
-  Delete,
   Search,
   Unarchive
 } from '@mui/icons-material';
@@ -50,7 +49,6 @@ import {
   updateReviewPeriod
 } from '../../api/reviewperiods.js';
 import {
-  DELETE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIODS,
   UPDATE_TOAST
@@ -61,7 +59,7 @@ import {
   selectCurrentMembers,
   selectCurrentUser,
   selectCurrentUserSubordinates,
-  selectHasDeleteReviewPeriodPermission,
+  selectHasCloseReviewPeriodPermission,
   selectHasLaunchReviewPeriodPermission,
   selectHasUpdateReviewPeriodPermission,
   selectReviewPeriod,
@@ -136,7 +134,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [nameQuery, setNameQuery] = useState('');
   const [query, setQuery] = useState({});
@@ -148,7 +146,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [showAll, setShowAll] = useState(false);
   const [hasShowAll, setHasShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [toDelete, setToDelete] = useState(null);
+  const [toClose, setToClose] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
   const [confirmRevieweesWithNoSupervisorOpen, setConfirmRevieweesWithNoSupervisorOpen] = useState(false);
@@ -186,8 +184,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                   selectHasUpdateReviewAssignmentsPermission(state));
 
 
-    setHasShowAll((isManager || selectHasUpdateReviewPeriodPermission(state)) &&
-                  (approvalState || openMode));
+    setHasShowAll((isManager || selectHasUpdateReviewPeriodPermission(state)));
   }, [state]);
 
   useEffect(() => {
@@ -220,6 +217,18 @@ const TeamReviews = ({ onBack, periodId }) => {
       source = showAll
         ? selectCurrentUserSubordinates(state)
         : selectTeamMembersBySupervisorId(state, myId);
+
+      // And others that the current user may be assigned to review.
+      assignments.filter(a => a.reviewerId == currentUser.id)
+                 .forEach(a => {
+        if (!source.some(s => s.id == a.revieweeId)) {
+          // Add this user to the list of members to show by default.
+          const member = currentMembers.find(m => m.id == a.revieweeId);
+          if (member) {
+            source.push(member);
+          }
+        }
+      });
     }
 
     // Always filter the members down to existing selected assignments.
@@ -230,8 +239,20 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const updateTeamMembers = async teamMembers => {
-    // First, create a set of team members, each with a default reviewer.
-    const data = teamMembers.map(tm => ({
+    // First, get the list of review assignements.
+    let res = await getReviewAssignments(periodId, csrf);
+    if (res.error) return;
+
+    // Match up the review assignments with the team members.
+    const existing = res.payload.data
+                     .filter(a => teamMembers.find(m => m.id == a.revieweeId));
+
+    // Create a set of team members that do not yet have review assignments,
+    // each with a default reviewer.
+    const mem = teamMembers.filter(
+      m => !existing.find(a => a.revieweeId == m.id)
+    );
+    const data = mem.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
       reviewPeriodId: periodId,
@@ -239,13 +260,25 @@ const TeamReviews = ({ onBack, periodId }) => {
     }));
 
     // Set those on the server as the review assignments.
-    let res = await createReviewAssignments(periodId, data, csrf);
+    res = await createReviewAssignments(periodId, data, csrf);
     if (res.error) return;
 
     // Get the list of review assignments from the server to ensure that we are
     // reflecting what was actually created.
     res = await getReviewAssignments(periodId, csrf);
-    const assignments = res.error ? [] : res.payload.data;
+    let assignments = res.error ? [] : res.payload.data;
+
+    // Remove review assignments for members no longer selected.
+    for(let assignment of assignments) {
+      if (!teamMembers.find(m => m.id == assignment.revieweeId)) {
+        // Delete review assignments if we do not have the matching member.
+        await removeReviewAssignment(assignment.id, csrf);
+      }
+    }
+
+    // Get the review assignments from the server one more time.
+    res = await getReviewAssignments(periodId, csrf);
+    assignments = res.error ? [] : res.payload.data;
 
     // Update our reactive assignment and member lists.
     setAssignments(assignments);
@@ -337,31 +370,29 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   }, [csrf, dispatch]);
 
-  const confirmDelete = useCallback(() => {
-    setToDelete(period.id);
-    setConfirmDeleteOpen(true);
-  }, [period, setToDelete, setConfirmDeleteOpen]);
+  const confirmClose = useCallback(() => {
+    setToClose(period.id);
+    setConfirmCloseOpen(true);
+  }, [period, setToClose, setConfirmCloseOpen]);
 
-  const handleConfirmDeleteClose = useCallback(() => {
-    setToDelete(null);
-    setConfirmDeleteOpen(false);
-  }, [setToDelete, setConfirmDeleteOpen]);
+  const handleConfirmCloseClose = useCallback(() => {
+    setToClose(null);
+    setConfirmCloseOpen(false);
+  }, [setToClose, setConfirmCloseOpen]);
 
   const handleConfirmApproveAllClose = useCallback(() => {
     setConfirmApproveAllOpen(false);
-  }, [setToDelete, setConfirmApproveAllOpen]);
+  }, [setConfirmApproveAllOpen]);
 
-  const deleteReviewPeriod = useCallback(async () => {
+  const closeReviewPeriod = useCallback(async () => {
     if (!csrf) return;
 
-    await removeReviewPeriod(toDelete, csrf);
-    dispatch({
-      type: DELETE_REVIEW_PERIOD,
-      payload: toDelete
-    });
-    handleConfirmDeleteClose();
+    if (period.reviewStatus === ReviewStatus.OPEN) {
+      updateReviewPeriodStatus(ReviewStatus.CLOSED);
+    }
+    handleConfirmCloseClose();
     onBack();
-  }, [csrf, dispatch, toDelete, handleConfirmDeleteClose]);
+  }, [csrf, dispatch, toClose, handleConfirmCloseClose]);
 
   const getReviewers = useCallback(
     reviewee => {
@@ -677,27 +708,31 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     // Remove all assignments for this member.
     newAssignments = newAssignments.filter(a => a.revieweeId !== memberId);
-
-    // Add assignments for these reviewers if they don't already exist.
-    // All objects in the assignments array are for the current review period.
-    for (const reviewer of reviewers) {
-      const exists = newAssignments.some(
-        a => a.reviewerId === reviewer.id && a.revieweeId === memberId
-      );
-      if (!exists) {
-        newAssignments.push({
-          reviewPeriodId: periodId,
-          reviewerId: reviewer.id,
-          revieweeId: member.id
-        });
+    for(let assignment of assignments) {
+      if (!newAssignments.find(a => a.id == assignment.id)) {
+        await removeReviewAssignment(assignment.id, csrf);
       }
     }
 
-    const res = await createReviewAssignments(periodId, newAssignments, csrf);
+    // Add assignments for these reviewers if they don't already exist.
+    // All objects in the assignments array are for the current review period.
+    const additional = [];
+    for (const reviewer of reviewers) {
+      additional.push({
+        reviewPeriodId: periodId,
+        reviewerId: reviewer.id,
+        revieweeId: member.id
+      });
+    }
+
+    // Create only the new assignments.
+    let res = await createReviewAssignments(periodId, additional, csrf);
     if (res.error) return;
 
-    newAssignments = sortMembers(res.payload.data);
-    setAssignments(newAssignments);
+    // Get the actual list of assignments back from the server.
+    res = await getReviewAssignments(periodId, csrf);
+    newAssignments = res.error ? [] : res.payload.data;
+    setAssignments(sortMembers(newAssignments));
   };
 
   const closeReviewerDialog = () => {
@@ -803,7 +838,9 @@ const TeamReviews = ({ onBack, periodId }) => {
   const renderSelfReviewStatus = member => {
     const recipientProfile = selectProfile(state, member.id);
     const manages = recipientProfile.supervisorid == currentUser?.id;
-    if (manages) {
+    const request = getReviewRequest(member, currentUser);
+    const isReviewer = request?.recipientId == currentUser?.id;
+    if (manages || isReviewer) {
       const selfReviewRequest = getSelfReviewRequest(member);
       return (
         <Chip
@@ -816,13 +853,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   };
 
-  const approvalButton = () => {
+  const modifierButton = () => {
     switch (period.reviewStatus) {
       case ReviewStatus.PLANNING:
         return <Button onClick={requestApproval}>Request Approval</Button>;
       case ReviewStatus.AWAITING_APPROVAL:
         return selectHasLaunchReviewPeriodPermission(state) ? (
           <Button onClick={requestApproval}>Launch Review</Button>
+        ) : null;
+      case ReviewStatus.OPEN:
+        return selectHasCloseReviewPeriodPermission(state) ? (
+          <Button onClick={confirmClose}>Close Review</Button>
         ) : null;
       default:
         return null;
@@ -958,7 +999,7 @@ const TeamReviews = ({ onBack, periodId }) => {
                 disabled={!canUpdate}
             />
           </div>
-          {approvalButton()}
+          {modifierButton()}
         </div>
       )}
       {validationMessage && (
@@ -1080,11 +1121,11 @@ const TeamReviews = ({ onBack, periodId }) => {
         }}
       />
       <ConfirmationDialog
-        open={confirmDeleteOpen}
-        onYes={deleteReviewPeriod}
-        question={`Are you sure you want to delete the review period ${selectReviewPeriod(state, toDelete)?.name}?`}
-        setOpen={setConfirmDeleteOpen}
-        title="Delete this review period?"
+        open={confirmCloseOpen}
+        onYes={closeReviewPeriod}
+        question={`Are you sure you want to close the review period ${selectReviewPeriod(state, toClose)?.name}?`}
+        setOpen={setConfirmCloseOpen}
+        title="Close this review period?"
       />
       <ConfirmationDialog
         open={confirmApproveAllOpen}

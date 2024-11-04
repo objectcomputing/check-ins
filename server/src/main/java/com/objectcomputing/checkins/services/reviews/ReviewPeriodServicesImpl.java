@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -162,7 +163,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             if (launchDate == null) {
                 throw new BadArgException("Cannot open a review period without a launch date.");
             }
-            if (launchDate.isBefore(LocalDateTime.now())) {
+            if (launchDate.isBefore(LocalDateTime.now().with(LocalTime.MIN))) {
                 throw new BadArgException("Cannot open a review period with a launch date in the past.");
             }
         }
