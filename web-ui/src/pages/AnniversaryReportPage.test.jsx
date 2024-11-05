@@ -14,7 +14,8 @@ const userStateWithPermission = {
 
 it('renders correctly', () => {
   const mockDate = new Date(2022, 1, 1);
-  const spy = vi.spyOn(global, 'Date').mockImplementation(() => mockDate);
+  vi.useFakeTimers();
+  vi.setSystemTime(mockDate);
 
   snapshot(
     <AppContextProvider value={userStateWithPermission}>
@@ -22,12 +23,13 @@ it('renders correctly', () => {
     </AppContextProvider>
   );
 
-  spy.mockRestore();
+  vi.useRealTimers();
 });
 
 it('renders an error if user does not have appropriate permission', () => {
   const mockDate = new Date(2022, 1, 1);
-  const spy = vi.spyOn(global, 'Date').mockImplementation(() => mockDate);
+  vi.useFakeTimers();
+  vi.setSystemTime(mockDate);
 
   snapshot(
     <AppContextProvider>
@@ -35,5 +37,5 @@ it('renders an error if user does not have appropriate permission', () => {
     </AppContextProvider>
   );
 
-  spy.mockRestore();
+  vi.useRealTimers();
 });
