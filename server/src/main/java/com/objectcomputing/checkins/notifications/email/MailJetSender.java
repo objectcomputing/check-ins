@@ -90,8 +90,6 @@ public class MailJetSender implements EmailSender {
             return;
         }
 
-        List<JSONArray> emailBatches = getEmailBatches(recipients);
-        List<JSONArray> failedBatches = new ArrayList<>();
         JSONObject sender = new JSONObject()
                 .put("Email", fromAddress)
                 .put("Name", fromName);
@@ -106,27 +104,33 @@ public class MailJetSender implements EmailSender {
         final String localEmailFormat = modifiedEmailFormat;
         final String localContent = content;
 
-        emailBatches.forEach((recipientList) -> {
-            MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                    .property(Emailv31.MESSAGES, new JSONArray()
-                            .put(new JSONObject()
-                                    .put(Emailv31.Message.FROM, sender)
-                                    .put(Emailv31.Message.TO, new JSONArray().put(sender))
-                                    .put(Emailv31.Message.BCC, recipientList)
-                                    .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(localEmailFormat, localContent)));
+        if (recipients.length == 1) {
+            final JSONArray to = new JSONArray()
+                           .put(new JSONObject().put("Email", recipients[0]));
             try {
-                MailjetResponse response = client.post(request);
-                LOG.info("Mailjet response status: {}", response.getStatus());
-                LOG.info("Mailjet response data: {}", response.getData());
+                send(sender, to, null, subject, localEmailFormat, localContent);
             } catch (MailjetException e) {
-                LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
-                failedBatches.add(recipientList);
+                throw new BadArgException("Failed to send email for " + to);
             }
-        });
+        } else {
+            List<JSONArray> emailBatches = getEmailBatches(recipients);
+            List<JSONArray> failedBatches = new ArrayList<>();
+            final JSONArray to =
+                new JSONArray()
+                .put(new JSONObject().put("Email", this.fromAddress));
+            emailBatches.forEach((recipientList) -> {
+                try {
+                    send(sender, to, recipientList,
+                         subject, localEmailFormat, localContent);
+                } catch (MailjetException e) {
+                    LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
+                    failedBatches.add(recipientList);
+                }
+            });
 
-        if (!failedBatches.isEmpty()) {
-            throw new BadArgException("Failed to send emails for " + failedBatches);
+            if (!failedBatches.isEmpty()) {
+                throw new BadArgException("Failed to send emails for " + failedBatches);
+            }
         }
     }
 
@@ -153,5 +157,23 @@ public class MailJetSender implements EmailSender {
         } else {
             throw new BadArgException(String.format("Email format must be either HTMLPART, MJMLPART or TEXTPART, got %s", format));
         }
+    }
+
+    private void send(JSONObject from, JSONArray to, JSONArray bcc,
+                      String subject, String emailFormat, String content) throws MailjetException {
+        JSONObject values = new JSONObject()
+                                .put(Emailv31.Message.FROM, from)
+                                .put(Emailv31.Message.TO, to)
+                                .put(Emailv31.Message.SUBJECT, subject)
+                                .put(emailFormat, content);
+        if (bcc != null) {
+          values.put(Emailv31.Message.BCC, bcc);
+        }
+
+        MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                .property(Emailv31.MESSAGES, new JSONArray().put(values));
+        MailjetResponse response = client.post(request);
+        LOG.info("Mailjet response status: {}", response.getStatus());
+        LOG.info("Mailjet response data: {}", response.getData());
     }
 }
