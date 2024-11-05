@@ -74,17 +74,19 @@ const AppContextProvider = props => {
   const url = `${BASE_API_URL}/csrf/cookie`;
   useEffect(() => {
     const getCsrf = async () => {
-      const cookieVal = getSessionCookieValue('_csrf');
-      if (!csrf && !cookieVal) {
-        const res = await fetch(url, {
-          responseType: 'text',
-          credentials: 'include'
-        });
-        if (res && res.ok) {
-          dispatch({ type: SET_CSRF, payload: await res.text() });
+      if (!csrf) {
+        const payload = getSessionCookieValue('_csrf');
+        if (payload) {
+          dispatch({ type: SET_CSRF, payload });
+        } else {
+          const res = await fetch(url, {
+            responseType: 'text',
+            credentials: 'include'
+          });
+          if (res && res.ok) {
+            dispatch({ type: SET_CSRF, payload: await res.text() });
+          }
         }
-      } else if (cookieVal) {
-        dispatch({ type: SET_CSRF, payload: cookieVal });
       }
     };
     getCsrf();
