@@ -34,6 +34,17 @@ import {getCertifications} from "../api/certification.js";
 
 const AppContext = React.createContext();
 
+function getSessionCookieValue(name) {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(name + '=')) {
+      return decodeURIComponent(cookie.substring(name.length + 1));
+    }
+  }
+  return null;
+}
+
 const AppContextProvider = props => {
   const [state, dispatch] = useReducer(
     reducer,
@@ -63,7 +74,8 @@ const AppContextProvider = props => {
   const url = `${BASE_API_URL}/csrf/cookie`;
   useEffect(() => {
     const getCsrf = async () => {
-      if (!csrf) {
+      const cookieVal = getSessionCookieValue('_csrf');
+      if (!csrf && !cookieVal) {
         const res = await fetch(url, {
           responseType: 'text',
           credentials: 'include'
@@ -71,6 +83,8 @@ const AppContextProvider = props => {
         if (res && res.ok) {
           dispatch({ type: SET_CSRF, payload: await res.text() });
         }
+      } else if (cookieVal) {
+        dispatch({ type: SET_CSRF, payload: cookieVal });
       }
     };
     getCsrf();
