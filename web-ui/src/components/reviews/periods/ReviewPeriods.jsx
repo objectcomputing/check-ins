@@ -389,11 +389,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
+              const aName = (a.name || '');
               return a.reviewStatus === b.reviewStatus
-                ? (a.name || '').localeCompare(b.name)
+                ? aName.localeCompare(b.name)
                 : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
-                  : 1;
+                  : (b.reviewStatus === ReviewStatus.OPEN
+                    ? 1
+                    : aName.localeCompare(b.name));
             })
             .map((period) => (
               <div>
