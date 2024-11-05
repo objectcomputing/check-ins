@@ -35,7 +35,7 @@ import {getCertifications} from "../api/certification.js";
 const AppContext = React.createContext();
 
 function getSessionCookieValue(name) {
-  const cookies = document.cookie.split(';');
+  const cookies = document?.cookie?.split(';');
   for (let i = 0; i < cookies.length; i++) {
     const cookie = cookies[i].trim();
     if (cookie.startsWith(name + '=')) {
