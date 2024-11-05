@@ -2,6 +2,7 @@ import { resolve } from './api.js';
 
 const feedbackTemplateUrl = '/services/feedback/templates';
 const templateQuestionsUrl = '/services/feedback/template_questions';
+const feedbackExternalRecipientUrl = '/services/feedback/external/recipients';
 
 export const createFeedbackTemplate = async (feedbackTemplate, cookie) => {
   return resolve({
@@ -154,3 +155,23 @@ export const getAllFeedbackTemplates = async cookie => {
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
+
+
+export const createFeedbackExternalRecipient = async (feedbackExternalRecipient, cookie) => {
+  const feedbackExternalRecipientReq = resolve({
+    method: 'POST',
+    url: feedbackExternalRecipientUrl,
+    data: feedbackExternalRecipient,
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  });
+  return Promise.all([feedbackExternalRecipientReq]).then(
+      ([feedbackExternalRecipientRes]) => {
+        return { feedbackExternalRecipientRes };
+      }
+  );
+};
+

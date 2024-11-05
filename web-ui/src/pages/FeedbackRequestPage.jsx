@@ -194,7 +194,12 @@ const FeedbackRequestPage = () => {
       return false;
     }
 
-  }, [memberIds, query, dispatch, handleQueryChange, externalRecipientIds]);
+  }, [memberIds, query, dispatch, handleQueryChange, externalRecipientIds])
+  ;
+
+  const addExternalRecipientId = (id) => {
+    setExternalRecipientIds((prevIds) => [...prevIds, id]);
+  };
 
   const isValidDate = useCallback(dateString => {
     const today = new Date().setHours(0, 0, 0, 0);
@@ -498,6 +503,7 @@ const FeedbackRequestPage = () => {
                                 : [query.from]
                             : []
                       }
+                      addExternalRecipientId={addExternalRecipientId}
                   />
               ) : (
                   <FeedbackRecipientSelector

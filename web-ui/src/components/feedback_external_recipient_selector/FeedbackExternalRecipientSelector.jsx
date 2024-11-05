@@ -14,6 +14,13 @@ import { TextField, Grid, InputAdornment } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import './FeedbackExternalRecipientSelector.css';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import {createFeedbackExternalRecipient, createFeedbackTemplateWithQuestion} from "../../api/feedbacktemplate.js";
+import NewExternalRecipientModal from "./NewExternalRecipientModal.jsx";
+import {UPDATE_TOAST} from "../../context/actions.js";
+
 
 const PREFIX = 'FeedbackExternalRecipientSelector';
 const classes = {
@@ -45,12 +52,13 @@ const StyledGrid = styled(Grid)({
 });
 
 const propTypes = {
-  changeQuery: PropTypes.func.isRequired,
-  fromQuery: PropTypes.array.isRequired,
-  forQuery: PropTypes.string.isRequired
+    changeQuery: PropTypes.func.isRequired,
+    fromQuery: PropTypes.array.isRequired,
+    forQuery: PropTypes.string.isRequired,
+    addExternalRecipientId: PropTypes.func.isRequired,
 };
 
-const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
+const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, addExternalRecipientId }) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const userProfile = selectCurrentUser(state);
@@ -58,7 +66,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
   const searchTextUpdated = useRef(false);
   const hasRenewedFromURL = useRef(false);
   const [searchText, setSearchText] = useState('');
-  const [profiles, setProfiles] = useState([]);
+  const [externalRecipients, setExternalRecipients] = useState([]);
   const normalizedMembers = selectNormalizedMembers(state, searchText);
 
   useEffect(() => {
@@ -69,7 +77,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
         searchText
     ) {
       if (fromQuery !== undefined) {
-        let selectedMembers = profiles.filter(profile =>
+        let selectedMembers = externalRecipients.filter(profile =>
             fromQuery.includes(profile.id)
         );
         let filteredNormalizedMembers = normalizedMembers.filter(member => {
@@ -77,14 +85,13 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
             return selectedMember.id === member.id;
           });
         });
-        setProfiles(filteredNormalizedMembers);
+        setExternalRecipients(filteredNormalizedMembers);
       } else {
-        setProfiles(normalizedMembers);
+        setExternalRecipients(normalizedMembers);
       }
       searchTextUpdated.current = true;
     }
-  }
-  , [searchText, profiles, fromQuery, state, userProfile, normalizedMembers])
+  }, [searchText, externalRecipients, fromQuery, state, userProfile, normalizedMembers])
   ;
 
   useEffect(() => {
@@ -94,21 +101,21 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
           fromQuery !== null &&
           fromQuery !== undefined
       ) {
-        let profileCopy = profiles;
+        let profileCopy = externalRecipients;
         if (typeof fromQuery === 'string') {
           let newProfile = { id: fromQuery };
-          if (profiles.filter(member => member.id === newProfile.id).length === 0) {
+          if (externalRecipients.filter(member => member.id === newProfile.id).length === 0) {
             profileCopy.push(newProfile);
           }
         } else if (Array.isArray(fromQuery)) {
           for (let i = 0; i < fromQuery.length; ++i) {
             let newProfile = { id: fromQuery[i] };
-            if (profiles.filter(member => member.id === newProfile.id).length === 0) {
+            if (externalRecipients.filter(member => member.id === newProfile.id).length === 0) {
               profileCopy.push(newProfile);
             }
           }
         }
-        setProfiles(profileCopy);
+        setExternalRecipients(profileCopy);
         hasRenewedFromURL.current = true;
       }
     }
@@ -128,32 +135,32 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
       getExternalRecipientsForSelector().then(res => {
         bindFromURL();
         if (res !== undefined && res !== null) {
-          let filteredProfileCopy = profiles.filter(member => {
+          let filteredProfileCopy = externalRecipients.filter(member => {
             return !res.some(suggestedMember => {
               return suggestedMember.id === member.id;
             });
           });
           let newProfiles = filteredProfileCopy.concat(res);
-          setProfiles(newProfiles);
+          setExternalRecipients(newProfiles);
         }
       });
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, csrf, searchText])
   ;
 
-  const cardClickHandler = id => {
-    if (!Array.isArray(fromQuery)) {
-      fromQuery = fromQuery ? [fromQuery] : [];
-    }
-    if (fromQuery.includes(id)) {
-      fromQuery.splice(fromQuery.indexOf(id), 1);
-    } else {
-      fromQuery.push(id);
-    }
-
-    changeQuery('from', fromQuery);
-    hasRenewedFromURL.current = false;
-  };
+    const cardClickHandler = id => {
+        if (!Array.isArray(fromQuery)) {
+          fromQuery = fromQuery ? [fromQuery] : [];
+        }
+        if (fromQuery.includes(id)) {
+          fromQuery.splice(fromQuery.indexOf(id), 1);
+        } else {
+          fromQuery.push(id);
+        }
+        console.log("FeedbackExternalRecipientSelector.jsx, cardClickHandler, 02 - fromQuery: ", fromQuery);
+        changeQuery('from', fromQuery);
+        hasRenewedFromURL.current = false;
+    };
 
   const getSelectedCards = () => {
     if (fromQuery) {
@@ -188,7 +195,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
                   <FeedbackExternalRecipientCard
                       key={id}
                       profileId={id}
-                      recipientProfile={selectFeedbackExternalRecipient(state, id)}
+                      recipientProfile={externalRecipients.find(profile => profile.id === id)}
                       selected
                       onClick={() => cardClickHandler(id)}
                   />
@@ -199,59 +206,108 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery })
     }
   };
 
-  return (
-      <StyledGrid className="feedback-recipient-selector">
-        <Grid container spacing={3}>
-          <Grid item xs={12} className={classes.search}>
-            <TextField
-                className={classes.searchInput}
-                label="Search external recipients..."
-                placeholder="Recipient Name"
-                value={searchText}
-                onChange={e => {
-                  setSearchText(e.target.value);
-                  searchTextUpdated.current = false;
-                }}
-                InputProps={{
-                  startAdornment: (
-                      <InputAdornment
-                          className={classes.searchInputIcon}
-                          position="start"
-                      >
-                        <Search />
-                      </InputAdornment>
-                  )
-                }}
+    const [newRecipientModalOpen, setNewRecipientModalOpen] = useState(false);
+    const handleNewRecipientOpen = () => {
+        setNewRecipientModalOpen(true);
+    };
+    const handleNewRecipientClose = () => {
+        setNewRecipientModalOpen(false);
+    };
+    const handleNewRecipientSubmit = async (newRecipient) => {
+        const { feedbackExternalRecipientRes } =
+            await createFeedbackExternalRecipient(
+                newRecipient,
+                csrf
+            );
+
+        console.log("FeedbackExternalRecipientSelector.jsx, handleNewRecipientSubmit, feedbackExternalRecipientRes: ", feedbackExternalRecipientRes);
+
+        if (feedbackExternalRecipientRes.error) {
+            const errorMessage = 'Failed to save external recipient';
+            dispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                    severity: 'error',
+                    toast: errorMessage
+                }
+            });
+        } else if (feedbackExternalRecipientRes.payload && feedbackExternalRecipientRes.payload.data) {
+            newRecipient.id = feedbackExternalRecipientRes.payload.data.id;
+            console.log("FeedbackExternalRecipientSelector.jsx, handleNewRecipientSubmit, newRecipient: ", newRecipient);
+            setExternalRecipients([...externalRecipients, newRecipient]);
+            addExternalRecipientId(newRecipient.id);
+            handleNewRecipientClose();
+        }
+
+    };
+
+    return (
+        <StyledGrid className="feedback-recipient-selector">
+            <Grid container spacing={3}>
+                <Grid item xs={12} className={classes.search}>
+                    <TextField
+                        className={classes.searchInput}
+                        label="Search external recipients..."
+                        placeholder="Recipient Name"
+                        value={searchText}
+                        onChange={e => {
+                            setSearchText(e.target.value);
+                            searchTextUpdated.current = false;
+                        }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment
+                                    className={classes.searchInputIcon}
+                                    position="start"
+                                >
+                                    <Search />
+                                </InputAdornment>
+                            )
+                        }}
+                    />
+                    <div className="new-recipient-button">
+                        <Button variant="contained" color="primary" onClick={handleNewRecipientOpen}>
+                            New External Recipient
+                        </Button>
+                        <Tooltip
+                            title="Create a new external recipient"
+                            arrow
+                        >
+                            <HelpOutlineIcon style={{ color: 'gray', marginLeft: '10px' }} />
+                        </Tooltip>
+                    </div>
+                </Grid>
+            </Grid>
+            <div className="selected-recipients-container">{getSelectedCards()}</div>
+            <div className="selectable-recipients-container">
+                {externalRecipients ? (
+                    <div className="recipient-card-container">
+                        {externalRecipients
+                            .filter(
+                                profile =>
+                                    !fromQuery ||
+                                    (!fromQuery.includes(profile.id) && profile.id !== forQuery)
+                            )
+                            .map(profile => (
+                                <FeedbackExternalRecipientCard
+                                    key={profile.id}
+                                    recipientProfile={profile}
+                                    onClick={() => cardClickHandler(profile.id)}
+                                />
+                            ))}
+                    </div>
+                ) : (
+                    <p>Can't get suggestions, please come back later :(</p>
+                )}
+            </div>
+            <NewExternalRecipientModal
+                open={newRecipientModalOpen}
+                onClose={handleNewRecipientClose}
+                onSubmit={handleNewRecipientSubmit}
             />
-          </Grid>
-        </Grid>
-        <div className="selected-recipients-container">{getSelectedCards()}</div>
-        <div className="selectable-recipients-container">
-          {profiles ? (
-              <div className="recipient-card-container">
-                {profiles
-                    .filter(
-                        profile =>
-                            !fromQuery ||
-                            (!fromQuery.includes(profile.id) && profile.id !== forQuery)
-                    )
-                    .map(profile => (
-                        <FeedbackExternalRecipientCard
-                            key={profile.id}
-                            recipientProfile={profile}
-                            onClick={() => cardClickHandler(profile.id)}
-                        />
-                    ))}
-              </div>
-          ) : (
-              <p>Can't get suggestions, please come back later :(</p>
-          )}
-        </div>
-      </StyledGrid>
-  );
-
+        </StyledGrid>
+    );
   //recipientProfile={selectProfile(state, profile.id)}
-
 };
 
 FeedbackExternalRecipientSelector.propTypes = propTypes;
