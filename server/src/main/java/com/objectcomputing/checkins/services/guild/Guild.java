@@ -64,16 +64,22 @@ public class Guild {
     @Schema(description = "Is the guild a community")
     private boolean community;
 
-    public Guild(String name, @Nullable String description, @Nullable String link, boolean community) {
-        this(null, name, description, link, community);
+    @NotNull
+    @Column(name = "is_active")
+    @Schema(description = "whether the guild is active")
+    private boolean active = true;
+
+    public Guild(String name, @Nullable String description, @Nullable String link, boolean community, boolean active) {
+        this(null, name, description, link, community, active);
     }
 
-    public Guild(UUID id, String name, @Nullable String description, @Nullable String link, boolean community) {
+    public Guild(UUID id, String name, @Nullable String description, @Nullable String link, boolean community, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.link = link;
         this.community = community;
+        this.active = active;
     }
 
     @Override
@@ -85,13 +91,14 @@ public class Guild {
                 Objects.equals(name, guild.name) &&
                 Objects.equals(description, guild.description) &&
                 Objects.equals(link, guild.link) &&
-                Objects.equals(community, guild.community);
+                Objects.equals(community, guild.community) &&
+                Objects.equals(active, guild.active);
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, link, community);
+        return Objects.hash(id, name, description, link, community, active);
     }
 
     @Override
@@ -102,6 +109,7 @@ public class Guild {
                 ", description='" + description + '\'' +
                 ", link='" + link +
                 ", community=" + community +
+                ", active=" + active +
                 '}';
     }
 }
