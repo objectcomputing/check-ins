@@ -399,7 +399,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdateGuildNullName() {
         Guild guildEntity = createDefaultGuild();
 
-        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null, null, false);
+        GuildUpdateDTO requestBody = new GuildUpdateDTO(guildEntity.getId(), null, null, null, false, true);
         requestBody.setGuildMembers(new ArrayList<>());
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("", requestBody)
@@ -434,7 +434,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         Guild guildEntity = createDefaultGuild();
         UUID requestId = UUID.randomUUID();
         GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(),
-                guildEntity.getDescription(), guildEntity.getLink(), guildEntity.isCommunity());
+                guildEntity.getDescription(), guildEntity.getLink(), guildEntity.isCommunity(), guildEntity.isActive());
         requestBody.setGuildMembers(new ArrayList<>());
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();

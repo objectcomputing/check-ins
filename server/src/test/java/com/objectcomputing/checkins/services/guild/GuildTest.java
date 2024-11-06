@@ -101,7 +101,7 @@ class GuildTest extends TestContainersSuite {
     void testGuildInstantiation() {
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(name, description, null, false);
+        Guild guild = new Guild(name, description, null, false, true);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);
     }
@@ -112,7 +112,7 @@ class GuildTest extends TestContainersSuite {
         final String name = "name";
         final String description = "description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
-        Guild guild = new Guild(id, name, description, link, false);
+        Guild guild = new Guild(id, name, description, link, false, true);
         assertEquals(guild.getId(), id);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);
@@ -126,7 +126,7 @@ class GuildTest extends TestContainersSuite {
         final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(id, name, description, null, false);
+        Guild guild = new Guild(id, name, description, null, false, true);
 
         guild.setName("");
 
@@ -143,8 +143,8 @@ class GuildTest extends TestContainersSuite {
         final String name = "name";
         final String description = "description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
-        Guild g = new Guild(id, name, description, link, false);
-        Guild g2 = new Guild(id, name, description, link, false);
+        Guild g = new Guild(id, name, description, link, false, true);
+        Guild g2 = new Guild(id, name, description, link, false, true);
 
         assertEquals(g, g2);
 
@@ -160,7 +160,7 @@ class GuildTest extends TestContainersSuite {
         final String name = "name";
         final String description = "description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
-        Guild g = new Guild(id, name, description, link, false);
+        Guild g = new Guild(id, name, description, link, false, true);
 
         map.put(g, true);
 
@@ -174,7 +174,7 @@ class GuildTest extends TestContainersSuite {
         final String description = "description------description";
         final String link = "https://www.compass.objectcomputing.com/guilds/name";
         final String isCommunity = "false";
-        Guild g = new Guild(id, name, description,link, false);
+        Guild g = new Guild(id, name, description,link, false, true);
 
         String s = g.toString();
         assertTrue(s.contains(name));
@@ -261,7 +261,7 @@ class GuildTest extends TestContainersSuite {
         MemberProfile memberProfile = new MemberProfile();
         memberProfile.setWorkEmail("test@example.com");
 
-        Guild guild = new Guild(UUID.randomUUID(), "test", "example", link, true);
+        Guild guild = new Guild(UUID.randomUUID(), "test", "example", link, true, true);
         when(guildsRepo.search(any(), any())).thenReturn(Collections.emptyList());
         when(guildsRepo.save(any())).thenReturn(guild);
         when(memberProfileServices.getById(any())).thenReturn(memberProfile);
