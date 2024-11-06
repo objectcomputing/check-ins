@@ -82,9 +82,9 @@ jobs:
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
             --set-env-vars "WEB_ADDRESS=${{ env.TARGET_URL }}" \
-            --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
+            --set-env-vars "FROM_ADDRESS=no-reply@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=cloud,google,gcp" \
             --platform "managed" \
-            --max-instances 5 \
+            --max-instances 8 \
             --allow-unauthenticated
