@@ -65,13 +65,19 @@ public class FeedbackExternalRecipient {
     @Schema(description = "company of the feedback external recipient")
     private String companyName;
 
+    @Column(name = "inactive")
+    @Nullable
+    @Schema(description = "Indicates if the external-recipient can no longer be used for feedback requests")
+    private Boolean inactive;
+
     public FeedbackExternalRecipient(
-            @NotBlank String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName
+            @NotBlank String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName, @Nullable Boolean inactive
     ) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.companyName = companyName;
+        this.inactive = inactive;
     }
 
     public FeedbackExternalRecipient() {}
@@ -86,12 +92,13 @@ public class FeedbackExternalRecipient {
                 && Objects.equals(firstName, that.firstName)
                 && Objects.equals(lastName, that.lastName)
                 && Objects.equals(companyName, that.companyName)
+                && Objects.equals(inactive, that.inactive)
                 ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, firstName, lastName, companyName);
+        return Objects.hash(id, email, firstName, lastName, companyName, inactive);
     }
 
     @Override
@@ -102,6 +109,7 @@ public class FeedbackExternalRecipient {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", company='" + companyName + '\'' +
+                ", inactive='" + inactive + '\'' +
                 '}';
     }
 }

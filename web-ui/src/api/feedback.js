@@ -295,7 +295,7 @@ export const getFeedbackRequestsByRequestees = async (
 
 export const getExternalRecipients = async (cookie) => {
   return resolve({
-    url: `${feedbackExternalRecipientsURL}/findAll`,
+    url: `${feedbackExternalRecipientsURL}?inactive=false`,
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };

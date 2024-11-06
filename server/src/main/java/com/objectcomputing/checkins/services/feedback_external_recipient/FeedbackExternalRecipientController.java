@@ -41,38 +41,28 @@ public class FeedbackExternalRecipientController {
      * @param feedbackExternalRecipientCreateDTO {@link FeedbackExternalRecipientCreateDTO} New feedback-req external recipient to create
      * @return {@link FeedbackExternalRecipient}
      */
-    @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
     @Post
     public HttpResponse<FeedbackExternalRecipientResponseDTO> save(@Body @Valid @NotNull FeedbackExternalRecipientCreateDTO feedbackExternalRecipientCreateDTO) {
         FeedbackExternalRecipient savedFeedbackExternalRecipient;
         FeedbackExternalRecipient feedbackExternalRecipientFromDto = fromDTO(feedbackExternalRecipientCreateDTO);
-        try {
-            savedFeedbackExternalRecipient = feedbackExternalRecipientServices.save(feedbackExternalRecipientFromDto);
-        } catch (Exception e) {
-            throw e;
-        }
+        savedFeedbackExternalRecipient = feedbackExternalRecipientServices.save(feedbackExternalRecipientFromDto);
         return HttpResponse.created(fromEntity(savedFeedbackExternalRecipient))
                 .headers(headers -> headers.location(URI.create("/feedback_external_recipient/" + savedFeedbackExternalRecipient.getId())));
     }
 
-    /*
-    @Get("/{?email, firstName, lastName, companyName}")
-    public List<FeedbackExternalRecipientResponseDTO> findByValues(@Nullable String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName) {
-        return this.feedbackExternalRecipientServices.findByValues(email, firstName, lastName, companyName)
-                .stream()
-                .map(this::fromEntity)
-                .toList();
-    }
-    */
-
     /**
-     * Return list of all external-recipients used for feedback-requests
+     * Update a feedback request external recipient
      *
-     * @return list of {@link FeedbackExternalRecipientResponseDTO}
+     * @param email   The {@link String} email of the external-recipient
+     * @param firstName The {@link String} first name of the external-recipient
+     * @param lastName The {@link String} last name of the external-recipient
+     * @param companyName The {@link String} company name of the external-recipient
+     * @param inactive The {@link Boolean} inactive status of the external-recipient
+     * @return {@link FeedbackExternalRecipient}
      */
-    @Get("/findAll")
-    public List<FeedbackExternalRecipientResponseDTO> findAll() {
-        return this.feedbackExternalRecipientServices.findAll()
+    @Get("/{?email, firstName, lastName, companyName,inactive}")
+    public List<FeedbackExternalRecipientResponseDTO> findByValues(@Nullable String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName, @Nullable Boolean inactive) {
+        return this.feedbackExternalRecipientServices.findByValues(email, firstName, lastName, companyName, inactive)
                 .stream()
                 .map(this::fromEntity)
                 .toList();
@@ -96,6 +86,7 @@ public class FeedbackExternalRecipientController {
         object.setFirstName(dto.getFirstName());
         object.setLastName(dto.getLastName());
         object.setCompanyName(dto.getCompanyName());
+        object.setInactive(dto.getInactive());
         return object;
     }
 
@@ -106,6 +97,7 @@ public class FeedbackExternalRecipientController {
         dto.setFirstName(feedbackExternalRecipient.getFirstName());
         dto.setLastName(feedbackExternalRecipient.getLastName());
         dto.setCompanyName(feedbackExternalRecipient.getCompanyName());
+        dto.setInactive(feedbackExternalRecipient.getInactive());
         return dto;
     }
 

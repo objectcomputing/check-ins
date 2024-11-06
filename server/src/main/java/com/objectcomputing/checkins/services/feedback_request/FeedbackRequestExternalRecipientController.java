@@ -40,6 +40,12 @@ public class FeedbackRequestExternalRecipientController {
         this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
     }
 
+    /**
+     * Retrieve feedback request record by ID
+     *
+     * @param id {@link UUID} ID of feedback request record to retrieve
+     * @return {@link FeedbackRequestResponseDTO}
+     */
     @Get("/{id}")
     public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
         FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
@@ -50,6 +56,18 @@ public class FeedbackRequestExternalRecipientController {
                 .headers(headers -> headers.location(URI.create("/feedback_request" + feedbackRequest.getId())));
     }
 
+    /**
+     * Find feedback requests by values
+     * @param creatorId {@link UUID} ID of the creator
+     * @param requesteeId {@link UUID} ID of the requestee
+     * @param recipientId {@link UUID} ID of the recipient
+     * @param oldestDate {@link LocalDate} The oldest date to search for
+     * @param reviewPeriodId {@link UUID} ID of the review period
+     * @param templateId {@link UUID} ID of the template
+     * @param externalRecipientId {@link UUID} ID of the external recipient
+     * @return {@link FeedbackRequestResponseDTO}
+     */
+    /*
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,externalRecipientId,requesteeIds}")
     public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, UUID externalRecipientId, @Nullable List<UUID> requesteeIds) {
         return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, externalRecipientId, requesteeIds)
@@ -57,6 +75,7 @@ public class FeedbackRequestExternalRecipientController {
                 .map(this::feedbackRequestFromEntity)
                 .toList();
     }
+    */
 
     @Get("/hello")
     @Produces(MediaType.TEXT_HTML)
@@ -99,7 +118,6 @@ public class FeedbackRequestExternalRecipientController {
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
         dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
         dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
-
         return dto;
     }
 

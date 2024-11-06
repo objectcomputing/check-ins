@@ -1289,6 +1289,10 @@ INSERT INTO feedback_external_recipient
 (id, email, firstname, lastname, company_name)
 VALUES('9aefc565-b9b0-4efa-bf9e-c721441d2747', PGP_SYM_ENCRYPT('tim.cook@apple.com', '${aeskey}'), PGP_SYM_ENCRYPT('Tim', '${aeskey}'), PGP_SYM_ENCRYPT('Cook', '${aeskey}'), PGP_SYM_ENCRYPT('Apple', '${aeskey}'))
 ;
+INSERT INTO feedback_external_recipient
+(id, email, firstname, lastname, company_name, inactive)
+VALUES('dc2921c1-cfff-4e91-a518-d60da098a53e', PGP_SYM_ENCRYPT('inn.unactive@inactive.com', '${aeskey}'), PGP_SYM_ENCRYPT('Inn', '${aeskey}'), PGP_SYM_ENCRYPT('Unactive', '${aeskey}'), PGP_SYM_ENCRYPT('Inactive, Inc.', '${aeskey}'), true)
+;
 
 -- Feedback Requests without responses
 ---- Creator: Huey Emmerich

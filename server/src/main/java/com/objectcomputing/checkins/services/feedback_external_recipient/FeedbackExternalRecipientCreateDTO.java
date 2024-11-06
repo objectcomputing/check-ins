@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_external_recipient;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -33,6 +34,10 @@ public class FeedbackExternalRecipientCreateDTO {
     @Schema(description = "company-name of the feedback-external-recipient")
     private String companyName;
 
+    @Nullable
+    @Schema(description = "Indicates if the external-recipient can no longer be used for feedback requests")
+    private Boolean inactive;
+
     @Override
     public boolean equals(@Nullable Object o) {
         if (this == o) return true;
@@ -43,12 +48,13 @@ public class FeedbackExternalRecipientCreateDTO {
                 && Objects.equals(firstName, that.firstName)
                 && Objects.equals(lastName, that.lastName)
                 && Objects.equals(companyName, that.companyName)
+                && Objects.equals(inactive, that.inactive)
                 ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, firstName, lastName, companyName);
+        return Objects.hash(email, firstName, lastName, companyName, inactive);
     }
 
 }

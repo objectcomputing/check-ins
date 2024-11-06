@@ -35,4 +35,8 @@ public class FeedbackExternalRecipientResponseDTO {
     @Schema(description = "company-name of the feedback-external-recipient")
     private String companyName;
 
+    @Nullable
+    @Schema(description = "Indicates if the external-recipient can no longer be used for feedback requests")
+    private Boolean inactive;
+
 }

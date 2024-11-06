@@ -26,11 +26,6 @@ public class FeedbackExternalRecipientServicesImpl implements FeedbackExternalRe
     }
 
     @Override
-    public void delete(UUID id) {
-
-    }
-
-    @Override
     public FeedbackExternalRecipient getById(UUID id) {
         Optional<FeedbackExternalRecipient> optional = feedbackExternalRecipientRepository.findById(id);
         if (optional.isEmpty()) {
@@ -41,17 +36,8 @@ public class FeedbackExternalRecipientServicesImpl implements FeedbackExternalRe
     }
 
     @Override
-    public List<FeedbackExternalRecipient> findAll() {
-        return feedbackExternalRecipientRepository.findAll();
+    public List<FeedbackExternalRecipient> findByValues(@Nullable String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName, @Nullable Boolean inactive) {
+        return feedbackExternalRecipientRepository.findByValues(email, firstName, lastName, companyName, inactive);
     }
-
-    /*
-    @Override
-    public List<FeedbackExternalRecipient> findByValues(@Nullable String email, @Nullable String firstName, @Nullable String lastName, @Nullable String companyName) {
-        List<FeedbackExternalRecipient> feedbackExternalRecipients = new ArrayList<>(feedbackExternalRecipientRepository.search());
-
-        return feedbackExternalRecipients;
-    }
-    */
 
 }

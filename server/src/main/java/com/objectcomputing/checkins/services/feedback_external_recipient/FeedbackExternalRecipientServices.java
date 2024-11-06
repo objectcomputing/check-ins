@@ -9,12 +9,8 @@ public interface FeedbackExternalRecipientServices {
 
     FeedbackExternalRecipient update(FeedbackExternalRecipientUpdateDTO feedbackExternalRecipientUpdateDTO);
 
-    void delete(UUID id);
-
     FeedbackExternalRecipient getById(UUID id);
 
-    //List<FeedbackExternalRecipient> findByValues(String email, String firstName, String lastName, String companyName);
-
-    List<FeedbackExternalRecipient> findAll();
+    List<FeedbackExternalRecipient> findByValues(String email, String firstName, String lastName, String companyName, Boolean inactive);
 
 }
