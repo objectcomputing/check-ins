@@ -185,10 +185,9 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
 
     // Compensation History
     ArrayNode comp = (ArrayNode)node.get("compensationHistory");
-    assertEquals(10, comp.size());
+    assertEquals(5, comp.size());
     assertEquals(memberId, comp.get(0).get("memberId").asText());
     assertTrue(comp.get(0).get("amount").asDouble() > 0);
-    assertFalse(comp.get(9).get("totalComp").asText().isEmpty());
 
     // Current Information
     JsonNode curr = node.get("currentInformation");

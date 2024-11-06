@@ -432,8 +432,9 @@ const MeritReportPage = () => {
     return text;
   };
 
-  const prepareCompensationHistory = (data, fn) => {
-    return data.compensationHistory.filter(fn).sort((a, b) => {
+  const markdownCompensationHistory = (data) => {
+    // Sort them latest to oldest and truncate to the first 3.
+    const compHistory = data.compensationHistory.sort((a, b) => {
       for(let i = 0; i < a.length; i++) {
         if (a.startDate[i] != b.startDate[i]) {
           return b.startDate[i] - a.startDate[i];
@@ -442,20 +443,10 @@ const MeritReportPage = () => {
       return 0;
     }).slice(0, 3);
 
-  };
-
-  const markdownCompensationHistory = (data) => {
-    // Sort them latest to oldest and truncate to the first 3.
-    const compBase = prepareCompensationHistory(data, (comp) => !!comp.amount);
-    const compTotal = prepareCompensationHistory(data, (comp) => !!comp.totalComp);
-
     let text = markdown.headers.h2("Compensation History");
-    text += markdown.lists.ul(compBase,
+    text += markdown.lists.ul(compHistory,
                 (comp) => formatDate(dateFromArray(comp.startDate)) + " - " +
-                "$" + parseFloat(comp.amount).toFixed(2) + " (base)");
-    text += markdown.lists.ul(compTotal,
-                (comp) => dateFromArray(comp.startDate).getFullYear() + " - " +
-                comp.totalComp);
+                "$" + comp.amount.toFixed(2) + " (base)");
     return text;
   };
 
