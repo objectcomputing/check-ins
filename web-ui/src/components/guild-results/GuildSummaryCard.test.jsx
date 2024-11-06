@@ -19,7 +19,8 @@ const guilds = [
         name: 'testname',
         lead: true
       }
-    ]
+    ],
+    active: true,
   }
 ];
 

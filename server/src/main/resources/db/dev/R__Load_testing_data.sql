@@ -1340,12 +1340,12 @@ VALUES
 INSERT INTO review_periods
 (id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
 VALUES
-    ('12345678-e29c-4cf4-9ea4-6baa09405c57', 'Review Period 1', 'PLANNING', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-01 06:00:00', '2024-09-02 06:00:00', '2024-09-03 06:00:00', '2024-01-01 06:00:00', '2024-08-31 06:00:00');
+    ('12345678-e29c-4cf4-9ea4-6baa09405c57', 'Review Period 1', 'PLANNING', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', CURRENT_DATE + TIME '06:00:00', CURRENT_DATE + INTERVAL '1' DAY + TIME '06:00:00', CURRENT_DATE + INTERVAL '2' DAY + TIME '06:00:00', date_trunc('year', CURRENT_DATE) + TIME '06:00:00', CURRENT_DATE + INTERVAL '-1' DAY + TIME '06:00:00');
 
 INSERT INTO review_periods
 (id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)
 VALUES
-    ('12345678-e29c-4cf4-9ea4-6baa09405c58', 'Review Period 2', 'PLANNING', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', '2024-09-10 06:00:00', '2024-09-11 06:00:00', '2024-09-12 06:00:00', '2024-01-01 06:00:00', '2024-08-31 06:00:00');
+    ('12345678-e29c-4cf4-9ea4-6baa09405c58', 'Review Period 2', 'PLANNING', 'd1e94b60-47c4-4945-87d1-4dc88f088e57', '926a37a4-4ded-4633-8900-715b0383aecc', CURRENT_DATE + TIME '06:00:00', CURRENT_DATE + INTERVAL '1' DAY + TIME '06:00:00', CURRENT_DATE + INTERVAL '2' DAY + TIME '06:00:00', date_trunc('year', CURRENT_DATE) + TIME '06:00:00', CURRENT_DATE + INTERVAL '-1' DAY + TIME '06:00:00');
 
 INSERT INTO review_periods
 (id, name, review_status, review_template_id, self_review_template_id, launch_date, self_review_close_date, close_date, period_start_date, period_end_date)

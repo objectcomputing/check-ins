@@ -35,6 +35,17 @@ import { getExternalRecipients } from '../api/feedback.js';
 
 const AppContext = React.createContext();
 
+function getSessionCookieValue(name) {
+  const cookies = document?.cookie?.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(name + '=')) {
+      return decodeURIComponent(cookie.substring(name.length + 1));
+    }
+  }
+  return null;
+}
+
 const AppContextProvider = props => {
   const [state, dispatch] = useReducer(
     reducer,
@@ -66,12 +77,17 @@ const AppContextProvider = props => {
   useEffect(() => {
     const getCsrf = async () => {
       if (!csrf) {
-        const res = await fetch(url, {
-          responseType: 'text',
-          credentials: 'include'
-        });
-        if (res && res.ok) {
-          dispatch({ type: SET_CSRF, payload: await res.text() });
+        const payload = getSessionCookieValue('_csrf');
+        if (payload) {
+          dispatch({ type: SET_CSRF, payload });
+        } else {
+          const res = await fetch(url, {
+            responseType: 'text',
+            credentials: 'include'
+          });
+          if (res && res.ok) {
+            dispatch({ type: SET_CSRF, payload: await res.text() });
+          }
         }
       }
     };

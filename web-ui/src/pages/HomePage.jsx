@@ -9,7 +9,7 @@ import MyBirthday from '../components/celebrations/MyBirthday';
 import { AppContext } from '../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
 import { sortAnniversaries, sortBirthdays } from '../context/util';
-import { Button } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 
 import './HomePage.css';
 
@@ -76,6 +76,13 @@ export default function HomePage() {
     return document.cookie.indexOf("OJWT=") != -1;
   }
 
+  // This width matches the birthdays-card and anniversaries-card style.
+  // However, we do not want to set this width on the PublicKudos css as it is
+  // used elsewhere and does not need to have it's width restricted.  This only
+  // applies if if we have birthdays or anniversaries to display on this page.
+  const kudosStyle = birthdays.length == 0 &&
+                     anniversaries.length == 0 ? {} : { width: '450px' };
+
   return (
     <div className="home-page">
       <div className="celebrations">
@@ -87,11 +94,19 @@ export default function HomePage() {
             myAnniversary={myAnniversaryData}
           />
         ) : (
-          <>
-            { anniversaries.length > 0  && (<Anniversaries anniversaries={anniversaries} />) }
-            { birthdays.length > 0 && (<Birthdays birthdays={birthdays} />) }
-            <PublicKudos />
-          </>
+          <Grid container spacing={2} style={{ padding: '0 20px 0 20px' }}>
+            { anniversaries.length > 0  && (
+              <Grid item>
+                <Anniversaries anniversaries={anniversaries} />
+              </Grid>) }
+            { birthdays.length > 0 && (
+              <Grid item>
+                <Birthdays birthdays={birthdays} />
+              </Grid>) }
+            <Grid item style={kudosStyle}>
+              <PublicKudos />
+            </Grid>
+          </Grid>
         )}
       </div>
       {checkForImpersonation() &&

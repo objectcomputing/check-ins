@@ -156,15 +156,29 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
     <Modal open={open} onClose={close} aria-labelledby="edit-guild-modal-title">
       <div className="EditGuildModal">
         <h2>{headerText}</h2>
-        <TextField
-          id="guild-name-input"
-          label="Guild Name"
-          required
-          className="halfWidth"
-          placeholder="Awesome Guild"
-          value={editedGuild.name ? editedGuild.name : ''}
-          onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
-        />
+        <div>
+          <TextField
+            id="guild-name-input"
+            label="Guild Name"
+            required
+            className="halfWidth"
+            placeholder="Awesome Guild"
+            value={editedGuild.name ? editedGuild.name : ''}
+            onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
+          />
+          {guild.id && <FormControlLabel
+            control={
+              <Switch
+                checked={editedGuild.active}
+                onChange={event => {
+                  const { checked } = event.target;
+                  setGuild({ ...editedGuild, active: checked });
+                }}
+              />
+            }
+            label="Active"
+          />}
+        </div>
         <div>
           <FormControlLabel
             control={
