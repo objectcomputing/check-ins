@@ -167,12 +167,13 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
             value={editedGuild.name ? editedGuild.name : ''}
             onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
           />
-          {guild.id && (<><Checkbox
+          {guild.id && (<>
+          <Checkbox
             id="guild-active-input"
             label="Active"
             variant="outlined"
             className="halfWidth"
-            checked={editedGuild.active}
+            checked={editedGuild.active ? editedGuild.active : false}
             onChange={event => {
               const { checked } = event.target;
               setGuild({ ...editedGuild, active: checked });
