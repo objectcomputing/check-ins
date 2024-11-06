@@ -11,7 +11,8 @@ import {
   FormControlLabel,
   Modal,
   Switch,
-  TextField
+  TextField,
+  Checkbox,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import './EditGuildModal.css';
@@ -166,18 +167,18 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
             value={editedGuild.name ? editedGuild.name : ''}
             onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
           />
-          {guild.id && <FormControlLabel
-            control={
-              <Switch
-                checked={editedGuild.active}
-                onChange={event => {
-                  const { checked } = event.target;
-                  setGuild({ ...editedGuild, active: checked });
-                }}
-              />
-            }
+          {guild.id && (<><Checkbox
+            id="guild-active-input"
             label="Active"
-          />}
+            variant="outlined"
+            className="halfWidth"
+            checked={editedGuild.active}
+            onChange={event => {
+              const { checked } = event.target;
+              setGuild({ ...editedGuild, active: checked });
+            }}
+          /> Active
+          </>)}
         </div>
         <div>
           <FormControlLabel
