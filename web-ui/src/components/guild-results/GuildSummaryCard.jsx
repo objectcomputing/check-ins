@@ -20,11 +20,11 @@ import {
   DialogContent,
   DialogActions,
   Link as StyledLink,
-  Tooltip
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { deleteGuild, updateGuild } from '../../api/guild.js';
-import SplitButton from '../split-button/SplitButton';
+import { updateGuild } from '../../api/guild.js';
 
 const PREFIX = 'GuildSummaryCard';
 const classes = {
@@ -55,6 +55,11 @@ const StyledCard = styled(Card)(() => ({
   }
 }));
 
+const inactiveStyle = {
+  'color': 'var(--action-disabled)',
+  'font-size': '0.75em',
+};
+
 const propTypes = {
   guild: PropTypes.shape({
     id: PropTypes.string,
@@ -69,7 +74,6 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
   const { state, dispatch } = useContext(AppContext);
   const { guilds, userProfile, csrf } = state;
   const [open, setOpen] = useState(isOpen);
-  const [openDelete, setOpenDelete] = useState(false);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes('ADMIN');
@@ -95,43 +99,6 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
   const handleClose = () => {
     setOpen(false);
     onGuildSelect('');
-  };
-
-  const handleOpenDeleteConfirmation = () => setOpenDelete(true);
-  const handleCloseDeleteConfirmation = () => setOpenDelete(false);
-
-  const guildId = guild?.id;
-  const deleteAGuild = useCallback(async () => {
-    if (guildId && csrf) {
-      const result = await deleteGuild(guildId, csrf);
-      if (result && result.payload && result.payload.status === 200) {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'success',
-            toast: 'Guild deleted'
-          }
-        });
-        let newGuilds = guilds.filter(guild => {
-          return guild.id !== guildId;
-        });
-        dispatch({
-          type: UPDATE_GUILDS,
-          payload: newGuilds
-        });
-      }
-    }
-  }, [guildId, csrf, dispatch, guilds]);
-
-  const options =
-    isAdmin || isGuildLead ? ['Edit Guild', 'Delete Guild'] : ['Edit Guild'];
-
-  const handleAction = (e, index) => {
-    if (index === 0) {
-      handleOpen();
-    } else if (index === 1) {
-      handleOpenDeleteConfirmation();
-    }
   };
 
   const iconStyles = {
@@ -178,6 +145,14 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
         }
       />
       <CardContent>
+        {!guild.active && (
+          <Typography sx={{ position: 'absolute', top: 10, right: 10,
+                            ...inactiveStyle,
+                          }}
+          >
+            Inactive
+          </Typography>
+        )}
         {guild?.link ? (
           <React.Fragment>
             <div>
@@ -232,28 +207,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
       <CardActions>
         {(isAdmin || isGuildLead) && (
           <>
-            <SplitButton options={options} onClick={handleAction} />
-            <Dialog
-              open={openDelete}
-              onClose={handleCloseDeleteConfirmation}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">Delete guild?</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to delete the guild?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseDeleteConfirmation} color="primary">
-                  Cancel
-                </Button>
-                <Button onClick={deleteAGuild} color="primary" autoFocus>
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
+            <Button onClick={handleOpen}>Edit Guild</Button>
           </>
         )}
       </CardActions>
