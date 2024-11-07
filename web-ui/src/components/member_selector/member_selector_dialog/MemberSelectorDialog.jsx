@@ -37,14 +37,14 @@ import { AppContext } from '../../../context/AppContext';
 import {
   selectCsrfToken,
   selectCurrentMembers,
-  selectGuilds,
+  selectActiveGuilds,
   selectMappedUserRoles,
   selectRoles,
   selectSkills,
   selectSubordinates,
   selectSupervisors,
   selectTeamMembersBySupervisorId,
-  selectTeams
+  selectActiveTeams,
 } from '../../../context/selectors';
 import { UPDATE_TOAST } from '../../../context/actions';
 import { getMembersByTeam } from '../../../api/team';
@@ -172,14 +172,14 @@ const MemberSelectorDialog = ({
     const getFilterOptions = () => {
       switch (filterType) {
         case FilterType.TEAM:
-          const teams = selectTeams(state);
+          const teams = selectActiveTeams(state);
           return {
             options: teams,
             label: team => team.name,
             equals: (team1, team2) => team1.id === team2.id
           };
         case FilterType.GUILD:
-          const guilds = selectGuilds(state);
+          const guilds = selectActiveGuilds(state);
           return {
             options: guilds,
             label: guild => guild.name,
