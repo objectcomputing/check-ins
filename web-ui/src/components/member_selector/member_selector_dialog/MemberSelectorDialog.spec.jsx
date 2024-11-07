@@ -39,7 +39,8 @@ const testGuild = {
   name: 'Test Guild',
   description: 'A guild used for testing.',
   guildLeads: [{ id: 124, name: managerProfile.name }],
-  guildMembers: []
+  guildMembers: [],
+  active: true,
 };
 
 const initialState = {
