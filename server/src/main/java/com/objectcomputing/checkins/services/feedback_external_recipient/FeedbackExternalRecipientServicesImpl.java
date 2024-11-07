@@ -21,8 +21,8 @@ public class FeedbackExternalRecipientServicesImpl implements FeedbackExternalRe
     }
 
     @Override
-    public FeedbackExternalRecipient update(FeedbackExternalRecipientUpdateDTO feedbackExternalRecipientUpdateDTO) {
-        return null;
+    public FeedbackExternalRecipient update(FeedbackExternalRecipient feedbackExternalRecipient) {
+        return feedbackExternalRecipientRepository.update(feedbackExternalRecipient);
     }
 
     @Override

@@ -295,7 +295,19 @@ export const getFeedbackRequestsByRequestees = async (
 
 export const getExternalRecipients = async (cookie) => {
   return resolve({
-    url: `${feedbackExternalRecipientsURL}?inactive=false`,
+    url: `${feedbackExternalRecipientsURL}`,
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
+export const putExternalRecipientInactivate = async (externalRecipientId, cookie) => {
+  return resolve({
+    method: 'PUT',
+    url: `${feedbackExternalRecipientsURL}/inactivate/${externalRecipientId}`,
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };

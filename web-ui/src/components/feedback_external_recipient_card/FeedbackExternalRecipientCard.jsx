@@ -1,16 +1,17 @@
 import React, { useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import { AppContext } from '../../context/AppContext.jsx';
-import { selectProfileMap } from '../../context/selectors.js';
-import { getAvatarURL } from '../../api/api.js';
-import { Box, Card, CardHeader, CardContent, Container, Typography } from '@mui/material';
+import { selectCsrfToken, selectProfileMap } from '../../context/selectors.js';
+import { Box, Card, CardHeader, CardContent, Container, Typography, IconButton, Tooltip } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { green } from '@mui/material/colors';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Divider from '@mui/material/Divider';
+import CloseIcon from '@mui/icons-material/Close';
 
 import './FeedbackExternalRecipientCard.css';
+import FeedbackExternalRecipientSelector
+  from "../feedback_external_recipient_selector/FeedbackExternalRecipientSelector.jsx";
+import PropTypes from "prop-types";
 
 const PREFIX = 'FeedbackExternalRecipientCard';
 const classes = {
@@ -59,53 +60,71 @@ const StyledBox = styled(Box)({
 });
 
 const FeedbackExternalRecipientCard = ({
-  recipientProfile,
-  selected,
-  onClick
-}) => {
+                                         recipientProfile,
+                                         selected,
+                                         onClick,
+                                         onInactivateHandle
+                                       }) => {
   const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
   const supervisorProfile = selectProfileMap(state)[recipientProfile?.supervisorid];
   const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
 
-  return (
-    <StyledBox display="flex" flexWrap="wrap">
-      <Card onClick={onClick} className="member-card" selected={selected}>
-        <CardHeader
-          className={classes.header}
-          title={
-            <Typography variant="h5" component="h2">
-              {recipientProfile?.firstName} {recipientProfile?.lastName}
-            </Typography>
-          }
-          action={
-            selected ? (
-              <CheckCircleIcon style={{ color: green[500] }}>
-                checkmark-image
-              </CheckCircleIcon>
-            ) : null
-          }
-          disableTypography
-        />
-        <CardContent>
-          <Container fixed className="info-container">
-            <Typography variant="body2" color="textSecondary" component="p">
-              <a
-                href={`mailto:${recipientProfile?.email}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {recipientProfile?.email}
-              </a>
-              <br />
-              Company: {recipientProfile?.companyName}
-              <br />
-            </Typography>
-          </Container>
-        </CardContent>
-      </Card>
-    </StyledBox>
-  );
+  async function handleInactivate() {
+      onInactivateHandle();
+  }
 
+  return (
+      <StyledBox display="flex" flexWrap="wrap">
+        <Card onClick={onClick} className="member-card" selected={selected}>
+          <CardHeader
+              className={classes.header}
+              title={
+                <Typography variant="h5" component="h2">
+                  {recipientProfile?.firstName} {recipientProfile?.lastName}
+                </Typography>
+              }
+              action={
+                <>
+                  {selected ? (
+                      <CheckCircleIcon style={{ color: green[500] }}>
+                        checkmark-image
+                      </CheckCircleIcon>
+                  ) : (
+                      <Tooltip title="Inactivate" arrow>
+                        <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleInactivate();
+                            }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </Tooltip>
+                  )}
+                </>
+              }
+              disableTypography
+          />
+          <CardContent>
+            <Container fixed className="info-container">
+              <Typography variant="body2" color="textSecondary" component="p">
+                <a
+                    href={`mailto:${recipientProfile?.email}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                  {recipientProfile?.email}
+                </a>
+                <br />
+                Company: {recipientProfile?.companyName}
+                <br />
+              </Typography>
+            </Container>
+          </CardContent>
+        </Card>
+      </StyledBox>
+  );
 };
 
 export default FeedbackExternalRecipientCard;

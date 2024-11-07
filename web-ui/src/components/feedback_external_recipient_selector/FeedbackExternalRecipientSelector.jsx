@@ -8,7 +8,7 @@ import {
   selectCurrentUser,
   selectNormalizedMembers, selectFeedbackExternalRecipient
 } from '../../context/selectors';
-import {getExternalRecipients} from '../../api/feedback';
+import {putExternalRecipientInactivate, getExternalRecipients} from '../../api/feedback';
 import Typography from '@mui/material/Typography';
 import { TextField, Grid, InputAdornment } from '@mui/material';
 import { Search } from '@mui/icons-material';
@@ -159,8 +159,40 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
         }
         console.log("FeedbackExternalRecipientSelector.jsx, cardClickHandler, 02 - fromQuery: ", fromQuery);
         changeQuery('from', fromQuery);
-        hasRenewedFromURL.current = false;
+        //hasRenewedFromURL.current = false;
     };
+
+    async function externalRecipientInactivate(id) {
+        let externalRecipientsCopy = [...externalRecipients];
+        let indexArray = externalRecipientsCopy.findIndex(profile => profile.id === id);
+
+        try {
+            const response = await putExternalRecipientInactivate(id, csrf);
+            if (response && !response.error) {
+                externalRecipientsCopy[indexArray].inactive = true;
+                hasRenewedFromURL.current = false;
+                setExternalRecipients(externalRecipientsCopy);
+            } else {
+                const errorMessage = 'Failed to inactivate recipient';
+                dispatch({
+                    type: UPDATE_TOAST,
+                    payload: {
+                        severity: 'error',
+                        toast: errorMessage
+                    }
+                });
+            }
+        } catch (error) {
+            const errorMessage = ("An error occurred while inactivating the recipient: ", error);
+            dispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                    severity: 'error',
+                    toast: errorMessage
+                }
+            });
+        }
+    }
 
   const getSelectedCards = () => {
     if (fromQuery) {
@@ -219,9 +251,6 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
                 newRecipient,
                 csrf
             );
-
-        console.log("FeedbackExternalRecipientSelector.jsx, handleNewRecipientSubmit, feedbackExternalRecipientRes: ", feedbackExternalRecipientRes);
-
         if (feedbackExternalRecipientRes.error) {
             const errorMessage = 'Failed to save external recipient';
             dispatch({
@@ -286,13 +315,14 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
                             .filter(
                                 profile =>
                                     !fromQuery ||
-                                    (!fromQuery.includes(profile.id) && profile.id !== forQuery)
+                                    (!fromQuery.includes(profile.id) && profile.id !== forQuery && !!!profile.inactive)
                             )
-                            .map(profile => (
+                            .map((profile, index) => (
                                 <FeedbackExternalRecipientCard
                                     key={profile.id}
                                     recipientProfile={profile}
                                     onClick={() => cardClickHandler(profile.id)}
+                                    onInactivateHandle={() => externalRecipientInactivate(profile.id)}
                                 />
                             ))}
                     </div>

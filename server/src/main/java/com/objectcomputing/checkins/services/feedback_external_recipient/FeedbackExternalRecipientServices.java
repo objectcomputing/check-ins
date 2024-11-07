@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface FeedbackExternalRecipientServices {
     FeedbackExternalRecipient save(FeedbackExternalRecipient feedbackExternalRecipient);
 
-    FeedbackExternalRecipient update(FeedbackExternalRecipientUpdateDTO feedbackExternalRecipientUpdateDTO);
+    FeedbackExternalRecipient update(FeedbackExternalRecipient feedbackExternalRecipient);
 
     FeedbackExternalRecipient getById(UUID id);
 

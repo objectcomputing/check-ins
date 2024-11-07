@@ -51,6 +51,23 @@ public class FeedbackExternalRecipientController {
     }
 
     /**
+     * Mark a feedback request external recipient as inactive
+     *
+     * @param id {@link UUID} ID of the external-recipient
+     * @return {@link HttpResponse}
+     */
+    @Put("/inactivate/{id}")
+    public HttpResponse<?> inactivate(UUID id) {
+        FeedbackExternalRecipient feedbackExternalRecipient = feedbackExternalRecipientServices.getById(id);
+        if (feedbackExternalRecipient == null) {
+            throw new BadArgException("Invalid external recipient ID");
+        }
+        feedbackExternalRecipient.setInactive(true);
+        feedbackExternalRecipientServices.update(feedbackExternalRecipient);
+        return HttpResponse.ok();
+    }
+
+    /**
      * Update a feedback request external recipient
      *
      * @param email   The {@link String} email of the external-recipient
