@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, TextField, Button, Box } from '@mui/material';
+import { Modal, TextField, Button, Box, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
 
 const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
@@ -21,6 +22,15 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
     return (
         <Modal open={open} onClose={onClose}>
             <Box sx={{ ...modalStyle }}>
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    onClick={onClose}
+                    aria-label="close"
+                    sx={{ position: 'absolute', right: 8, top: 8 }}
+                >
+                    <CloseIcon />
+                </IconButton>
                 <h2>Create New External Recipient</h2>
                 <TextField
                     label="Email"
