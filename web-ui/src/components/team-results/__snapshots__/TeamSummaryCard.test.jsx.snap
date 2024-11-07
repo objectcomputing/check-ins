@@ -3,7 +3,7 @@
 exports[`renders correctly 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-2bwzc-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-55zgp6-MuiPaper-root-MuiCard-root"
   >
     <div
       class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
@@ -14,7 +14,7 @@ exports[`renders correctly 1`] = `
         <span
           class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
         >
-          string (Inactive)
+          string
         </span>
         <span
           class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
@@ -32,6 +32,11 @@ exports[`renders correctly 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-19pemnp-MuiTypography-root"
+      >
+        Inactive
+      </p>
       <strong>
         Team Leads: 
       </strong>
@@ -52,7 +57,7 @@ exports[`renders correctly 1`] = `
 exports[`renders correctly for ADMIN 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-2bwzc-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-55zgp6-MuiPaper-root-MuiCard-root"
   >
     <div
       class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
@@ -63,7 +68,7 @@ exports[`renders correctly for ADMIN 1`] = `
         <span
           class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
         >
-          string (Inactive)
+          string
         </span>
         <span
           class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
@@ -81,6 +86,11 @@ exports[`renders correctly for ADMIN 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-19pemnp-MuiTypography-root"
+      >
+        Inactive
+      </p>
       <strong>
         Team Leads: 
       </strong>
@@ -142,7 +152,7 @@ exports[`renders correctly for ADMIN 1`] = `
 exports[`renders correctly for team lead 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-2bwzc-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root TeamSummaryCard-card css-55zgp6-MuiPaper-root-MuiCard-root"
   >
     <div
       class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
@@ -153,7 +163,7 @@ exports[`renders correctly for team lead 1`] = `
         <span
           class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title TeamSummaryCard-title css-1qvr50w-MuiTypography-root"
         >
-          stuff (Inactive)
+          stuff
         </span>
         <span
           class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader TeamSummaryCard-title css-nrdprl-MuiTypography-root"
@@ -169,6 +179,11 @@ exports[`renders correctly for team lead 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-19pemnp-MuiTypography-root"
+      >
+        Inactive
+      </p>
       <strong>
         Team Leads: 
       </strong>
