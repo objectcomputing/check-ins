@@ -159,7 +159,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
         }
         console.log("FeedbackExternalRecipientSelector.jsx, cardClickHandler, 02 - fromQuery: ", fromQuery);
         changeQuery('from', fromQuery);
-        //hasRenewedFromURL.current = false;
+        hasRenewedFromURL.current = false;
     };
 
     async function externalRecipientInactivate(id) {
