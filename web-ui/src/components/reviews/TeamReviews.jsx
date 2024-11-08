@@ -647,9 +647,9 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (!period.closeDate) return 'No close date was specified.';
     if (!period.periodStartDate) return 'No period-start-date was specified.';
     if (!period.periodEndDate) return 'No period-end-date was specified.';
-    if (teamMembers.length === 0) return 'No members were added.';
-    const haveReviewers = teamMembers.every(
-      member => getReviewers(member).length > 0
+    if (assignments.length === 0) return 'No members were added.';
+    const haveReviewers = assignments.every(
+      assignment => assignment.reviewerId != null
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
     return null; // no validation errors
