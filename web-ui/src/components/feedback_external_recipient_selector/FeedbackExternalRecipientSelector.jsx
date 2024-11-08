@@ -67,72 +67,72 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
   const hasRenewedFromURL = useRef(false);
   const [searchText, setSearchText] = useState('');
   const [externalRecipients, setExternalRecipients] = useState([]);
-  const normalizedMembers = selectNormalizedMembers(state, searchText);
 
-  useEffect(() => {
-    if (
-        !searchTextUpdated.current &&
-        searchText.length !== 0 &&
-        searchText !== '' &&
-        searchText
-    ) {
-      if (fromQuery !== undefined) {
-        let selectedMembers = externalRecipients.filter(profile =>
-            fromQuery.includes(profile.id)
-        );
-        let filteredNormalizedMembers = normalizedMembers.filter(member => {
-          return !selectedMembers.some(selectedMember => {
-            return selectedMember.id === member.id;
-          });
-        });
-        setExternalRecipients(filteredNormalizedMembers);
-      } else {
-        setExternalRecipients(normalizedMembers);
-      }
-      searchTextUpdated.current = true;
-    }
-  }, [searchText, externalRecipients, fromQuery, state, userProfile, normalizedMembers])
-  ;
 
-  useEffect(() => {
-    function bindFromURL() {
-      if (
+    useEffect(() => {
+
+        if (!searchTextUpdated.current && searchText.length !== 0 && searchText !== '' && searchText) {
+          if (fromQuery !== undefined) {
+            let selectedRecipients = externalRecipients.filter(externalRecipient =>
+                fromQuery.includes(externalRecipient.id)
+            );
+            const normalizedRecipients = [...externalRecipients];
+              const filteredNormalizedMembers = normalizedRecipients.filter(member => {
+                  const searchTextLower = searchText.toLowerCase();
+                  const matchesSearchText = ['firstName', 'lastName', 'email', 'companyName'].some(key =>
+                      member[key] && member[key].toLowerCase().includes(searchTextLower)
+                  );
+                  const isInFromQuery = fromQuery.includes(member.id);
+                  return matchesSearchText || isInFromQuery;
+              });
+            setExternalRecipients(filteredNormalizedMembers);
+          } else {
+            setExternalRecipients(normalizedRecipients);
+          }
+          searchTextUpdated.current = true;
+        }
+    }, [searchText, externalRecipients, fromQuery, state, userProfile])
+    ;
+
+    useEffect(() => {
+        function bindFromURL() {
+        if (
           !hasRenewedFromURL.current &&
           fromQuery !== null &&
           fromQuery !== undefined
-      ) {
+        ) {
         let profileCopy = externalRecipients;
         if (typeof fromQuery === 'string') {
           let newProfile = { id: fromQuery };
-          if (externalRecipients.filter(member => member.id === newProfile.id).length === 0) {
+          if (externalRecipients.filter(externalRecipient => externalRecipient.id === newProfile.id).length === 0) {
             profileCopy.push(newProfile);
           }
         } else if (Array.isArray(fromQuery)) {
           for (let i = 0; i < fromQuery.length; ++i) {
             let newProfile = { id: fromQuery[i] };
-            if (externalRecipients.filter(member => member.id === newProfile.id).length === 0) {
+            if (externalRecipients.filter(externalRecipient => externalRecipient.id === newProfile.id).length === 0) {
               profileCopy.push(newProfile);
             }
           }
         }
         setExternalRecipients(profileCopy);
         hasRenewedFromURL.current = true;
-      }
-    }
+        }
+        }
 
-    async function getExternalRecipientsForSelector() {
-      if (forQuery === undefined || forQuery === null) {
+        async function getExternalRecipientsForSelector() {
+        if (forQuery === undefined || forQuery === null) {
         return;
-      }
-      let res = await getExternalRecipients(csrf);
-      if (res && res.payload) {
+        }
+        let res = await getExternalRecipients(csrf);
+        if (res && res.payload) {
         return res.payload.data && !res.error ? res.payload.data : undefined;
-      }
-      return null;
-    }
+        }
+        return null;
+        }
 
-    if (csrf && (searchText === '' || searchText.length === 0)) {
-      getExternalRecipientsForSelector().then(res => {
+        if (csrf && (searchText === '' || searchText.length === 0)) {
+        getExternalRecipientsForSelector().then(res => {
         bindFromURL();
         if (res !== undefined && res !== null) {
           let filteredProfileCopy = externalRecipients.filter(member => {
@@ -143,10 +143,10 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
           let newProfiles = filteredProfileCopy.concat(res);
           setExternalRecipients(newProfiles);
         }
-      });
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, csrf, searchText])
-  ;
+        });
+        } // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id, csrf, searchText])
+    ;
 
     const cardClickHandler = id => {
         if (!Array.isArray(fromQuery)) {
@@ -194,7 +194,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
         }
     }
 
-  const getSelectedCards = () => {
+    const getSelectedCards = () => {
     if (fromQuery) {
       const title = (
           <Typography

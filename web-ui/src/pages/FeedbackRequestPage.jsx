@@ -316,6 +316,7 @@ const FeedbackRequestPage = () => {
       return;
     }
     query.step = `${activeStep + 1}`;
+    query.from = null;
     history.push({ ...location, search: queryString.stringify(query) });
   }, [canProceed, steps.length, query, location, history]); // eslint-disable-line react-hooks/exhaustive-deps
 
