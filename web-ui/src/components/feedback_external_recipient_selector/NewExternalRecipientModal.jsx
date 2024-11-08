@@ -8,6 +8,7 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [companyName, setCompanyName] = useState('');
+    const [emailError, setEmailError] = useState('');
 
     useEffect(() => {
         if (open) {
@@ -15,10 +16,15 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
             setFirstName('');
             setLastName('');
             setCompanyName('');
+            setEmailError('');
         }
     }, [open]);
 
     const handleSubmit = () => {
+        if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address');
+            return;
+        }
         const newRecipient = {
             email,
             firstName,
@@ -26,6 +32,11 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
             companyName,
         };
         onSubmit(newRecipient);
+    };
+
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
     };
 
     return (
@@ -44,7 +55,12 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
                 <TextField
                     label="Email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (emailError) setEmailError('');
+                    }}
+                    error={!!emailError}
+                    helperText={emailError}
                     fullWidth
                     margin="normal"
                 />
@@ -69,7 +85,12 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
                     fullWidth
                     margin="normal"
                 />
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                    disabled={!email || !!emailError}
+                >
                     Submit
                 </Button>
             </Box>
