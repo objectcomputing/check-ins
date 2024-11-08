@@ -316,9 +316,12 @@ const FeedbackRequestPage = () => {
       return;
     }
     query.step = `${activeStep + 1}`;
-    query.from = null;
+    if (query.step == 2) {
+      query.from = null;
+    }
     history.push({ ...location, search: queryString.stringify(query) });
-  }, [canProceed, steps.length, query, location, history]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [canProceed, steps.length, query, location, history])
+  ; // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
     if (activeStep === 1) return;

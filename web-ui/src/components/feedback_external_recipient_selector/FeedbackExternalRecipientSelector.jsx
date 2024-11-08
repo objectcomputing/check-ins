@@ -267,7 +267,6 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
             addExternalRecipientId(newRecipient.id);
             handleNewRecipientClose();
         }
-
     };
 
     return (
