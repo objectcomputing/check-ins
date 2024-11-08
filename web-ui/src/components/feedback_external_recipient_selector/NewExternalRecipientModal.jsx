@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, TextField, Button, Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
@@ -8,6 +8,15 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [companyName, setCompanyName] = useState('');
+
+    useEffect(() => {
+        if (open) {
+            setEmail('');
+            setFirstName('');
+            setLastName('');
+            setCompanyName('');
+        }
+    }, [open]);
 
     const handleSubmit = () => {
         const newRecipient = {
