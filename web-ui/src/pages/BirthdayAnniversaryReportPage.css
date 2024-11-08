@@ -20,7 +20,6 @@
 
 .select-month {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-left: 15px;
   margin-right: 10px;
