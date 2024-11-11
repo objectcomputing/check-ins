@@ -159,7 +159,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
             reviewerFirstName = reviewerExternalRecipient.getFirstName();
             reviewerEmail = reviewerExternalRecipient.getEmail();
-            urlFeedbackSubmit = "/feedback/submitForExternalRecipient?request=";
+            urlFeedbackSubmit = "/feedbackExternalRecipient/submitForExternalRecipient?request=";
         } else {
             recipientOrExternalRecipientId = storedRequest.getRecipientId();
             reviewerMemberProfile = memberProfileServices.getById(recipientOrExternalRecipientId);
