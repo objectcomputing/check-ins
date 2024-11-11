@@ -564,6 +564,7 @@ const MeritReportPage = () => {
         <Autocomplete
           id="reviewPeriodSelect"
           options={reviewPeriods ? reviewPeriods : []}
+          getOptionLabel={(option) => option.name || ""}
           value={reviewPeriodId}
           onChange={onReviewPeriodChange}
           renderInput={params => (

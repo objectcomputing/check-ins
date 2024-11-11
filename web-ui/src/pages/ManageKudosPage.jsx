@@ -63,6 +63,20 @@ const ManageKudosPage = () => {
   const [approvedKudosLoading, setApprovedKudosLoading] = useState(true);
   const [kudosTab, setKudosTab] = useState("PENDING");
   const [timeRange, setTimeRange] = useState(DateRange.TWO_WEEKS);
+  const [pendingSort, setPendingSort] = useState(SortOption.OLDEST);
+
+  const sortPendingKudos = (pending) => {
+    return pending.sort((a, b) => {
+      const l = pendingSort === SortOption.NEWEST ? a : b;
+      const r = pendingSort === SortOption.NEWEST ? b : a;
+      for(let i = 0; i < l.dateCreated.length; i++) {
+        if (l.dateCreated[i] != r.dateCreated[i]) {
+          return r.dateCreated[i] - l.dateCreated[i];
+        }
+      }
+      return 0;
+    });
+  };
 
   const loadPendingKudos = useCallback(async () => {
     setPendingKudosLoading(true);
@@ -85,10 +99,14 @@ const ManageKudosPage = () => {
   useEffect(() => {
     loadPendingKudos().then(data => {
       if (data) {
-        setPendingKudos(data);
+        setPendingKudos(sortPendingKudos(data));
       }
     });
   }, [csrf, dispatch, loadPendingKudos]);
+
+  useEffect(() => {
+    setPendingKudos(sortPendingKudos([...pendingKudos]));
+  }, [pendingSort]);
 
   const handleTabChange = useCallback((event, newTab) => {
     switch (newTab) {
@@ -141,6 +159,8 @@ const ManageKudosPage = () => {
               select
               label="Sort by"
               variant="outlined"
+              value={pendingSort}
+              onChange={(event) => setPendingSort(event.target.value)}
             >
               <MenuItem value={SortOption.NEWEST}>Newest</MenuItem>
               <MenuItem value={SortOption.OLDEST}>Oldest</MenuItem>

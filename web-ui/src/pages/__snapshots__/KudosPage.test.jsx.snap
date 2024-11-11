@@ -1,0 +1,126 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="kudos-page css-177onil"
+  >
+    <div
+      class="kudos-page-header"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary kudos-dialog-open css-1rwt2y5-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        <span
+          class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1d6wzja-MuiButton-startIcon"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="StarIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+            />
+          </svg>
+        </span>
+        Give Kudos
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+    <div
+      class="kudos-tab-container"
+    >
+      <div
+        class="MuiTabs-root css-1ujnqem-MuiTabs-root"
+      >
+        <div
+          class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+          style="overflow: hidden; margin-bottom: 0px;"
+        >
+          <div
+            class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+            role="tablist"
+          >
+            <button
+              aria-controls="mui-p-12978-P-RECEIVED"
+              aria-selected="true"
+              class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary Mui-selected css-h0q0iv-MuiButtonBase-root-MuiTab-root"
+              id="mui-p-12978-T-RECEIVED"
+              role="tab"
+              tabindex="0"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                data-testid="ArchiveIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="m20.54 5.23-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27M12 17.5 6.5 12H10v-2h4v2h3.5zM5.12 5l.81-1h12l.94 1z"
+                />
+              </svg>
+              Received
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              aria-controls="mui-p-12978-P-SENT"
+              aria-selected="false"
+              class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary css-h0q0iv-MuiButtonBase-root-MuiTab-root"
+              id="mui-p-12978-T-SENT"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                data-testid="UnarchiveIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="m20.55 5.22-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28M12 9.5l5.5 5.5H14v2h-4v-2H6.5zM5.12 5l.82-1h12l.93 1z"
+                />
+              </svg>
+              Sent
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+          <span
+            class="MuiTabs-indicator css-1aquho2-MuiTabs-indicator"
+            style="left: 0px; width: 0px;"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      aria-labelledby="mui-p-12978-T-RECEIVED"
+      class="MuiTabPanel-root css-13xfq8m-MuiTabPanel-root"
+      id="mui-p-12978-P-RECEIVED"
+      role="tabpanel"
+      style="padding: 1rem 0px;"
+    />
+    <div
+      aria-labelledby="mui-p-12978-T-SENT"
+      class="MuiTabPanel-root css-13xfq8m-MuiTabPanel-root"
+      hidden=""
+      id="mui-p-12978-P-SENT"
+      role="tabpanel"
+      style="padding: 1rem 0px;"
+    />
+  </div>
+</div>
+`;

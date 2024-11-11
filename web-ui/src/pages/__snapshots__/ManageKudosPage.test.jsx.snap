@@ -1,0 +1,163 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders an error if user does not have appropriate permission 1`] = `
+<div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
+</div>
+`;
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="manage-kudos-page css-nff2pr"
+  >
+    <div
+      class="kudos-tab-container"
+    >
+      <div
+        class="MuiTabs-root css-1ujnqem-MuiTabs-root"
+      >
+        <div
+          class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+          style="overflow: hidden; margin-bottom: 0px;"
+        >
+          <div
+            class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+            role="tablist"
+          >
+            <button
+              aria-controls="mui-p-78069-P-PENDING"
+              aria-selected="true"
+              class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary Mui-selected css-h0q0iv-MuiButtonBase-root-MuiTab-root"
+              id="mui-p-78069-T-PENDING"
+              role="tab"
+              tabindex="0"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                data-testid="PendingActionsIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M17 12c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5m1.65 7.35L16.5 17.2V14h1v2.79l1.85 1.85zM18 3h-3.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H6c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h6.11c-.59-.57-1.07-1.25-1.42-2H6V5h2v3h8V5h2v5.08c.71.1 1.38.31 2 .6V5c0-1.1-.9-2-2-2m-6 2c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1"
+                />
+              </svg>
+              Pending
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              aria-controls="mui-p-78069-P-APPROVED"
+              aria-selected="false"
+              class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary css-h0q0iv-MuiButtonBase-root-MuiTab-root"
+              id="mui-p-78069-T-APPROVED"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                data-testid="ThumbUpIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M1 21h4V9H1zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73z"
+                />
+              </svg>
+              Approved
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+          <span
+            class="MuiTabs-indicator css-1aquho2-MuiTabs-indicator"
+            style="left: 0px; width: 0px;"
+          />
+        </div>
+      </div>
+      <div
+        class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+      >
+        <label
+          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+          data-shrink="true"
+          for=":r0:"
+          id=":r0:-label"
+        >
+          Sort by
+        </label>
+        <div
+          class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+        >
+          <div
+            aria-controls=":r1:"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            aria-labelledby=":r0:-label :r0:"
+            class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+            id=":r0:"
+            role="combobox"
+            tabindex="0"
+          >
+            Oldest
+          </div>
+          <input
+            aria-hidden="true"
+            aria-invalid="false"
+            class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+            tabindex="-1"
+            value="oldest"
+          />
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+            data-testid="ArrowDropDownIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M7 10l5 5 5-5z"
+            />
+          </svg>
+          <fieldset
+            aria-hidden="true"
+            class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+          >
+            <legend
+              class="css-14lo706"
+            >
+              <span>
+                Sort by
+              </span>
+            </legend>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+    <div
+      aria-labelledby="mui-p-78069-T-PENDING"
+      class="MuiTabPanel-root css-13xfq8m-MuiTabPanel-root"
+      id="mui-p-78069-P-PENDING"
+      role="tabpanel"
+      style="padding: 1rem 0px;"
+    />
+    <div
+      aria-labelledby="mui-p-78069-T-APPROVED"
+      class="MuiTabPanel-root css-13xfq8m-MuiTabPanel-root"
+      hidden=""
+      id="mui-p-78069-P-APPROVED"
+      role="tabpanel"
+      style="padding: 1rem 0px;"
+    />
+  </div>
+</div>
+`;
