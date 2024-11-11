@@ -16,7 +16,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Tooltip
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { updateTeam } from '../../api/team.js';
@@ -34,7 +35,8 @@ const StyledCard = styled(Card)({
     width: '340px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative',
   },
   [`& .${classes.header}`]: {
     width: '100%'
@@ -45,6 +47,11 @@ const StyledCard = styled(Card)({
     whiteSpace: 'nowrap'
   }
 });
+
+const inactiveStyle = {
+  'color': 'var(--action-disabled)',
+  'font-size': '0.75em',
+};
 
 const propTypes = {
   team: PropTypes.shape({
@@ -101,7 +108,7 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
           title: classes.title,
           subheader: classes.title
         }}
-        title={team.name + (team.active ? ' (Active)' : ' (Inactive)')}
+        title={team.name}
         subheader={
           <Tooltip
             open={tooltipIsOpen}
@@ -116,6 +123,14 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
         }
       />
       <CardContent>
+        {!team.active && (
+          <Typography sx={{ position: 'absolute', top: 10, right: 10,
+                            ...inactiveStyle,
+                          }}
+          >
+            Inactive
+          </Typography>
+        )}
         {team.teamMembers == null ? (
           <React.Fragment key={`empty-team-${team.name}`}>
             <strong>Team Leads: </strong>None Assigned

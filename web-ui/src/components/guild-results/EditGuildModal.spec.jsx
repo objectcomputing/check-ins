@@ -34,12 +34,14 @@ const testGuild = {
   guildMembers: [
     { id: 125, name: 'Guild Member' },
     { id: 126, name: 'Other Member' }
-  ]
+  ],
+  active: true,
 };
 
 const emptyGuild = {
   name: 'Test Guild',
-  description: 'A guild used for testing.'
+  description: 'A guild used for testing.',
+  active: true,
 };
 
 const currentUserProfile = {
