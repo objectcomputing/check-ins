@@ -29,7 +29,7 @@ import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
   selectCurrentUser,
-  selectNormalizedTeams,
+  selectActiveTeams,
   selectOrderedCurrentMemberProfiles,
   selectProfile
 } from '../../context/selectors';
@@ -65,7 +65,7 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
   );
 
   const currentUser = selectCurrentUser(state);
-  const teams = selectNormalizedTeams(state, '');
+  const teams = selectActiveTeams(state);
   const memberProfiles = selectOrderedCurrentMemberProfiles(state);
 
   const handleSubmit = useCallback(() => {
