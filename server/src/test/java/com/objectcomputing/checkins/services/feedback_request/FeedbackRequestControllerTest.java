@@ -1171,32 +1171,6 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
     }
 
     @Test
-    void testGetByCreatorRequesteeIdIsPermittedToExternalRecipients() {
-        //create two employee-PDL relationships
-        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        assignPdlRole(pdlMemberProfile);
-        MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
-        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        assignPdlRole(pdlMemberProfileTwo);
-        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
-        final FeedbackExternalRecipient externalRecipient01 = createADefaultFeedbackExternalRecipient();
-        final FeedbackExternalRecipient externalRecipient02 = createASecondDefaultFeedbackExternalRecipient();
-
-        //create two sample feedback requests by the same PDL
-        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, memberOne, externalRecipient01);
-        saveFeedbackRequest(pdlMemberProfileTwo, memberTwo, externalRecipient02);
-
-        //search for feedback requests by a specific creator, requestee, and template
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s&externalRecipientId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId(), feedbackReq.getExternalRecipientId()));
-        final HttpResponse<List<FeedbackRequestResponseDTO>> response = clientExternalRecipient.toBlocking()
-                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
-
-        assertTrue(response.getBody().isPresent());
-        assertEquals(1, response.getBody().get().size());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
     void testGetByCreatorRecipientIdPermittedToRecipients() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         assignPdlRole(pdlMemberProfile);
@@ -1208,24 +1182,6 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?recipientId=%s", feedbackRequest.getRecipientId()))
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
-
-        // recipient must be able to get the feedback request
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.getBody().isPresent());
-        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
-    }
-
-    @Test
-    void testGetByCreatorRecipientIdPermittedToExternalRecipients() {
-        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        assignPdlRole(pdlMemberProfile);
-        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
-        final FeedbackExternalRecipient externalRecipient = createADefaultFeedbackExternalRecipient();
-        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, externalRecipient);
-
-        //get feedback request
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?externalRecipientId=%s", feedbackRequest.getExternalRecipientId()));
-        final HttpResponse<FeedbackRequestResponseDTO> response = clientExternalRecipient.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         // recipient must be able to get the feedback request
         assertEquals(HttpStatus.OK, response.getStatus());

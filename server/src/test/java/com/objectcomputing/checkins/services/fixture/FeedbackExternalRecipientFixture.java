@@ -15,7 +15,7 @@ public interface FeedbackExternalRecipientFixture extends RepositoryFixture {
         String companyName = "Company Name";
 
         return getFeedbackExternalRecipientRepository().save(new FeedbackExternalRecipient(
-            email, firstName, lastName, companyName
+            email, firstName, lastName, companyName, null
         ));
     }
 
@@ -26,7 +26,7 @@ public interface FeedbackExternalRecipientFixture extends RepositoryFixture {
         String companyName = "Company Name";
 
         return getFeedbackExternalRecipientRepository().save(new FeedbackExternalRecipient(
-                email, firstName, lastName, companyName
+                email, firstName, lastName, companyName, null
         ));
     }
 
@@ -37,7 +37,7 @@ public interface FeedbackExternalRecipientFixture extends RepositoryFixture {
         String companyName = "Company Name";
 
         return getFeedbackExternalRecipientRepository().save(new FeedbackExternalRecipient(
-                email, firstName, lastName, companyName
+                email, firstName, lastName, companyName, null
         ));
     }
 
