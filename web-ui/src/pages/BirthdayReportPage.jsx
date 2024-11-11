@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { AppContext } from '../context/AppContext';
 
-import { Button, TextField } from '@mui/material';
+import { FormControlLabel, Switch, Button, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import './BirthdayAnniversaryReportPage.css';
@@ -45,6 +45,7 @@ const BirthdayReportPage = () => {
   const [selectedMonths, setSelectedMonths] = useState(defaultMonths);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [noBirthday, setNoBirthday] = useState(false);
 
   useQueryParameters([
     {
@@ -61,7 +62,8 @@ const BirthdayReportPage = () => {
   const handleSearch = async monthsToSearch => {
     setLoading(true);
     try {
-      const birthdayResults = await getBirthdays(monthsToSearch, csrf);
+      const birthdayResults = await getBirthdays(noBirthday ? null :
+                                                   monthsToSearch, csrf);
       setSearchBirthdayResults(sortBirthdays(birthdayResults));
       setHasSearched(true);
     } catch(e) {
@@ -101,12 +103,25 @@ const BirthdayReportPage = () => {
               placeholder="Choose a month"
             />
           )}
+          disabled={noBirthday}
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={noBirthday}
+              onChange={event => {
+                const { checked } = event.target;
+                setNoBirthday(checked);
+              }}
+            />
+          }
+          label="No Birthday Registered"
         />
       </div>
       <div className="birthday-anniversary-search halfWidth">
         <Button
           onClick={() => {
-            if (!selectedMonths) {
+            if (!noBirthday && selectedMonths.length == 0) {
               window.snackDispatch({
                 type: UPDATE_TOAST,
                 payload: {
