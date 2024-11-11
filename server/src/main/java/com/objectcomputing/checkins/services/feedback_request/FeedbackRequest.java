@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -86,6 +87,18 @@ public class FeedbackRequest {
     @Schema(description = "the id of the review period in that this request was created for")
     private UUID reviewPeriodId;
 
+    @Column(name = "denied")
+    @Nullable
+    @Schema(description = "Whether the feedback request has been denied")
+    private boolean denied = false;
+
+    @Column(name = "reason")
+    @Nullable
+    @Schema(description = "Denial reason")
+    private String reason;
+
+
+
     public FeedbackRequest(UUID creatorId,
                            UUID requesteeId,
                            UUID recipientId,
@@ -94,7 +107,9 @@ public class FeedbackRequest {
                            @Nullable LocalDate dueDate,
                            String status,
                            @Nullable LocalDate submitDate,
-                           @Nullable UUID reviewPeriodId) {
+                           @Nullable UUID reviewPeriodId,
+                           boolean denied,
+                           @Nullable String reason) {
         this.id = null;
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
@@ -105,6 +120,8 @@ public class FeedbackRequest {
         this.status = status;
         this.submitDate = submitDate;
         this.reviewPeriodId = reviewPeriodId;
+        this.denied = denied;
+        this.reason = reason;
     }
 
     public FeedbackRequest() {}
@@ -123,12 +140,14 @@ public class FeedbackRequest {
                 && Objects.equals(dueDate, that.dueDate)
                 && Objects.equals(status, that.status)
                 && Objects.equals(submitDate, that.submitDate)
-                && Objects.equals(reviewPeriodId, that.reviewPeriodId);
+                && Objects.equals(reviewPeriodId, that.reviewPeriodId)
+                && Objects.equals(denied, that.denied)
+                && Objects.equals(reason, that.reason);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate, reviewPeriodId);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate, reviewPeriodId, denied, reason);
     }
 
     @Override
@@ -144,6 +163,8 @@ public class FeedbackRequest {
                 ", status='" + status +
                 ", submitDate='" + submitDate +
                 ", reviewPeriodId='" + reviewPeriodId +
+                ", denied='" + denied +
+                ", reason='" + reason +
                 '}';
     }
 }

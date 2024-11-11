@@ -371,7 +371,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setStatus(dto.getStatus());
         feedbackRequest.setSubmitDate(dto.getSubmitDate());
         feedbackRequest.setRecipientId(dto.getRecipientId());
-
+        feedbackRequest.setDenied(dto.isDenied());
+        feedbackRequest.setReason(dto.getReason());
         return feedbackRequest;
     }
 

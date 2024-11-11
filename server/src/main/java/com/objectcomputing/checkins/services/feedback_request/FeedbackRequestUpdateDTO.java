@@ -35,4 +35,11 @@ public class FeedbackRequestUpdateDTO {
     @Schema(description = "the recipient of the request, used to reassign")
     private UUID recipientId;
 
+    @Schema(description = "Whether the feedback request has been denied")
+    private boolean denied = false;
+
+    @Nullable
+    @Schema(description = "Reason for the request being denied")
+    private String reason;
+
 }

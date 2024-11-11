@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import FeedbackResponseCard from './feedback_response_card/FeedbackResponseCard';
 import { getQuestionsAndAnswers } from '../../api/feedbackanswer';
-import { getFeedbackRequestById } from '../../api/feedback';
+import { getAnswerByRequestAndQuestionId, getFeedbackRequestById } from '../../api/feedback';
 import queryString from 'query-string';
 import { useLocation } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
@@ -81,7 +81,6 @@ const ViewFeedbackResponses = () => {
   const [currentResponder, setCurrentResponder] = useState(null);  // Track the responder being denied
 
   const handleDenyClick = (responderId) => {
-    console.log(`Denial process initiated for responder: ${responderId}`);
     setCurrentResponder(responderId);  // Track the current responder
     setDenialPopupOpen(true);
   };
@@ -91,10 +90,52 @@ const ViewFeedbackResponses = () => {
     console.log("Denial popup closed");
   };
 
-  const handleDenialSubmit = () => {
+  const handleDenialSubmit = async () => {
     console.log(`Denial reason for responder ${currentResponder}:`, denialReason);
-    setDenialPopupOpen(false);
-    // Here, you'd normally send the reason to the backend or handle it appropriately
+
+    setQuestionsAndAnswers(prevState =>
+      prevState.map(question => ({
+        ...question,
+        answers: question.answers.filter(answer => answer.responder !== currentResponder)
+      }))
+    );
+
+    try {
+      const response = await fetch('/api/feedback/deny', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrf,
+        },
+        body: JSON.stringify({
+          requestId: query.request,
+          responderId: currentResponder,
+          denialReason: denialReason
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to deny feedback request');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        console.log('Feedback request denied successfully');
+      }
+
+    } catch (error) {
+      console.error("Error denying feedback request:", error);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'Failed to deny the feedback request'
+        }
+      });
+    } finally {
+      setDenialPopupOpen(false);
+      setDenialReason('');
+    }
   };
 
   useEffect(() => {

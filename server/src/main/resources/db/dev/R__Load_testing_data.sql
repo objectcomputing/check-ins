@@ -661,6 +661,11 @@ values
 insert into role_permissions
     (roleid, permission)
 values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_DENY_FEEDBACK_REQUEST');
+
+insert into role_permissions
+    (roleid, permission)
+values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_FEEDBACK_ANSWER');
 
 insert into role_permissions
@@ -989,6 +994,11 @@ insert into role_permissions
     (roleid, permission)
 values
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_DELETE_FEEDBACK_REQUEST');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'CAN_DENY_FEEDBACK_REQUEST');
 
 insert into role_permissions
     (roleid, permission)

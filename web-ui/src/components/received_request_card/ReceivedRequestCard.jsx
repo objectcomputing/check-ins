@@ -22,11 +22,10 @@ const classes = {
 
 const propTypes = {
   request: PropTypes.object.isRequired,
-  handleDenyClick: PropTypes.func.isRequired  // handle deny function as a prop
+  handleDenyClick: PropTypes.func.isRequired
 };
 
-const ReceivedRequestCard = ({ request, handleDenyClick }) => {
-  console.log("Rendering ReceivedRequestCard for request:", request.id);
+const ReceivedRequestCard = ({ request, handleDenyClick, isDenied }) => {
   
   const { state } = useContext(AppContext);
 
@@ -70,6 +69,8 @@ const ReceivedRequestCard = ({ request, handleDenyClick }) => {
     }
   };
 
+
+
   return (
     <div className="card-content-grid" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
       <div className="request-members-container">
@@ -112,6 +113,9 @@ const ReceivedRequestCard = ({ request, handleDenyClick }) => {
         </div>
         <div className="request-status-container">
           <Submitted />
+          {isDenied && (
+            <Typography className={classes.grayTypography}>Denied</Typography>
+          )}
         </div>
         <div className="submission-link-container">
           {request &&
@@ -129,7 +133,7 @@ const ReceivedRequestCard = ({ request, handleDenyClick }) => {
               <Tooltip title="Deny feedback request" arrow>
                 <IconButton size="large" onClick={() => {
                   console.log("X icon clicked for request ID:", request.id);
-                  handleDenyClick(request.id);  // Call handleDenyClick with request ID
+                  handleDenyClick(request.id);
                 }}>
                   <CloseIcon />
                 </IconButton>
@@ -142,6 +146,9 @@ const ReceivedRequestCard = ({ request, handleDenyClick }) => {
   );
 };
 
-ReceivedRequestCard.propTypes = propTypes;
+ReceivedRequestCard.propTypes = {
+  ...propTypes,
+  isDenied: PropTypes.bool
+};
 
 export default ReceivedRequestCard;

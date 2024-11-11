@@ -55,4 +55,15 @@ public class FeedbackRequestResponseDTO {
     @Schema(description = "the id of the review period in that this request was created for")
     private UUID reviewPeriodId;
 
+    @Schema(description = "Whether the feedback request has been denied")
+    private boolean denied = false;
+
+    @Nullable
+    @Schema(description = "Reason for the request being denied")
+    private String reason;
+
+    public FeedbackRequestResponseDTO() {
+        this.denied = false;
+    }
+
 }

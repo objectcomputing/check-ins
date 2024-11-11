@@ -356,7 +356,8 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             LocalDate sendDate = LocalDate.now();
             FeedbackRequest request = new FeedbackRequest(
                 creatorId, revieweeId, reviewerId, templateId, sendDate,
-                dueDate, "sent", null, period.getId());
+                dueDate, "sent", null, period.getId(), false, null
+            );
             feedbackRequestServices.save(request);
         } catch(Exception ex) {
             LOG.error(ex.toString());

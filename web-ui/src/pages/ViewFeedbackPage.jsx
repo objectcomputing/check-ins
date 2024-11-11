@@ -37,6 +37,8 @@ import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../helpers/query-parameters';
 
+
+
 const PREFIX = 'ViewFeedbackPage';
 const classes = {
   pageTitle: `${PREFIX}-pageTitle`,
@@ -109,6 +111,7 @@ const ViewFeedbackPage = () => {
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
   const [includeAll, setIncludeAll] = useState(false);
+  const [deniedRequests, setDeniedRequests] = useState([]);
 
   useQueryParameters([
     {
@@ -139,13 +142,14 @@ const ViewFeedbackPage = () => {
 
   useEffect(() => {
     if (currentMembers && currentMembers.length > 0) {
-      isAdmin && includeAll
-        ? setTeamMembers(
-            currentMembers.filter(member => member?.id !== currentUserId)
-          )
-        : includeAll
-          ? setTeamMembers(subordinates)
-          : setTeamMembers(myTeam);
+      const newTeamMembers = isAdmin && includeAll
+      ? currentMembers.filter(member => member?.id !== currentUserId)
+      : includeAll
+        ? subordinates
+        : myTeam;
+      if (JSON.stringify(teamMembers) !== JSON.stringify(newTeamMembers)) {
+        setTeamMembers(newTeamMembers);
+      }
     }
   }, [
     isAdmin,
@@ -153,7 +157,8 @@ const ViewFeedbackPage = () => {
     subordinates,
     currentMembers,
     myTeam,
-    currentUserId
+    currentUserId,
+    teamMembers
   ]);
 
   const toggleIncludeAll = useCallback(() => {
@@ -162,6 +167,20 @@ const ViewFeedbackPage = () => {
   }, [includeAll, setIncludeAll]);
 
   useEffect(() => {
+    let mounted = true;
+
+    const fetchData = async () => {
+      try {
+        const feedbackRequests = await getRequestAndTemplateInfo(currentUserId);
+        if (mounted) {
+          setFeedbackRequests(feedbackRequests);
+          isLoading.current = false;
+        }
+      } catch(error) {
+        console.error('Failed to fetch feedback requests:', error);
+      }
+    };
+
     const getFeedbackRequests = async creatorId => {
       if (csrf) {
         let res = await getFeedbackRequestsByCreator(creatorId, csrf);
@@ -359,28 +378,47 @@ const ViewFeedbackPage = () => {
       return requestDate >= oldestDate;
     };
 
-    return requestsToDisplay?.reduce((toDisplay, request) => {
-      if (request?.responses?.length > 0) {
-        if (
-          request.responses.filter(response => isInRange(response.sendDate))
-            .length > 0
-        ) {
-          toDisplay.push(
-            <FeedbackRequestCard
-              key={`${request?.requesteeId}-${request?.templateId}`}
-              requesteeId={request?.requesteeId}
-              templateName={request?.templateInfo?.title}
-              responses={request?.responses}
-              sortType={sortValue}
-              dateRange={dateRange}
-            />
-          );
-        }
-      }
-      return toDisplay;
-    }, []);
-  }, [searchText, sortValue, dateRange, feedbackRequests]);
+    const handleDenialOfFeedback = (requestId, reason) => {
+      setDeniedRequests(prev => [...prev, requestId]);
+      console.log(`Feedback denied for request ID: ${requestId} with reason: ${reason}`);
+    
+      
+      setFeedbackRequests(prevRequests => 
+        prevRequests.map(request => ({
+          ...request,
+          responses: request.responses.filter(response => response.id !== requestId)
+        }))
+      );
+    };
+    
+  
 
+  return requestsToDisplay?.reduce((toDisplay, request) => {
+     if (request?.responses?.length > 0) {
+       request.responses = request.responses.filter(response =>
+         isInRange(response.sendDate) &&
+         !deniedRequests.includes(response.id)
+       );
+       if (request.responses.length > 0) {
+         toDisplay.push(
+           <FeedbackRequestCard
+             key={`${request?.requesteeId}-${request?.templateId}`}
+             requesteeId={request?.requesteeId}
+             templateName={request?.templateInfo?.title}
+             responses={request?.responses}
+             sortType={sortValue}
+             dateRange={dateRange}
+             onDeny={handleDenialOfFeedback}
+             isDenied={deniedRequests.includes(request.responses[0].id)}
+           />
+         );
+       }
+     }
+     return toDisplay;
+   }, []);
+}, [searchText, sortValue, dateRange]);
+
+  
   return selectCanViewFeedbackRequestPermission(state) ? (
     <Root className="view-feedback-page">
       <div className="view-feedback-header-container">

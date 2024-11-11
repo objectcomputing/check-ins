@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { Collapse, InputAdornment, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
 import ReceivedRequestCard from '../components/received_request_card/ReceivedRequestCard';
-import { getFeedbackRequestsByRecipient } from '../api/feedback';
+import { denyFeedbackRequest, getFeedbackRequestById, getFeedbackRequestsByRecipient } from '../api/feedback';
 import './ReceivedRequestsPage.css';
 import { UPDATE_TOAST } from '../context/actions';
 import Divider from '@mui/material/Divider';
@@ -91,7 +91,6 @@ const ReceivedRequestsPage = () => {
   const [receivedRequestsExpanded, setReceivedRequestsExpanded] = useState(true);
   const [submittedRequestsExpanded, setSubmittedRequestsExpanded] = useState(false);
 
-  // State for denial dialog
   const [denialPopupOpen, setDenialPopupOpen] = useState(false);
   const [denialReason, setDenialReason] = useState('');
   const [currentRequestId, setCurrentRequestId] = useState(null);
@@ -109,14 +108,68 @@ const ReceivedRequestsPage = () => {
     console.log("Denial popup closed");
   };
 
-  const handleDenialSubmit = () => {
-    console.log("Denial reason for request ID:", currentRequestId, denialReason);
-    // Perform any necessary action for submitting the denial reason here
-    setDenialPopupOpen(false);
-    setDenialReason('');
-    setCurrentRequestId(null);
+  const updateRequestAfterDenial = (requestId, reason) => {
+    setReceivedRequests(prevRequests =>
+      prevRequests.filter(req => req.id !== requestId)
+    );
+    console.log(`Request ${requestId} denied with reason: ${reason}`);
   };
 
+  const handleDenialSubmit = async () => {
+    try {
+      const currentProfile = selectProfile(state, currentUserId);
+      const deniedRequest = receivedRequests.find(req => req.id === currentRequestId);
+      const creatorProfile = selectProfile(state, deniedRequest.creatorId);
+      
+      // await denyFeedbackRequest(currentRequestId, denialReason, csrf);
+
+      const denier = {
+        id: currentProfile.id,
+        name: currentProfile.name
+      };
+
+      const creator = {
+        id: creatorProfile.id
+      };
+
+
+      await denyFeedbackRequest(
+        currentRequestId,
+        denialReason,
+        denier,
+        creator,
+        csrf
+      );
+
+      const deniedRequestDetails = await getFeedbackRequestById(currentRequestId, csrf);
+      if (deniedRequestDetails.payload && deniedRequestDetails.payload.data) {
+        const creatorId = deniedRequest.payload.data.creatorId;
+        const notificationMessage = `Your feedback request for ${requesteeName} was denied. Reason: ${denialReason}`;
+        await sendNotification(creatorId, notificationMessage);
+      }
+      setReceivedRequests(prevRequests =>
+        prevRequests.map(req =>
+          req.id === currentRequestId ? { ...req, denied: true } : req
+        )
+      );
+
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'success',
+          toast: 'Feedback request denied and notification sent.'
+        }
+      });
+    } catch (error) {
+      // Catch for error logging. Errors are handled elsewhere at time of writing.
+    } finally {
+      updateRequestAfterDenial(currentRequestId, denialReason);
+      setDenialPopupOpen(false);
+      setDenialReason('');
+      setCurrentRequestId(null);
+  }
+};
+  
   useEffect(() => {
     const getAllFeedbackRequests = async () => {
       let res = await getFeedbackRequestsByRecipient(currentUserId, csrf);
@@ -137,7 +190,7 @@ const ReceivedRequestsPage = () => {
       getAllFeedbackRequests().then(data => {
         if (data) {
           setCanceledRequests(data.filter(req => req.status === 'canceled'));
-          setReceivedRequests(data.filter(req => !req.submitDate && req.status !== 'canceled'));
+          setReceivedRequests(data.filter(req => !req.submitDate && req.status !== 'canceled' && !req.denied));
           setSubmittedRequests(data.filter(req => req.submitDate && req.submitDate.length === 3 && req.status !== 'canceled'));
           setIsLoading(false);
         }
@@ -280,7 +333,12 @@ const ReceivedRequestsPage = () => {
               </div>
             )}
             {filteredReceivedRequests.map(request => (
-              <ReceivedRequestCard key={request.id} request={request} handleDenyClick={handleDenyClick} />
+              <ReceivedRequestCard
+                key={request.id}
+                request={request}
+                handleDenyClick={handleDenyClick}
+                isDenied={request.denied}
+                />
             ))}
           </div>
         )}
