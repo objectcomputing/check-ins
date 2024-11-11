@@ -23,6 +23,13 @@ public class BirthDayServicesImpl implements BirthDayServices{
     public List<BirthDayResponseDTO> findByValue(String[] months, Integer[] daysOfMonth) {
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
         List<MemberProfile> memberProfileAll = new ArrayList<>(memberProfiles);
+        if (months == null && daysOfMonth == null) {
+            // If nothing was passed in, get all members without birthdays.
+            memberProfileAll = memberProfileAll
+                .stream()
+                .filter(member -> member.getBirthDate() == null)
+                .toList();
+        }
         if (months != null) {
             for (String month : months) {
                 if (month != null) {
@@ -66,7 +73,9 @@ public class BirthDayServicesImpl implements BirthDayServices{
                 BirthDayResponseDTO birthDayResponseDTO = new BirthDayResponseDTO();
                 birthDayResponseDTO.setUserId(member.getId());
                 birthDayResponseDTO.setName(member.getFirstName() + "" +member.getLastName());
-                birthDayResponseDTO.setBirthDay(member.getBirthDate().getMonthValue() + "/" +member.getBirthDate().getDayOfMonth());
+                if (member.getBirthDate() != null) {
+                    birthDayResponseDTO.setBirthDay(member.getBirthDate().getMonthValue() + "/" +member.getBirthDate().getDayOfMonth());
+                }
                 birthDays.add(birthDayResponseDTO);
             }
         }

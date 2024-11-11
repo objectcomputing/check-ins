@@ -8,7 +8,7 @@ import {
 } from '../../context/selectors';
 import TeamsActions from './TeamsActions';
 import PropTypes from 'prop-types';
-import { TextField } from '@mui/material';
+import { FormControlLabel, Switch, TextField } from '@mui/material';
 import './TeamResults.css';
 import SkeletonLoader from '../skeleton_loader/SkeletonLoader';
 import { useQueryParameters } from '../../helpers/query-parameters';
@@ -40,21 +40,10 @@ const TeamResults = () => {
   const { state } = useContext(AppContext);
   const loading = selectTeamsLoading(state);
   const [addingTeam, setAddingTeam] = useState(false);
+  const [activeTeams, setActiveTeams] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [selectedTeamId, setSelectedTeamId] = useState('');
   const teams = selectNormalizedTeams(state, searchText);
-
-  const teamCards = teams.map((team, index) => {
-    return (
-      <TeamSummaryCard
-        key={`team-summary-${team.id}`}
-        index={index}
-        team={team}
-        onTeamSelect={setSelectedTeamId}
-        selectedTeamId={selectedTeamId}
-      />
-    );
-  });
 
   useQueryParameters([
     {
@@ -89,16 +78,41 @@ const TeamResults = () => {
             setSearchText(e.target.value);
           }}
         />
-        <TeamsActions isOpen={addingTeam} onOpen={setAddingTeam} />
+        <div className="team-actions">
+          <TeamsActions isOpen={addingTeam} onOpen={setAddingTeam} />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={activeTeams}
+                onChange={event => {
+                  const { checked } = event.target;
+                  setActiveTeams(checked);
+                }}
+             />
+            }
+            label="Active Teams Only"
+          />
+        </div>
       </div>
       <div className="teams">
         {loading
           ? Array.from({ length: 20 }).map((_, index) => (
               <SkeletonLoader key={index} type="team" />
             ))
-          : teams?.length && !loading
-            ? teamCards
-            : null}
+          : teams.filter((team) => !activeTeams ||
+                                   (activeTeams && team.active))
+                 .map((team, index) => {
+              return (
+                <TeamSummaryCard
+                  key={`team-summary-${team.id}`}
+                  index={index}
+                  team={team}
+                  onTeamSelect={setSelectedTeamId}
+                  selectedTeamId={selectedTeamId}
+                />
+              );
+            })
+        }
       </div>
     </Root>
   );

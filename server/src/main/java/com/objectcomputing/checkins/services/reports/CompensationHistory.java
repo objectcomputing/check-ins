@@ -23,7 +23,8 @@ public class CompensationHistory extends CSVProcessor {
     public record Compensation(
             UUID memberId,
             LocalDate startDate,
-            float amount
+            String amount,
+            String totalComp
     ) {
     }
 
@@ -45,11 +46,13 @@ public class CompensationHistory extends CSVProcessor {
             if (date == null) {
               LOG.error("Unable to parse date: {}", startDate);
             } else {
+              String value = csvRecord.get("compensation");
               Compensation comp = new Compensation(
                       memberProfile.get().getId(),
                       date,
-                      Float.parseFloat(csvRecord.get("compensation")
-                                                .replaceAll("[^\\d\\.,]", "")));
+                      value == null ? null : value.replaceAll("[^\\d\\.,]", ""),
+                      csvRecord.get("totalComp")
+              );
               history.add(comp);
             }
           } else {
