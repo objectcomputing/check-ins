@@ -3,10 +3,7 @@ import { styled } from '@mui/material/styles';
 import FeedbackExternalRecipientCard from '../feedback_external_recipient_card/FeedbackExternalRecipientCard';
 import { AppContext } from '../../context/AppContext';
 import {
-  selectProfile,
-  selectCsrfToken,
-  selectCurrentUser,
-  selectNormalizedMembers, selectFeedbackExternalRecipient
+    selectProfile, selectCsrfToken, selectCurrentUser, selectNormalizedMembers,
 } from '../../context/selectors';
 import {putExternalRecipientInactivate, getExternalRecipients} from '../../api/feedback';
 import Typography from '@mui/material/Typography';
@@ -59,7 +56,7 @@ const propTypes = {
 };
 
 const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, addExternalRecipientId }) => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const userProfile = selectCurrentUser(state);
   const { id } = userProfile;
@@ -96,39 +93,39 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
 
     useEffect(() => {
         function bindFromURL() {
-        if (
-          !hasRenewedFromURL.current &&
-          fromQuery !== null &&
-          fromQuery !== undefined
-        ) {
-        let profileCopy = externalRecipients;
-        if (typeof fromQuery === 'string') {
-          let newProfile = { id: fromQuery };
-          if (externalRecipients.filter(externalRecipient => externalRecipient.id === newProfile.id).length === 0) {
-            profileCopy.push(newProfile);
-          }
-        } else if (Array.isArray(fromQuery)) {
-          for (let i = 0; i < fromQuery.length; ++i) {
-            let newProfile = { id: fromQuery[i] };
-            if (externalRecipients.filter(externalRecipient => externalRecipient.id === newProfile.id).length === 0) {
-              profileCopy.push(newProfile);
+            if (
+              !hasRenewedFromURL.current &&
+              fromQuery !== null &&
+              fromQuery !== undefined
+            ) {
+            let profileCopy = externalRecipients;
+            if (typeof fromQuery === 'string') {
+              let newProfile = { id: fromQuery };
+              if (externalRecipients.filter(externalRecipient => externalRecipient.id === newProfile.id).length === 0) {
+                profileCopy.push(newProfile);
+              }
+            } else if (Array.isArray(fromQuery)) {
+              for (let i = 0; i < fromQuery.length; ++i) {
+                let newProfile = { id: fromQuery[i] };
+                if (externalRecipients.filter(externalRecipient => externalRecipient.id === newProfile.id).length === 0) {
+                  profileCopy.push(newProfile);
+                }
+              }
             }
-          }
-        }
-        setExternalRecipients(profileCopy);
-        hasRenewedFromURL.current = true;
-        }
+            setExternalRecipients(profileCopy);
+            hasRenewedFromURL.current = true;
+            }
         }
 
         async function getExternalRecipientsForSelector() {
-        if (forQuery === undefined || forQuery === null) {
-        return;
-        }
-        let res = await getExternalRecipients(csrf);
-        if (res && res.payload) {
-        return res.payload.data && !res.error ? res.payload.data : undefined;
-        }
-        return null;
+            if (forQuery === undefined || forQuery === null) {
+            return;
+            }
+            let res = await getExternalRecipients(csrf);
+            if (res && res.payload) {
+                return res.payload.data && !res.error ? res.payload.data : undefined;
+            }
+                return null;
         }
 
         if (csrf && (searchText === '' || searchText.length === 0)) {
@@ -157,7 +154,6 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
         } else {
           fromQuery.push(id);
         }
-        console.log("FeedbackExternalRecipientSelector.jsx, cardClickHandler, 02 - fromQuery: ", fromQuery);
         changeQuery('from', fromQuery);
         hasRenewedFromURL.current = false;
     };
@@ -263,8 +259,13 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
         } else if (feedbackExternalRecipientRes.payload && feedbackExternalRecipientRes.payload.data) {
             newRecipient.id = feedbackExternalRecipientRes.payload.data.id;
             console.log("FeedbackExternalRecipientSelector.jsx, handleNewRecipientSubmit, newRecipient: ", newRecipient);
-            setExternalRecipients([...externalRecipients, newRecipient]);
+            //setExternalRecipients([...externalRecipients, newRecipient]);
             addExternalRecipientId(newRecipient.id);
+            const updatedRecipients = await getExternalRecipients(csrf);
+            console.log("FeedbackExternalRecipientSelector.jsx, handleNewRecipientSubmit, updatedRecipients: ", updatedRecipients);
+            if (updatedRecipients && updatedRecipients.payload) {
+                setExternalRecipients(updatedRecipients.payload.data);
+            }
             handleNewRecipientClose();
         }
     };

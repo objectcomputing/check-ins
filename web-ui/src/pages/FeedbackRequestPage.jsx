@@ -18,14 +18,14 @@ import FeedbackTemplateSelector from '../components/feedback_template_selector/F
 import FeedbackRecipientSelector from '../components/feedback_recipient_selector/FeedbackRecipientSelector';
 import SelectDate from '../components/feedback_date_selector/SelectDate';
 import { AppContext } from '../context/AppContext';
-import { createFeedbackRequest } from '../api/feedback';
+import {createFeedbackRequest, getExternalRecipients} from '../api/feedback';
 import {
   selectProfile,
   selectCsrfToken,
   selectCurrentUser,
   selectCurrentMemberIds,
   selectHasCreateFeedbackPermission,
-  noPermission, selectFeedbackExternalRecipientIds,
+  noPermission,
 } from '../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
 import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
@@ -259,7 +259,7 @@ const FeedbackRequestPage = () => {
         await softDeleteAdHoc(currentUserId);
         const newLocation = {
           pathname: '/feedback/request/confirmation',
-          search: queryString.stringify(query)
+          search: queryString.stringify(query),
         };
         history.push(newLocation);
       } else if (res.error || data === null) {
@@ -365,10 +365,18 @@ const FeedbackRequestPage = () => {
   }, [state]);
 
   useEffect(() => {
-    const feedbackExternalRecipients = selectFeedbackExternalRecipientIds(state);
-    if (feedbackExternalRecipients) {
-      setExternalRecipientIds(feedbackExternalRecipients);
+    async function fetchExternalRecipients() {
+      let res = await getExternalRecipients();
+      let externalRecipientsResponse =
+          res.payload && res.payload.data && res.payload.status === 200 && !res.error
+              ? res.payload.data
+              : null
+      ;
+      if (externalRecipientsResponse) {
+        setExternalRecipientIds(externalRecipientsResponse.map(recipient => recipient.id));
+      }
     }
+    fetchExternalRecipients();
   }, [state]);
 
   useEffect(() => {

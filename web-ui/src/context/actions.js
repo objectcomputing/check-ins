@@ -34,5 +34,3 @@ export const UPDATE_TEAMS_LOADING = '@@check-ins/update_teams_loading';
 export const UPDATE_REVIEW_PERIOD = '@@check-ins/update_review_period';
 export const UPDATE_REVIEW_PERIODS = '@@check-ins/update_review_periods';
 export const ADD_REVIEW_PERIOD = '@@check-ins/add_review_period';
-export const UPDATE_EXTERNAL_RECIPIENTS = '@@check-ins/update_external_recipients';
-export const UPDATE_EXTERNAL_RECIPIENTS_LOADING = '@@check-ins/update_external_recipients_loading';

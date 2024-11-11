@@ -66,7 +66,6 @@ const AppContextProvider = props => {
     teams,
     memberSkills,
     memberProfiles,
-      feedbackExternalRecipients,
     checkins,
     skills,
     certifications,
@@ -165,25 +164,6 @@ const AppContextProvider = props => {
     }
   }
   , [csrf, memberSkills])
-  ;
-
-  useEffect(() => {
-    async function getAllExternalRecipients() {
-      let res = await getExternalRecipients(csrf);
-      let externalRecipients =
-          res.payload && res.payload.data && !res.error
-              ? res.payload.data
-              : undefined
-      ;
-      if (externalRecipients) {
-        dispatch({ type: UPDATE_EXTERNAL_RECIPIENTS, payload: externalRecipients });
-        dispatch({ type: UPDATE_EXTERNAL_RECIPIENTS_LOADING, payload: false });
-      }
-    }
-    if (csrf && !feedbackExternalRecipients) {
-      getAllExternalRecipients();
-    }
-  }, [csrf, feedbackExternalRecipients])
   ;
 
   useEffect(() => {

@@ -5,7 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {
     selectProfile,
     selectHasCreateFeedbackPermission,
-    noPermission, selectFeedbackExternalRecipient,
+    noPermission,
 } from '../../context/selectors';
 import { AppContext } from '../../context/AppContext';
 import { Link, useLocation } from 'react-router-dom';
@@ -15,7 +15,8 @@ import './FeedbackRequestConfirmation.css';
 import { green } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import {getFeedbackTemplate} from "../../api/feedbacktemplate.js";
-import {UPDATE_TOAST} from "../../context/actions.js"; // Import the action type
+import {UPDATE_TOAST} from "../../context/actions.js";
+import {getExternalRecipients} from "../../api/feedback.js"; // Import the action type
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'FeedbackRequestConfirmation';
@@ -52,11 +53,11 @@ const FeedbackRequestConfirmation = () => {
     const templateQuery = query.template?.toString();
     const requestee = selectProfile(state, forQuery);
     const [templateIsForExternalRecipient, setTemplateIsForExternalRecipient] = useState(false);
+    const [externalRecipients, setExternalRecipients] = useState([]);
 
     useEffect(() => {
         async function fetchTemplateDetails() {
             if (!templateQuery) return;
-
             let res = await getFeedbackTemplate(templateQuery);
             let templateResponse =
                 res.payload &&
@@ -78,24 +79,45 @@ const FeedbackRequestConfirmation = () => {
                 setTemplateIsForExternalRecipient(templateResponse.isForExternalRecipient);
             }
         }
-
         fetchTemplateDetails();
     }, [templateQuery, dispatch]);
 
-    function getRecipientNames() {
-        if (fromQuery !== undefined) {
-            let fromArray = fromQuery.split(',');
-            let recipientProfiles = [];
-            if (fromArray.length !== 0) {
-                for (let i = 0; i < fromArray.length; ++i) {
-                    let element = fromArray[i];
-                    recipientProfiles.push(element);
-                }
-            } else {
-                recipientProfiles.push(fromQuery);
+    useEffect(() => {
+            async function fetchExternalRecipients() {
+            let res = await getExternalRecipients();
+            let externalRecipientsResponse =
+                res.payload && res.payload.data && res.payload.status === 200 && !res.error
+                    ? res.payload.data
+                    : null
+            ;
+            if (externalRecipientsResponse) {
+                setExternalRecipients(externalRecipientsResponse);
             }
-            return recipientProfiles;
         }
+        fetchExternalRecipients();
+    }, [templateIsForExternalRecipient]);
+
+    function getRecipientNames() {
+        let recipientProfiles = [];
+        if (templateIsForExternalRecipient) {
+            if (fromQuery !== undefined) {
+                let fromArray = fromQuery.split(',');
+                fromArray.forEach(id => {
+                    let recipient = externalRecipients.find(recipient => recipient.id === id);
+                    if (recipient) {
+                        recipientProfiles.push(recipient.firstName + ' ' + recipient.lastName + ' (' + recipient.companyName + ')');
+                    }
+                });
+            }
+        } else {
+            if (fromQuery !== undefined) {
+                let fromArray = fromQuery.split(',');
+                fromArray.forEach(id => {
+                    recipientProfiles.push(id);
+                });
+            }
+        }
+        return recipientProfiles;
     }
 
     let recipientInfo = getRecipientNames();
@@ -122,7 +144,7 @@ const FeedbackRequestConfirmation = () => {
                         `
                         ${
                             templateIsForExternalRecipient
-                                ? selectFeedbackExternalRecipient(state, recipient)?.firstName + " " + selectFeedbackExternalRecipient(state, recipient)?.lastName + " (" + selectFeedbackExternalRecipient(state, recipient)?.companyName + ") "
+                                ? recipient
                                 : selectProfile(state, recipient)?.name
                         }                                
                         ${index === recipientInfo.length - 1 ? '' : ', '}

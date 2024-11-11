@@ -32,7 +32,7 @@ import {
   UPDATE_TEAMS_LOADING,
   UPDATE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIODS,
-  ADD_REVIEW_PERIOD, UPDATE_EXTERNAL_RECIPIENTS, UPDATE_EXTERNAL_RECIPIENTS_LOADING
+  ADD_REVIEW_PERIOD
 } from './actions';
 
 export const initialState = {
@@ -46,7 +46,6 @@ export const initialState = {
   memberProfiles: null,
   terminatedMembers: [],
   memberSkills: null,
-  feedbackExternalRecipients: null,
   roles: null,
   userRoles: null,
   skills: null,
