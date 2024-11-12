@@ -4,18 +4,29 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
-public class DenierDTO {
+import io.micronaut.core.annotation.Introspected;
 
-    @NotNull(message = "Denier ID cannot be null")
+
+@Introspected
+
+public class UserDTO {
+
+    @NotNull(message = "User ID cannot be null")
     private UUID id;
 
-    @NotBlank(message = "Denier name cannot be blank")
+    @NotBlank(message = "User name cannot be blank")
     private String name;
 
     // Constructors
-    public DenierDTO() {}
+    public UserDTO() {}
 
-    public DenierDTO(UUID id, String name) {
+    // Constructor with only ID (for cases where only ID is required)
+    public UserDTO(UUID id) {
+        this.id = id;
+    }
+
+    // Constructor with ID and name (for cases where both ID and name are required)
+    public UserDTO(UUID id, String name) {
         this.id = id;
         this.name = name;
     }

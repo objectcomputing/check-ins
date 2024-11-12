@@ -1,13 +1,15 @@
-package com.objectcomputing.checkins.services.feedback_request.DTO;
+package com.objectcomputing.checkins.services.feedback_request;
 
 import io.micronaut.core.annotation.Introspected;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import com.objectcomputing.checkins.services.feedback_request.DTO.UserDTO;
+
 
 @Introspected
 
-public class DenyFeedbackRequestDTO {
+public class FeedbackRequestDenialDTO {
 
     @NotBlank(message = "Reason cannot be blank")
     private String reason;
@@ -21,9 +23,9 @@ public class DenyFeedbackRequestDTO {
     private UserDTO creator;
 
     // Constructors
-    public DenyFeedbackRequestDTO() {}
+    public FeedbackRequestDenialDTO() {}
 
-    public DenyFeedbackRequestDTO(String reason, UserDTO denier, UserDTO creator) {
+    public FeedbackRequestDenialDTO(String reason, UserDTO denier, UserDTO creator) {
         this.reason = reason;
         this.denier = denier;
         this.creator = creator;

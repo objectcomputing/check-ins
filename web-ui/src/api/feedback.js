@@ -131,7 +131,10 @@ export const denyFeedbackRequest = async (requestId, reason, denier, creator, co
     data: { 
       reason: reason, 
       denier: denier, 
-      creator: creator,
+      creator: {
+        id: creator.id,
+        name: "Anonymous"
+      }
     },
     headers: {
       'X-CSRF-Header': cookie,

@@ -215,6 +215,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
+        if (feedbackRequest.isDenied() && (feedbackRequestUpdateDTO.getReason() == null || feedbackRequestUpdateDTO.getReason().trim().isEmpty())) {
+            throw new BadArgException("A reason must be provided for denying the request.");
+        }
+
         FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
         MemberProfile reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());

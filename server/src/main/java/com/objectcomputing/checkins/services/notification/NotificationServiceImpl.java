@@ -4,6 +4,7 @@ import io.micronaut.core.annotation.NonNull;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -21,14 +22,17 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final EmailSender emailSender;
     private final MemberProfileServices memberProfileServices;
+    private final CurrentUserServices currentUserServices;
 
     @Inject
     public NotificationServiceImpl(
             @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
-            MemberProfileServices memberProfileServices
+            MemberProfileServices memberProfileServices,
+            CurrentUserServices currentUserServices
     ) {
         this.emailSender = emailSender;
         this.memberProfileServices = memberProfileServices;
+        this.currentUserServices = currentUserServices;
     }
 
     @Override
@@ -57,9 +61,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private MemberProfile getCurrentDenier() {
-        // This method should fetch the profile of the user who denied the request
-        // This could be passed as a parameter or retrieved from the session or context
-        // If not available, you might need to redesign how this information is passed to the service
-        throw new UnsupportedOperationException("Not implemented");
+        return currentUserServices.getCurrentUser();
     }
 }

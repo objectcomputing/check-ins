@@ -3,8 +3,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.feedback_request.DTO.DenyFeedbackRequestDTO;
-import com.objectcomputing.checkins.services.feedback_request.DTO.DenierDTO;
-import com.objectcomputing.checkins.services.feedback_request.DTO.CreatorDTO;
+import com.objectcomputing.checkins.services.feedback_request.DTO.UserDTO;
 import com.objectcomputing.checkins.services.notification.NotificationService;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
@@ -137,21 +136,21 @@ public class FeedbackRequestController {
      * @return {@link FeedbackRequestResponseDTO} with updated denial status
      */
     @Post("/{id}/deny")
-@RequiredPermission(Permission.CAN_DENY_FEEDBACK_REQUEST)
-public HttpResponse<FeedbackRequestResponseDTO> denyFeedbackRequest(
-    @PathVariable("id") @NotNull UUID id, 
-    @Body @Valid DenyFeedbackRequestDTO body
-) {
-    FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
-    if (feedbackRequest == null) {
-        return HttpResponse.notFound();
+    @RequiredPermission(Permission.CAN_DENY_FEEDBACK_REQUEST)
+    public HttpResponse<FeedbackRequestResponseDTO> denyFeedbackRequest(
+        @PathVariable("id") @NotNull UUID id, 
+        @Body @Valid DenyFeedbackRequestDTO body
+    ) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
+        if (feedbackRequest == null) {
+            return HttpResponse.notFound();
     }
 
     String reason = body.getReason();
-    DenierDTO denier = body.getDenier();
-    CreatorDTO creator = body.getCreator();
+    UserDTO denier = body.getDenier();
+    UserDTO creator = body.getCreator();
 
-    if (!feedbackRequest.isDenied() && reason != null && !reason.trim().isEmpty()) {
+    if (!feedbackRequest.isDenied() && reason != null && !reason.trim().isEmpty() && denier != null && creator != null) {
         FeedbackRequestUpdateDTO dto = new FeedbackRequestUpdateDTO();
         dto.setId(feedbackRequest.getId());
         dto.setDueDate(feedbackRequest.getDueDate());
@@ -171,9 +170,10 @@ public HttpResponse<FeedbackRequestResponseDTO> denyFeedbackRequest(
         );
 
         return HttpResponse.ok(fromEntity(updatedFeedbackRequest));
-    }
+    } else {
+        return HttpResponse.badRequest();
 
-    return HttpResponse.ok(fromEntity(feedbackRequest));
+    }
 }
 
     private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
