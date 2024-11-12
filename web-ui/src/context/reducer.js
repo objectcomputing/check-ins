@@ -59,6 +59,8 @@ export const initialState = {
   reviewPeriods: []
 };
 
+// 2024-11-12 - Added then removed for feedback_external_recipients
+
 export const reducer = (state, action) => {
   switch (action.type) {
     case MY_PROFILE_UPDATE:
@@ -247,12 +249,6 @@ export const reducer = (state, action) => {
       break;
     case UPDATE_REVIEW_PERIODS:
       state.reviewPeriods = action.payload;
-      break;
-    case UPDATE_EXTERNAL_RECIPIENTS:
-      state.feedbackExternalRecipients = action.payload;
-      break;
-    case UPDATE_EXTERNAL_RECIPIENTS_LOADING:
-      state.loading = { ...state.loading, feedbackExternalRecipients: action.payload };
       break;
     default:
   }

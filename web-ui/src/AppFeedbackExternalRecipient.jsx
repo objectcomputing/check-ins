@@ -66,22 +66,14 @@ const theme = extendTheme({
 
 
 getUserColorScheme();
+const customHistory = createBrowserHistory();
 
 function AppFeedbackExternalRecipient() {
   return (
     <CssVarsProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Router>
-          <AppFeedbackExternalRecipientContextProvider>
-            <ErrorBoundary FallbackComponent={ErrorFallback}>
-              <div>
-                <div className="AppFeedbackExternalRecipient">
-                  <RoutesFeedbackExternalRecipient />
-                </div>
-              </div>
-            </ErrorBoundary>
-            <SnackBarWithContext />
-          </AppFeedbackExternalRecipientContextProvider>
+        <Router  history={customHistory}>
+          <RoutesFeedbackExternalRecipient />
         </Router>
       </LocalizationProvider>
     </CssVarsProvider>
