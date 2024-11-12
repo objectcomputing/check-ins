@@ -49,10 +49,10 @@ exports[`renders correctly 1`] = `
             role="tablist"
           >
             <button
-              aria-controls="mui-p-12978-P-RECEIVED"
+              aria-controls="mui-p-59487-P-RECEIVED"
               aria-selected="true"
               class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary Mui-selected css-h0q0iv-MuiButtonBase-root-MuiTab-root"
-              id="mui-p-12978-T-RECEIVED"
+              id="mui-p-59487-T-RECEIVED"
               role="tab"
               tabindex="0"
               type="button"
@@ -74,10 +74,10 @@ exports[`renders correctly 1`] = `
               />
             </button>
             <button
-              aria-controls="mui-p-12978-P-SENT"
+              aria-controls="mui-p-59487-P-SENT"
               aria-selected="false"
               class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorPrimary css-h0q0iv-MuiButtonBase-root-MuiTab-root"
-              id="mui-p-12978-T-SENT"
+              id="mui-p-59487-T-SENT"
               role="tab"
               tabindex="-1"
               type="button"
@@ -107,17 +107,17 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <div
-      aria-labelledby="mui-p-12978-T-RECEIVED"
+      aria-labelledby="mui-p-59487-T-RECEIVED"
       class="MuiTabPanel-root css-13xfq8m-MuiTabPanel-root"
-      id="mui-p-12978-P-RECEIVED"
+      id="mui-p-59487-P-RECEIVED"
       role="tabpanel"
       style="padding: 1rem 0px;"
     />
     <div
-      aria-labelledby="mui-p-12978-T-SENT"
+      aria-labelledby="mui-p-59487-T-SENT"
       class="MuiTabPanel-root css-13xfq8m-MuiTabPanel-root"
       hidden=""
-      id="mui-p-12978-P-SENT"
+      id="mui-p-59487-P-SENT"
       role="tabpanel"
       style="padding: 1rem 0px;"
     />
