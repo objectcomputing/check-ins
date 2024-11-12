@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import FeedbackRequestForExternalRecipientPage from "../../pages/FeedbackRequestForExternalRecipientPage.jsx";
 import {AppFeedbackExternalRecipientContext} from "../../context/AppFeedbackExternalRecipientContext.jsx";
+import FeedbackSubmitForExternalRecipientPage from "../../pages/FeedbackSubmitPageForExternalRecipient.jsx";
 
 export default function RoutesFeedbackExternalRecipient() {
   const { state } = useContext(AppFeedbackExternalRecipientContext);
@@ -9,7 +9,7 @@ export default function RoutesFeedbackExternalRecipient() {
   return (
     <Switch>
         <Route path="/feedbackExternalRecipient">
-            <FeedbackRequestForExternalRecipientPage />
+            <FeedbackSubmitForExternalRecipientPage />
         </Route>
     </Switch>
   );

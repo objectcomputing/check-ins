@@ -31,7 +31,6 @@ import DateFnsUtils from '@date-io/date-fns';
 import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
 
 import './FeedbackRequestPage.css';
-import FeedbackRequestForExternalRecipientPage from "./FeedbackRequestForExternalRecipientPage.jsx";
 import FeedbackExternalRecipientSelector from "../components/feedback_external_recipient_selector/FeedbackExternalRecipientSelector.jsx";
 
 const dateUtils = new DateFnsUtils();
