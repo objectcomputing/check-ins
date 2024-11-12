@@ -37,7 +37,7 @@ public class NotificationController {
      * @return {@link HttpResponse} with status indicating success or error
      */
     @Post("/send")
-    @RequiredPermission(Permission.CAN_SEND_NOTIFICATION)
+    @RequiredPermission(Permission.CAN_SEND_NOTIFICATIONS)
     public HttpResponse<Void> sendNotification(@Body @Valid @NotNull NotificationDTO notificationDTO) {
         notificationService.sendNotification(notificationDTO.getUserId(), notificationDTO.getMessage());
         return HttpResponse.ok();

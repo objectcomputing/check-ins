@@ -11,6 +11,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
@@ -168,6 +169,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         if (originalFeedback == null) {
             throw new BadArgException("Cannot update feedback request that does not exist");
+        }
+
+        if (feedbackRequest.isDenied()) {
+            UUID currentUserId = currentUserServices.getCurrentUser().getId();
+            if (!currentUserId.equals(originalFeedback.getRecipientId())) {
+                if (!currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUESTS)) {
+                    throw new PermissionException(NOT_AUTHORIZED_MSG);
+                }
+            }
         }
 
         validateMembers(originalFeedback);
