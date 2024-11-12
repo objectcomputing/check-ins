@@ -113,7 +113,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID requesteePDL = requestee.getPdlId();
-        if (currentUserServices.isAdmin() || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId)) {
+        if (currentUserServices.isAdmin() || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId) || feedbackRequestServices.selfRevieweeIsCurrentUserReviewee(feedbackRequest, currentUserId)) {
             response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
             return response;
         }
@@ -145,15 +145,36 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     public boolean getIsPermitted(FeedbackRequest feedbackRequest) {
-        final boolean isAdmin = currentUserServices.isAdmin();
-        final UUID requestCreatorId = feedbackRequest.getCreatorId();
-        UUID requesteeId = feedbackRequest.getRequesteeId();
-        MemberProfile requestee = memberProfileServices.getById(requesteeId);
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
-        final UUID requesteePDL = requestee.getPdlId();
+        // Admins can always get questions and answers.
+        if (currentUserServices.isAdmin()) {
+            return true;
+        }
 
-        return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);
+        // See if the current user is the requestee's supervisor.
+        final UUID requesteeId = feedbackRequest.getRequesteeId();
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (requesteeId != null &&
+            memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()))) {
+            return true;
+        }
+
+        // See if the current user is the requestee's PDL.
+        final MemberProfile requestee = memberProfileServices.getById(requesteeId);
+        if (currentUserId.equals(requestee.getPdlId())) {
+            return true;
+        }
+
+        // See if the current user is the request creator or the recipient of
+        // the request.
+        final UUID requestCreatorId = feedbackRequest.getCreatorId();
+        final UUID recipientId = feedbackRequest.getRecipientId();
+        if (requestCreatorId.equals(currentUserId) ||
+            recipientId.equals(currentUserId)) {
+            return true;
+        }
+
+
+        return feedbackRequestServices.selfRevieweeIsCurrentUserReviewee(
+                   feedbackRequest, currentUserId);
     }
 }
