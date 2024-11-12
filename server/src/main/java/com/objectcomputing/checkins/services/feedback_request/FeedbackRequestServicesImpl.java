@@ -303,13 +303,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             } else if (request != null) {
                 if (currentUserId.equals(request.getCreatorId()) ||
                     isSupervisor(request.getRequesteeId(), currentUserId) ||
-                    currentUserId.equals(request.getRecipientId())) {
+                    currentUserId.equals(request.getRecipientId()) ||
+                    selfRevieweeIsCurrentUserReviewee(request, currentUserId)) {
                     visible = true;
-                } else {
-                    if (selfRevieweeIsCurrentUserReviewee(request,
-                                                          currentUserId)) {
-                        visible = true;
-                    }
                 }
             }
             return visible;
