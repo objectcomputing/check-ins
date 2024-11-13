@@ -20,21 +20,6 @@ import { useQueryParameters } from '../helpers/query-parameters';
 import markdown from 'markdown-builder';
 
 const MeritReportPage = () => {
-  const agreeMarks = [
-    'Strongly Disagree',
-    'Disagree',
-    'Neither Agree nor Disagree',
-    'Agree',
-    'Strongly Agree'
-  ];
-  const frequencyMarks = [
-    'Very Infrequently',
-    'Infrequently',
-    'Neither Frequently nor Infrequently',
-    'Frequently',
-    'Very Frequently'
-  ];
-
   const { state, dispatch } = useContext(AppContext);
 
   const csrf = selectCsrfToken(state);
@@ -303,7 +288,7 @@ const MeritReportPage = () => {
 
       const questions = getUniqueQuestions(feedback.answers);
       for(let question of Object.keys(questions)) {
-        text += markdown.headers.h3(question) + "\n";
+        text += markdown.headers.h4(question) + "\n";
         for(let answer of questions[question]) {
           if (listMembers) {
             text += answer[0] + ": ";
@@ -338,22 +323,6 @@ const MeritReportPage = () => {
   };
 
   const getAnswerText = (answer) => {
-    if (answer.type == "SLIDER" || answer.type == "FREQ") {
-      const sentiment = parseFloat(answer.answer);
-      if (!isNaN(sentiment)) {
-        if (answer.type == "SLIDER") {
-          const index = sentiment * agreeMarks.length;
-          if (index >= 0 && index < agreeMarks.length) {
-            return agreeMarks[index];
-          }
-        } else if (answer.type == "FREQ") {
-          const index = sentiment * frequencyMarks.length;
-          if (index >= 0 && index < frequencyMarks.length) {
-            return frequencyMarks[index];
-          }
-        }
-      }
-    }
     return answer.answer;
   };
 
@@ -388,7 +357,7 @@ const MeritReportPage = () => {
 
       const questions = getUniqueQuestions(feedback.answers);
       for(let question of Object.keys(questions)) {
-        text += markdown.headers.h3(question) + "\n";
+        text += markdown.headers.h4(question) + "\n";
         for(let answer of questions[question]) {
           text += answer[0] + ": " + answer[1] + "\n\n";
         }
@@ -434,14 +403,13 @@ const MeritReportPage = () => {
 
   const prepareCompensationHistory = (data, fn) => {
     return data.compensationHistory.filter(fn).sort((a, b) => {
-      for(let i = 0; i < a.length; i++) {
+      for(let i = 0; i < a.startDate.length; i++) {
         if (a.startDate[i] != b.startDate[i]) {
           return b.startDate[i] - a.startDate[i];
         }
       }
       return 0;
     }).slice(0, 3);
-
   };
 
   const markdownCompensationHistory = (data) => {
@@ -450,12 +418,17 @@ const MeritReportPage = () => {
     const compTotal = prepareCompensationHistory(data, (comp) => !!comp.totalComp);
 
     let text = markdown.headers.h2("Compensation History");
+    text += markdown.headers.h3("Base Compensation (annual or hourly)");
     text += markdown.lists.ul(compBase,
                 (comp) => formatDate(dateFromArray(comp.startDate)) + " - " +
-                "$" + parseFloat(comp.amount).toFixed(2) + " (base)");
+                "$" + parseFloat(comp.amount).toFixed(2));
+    text += markdown.headers.h3("Total Compensation")
     text += markdown.lists.ul(compTotal,
-                (comp) => dateFromArray(comp.startDate).getFullYear() + " - " +
-                comp.totalComp);
+                (comp) => {
+                    var date = dateFromArray(comp.startDate);
+                    date = date.getMonth() === 0 && date.getDate() === 1 ? date.getFullYear() : formatDate(date);
+                    return date + " - " + comp.totalComp;
+                });
     return text;
   };
 
@@ -512,7 +485,7 @@ const MeritReportPage = () => {
     <div className="merit-report-page">
       <Button color="primary" className="space-between">
         <label htmlFor="file-upload-comp">
-          <h3>Compenstion History File {selectedCompHist && checkMark}</h3>
+          <h3>Compensation History File {selectedCompHist && checkMark}</h3>
           <input
             accept=".csv"
             id="file-upload-comp"

@@ -55,6 +55,7 @@ import {
 } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import {
+  selectIsAdmin,
   selectCsrfToken,
   selectCurrentMembers,
   selectCurrentUser,
@@ -125,7 +126,7 @@ const ReviewStatus = {
 const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const location = useLocation();
-
+  const isAdmin = selectIsAdmin(state);
   const [openMode, setOpenMode] = useState(false);
   const [approvalState, setApprovalState] = useState(false);
   const [assignments, setAssignments] = useState([]);
@@ -796,7 +797,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     const url = getReviewerURL(request, selfReviewRequest);
 
     return (url ?
-            <Link to={url}>
+            <Link key={member?.id} to={url}>
             <Chip
               key={reviewer.id}
               label={statusLabel}
@@ -840,7 +841,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     const manages = recipientProfile.supervisorid == currentUser?.id;
     const request = getReviewRequest(member, currentUser);
     const isReviewer = request?.recipientId == currentUser?.id;
-    if (manages || isReviewer) {
+    if (isAdmin || manages || isReviewer) {
       const selfReviewRequest = getSelfReviewRequest(member);
       return (
         <Chip
