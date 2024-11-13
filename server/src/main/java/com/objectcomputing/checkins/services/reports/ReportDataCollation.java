@@ -306,12 +306,7 @@ public class ReportDataCollation {
               feedbackAnswers.add(
                   new Feedback.Answer(
                         recipientName, request.getSubmitDate(), questionText,
-                        questionType.equals(textQuestion) ||
-                        questionType.equals(radioQuestion) ?
-                               answer.getAnswer() :
-                               String.valueOf(answer.getSentiment()),
-                        questionType,
-                        questionNumber));
+                        answer.getAnswer(), questionType, questionNumber));
             }
           }
         }
