@@ -94,7 +94,8 @@ const MeritReportPage = () => {
       if (data) {
         let periods = data.reduce((result, item) => {
                          if (item.closeDate) {
-                           result.push({label: formatReviewDate(item.closeDate),
+                           result.push({label: item.name + ' - ' +
+                                               formatReviewDate(item.closeDate),
                                         id: item.id});
                          }
                          return result;
@@ -564,7 +565,7 @@ const MeritReportPage = () => {
         <Autocomplete
           id="reviewPeriodSelect"
           options={reviewPeriods ? reviewPeriods : []}
-          getOptionLabel={(option) => option.name || ""}
+          getOptionLabel={(option) => option.label || ""}
           value={reviewPeriodId}
           onChange={onReviewPeriodChange}
           renderInput={params => (
