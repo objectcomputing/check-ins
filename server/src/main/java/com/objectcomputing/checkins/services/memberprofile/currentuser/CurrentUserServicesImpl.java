@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -83,5 +84,11 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         }
 
         return createdMember;
+    }
+
+    @Override
+    public boolean hasPermission(Permission permission) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hasPermission'");
     }
 }

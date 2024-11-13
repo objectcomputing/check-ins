@@ -4,6 +4,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import com.objectcomputing.checkins.services.feedback_request.DTO.UserDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,5 +35,12 @@ public class FeedbackRequestUpdateDTO {
     @Nullable
     @Schema(description = "the recipient of the request, used to reassign")
     private UUID recipientId;
+
+    @Schema(description = "Whether the feedback request has been denied")
+    private boolean denied = false;
+
+    @Nullable
+    @Schema(description = "Reason for the request being denied")
+    private String reason;
 
 }

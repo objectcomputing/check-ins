@@ -1,3 +1,4 @@
+import { createDateStrForV6InputFromSections } from '@mui/x-date-pickers/internals';
 import { resolve } from './api.js';
 import { getFeedbackTemplateWithQuestions } from './feedbacktemplate.js';
 
@@ -118,6 +119,47 @@ export const cancelFeedbackRequest = async (feedbackRequest, cookie) => {
   });
 };
 
+export const denyFeedbackRequest = async (requestId, reason, denier, creator, cookie) => {
+  console.log('Sending deny feedback request with data:', {
+    reason,
+    denier,
+    creator
+  });
+  return resolve({
+    method: 'POST',
+    url: `${feedbackRequestURL}/${requestId}/deny`,
+    data: { 
+      reason: reason, 
+      denier: denier, 
+      creator: {
+        id: creator.id,
+        name: "Anonymous"
+      }
+    },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  });
+};
+
+export const sendNotification = async (userId, message, cookie) => {
+  return resolve({
+    method: 'POST',
+    url: '/services/notifications/send',
+    data: {
+      userId: userId,
+      message: message
+    },
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'applications/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  });
+};
+
 export const deleteFeedbackRequestById = async (id, cookie) => {
   return resolve({
     method: 'DELETE',
@@ -125,6 +167,8 @@ export const deleteFeedbackRequestById = async (id, cookie) => {
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
+
+
 
 export const getFeedbackRequestById = async (id, cookie) => {
   return resolve({

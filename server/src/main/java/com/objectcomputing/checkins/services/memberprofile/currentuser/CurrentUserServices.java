@@ -2,6 +2,8 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 
 public interface CurrentUserServices {
 
@@ -12,5 +14,7 @@ public interface CurrentUserServices {
     boolean isAdmin();
 
     MemberProfile getCurrentUser();
+
+    boolean hasPermission(Permission permission);
 
 }

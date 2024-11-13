@@ -91,7 +91,9 @@ const FeedbackRequestCard = ({
   templateName,
   responses,
   sortType,
-  dateRange
+  dateRange,
+  onDeny,
+  isDenied
 }) => {
   const { state } = useContext(AppContext);
   const requesteeProfile = selectProfile(state, requesteeId);
@@ -215,7 +217,7 @@ const FeedbackRequestCard = ({
   }, [state, sortType, dateRange, responses, withinDateRange]);
 
   return (
-    <div className="feedback-request-card">
+    <div className={`feedback-request-card ${isDenied ? 'denied-request' : ''}`}>
       <StyledCard className={classes.root}>
         <div className="has-padding-top">
           <CardContent className={classes.noBottomPadding}>

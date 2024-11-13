@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { selectProfile } from '../../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
 import { AppContext } from '../../context/AppContext';
-import { Edit as EditIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Close as CloseIcon } from '@mui/icons-material';
 import './ReceivedRequestCard.css';
 
 const dateFns = new DateFnsUtils();
@@ -21,12 +21,15 @@ const classes = {
 };
 
 const propTypes = {
-  request: PropTypes.object.isRequired
+  request: PropTypes.object.isRequired,
+  handleDenyClick: PropTypes.func.isRequired
 };
 
-const ReceivedRequestCard = ({ request }) => {
-  let { submitDate, dueDate, sendDate } = request;
+const ReceivedRequestCard = ({ request, handleDenyClick, isDenied }) => {
+  
   const { state } = useContext(AppContext);
+
+  let { submitDate, dueDate, sendDate } = request;
   const requestCreator = selectProfile(state, request?.creatorId);
   const requestee = selectProfile(state, request?.requesteeId);
   submitDate = submitDate
@@ -66,11 +69,10 @@ const ReceivedRequestCard = ({ request }) => {
     }
   };
 
+
+
   return (
-    <div
-      className="card-content-grid"
-      style={{ paddingLeft: '16px', paddingRight: '16px' }}
-    >
+    <div className="card-content-grid" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
       <div className="request-members-container">
         <div className="member-chip">
           <Avatar
@@ -78,9 +80,7 @@ const ReceivedRequestCard = ({ request }) => {
             src={getAvatarURL(requestCreator?.workEmail)}
           />
           <div>
-            <Typography className="person-name">
-              {requestCreator?.name}
-            </Typography>
+            <Typography className="person-name">{requestCreator?.name}</Typography>
             <Typography className="position-text" style={{ fontSize: '14px' }}>
               {requestCreator?.title}
             </Typography>
@@ -113,28 +113,42 @@ const ReceivedRequestCard = ({ request }) => {
         </div>
         <div className="request-status-container">
           <Submitted />
+          {isDenied && (
+            <Typography className={classes.grayTypography}>Denied</Typography>
+          )}
         </div>
         <div className="submission-link-container">
           {request &&
           !request.submitDate &&
           request.id &&
           request.status !== 'canceled' ? (
-            <Link
-              to={`/feedback/submit?request=${request.id}`}
-              style={{ textDecoration: 'none' }}
-            >
-              <Tooltip title="Give feedback" arrow>
-                <IconButton size="large">
-                  <EditIcon />
+            <>
+              <Link to={`/feedback/submit?request=${request.id}`} style={{ textDecoration: 'none' }}>
+                <Tooltip title="Give feedback" arrow>
+                  <IconButton size="large">
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+              </Link>
+              <Tooltip title="Deny feedback request" arrow>
+                <IconButton size="large" onClick={() => {
+                  console.log("X icon clicked for request ID:", request.id);
+                  handleDenyClick(request.id);
+                }}>
+                  <CloseIcon />
                 </IconButton>
               </Tooltip>
-            </Link>
+            </>
           ) : null}
         </div>
       </div>
     </div>
   );
 };
-ReceivedRequestCard.propTypes = propTypes;
+
+ReceivedRequestCard.propTypes = {
+  ...propTypes,
+  isDenied: PropTypes.bool
+};
 
 export default ReceivedRequestCard;

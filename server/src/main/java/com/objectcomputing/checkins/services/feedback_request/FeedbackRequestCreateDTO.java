@@ -4,6 +4,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,6 +51,13 @@ public class FeedbackRequestCreateDTO {
     @Nullable
     @Schema(description = "the id of the review period in that this request was created for")
     private UUID reviewPeriodId;
+
+    @Schema(description = "Whether the feedback request has been denied")
+    private boolean denied = false;
+
+    @Nullable
+    @Schema(description = "Reason for the request being denied")
+    private String reason;
 
 }
 

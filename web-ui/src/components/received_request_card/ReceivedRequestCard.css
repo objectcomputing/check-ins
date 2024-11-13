@@ -17,3 +17,8 @@
 .ReceivedRequestCard-grayTypography {
   color: var(--checkins-palette-gray);
 }
+
+.denied-request {
+  background-color: #ffebee;
+  border-left: 5px solid #f44336;
+}

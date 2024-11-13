@@ -12,6 +12,12 @@
   }
 }
 
+.denied-request {
+  opacity: 0.6;
+  pointer-events: none;
+  background-color: var(--checkins-palette-background-disabled);
+}
+
 .has-padding-top {
   padding-top: 1em;
 }
@@ -63,6 +69,16 @@
   width: 100%;
 }
 
+.deny-feedback-button {
+  background-color: var(--checkins-palette-error);
+  color: white;
+  margin-top: 1em;
+
+  &:hover {
+    background-color: darken(var(--checkins-palette-error), 10%);
+  }
+}
+
 .MuiFormControl-root {
   width: 20%;
   margin-right: 2em;
@@ -80,4 +96,16 @@
   .response-link {
     font-size: 0.7rem;
   }
+  
+  .deny-feedback-button {
+    font-size: 0.7rem;
+    padding: 6px 8px;
+  }
+}
+
+.denied-label {
+  color: var(--checkins-palette-error);
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
 }

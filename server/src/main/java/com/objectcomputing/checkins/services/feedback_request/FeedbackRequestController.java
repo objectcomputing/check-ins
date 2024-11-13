@@ -2,6 +2,9 @@ package com.objectcomputing.checkins.services.feedback_request;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import com.objectcomputing.checkins.services.feedback_request.DTO.DenyFeedbackRequestDTO;
+import com.objectcomputing.checkins.services.feedback_request.DTO.UserDTO;
+import com.objectcomputing.checkins.services.notification.NotificationService;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
@@ -10,6 +13,7 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.Status;
@@ -19,6 +23,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -35,9 +40,12 @@ import java.util.UUID;
 public class FeedbackRequestController {
 
     private final FeedbackRequestServices feedbackReqServices;
+    private final NotificationService notificationService;
 
-    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices) {
+    @Inject
+    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices, NotificationService notificationService) {
         this.feedbackReqServices = feedbackReqServices;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -91,7 +99,7 @@ public class FeedbackRequestController {
     public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
         FeedbackRequest savedFeedbackRequest = feedbackReqServices.getById(id);
         return savedFeedbackRequest == null ? HttpResponse.notFound() : HttpResponse.ok(fromEntity(savedFeedbackRequest))
-                .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId())));
+                .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedbackRequest.getId())));
     }
 
     /**
@@ -106,12 +114,67 @@ public class FeedbackRequestController {
      */
     @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,requesteeIds}")
-    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds) {
+    public List<FeedbackRequestResponseDTO> findByValues(
+            @Nullable UUID creatorId, 
+            @Nullable UUID requesteeId, 
+            @Nullable UUID recipientId, 
+            @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, 
+            @Nullable UUID reviewPeriodId, 
+            @Nullable UUID templateId, 
+            @Nullable List<UUID> requesteeIds) {
         return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds)
                 .stream()
                 .map(this::fromEntity)
                 .toList();
     }
+
+    /**
+     * Deny a feedback request
+     *
+     * @param id   {@link UUID} ID of the feedback request to deny
+     * @param body Request body containing reason, denier, and creator information
+     * @return {@link FeedbackRequestResponseDTO} with updated denial status
+     */
+    @Post("/{id}/deny")
+    @RequiredPermission(Permission.CAN_DENY_FEEDBACK_REQUEST)
+    public HttpResponse<FeedbackRequestResponseDTO> denyFeedbackRequest(
+        @PathVariable("id") @NotNull UUID id, 
+        @Body @Valid DenyFeedbackRequestDTO body
+    ) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
+        if (feedbackRequest == null) {
+            return HttpResponse.notFound();
+    }
+
+    String reason = body.getReason();
+    UserDTO denier = body.getDenier();
+    UserDTO creator = body.getCreator();
+
+    if (!feedbackRequest.isDenied() && reason != null && !reason.trim().isEmpty() && denier != null && creator != null) {
+        FeedbackRequestUpdateDTO dto = new FeedbackRequestUpdateDTO();
+        dto.setId(feedbackRequest.getId());
+        dto.setDueDate(feedbackRequest.getDueDate());
+        dto.setStatus(feedbackRequest.getStatus());
+        dto.setSubmitDate(feedbackRequest.getSubmitDate());
+        dto.setRecipientId(feedbackRequest.getRecipientId());
+        dto.setDenied(true);
+        dto.setReason(reason);
+
+        FeedbackRequest updatedFeedbackRequest = feedbackReqServices.update(dto);
+
+        UUID creatorId = creator.getId();
+        String denierName = denier.getName();
+        notificationService.sendNotification(
+            creatorId,
+            String.format("Your feedback request was denied by %s. Reason: %s", denierName, reason)
+        );
+
+        return HttpResponse.ok(fromEntity(updatedFeedbackRequest));
+    } else {
+        return HttpResponse.badRequest();
+
+    }
+}
 
     private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
         FeedbackRequestResponseDTO dto = new FeedbackRequestResponseDTO();
@@ -125,7 +188,8 @@ public class FeedbackRequestController {
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
         dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
-
+        dto.setDenied(feedbackRequest.isDenied());
+        dto.setReason(feedbackRequest.getReason());
         return dto;
     }
 
@@ -139,6 +203,9 @@ public class FeedbackRequestController {
                 dto.getDueDate(),
                 dto.getStatus(),
                 dto.getSubmitDate(),
-                dto.getReviewPeriodId());
+                dto.getReviewPeriodId(),
+                dto.isDenied(),
+                dto.getReason()
+        );
     }
 }

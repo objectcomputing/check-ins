@@ -11,6 +11,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
 import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
@@ -170,6 +171,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
 
+        if (feedbackRequest.isDenied()) {
+            UUID currentUserId = currentUserServices.getCurrentUser().getId();
+            if (!currentUserId.equals(originalFeedback.getRecipientId())) {
+                if (!currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUESTS)) {
+                    throw new PermissionException(NOT_AUTHORIZED_MSG);
+                }
+            }
+        }
+
         validateMembers(originalFeedback);
 
         Set<ReviewAssignment> reviewAssignmentsSet = Set.of();
@@ -213,6 +223,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         if (feedbackRequest.getDueDate() != null && originalFeedback.getSendDate().isAfter(feedbackRequest.getDueDate())) {
             throw new BadArgException("Send date of feedback request must be before the due date.");
+        }
+
+        if (feedbackRequest.isDenied() && (feedbackRequestUpdateDTO.getReason() == null || feedbackRequestUpdateDTO.getReason().trim().isEmpty())) {
+            throw new BadArgException("A reason must be provided for denying the request.");
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
@@ -371,7 +385,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setStatus(dto.getStatus());
         feedbackRequest.setSubmitDate(dto.getSubmitDate());
         feedbackRequest.setRecipientId(dto.getRecipientId());
-
+        feedbackRequest.setDenied(dto.isDenied());
+        feedbackRequest.setReason(dto.getReason());
         return feedbackRequest;
     }
 
