@@ -101,7 +101,7 @@
     "typescript-eslint": "^7.7.1",
     "vite": "^5.2.14",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^2.1.4",
+    "vitest": "^1.6.0",
     "vitest-fetch-mock": "^0.2.2"
   }
 }
