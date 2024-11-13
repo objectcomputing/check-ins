@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.reports;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.kudos.KudosRepository;
@@ -43,7 +44,7 @@ public class ReportDataController {
     private final ReportDataServices reportDataServices;
     private final KudosRepository kudosRepository;
     private final KudosRecipientRepository kudosRecipientRepository;
-    private final MemberProfileRepository memberProfileRepository;
+    private final MemberProfileServices memberProfileServices;
     private final ReviewPeriodServices reviewPeriodServices;
     private final FeedbackTemplateServices feedbackTemplateServices;
     private final FeedbackRequestServices feedbackRequestServices;
@@ -54,7 +55,7 @@ public class ReportDataController {
     public ReportDataController(ReportDataServices reportDataServices,
                           KudosRepository kudosRepository,
                           KudosRecipientRepository kudosRecipientRepository,
-                          MemberProfileRepository memberProfileRepository,
+                          MemberProfileServices memberProfileServices,
                           ReviewPeriodServices reviewPeriodServices,
                           FeedbackTemplateServices feedbackTemplateServices,
                           FeedbackRequestServices feedbackRequestServices,
@@ -64,7 +65,7 @@ public class ReportDataController {
         this.reportDataServices = reportDataServices;
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
-        this.memberProfileRepository = memberProfileRepository;
+        this.memberProfileServices = memberProfileServices;
         this.reviewPeriodServices = reviewPeriodServices;
         this.feedbackTemplateServices = feedbackTemplateServices;
         this.feedbackRequestServices = feedbackRequestServices;
@@ -124,7 +125,7 @@ public class ReportDataController {
                                            memberId, reviewPeriodId,
                                            kudosRepository,
                                            kudosRecipientRepository,
-                                           memberProfileRepository,
+                                           memberProfileServices,
                                            reviewPeriodServices,
                                            reportDataServices,
                                            feedbackTemplateServices,

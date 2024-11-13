@@ -13,6 +13,7 @@ import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.CacheInvalidate;
 import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
@@ -55,6 +56,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
+    @Cacheable
     public MemberProfile getById(@NotNull UUID id) {
         Optional<MemberProfile> optional = memberProfileRepository.findById(id);
         if (optional.isEmpty()) {
@@ -65,6 +67,14 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
             memberProfile.clearBirthYear();
         }
         return memberProfile;
+    }
+
+    @Cacheable
+    @Override
+    public MemberProfile findByWorkEmail(@NotNull String workEmail) {
+        return memberProfileRepository.findByWorkEmail(workEmail).orElseThrow(() ->
+                new NotFoundException("Member not found")
+        );
     }
 
     @Override
@@ -86,6 +96,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
+    @CacheInvalidate(cacheNames = {"member-cache"})
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
@@ -152,6 +163,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
+    @CacheInvalidate(cacheNames = {"member-cache"})
     public boolean deleteProfile(@NotNull UUID id) {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("Requires admin privileges");
@@ -183,6 +195,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
+    @Cacheable(parameters = {"firstName", "lastName"})
     public MemberProfile findByName(@NotNull String firstName, @NotNull String lastName) {
         List<MemberProfile> searchResult = memberProfileRepository.search(firstName, null, lastName,
                 null, null, null, null, null, null);
@@ -222,6 +235,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
+    @CacheInvalidate(cacheNames = {"member-cache"})
     public MemberProfile updateProfile(MemberProfile memberProfile) {
         return memberProfileRepository.update(memberProfile);
     }
