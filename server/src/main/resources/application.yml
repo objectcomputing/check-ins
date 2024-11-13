@@ -24,6 +24,11 @@ micronaut:
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
         mapping: /swagger-ui/**
+      externalFeedback:
+        enabled: true
+        mapping: "/externalFeedback/**"
+        paths:
+          - "classpath:public-external-feedback"
       default:
         enabled: true
         mapping: "/**"

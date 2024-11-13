@@ -83,10 +83,10 @@ public class FeedbackRequestExternalRecipientController {
         return "<html><body><h1>Hello, World!</h1></body></html>";
     }
 
-    @Get("/submitForExternalRecipient")
-    public HttpResponse<?> redirectToReactPage() {
-        LOG.info("FeedbackRequestExternalRecipientController, redirectToReactPage");
-        return HttpResponse.redirect(URI.create("/feedback/submitForExternalRecipient"));
+    @Get("/submitForExternalRecipient/{id}")
+    public HttpResponse<?> redirectToReactPage(UUID id) {
+        LOG.info("FeedbackRequestExternalRecipientController, redirectToReactPage, id: {}", id);
+        return HttpResponse.redirect(URI.create("/feedback/submitForExternalRecipient?id=" + id));
     }
 
     /**

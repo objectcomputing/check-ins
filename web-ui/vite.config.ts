@@ -19,13 +19,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['@mui/material/Tooltip']
-  },
-  build: {
-    rollupOptions: {
-      input: {
-        main: 'index.html',
-        externalRecipient: 'index_external_recipient.html'
-      }
-    }
   }
 });
