@@ -288,7 +288,7 @@ const MeritReportPage = () => {
 
       const questions = getUniqueQuestions(feedback.answers);
       for(let question of Object.keys(questions)) {
-        text += markdown.headers.h3(question) + "\n";
+        text += markdown.headers.h4(question) + "\n";
         for(let answer of questions[question]) {
           if (listMembers) {
             text += answer[0] + ": ";
@@ -357,7 +357,7 @@ const MeritReportPage = () => {
 
       const questions = getUniqueQuestions(feedback.answers);
       for(let question of Object.keys(questions)) {
-        text += markdown.headers.h3(question) + "\n";
+        text += markdown.headers.h4(question) + "\n";
         for(let answer of questions[question]) {
           text += answer[0] + ": " + answer[1] + "\n\n";
         }
@@ -485,7 +485,7 @@ const MeritReportPage = () => {
     <div className="merit-report-page">
       <Button color="primary" className="space-between">
         <label htmlFor="file-upload-comp">
-          <h3>Compenstion History File {selectedCompHist && checkMark}</h3>
+          <h3>Compensation History File {selectedCompHist && checkMark}</h3>
           <input
             accept=".csv"
             id="file-upload-comp"
