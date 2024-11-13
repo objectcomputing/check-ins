@@ -1,7 +1,6 @@
 import {
   SET_CSRF,
   UPDATE_TOAST,
-
 } from './actionsFeedbackExternalRecipient.js';
 
 export const initialState = {
