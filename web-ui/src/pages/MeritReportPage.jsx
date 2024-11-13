@@ -418,13 +418,17 @@ const MeritReportPage = () => {
     const compTotal = prepareCompensationHistory(data, (comp) => !!comp.totalComp);
 
     let text = markdown.headers.h2("Compensation History");
+    text += markdown.headers.h3("Base Compensation (annual or hourly)");
     text += markdown.lists.ul(compBase,
                 (comp) => formatDate(dateFromArray(comp.startDate)) + " - " +
-                "$" + parseFloat(comp.amount).toFixed(2) + " (base)");
-    text += "\n";
+                "$" + parseFloat(comp.amount).toFixed(2));
+    text += markdown.headers.h3("Total Compensation")
     text += markdown.lists.ul(compTotal,
-                (comp) => dateFromArray(comp.startDate).getFullYear() + " - " +
-                comp.totalComp + " (total comp)");
+                (comp) => {
+                    var date = dateFromArray(comp.startDate);
+                    date = date.getMonth() === 0 && date.getDate() === 1 ? date.getFullYear() : formatDate(date);
+                    return date + " - " + comp.totalComp;
+                });
     return text;
   };
 
