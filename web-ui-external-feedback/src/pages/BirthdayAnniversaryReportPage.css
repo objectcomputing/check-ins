@@ -1,0 +1,44 @@
+.birthday-anniversary-search {
+  margin-left: 12px;
+}
+
+.checkbox-row {
+  margin-top: 0;
+}
+
+.checkbox-row label {
+  margin-left: 0.5rem;
+}
+
+.search-results {
+  margin: 1rem;
+}
+
+.search-results .MuiChip-root {
+  margin: 0.25rem;
+}
+
+.select-month {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+  margin-right: 10px;
+  margin-bottom: 0rem;
+}
+
+.select-month > * {
+  width: 15%;
+}
+
+.member-birthday-anniversary-card {
+  max-height: 20rem;
+  width: flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.results-section {
+  align-items: center;
+  justify-content: space-between;
+}

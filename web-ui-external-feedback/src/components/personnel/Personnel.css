@@ -1,0 +1,24 @@
+.personnel-info,
+.personnel-info-hidden {
+  text-align: left;
+  margin-left: 15px;
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.personnel-info-hidden {
+  background-color: lightgrey;
+  color: lightgrey;
+  width: 100%;
+}
+
+.feedback-link {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.info-div {
+  display: block;
+}

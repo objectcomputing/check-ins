@@ -42,8 +42,8 @@ public class HomeController {
      * Forwards any unmapped paths (except those containing a period) to the client {@code index.html}.
      * @return forward to client {@code index.html}.
      */
-    // 2024-10-29 - Note the path excludes "/feedbackExternalRecipient", which is handled by HomeExternalRecipientController
-    @Get("/{path:^(?!feedbackExternalRecipient)([^\\.]+)$}")
+    // 2024-10-29 - Note the path excludes "/externalFeedback", which is handled by HomeExternalRecipientController
+    @Get("/{path:^(?!externalFeedback)([^\\.]+)$}")
     public Optional<StreamedFile> forward(String path) {
         LOG.info("HomeController, forward, path: " + path);
         return environment.getResource("public/index.html").map(StreamedFile::new);

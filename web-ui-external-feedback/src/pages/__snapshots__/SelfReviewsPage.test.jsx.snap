@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SelfReviewsPage renders correctly 1`] = `
+<div>
+  <div
+    class="SelfReviewPage-root css-e0h15h"
+  >
+    <div
+      class="SelfReviewPage-headerContainer"
+    >
+      <h4
+        class="MuiTypography-root MuiTypography-h4 SelfReviewPage-requestHeader css-5lbw0b-MuiTypography-root"
+      >
+        Self-Reviews for
+         
+        <b>
+          undefined undefined
+        </b>
+      </h4>
+    </div>
+    <div
+      class="SelfReviewPage-stepContainer"
+    >
+      <div
+        class="css-d225zd"
+      >
+        <div
+          class="ReviewPeriods-headerContainer"
+        >
+          <h4
+            class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+          >
+            Review Periods
+          </h4>
+        </div>
+        <ul
+          class="MuiList-root MuiList-padding css-168pop2-MuiList-root"
+        >
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          >
+            There are currently no review periods.
+          </p>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+`;

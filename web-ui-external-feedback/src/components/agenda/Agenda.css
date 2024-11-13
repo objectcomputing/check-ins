@@ -1,0 +1,48 @@
+.agenda-items-container {
+  height: fit-content;
+  margin: 0 auto;
+}
+
+.add-agenda-item-div {
+  display: flex;
+  padding: 12px 8px;
+}
+
+.agenda-items .description-field {
+  text-align: left;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.agenda-items-info {
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.agenda-items .drag-icon {
+  display: flex;
+  align-items: center;
+}
+
+.agenda-items .skeleton {
+  padding-right: 10px;
+  width: 100%;
+}
+
+.agenda-items-container .skeleton-div {
+  display: flex;
+}
+
+.agenda-item-button-div {
+  display: flex;
+  flex-direction: row;
+}
+
+.agenda-items .text-input {
+  padding: 5px;
+  width: 100%;
+}

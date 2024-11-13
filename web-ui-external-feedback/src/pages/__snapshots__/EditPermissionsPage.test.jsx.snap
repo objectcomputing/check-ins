@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="edit-permissions-page"
+  >
+    <h3>
+      You do not have permission to view this page.
+    </h3>
+  </div>
+</div>
+`;

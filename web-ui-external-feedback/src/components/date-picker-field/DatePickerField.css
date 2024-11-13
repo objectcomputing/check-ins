@@ -1,0 +1,18 @@
+.date-picker-field {
+  display: flex;
+
+  .MuiFormControl-root {
+    width: auto;
+  }
+}
+
+.date-pickers-container {
+  display: flex;
+}
+
+.date-pickers-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}

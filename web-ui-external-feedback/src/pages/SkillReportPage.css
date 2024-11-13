@@ -1,0 +1,29 @@
+.skills-report-page {
+  margin: 2rem;
+  align-items: center;
+}
+
+.member-skills-card {
+  max-height: 20rem;
+  width: flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.skills-list {
+  margin: 1rem;
+}
+
+.search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.results-section {
+  align-items: center;
+  justify-content: space-between;
+}

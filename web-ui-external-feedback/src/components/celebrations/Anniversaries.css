@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+
+body {
+  font-family: 'Raleway', sans-serif;
+  background-color: #f0e2db;
+  font-size: 20px;
+  transition: var(--transition-timing-long);
+}
+
+body.open {
+  animation: bg-change 1s 1;
+  background-color: #72c8d5;
+  transition: var(--transition-timing-long);
+}
+@keyframes bg-change {
+  0% {
+    background-color: #f0e2db;
+  }
+  100% {
+    background-color: #72c8d5;
+  }
+}
+.anniversaries {
+  position: relative;
+}
+.anniversaries .anniversary-title {
+  display: flex;
+  justify-content: center;
+}
+.anniversaries-card {
+  min-width: 450px;
+}
+.anniversaries-card span {
+  color: var(--checkins-palette-primary-light);
+  font-weight: bold;
+}
+.anniversary-gift {
+  position: absolute;
+  top: -2rem;
+  left: 15rem;
+  width: 100px;
+  height: 100px;
+  transform-origin: 0% 0%;
+  transform: translate(-50%, -50%);
+  transition: var(--transition-timing-long);
+  /*   animation: box 0.5s infinite; */
+}
+.box {
+  transform-origin: 0% 0%;
+  animation: box 0.5s infinite;
+}
+@keyframes box {
+  0% {
+    transform: rotate(0deg) translate(-50%, -50%);
+  }
+  25% {
+    transform: rotate(1deg) translate(-50%, -50%);
+  }
+  50% {
+    transform: rotate(0deg) translate(-50%, -50%);
+  }
+  70% {
+    transform: rotate(-1deg) translate(-50%, -50%);
+  }
+  100% {
+    transform: rotate(0deg) translate(-50%, -50%);
+  }
+}
+.anniversary-gift-top {
+  position: relative;
+  width: 110%;
+  height: 25%;
+  background: #2559a7;
+  border-radius: 5px 5px 0 0;
+  transform: translate3d(-5%, 0, 0);
+  background-image: linear-gradient(
+    to right,
+    #2559a7 0%,
+    #2559a7 44%,
+    #feb672 44%,
+    #feb672 56%,
+    #2559a7 56%,
+    #2559a7 100%
+  );
+  transition: var(--transition-timing-long);
+}
+.anniversary-gift-top.boxOpen {
+  animation: box-open 1s;
+  opacity: 0;
+}
+@keyframes box-open {
+  0% {
+    top: 0px;
+    opacity: 1;
+  }
+  100% {
+    top: -50px;
+    opacity: 0;
+  }
+}
+.anniversary-gift-top::before,
+.anniversary-gift-top::after {
+  content: '';
+  width: 15px;
+  height: 15px;
+  border: 10px solid #feb672;
+  border-radius: 50% 50% 0 50%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate3d(-100%, -100%, 0) skew(10deg, 10deg);
+}
+
+.anniversary-gift-top::after {
+  border-radius: 50% 50% 50% 0;
+  transform: translate3d(0, -100%, 0) skew(-10deg, -10deg);
+}
+
+.anniversary-gift-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  color: #ffffff;
+  white-space: nowrap;
+  transform: translate3d(-50%, -50%, 0) scale(0.5);
+  transform-origin: center center;
+  z-index: -1;
+  opacity: 1;
+  transition: 5s;
+}
+
+.anniversary-gift-box {
+  width: 100%;
+  height: 75%;
+  position: relative;
+  background-image: linear-gradient(
+    to right,
+    #2559a7 0%,
+    #2559a7 45%,
+    #feb672 45%,
+    #feb672 55%,
+    #2559a7 55%,
+    #2559a7 100%
+  );
+  border-radius: 0 0 5px 5px;
+  transition: var(--transition-timing-long);
+}
+.anniversary-gift-box.boxDown {
+  animation: box-down var(--transition-timing-long);
+  opacity: 0;
+}
+@keyframes box-down {
+  0% {
+    top: 0px;
+    opacity: 1;
+  }
+  100% {
+    top: 50px;
+    opacity: 0;
+  }
+}
+@media (max-width: 600px) {
+  .anniversaries-card {
+    min-width: unset;
+    /* margin: 0 1rem; */
+  }
+  .anniversary-gift {
+    left: 12rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .anniversaries-card {
+    min-width: unset;
+    margin: 0 1rem;
+  }
+  .anniversary-gift {
+    left: 10rem;
+  }
+}

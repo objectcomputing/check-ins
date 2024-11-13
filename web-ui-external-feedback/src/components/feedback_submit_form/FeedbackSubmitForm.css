@@ -1,0 +1,34 @@
+.submit-form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-top: 3em;
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+.submit-action-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.feedback-submit-question {
+  width: calc(100% - 6em);
+  margin: 0.75em 0em;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 2em 1fr;
+  align-items: center;
+  margin: 2em 1em 0em 1em;
+}
+
+@media (max-width: 800px) {
+  .submit-form {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

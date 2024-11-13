@@ -1,0 +1,25 @@
+.search-parent {
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  padding: 5px;
+  width: 20rem;
+}
+
+.skill {
+  cursor: pointer;
+  padding: 5px;
+  width: 20rem;
+}
+
+.skill:hover {
+  background-color: green;
+}
+.skills-parent {
+  position: absolute;
+  max-height: 15rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

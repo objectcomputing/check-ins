@@ -78,6 +78,7 @@ dependencies {
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
 
     yarnBuildElements(project(":web-ui"))
+    yarnBuildElements(project(":web-ui-external-feedback"))
 
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("io.micronaut:micronaut-http-client")
@@ -172,6 +173,11 @@ tasks.withType(JavaCompile).configureEach {
 if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
     processResources {
         into('public') {
+            from configurations.named('yarnBuildElements')
+        }
+    }
+    processResources {
+        into('public-external-feedback') {
             from configurations.named('yarnBuildElements')
         }
     }

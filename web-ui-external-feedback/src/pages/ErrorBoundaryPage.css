@@ -1,0 +1,93 @@
+.create-new-issue-modal {
+  position: absolute;
+  min-width: 400px;
+  max-width: 600px;
+  background-color: var(--checkins-palette-background-default);
+  top: 50%;
+  left: 50%;
+  padding: 0.5rem;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+}
+
+.create-new-issue-modal h2 {
+  margin-block-end: 0rem;
+  margin-left: 0.5rem;
+}
+
+.create-new-issue-modal .quill {
+  margin-bottom: 0px;
+}
+
+.create-new-issue-modal-actions {
+  margin-top: 2rem;
+  width: calc(100% - 1rem);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.link {
+  color: white;
+}
+
+.link a {
+  color: white;
+  cursor: pointer;
+}
+
+.create-new-issue-modal .MuiTextField-root {
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.error-boundary {
+  background-image: url('https://media.giphy.com/media/tvGOBZKNEX0ac/giphy.gif');
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 1rem;
+  margin: 0;
+}
+
+@media (max-width: 550px) {
+  .error-boundary {
+    background-size: auto;
+  }
+}
+
+.error-boundary .message-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.error-boundary .message-section .create-new-issue-button {
+  display: flex;
+  background-color: white;
+  border-radius: 5px;
+  color: black;
+  cursor: pointer;
+  font-weight: bolder;
+  margin-top: 1rem;
+  width: 35%;
+}
+
+.error-boundary .message-section .message {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  color: white;
+}
+
+.error-boundary .message-section .new-issue-message {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  color: white;
+}
+
+.error-boundary .message-section .error {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  color: red;
+}

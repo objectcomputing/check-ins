@@ -1,0 +1,39 @@
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.submit-checkin-modal {
+  position: absolute;
+  min-width: 400px;
+  max-width: 600px;
+  background-color: var(--checkins-palette-background-default);
+  top: 50%;
+  left: 50%;
+  padding: 0.5rem;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+}
+
+.submit-modal-actions {
+  margin-top: 1rem;
+  width: calc(100% - 1rem);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.submit-checkin-modal .MuiTextField-root.fullWidth {
+  width: calc(100% - 10rem);
+}
+
+.submit-checkin-modal .MuiTextField-root.halfWidth {
+  width: calc(50% - 5rem);
+}
+
+.submit-checkin-modal .MuiTextField-root {
+  margin: 0.5rem;
+  width: 25ch;
+}

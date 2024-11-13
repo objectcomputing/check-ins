@@ -1,0 +1,32 @@
+.team-skill-report-page {
+  margin: 1rem 3rem;
+}
+
+.team-skill-report-page .select-skills-section {
+  width: 50%;
+}
+
+.team-skill-report-page .member-skills-card {
+  max-height: 20rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.team-skill-report-page .search-results {
+  margin: 2rem 0 0 0;
+}
+
+.team-skill-report-page .search-results .MuiChip-root {
+  margin: 0.25rem;
+}
+
+@media (max-width: 850px) {
+  .team-skill-report-page {
+    margin: 0.5rem 1rem;
+  }
+
+  .team-skill-report-page .select-skills-section {
+    width: 100%;
+  }
+}

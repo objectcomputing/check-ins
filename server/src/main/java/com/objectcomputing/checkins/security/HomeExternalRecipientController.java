@@ -30,7 +30,7 @@ public class HomeExternalRecipientController {
         this.environment = environment;
     }
 
-    @Get("/feedbackExternalRecipient/{path:.+}")
+    @Get("/externalFeedback/{path:.+}")
     public Optional<StreamedFile> forward(String path) {
         LOG.info("HomeExternalRecipientController, forward, path: " + path);
         return environment.getResource("public-external-feedback/index_external_recipient.html").map(StreamedFile::new);

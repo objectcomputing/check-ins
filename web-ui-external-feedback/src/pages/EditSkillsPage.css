@@ -1,0 +1,29 @@
+.pending-skills-page {
+  margin: 2rem;
+}
+
+.pending-skills-list {
+  margin: 1rem;
+}
+
+.skill-actions-container {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  flex-wrap: wrap;
+}
+
+.show-all-skills {
+  align-items: center;
+  display: flex;
+  margin-top: 1rem;
+}
