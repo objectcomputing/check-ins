@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import io.micronaut.core.annotation.Nullable;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface FeedbackAnswerServices {
     FeedbackAnswer getById(UUID id);
 
     List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId, @Nullable UUID externalRecipientId);
-}
+
+    boolean getIsPermitted(FeedbackRequest feedbackRequest);
+ }

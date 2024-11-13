@@ -7,7 +7,7 @@ plugins {
     id "jacoco"
 }
 
-version "0.8.7"
+version "0.8.8"
 group "com.objectcomputing.checkins"
 
 repositories {

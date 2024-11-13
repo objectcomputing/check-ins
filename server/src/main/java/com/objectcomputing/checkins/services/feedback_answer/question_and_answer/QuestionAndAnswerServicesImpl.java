@@ -42,7 +42,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
     @Override
     public List<Tuple> getAllQuestionsAndAnswers(UUID requestId) {
         FeedbackRequest feedbackRequest = feedbackRequestServices.getById(requestId);
-        if (!getIsPermitted(feedbackRequest)) {
+        if (!feedbackAnswerServices.getIsPermitted(feedbackRequest)) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         List<TemplateQuestion> templateQuestions = templateQuestionServices.findByFields(feedbackRequest.getTemplateId());
@@ -77,7 +77,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         TemplateQuestion question = new TemplateQuestion();
         FeedbackRequest feedbackRequest = feedbackRequestServices.getById(requestId);
 
-        if (!getIsPermitted(feedbackRequest)) {
+        if (!feedbackAnswerServices.getIsPermitted(feedbackRequest)) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -101,18 +101,4 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         }
         return new Tuple(question, returnedAnswer);
     }
-
-    public boolean getIsPermitted(FeedbackRequest feedbackRequest) {
-        final boolean isAdmin = currentUserServices.isAdmin();
-        final UUID requestCreatorId = feedbackRequest.getCreatorId();
-        UUID requesteeId = feedbackRequest.getRequesteeId();
-        MemberProfile requestee = memberProfileServices.getById(requesteeId);
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
-        final UUID requesteePDL = requestee.getPdlId();
-
-        return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);
-    }
-
 }

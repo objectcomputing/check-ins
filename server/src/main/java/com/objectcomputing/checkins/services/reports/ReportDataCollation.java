@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.reports;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipient;
@@ -65,7 +66,7 @@ public class ReportDataCollation {
     private PositionHistory positionHistory;
     private KudosRepository kudosRepository;
     private KudosRecipientRepository kudosRecipientRepository;
-    private MemberProfileRepository memberProfileRepository;
+    private MemberProfileServices memberProfileServices;
     private ReviewPeriodServices reviewPeriodServices;
     private ReportDataServices reportDataServices;
     private FeedbackTemplateServices feedbackTemplateServices;
@@ -78,7 +79,7 @@ public class ReportDataCollation {
                           UUID memberId, UUID reviewPeriodId,
                           KudosRepository kudosRepository,
                           KudosRecipientRepository kudosRecipientRepository,
-                          MemberProfileRepository memberProfileRepository,
+                          MemberProfileServices memberProfileServices,
                           ReviewPeriodServices reviewPeriodServices,
                           ReportDataServices reportDataServices,
                           FeedbackTemplateServices feedbackTemplateServices,
@@ -93,7 +94,7 @@ public class ReportDataCollation {
         this.positionHistory = new PositionHistory();
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
-        this.memberProfileRepository = memberProfileRepository;
+        this.memberProfileServices = memberProfileServices;
         this.reviewPeriodServices = reviewPeriodServices;
         this.reportDataServices = reportDataServices;
         this.feedbackTemplateServices = feedbackTemplateServices;
@@ -125,7 +126,7 @@ public class ReportDataCollation {
                 LocalDate created = kudos.getDateCreated();
                 if (dateInRange(created, startDate, endDate)) {
                     MemberProfile senderProfile =
-                      memberProfileRepository.findById(kudos.getSenderId()).orElse(null);
+                      memberProfileServices.getById(kudos.getSenderId());
                     String sender = senderProfile == null ?
                               "Unknown" :
                               MemberProfileUtils.getFullName(senderProfile);
@@ -139,9 +140,7 @@ public class ReportDataCollation {
 
     /// Get the member name, title, and start date among others.
     public MemberProfile getMemberProfile() {
-        return memberProfileRepository.findById(memberId).orElseThrow(() ->
-            new NotFoundException("Member not found")
-        );
+        return memberProfileServices.getById(memberId);
     }
 
     /// Get the compensation history for the designated member.
@@ -149,7 +148,7 @@ public class ReportDataCollation {
         try {
             ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.compensationHistory);
-            compensationHistory.load(memberProfileRepository, buffer);
+            compensationHistory.load(memberProfileServices, buffer);
         } catch(IOException ex) {
         }
         return compensationHistory.getHistory(memberId);
@@ -160,7 +159,7 @@ public class ReportDataCollation {
         try {
             ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.currentInformation);
-            currentInformation.load(memberProfileRepository, buffer);
+            currentInformation.load(memberProfileServices, buffer);
         } catch(IOException ex) {
         }
         return currentInformation.getInformation(memberId);
@@ -171,7 +170,7 @@ public class ReportDataCollation {
         try {
             ByteBuffer buffer = reportDataServices.get(
                     ReportDataServices.DataType.positionHistory);
-            positionHistory.load(memberProfileRepository, buffer);
+            positionHistory.load(memberProfileServices, buffer);
         } catch(IOException ex) {
         }
         return positionHistory.getHistory(memberId);
@@ -281,8 +280,8 @@ public class ReportDataCollation {
         for (FeedbackRequest request: requests) {
           if (request.getTemplateId().equals(templateId)) {
             UUID recipientId = request.getRecipientId();
-            MemberProfile recipient = memberProfileRepository.findById(
-                                        recipientId).orElse(null);
+            MemberProfile recipient = memberProfileServices.getById(
+                                        recipientId);
             String recipientName = (recipient == null ?
                 recipientId.toString() :
                 MemberProfileUtils.getFullName(recipient));
@@ -306,12 +305,7 @@ public class ReportDataCollation {
               feedbackAnswers.add(
                   new Feedback.Answer(
                         recipientName, request.getSubmitDate(), questionText,
-                        questionType.equals(textQuestion) ||
-                        questionType.equals(radioQuestion) ?
-                               answer.getAnswer() :
-                               String.valueOf(answer.getSentiment()),
-                        questionType,
-                        questionNumber));
+                        answer.getAnswer(), questionType, questionNumber));
             }
           }
         }

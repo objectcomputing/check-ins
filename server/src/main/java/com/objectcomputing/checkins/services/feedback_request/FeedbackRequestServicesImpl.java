@@ -418,6 +418,23 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                 && memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
     }
 
+    public boolean selfRevieweeIsCurrentUserReviewee(FeedbackRequest request,
+                                                     UUID currentUserId) {
+        // If we are looking at a self-review request, see if there is a review
+        // request in the same review period that is assigned to the current
+        // user and the requestee is the same as the self-review request.  If
+        // so, this user is allowed to see the self-review request.
+        if (request.getRecipientId().equals(request.getRequesteeId())) {
+            List<FeedbackRequest> other = feedbackReqRepository.findByValues(
+                null, request.getRecipientId().toString(),
+                currentUserId.toString(), null,
+                Util.nullSafeUUIDToString(request.getReviewPeriodId()),
+                null);
+            return (other.size() == 1);
+        }
+        return false;
+    }
+
     private boolean createIsPermitted(UUID requesteeId) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
