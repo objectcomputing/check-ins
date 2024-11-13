@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.reports;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
@@ -18,7 +18,7 @@ import java.util.List;
 
 abstract class CSVProcessor {
 
-  public void load(MemberProfileRepository memberProfileRepository,
+  public void load(MemberProfileServices memberProfileServices,
                    ByteBuffer dataSource) throws IOException,
                                                  BadArgException {
     ByteArrayInputStream stream = new ByteArrayInputStream(dataSource.array());
@@ -30,10 +30,10 @@ abstract class CSVProcessor {
                     .setNullString("")
                     .build()
                     .parse(input);
-    loadImpl(memberProfileRepository, csvParser);
+    loadImpl(memberProfileServices, csvParser);
   }
 
-  protected abstract void loadImpl(MemberProfileRepository memberProfileRepository, CSVParser csvParser) throws BadArgException;
+  protected abstract void loadImpl(MemberProfileServices memberProfileServices, CSVParser csvParser) throws BadArgException;
 
   protected LocalDate parseDate(String date) {
     List<String> formatStrings = List.of("yyyy", "M/d/yyyy");
