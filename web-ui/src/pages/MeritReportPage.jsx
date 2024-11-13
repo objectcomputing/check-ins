@@ -20,21 +20,6 @@ import { useQueryParameters } from '../helpers/query-parameters';
 import markdown from 'markdown-builder';
 
 const MeritReportPage = () => {
-  const agreeMarks = [
-    'Strongly Disagree',
-    'Disagree',
-    'Neither Agree nor Disagree',
-    'Agree',
-    'Strongly Agree'
-  ];
-  const frequencyMarks = [
-    'Very Infrequently',
-    'Infrequently',
-    'Neither Frequently nor Infrequently',
-    'Frequently',
-    'Very Frequently'
-  ];
-
   const { state, dispatch } = useContext(AppContext);
 
   const csrf = selectCsrfToken(state);
@@ -338,22 +323,6 @@ const MeritReportPage = () => {
   };
 
   const getAnswerText = (answer) => {
-    if (answer.type == "SLIDER" || answer.type == "FREQ") {
-      const sentiment = parseFloat(answer.answer);
-      if (!isNaN(sentiment)) {
-        if (answer.type == "SLIDER") {
-          const index = sentiment * agreeMarks.length;
-          if (index >= 0 && index < agreeMarks.length) {
-            return agreeMarks[index];
-          }
-        } else if (answer.type == "FREQ") {
-          const index = sentiment * frequencyMarks.length;
-          if (index >= 0 && index < frequencyMarks.length) {
-            return frequencyMarks[index];
-          }
-        }
-      }
-    }
     return answer.answer;
   };
 
