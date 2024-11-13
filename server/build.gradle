@@ -3,11 +3,11 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 plugins {
     id 'maven-publish'
     id("com.gradleup.shadow") version "8.3.2"
-    id("io.micronaut.application") version "4.4.2"
+    id("io.micronaut.application") version "4.4.3"
     id "jacoco"
 }
 
-version "0.7.0"
+version "0.8.7"
 group "com.objectcomputing.checkins"
 
 repositories {

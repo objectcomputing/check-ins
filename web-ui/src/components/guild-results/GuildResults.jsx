@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useContext, useState } from 'react';
 import GroupIcon from '@mui/icons-material/Group';
-import { Button, TextField } from '@mui/material';
+import { FormControlLabel, Switch, Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { createGuild, getGuildLeaders } from '../../api/guild';
@@ -42,6 +42,7 @@ const GuildResults = () => {
   const [addOpen, setAddOpen] = useState(false);
   const [openedGuildId, setOpenedGuildId] = useState('');
   const [searchText, setSearchText] = useState('');
+  const [activeGuilds, setActiveGuilds] = useState(true);
 
   useQueryParameters([
     {
@@ -93,6 +94,7 @@ const GuildResults = () => {
                 onClose={handleClose}
                 onSave={async guild => {
                   if (csrf) {
+                    guild.active = true;
                     const res = await createGuild(guild, csrf);
                     const data =
                       res.payload?.data && !res.error ? res.payload.data : null;
@@ -110,12 +112,25 @@ const GuildResults = () => {
               />
             </>
           )}
+          <FormControlLabel
+            control={
+              <Switch
+                checked={activeGuilds}
+                onChange={event => {
+                  const { checked } = event.target;
+                  setActiveGuilds(checked);
+                }}
+              />
+            }
+            label="Active Guilds Only"
+          />
         </div>
       </div>
       <div className="guilds">
-        {guilds?.length
-          ? guilds?.map((guild, index) =>
-              guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
+        {guilds
+          ? guilds.map((guild, index) =>
+              guild.name.toLowerCase().includes(searchText.toLowerCase()) &&
+              ((activeGuilds && guild.active) || !activeGuilds) ? (
                 <GuildSummaryCard
                   key={`guild-summary-${guild.id}`}
                   index={index}

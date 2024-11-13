@@ -252,7 +252,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
+        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity(), dto.isActive());
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
@@ -276,7 +276,7 @@ public class GuildServicesImpl implements GuildServices {
             return null;
         }
         GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(),
-                entity.getLink(), entity.isCommunity());
+                entity.getLink(), entity.isCommunity(), entity.isActive());
         dto.setGuildMembers(memberEntities);
         return dto;
     }
@@ -285,7 +285,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
+        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity(), dto.isActive());
     }
 
     private GuildMemberResponseDTO fromMemberEntity(GuildMember guildMember, MemberProfile memberProfile) {

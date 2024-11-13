@@ -1,7 +1,7 @@
 <mjml>
   <mj-head>
     <mj-title>%s</mj-title>
-    <mj-preview>It's time for performance reviews!</mj-preview>
+    <mj-preview>It is time for performance reviews</mj-preview>
     <mj-attributes>
       <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
       <mj-section background-color="#ffffff" padding="20px 20px">
@@ -14,22 +14,22 @@
       </mj-column>
     </mj-section>
     <mj-hero mode="fluid-height" background-url="https://lh3.googleusercontent.com/pw/AL9nZEW6o0zSXFq6gKMdO2kpj_KZa8NLCnGq8bPoyiDFKimEuXOeuo1FsE8MhLP7ZTrSIUuf3zG4WuAQE2qLPzyDSqGAYaOhHOuWpWg2ocTjXLTbU5wUe-69JFoWbFU0gW3yDV7X5yfMollI5rq7N24vUs82=w1200-h600-no" background-color="#FFF" padding="100px 0px">
-      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900">It's Time for Performance Reviews!</mj-text>
+      <mj-text padding="20px" font-family="Helvetica" align="center" font-size="45px" line-height="45px" font-weight="900">What to expect from this review period...</mj-text>
     </mj-hero>
     <mj-section background-color="#ffffff">
       <mj-column>
         <mj-text>
           <h2>%s Starts Soon!</h2>
         </mj-text>
-        <mj-text font-size="16px">It's nearly time for our next performance reviews. This review covers the period from %s through %s</mj-text>
+        <mj-text font-size="16px">It's nearly time for our next round of performance reviews.</mj-text>
         <mj-text font-size="16px">Here is what to expect:
           <ul>
-            <li><strong>%s</strong> - Self-reviews begin</li>
+            <li><strong>%s</strong> - Review assignments must be approved and self-reviews begin</li>
             <li><strong>%s</strong> - Self-reviews must be completed</li>
-            <li><strong>%s</strong> - Reviews must be completed</li>
+            <li><strong>%s</strong> - All reviews must be completed</li>
           </ul>
         </mj-text>
-        <mj-text font-size="16px">Help us make this a valuable experience for everyone!</mj-text>
+        <mj-text font-size="16px">Your feedback helps us improve as a team! Please take the time to be thoughtful, honest, and forthcoming in your evaluation of yourself and anyone you have been asked to review.</mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#feb672" padding="10px">

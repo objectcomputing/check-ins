@@ -87,23 +87,25 @@ const MemberProfilePage = () => {
   useEffect(() => {
     async function getTeamsAndGuilds() {
       if (memberId) {
-        let teamRes = await getTeamByMember(memberId, csrf);
-        let teamData =
+        const teamRes = await getTeamByMember(memberId, csrf);
+        const teamData =
           teamRes.payload && teamRes.payload.status === 200
             ? teamRes.payload.data
             : null;
-        let memberTeams = teamData && !teamRes.error ? teamData : [];
-        memberTeams.sort((a, b) => a.name.localeCompare(b.name));
-        setTeams(memberTeams);
+        const memberTeams = teamData && !teamRes.error ? teamData : [];
+        setTeams(memberTeams.sort((a, b) => a.name.localeCompare(b.name)));
 
-        let guildRes = await getGuildsForMember(memberId, csrf);
-        let guildData =
+        const guildRes = await getGuildsForMember(memberId, csrf);
+        const guildData =
           guildRes.payload && guildRes.payload.status === 200
             ? guildRes.payload.data
             : null;
-        let memberGuilds = guildData && !guildRes.error ? guildData : [];
-        memberGuilds.sort((a, b) => a.name.localeCompare(b.name));
-        setGuilds(memberGuilds);
+        const memberGuilds = guildData && !guildRes.error ?
+          guildData.filter((guild) =>
+            guild.guildMembers.some((member) => member.memberId == memberId)
+          )
+          : [];
+        setGuilds(memberGuilds.sort((a, b) => a.name.localeCompare(b.name)));
       }
     }
 

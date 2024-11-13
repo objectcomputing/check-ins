@@ -186,6 +186,10 @@ export const selectHasSendEmailPermission = hasPermission(
   'CAN_SEND_EMAIL'
 );
 
+export const selectCanViewCheckinsPermission = hasPermission(
+  'CAN_VIEW_CHECKINS'
+);
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   userProfile =>
@@ -682,11 +686,21 @@ export const selectNormalizedTeams = createSelector(
     })
 );
 
+export const selectActiveTeams = createSelector(
+  selectTeams,
+  (teams, searchText) => teams?.filter(team => team.active)
+);
+
+export const selectActiveGuilds = createSelector(
+  selectGuilds,
+  (guilds, searchText) => guilds?.filter(guild => guild.active)
+);
+
 export const selectMyGuilds = createSelector(
   selectCurrentUserId,
   selectGuilds,
   (id, guilds) =>
-    guilds?.filter(guild =>
+    guilds?.filter(guild => guild.active &&
       guild.guildMembers?.some(member => member.memberId === id)
     )
 );
@@ -695,7 +709,7 @@ export const selectMyTeams = createSelector(
   selectCurrentUserId,
   selectTeams,
   (id, teams) =>
-    teams?.filter(team =>
+    teams?.filter(team => team.active &&
       team.teamMembers?.some(member => member.memberId === id)
     )
 );

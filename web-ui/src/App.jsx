@@ -63,6 +63,11 @@ const theme = extendTheme({
     }
   },
   components: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: typeof process !== 'undefined' && !!process.env.VITEST_WORKER_ID, // No more ripple...only when testing.
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         secondary: {

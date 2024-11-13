@@ -44,20 +44,22 @@ const SettingsPage = () => {
                             (await getAllOptions()).payload.data : [];
 
       if (allOptions) {
-        // If the option has a valid UUID, then the setting already exists.
-        // This information is necessary to know since we must use POST to
-        // create new settings and PUT to modify existing settings.
-        for (let option of allOptions) {
-          option.exists = option?.id != '00000000-0000-0000-0000-000000000000';
-        }
+        // Sort the options by category, store them, and upate the state.
+        setSettingsControls(
+          allOptions.sort((l, r) => {
+            if (l.category === r.category) {
+              return l.name.localeCompare(r.name);
+            } else {
+              return l.category.localeCompare(r.category);
+            }
+          })
+        );
       }
-
-      // Sort the options by category, store them, and upate the state.
-      setSettingsControls(
-        allOptions.sort((l, r) => l.category.localeCompare(r.category)));
     };
-    fetchData();
-  }, []);
+    if (csrf) {
+      fetchData();
+    }
+  }, [state, csrf]);
 
   // For specific settings, add a handleFunction to the settings object.
   // Format should be handleSetting and then add it to the handlers object
@@ -126,19 +128,19 @@ const SettingsPage = () => {
   const save = async () => {
     let errors;
     let saved = 0;
-    for( let key of Object.keys(handlers)) {
+    for(let key of Object.keys(handlers)) {
       const setting = handlers[key].setting;
       // The settings controller does not allow blank values.
-      if (setting && setting.value) {
+      if (setting?.name && `${setting.value}` != "") {
         let res;
-        if (setting.exists) {
+        if (setting.id) {
           res = await putOption({ name: setting.name,
                                   value: setting.value }, csrf);
         } else {
           res = await postOption({ name: setting.name,
                                    value: setting.value }, csrf);
           if (res?.payload?.data) {
-            setting.exists = true;
+            setting.id = res.payload.data.id;
           }
         }
         if (res?.error) {
@@ -152,6 +154,8 @@ const SettingsPage = () => {
         if (res?.payload?.data) {
           saved++;
         }
+      } else {
+        console.warn(`WARNING: ${setting.name} not sent to the server`);
       }
     }
 
@@ -183,12 +187,12 @@ const SettingsPage = () => {
 
   /** @type {Controls[]} */
   const updatedSettingsControls = addHandlersToSettings(settingsControls);
+  const categories = {};
 
   return (selectHasViewSettingsPermission(state) ||
           selectHasAdministerSettingsPermission(state)) ? (
     <div className="settings-page">
       {updatedSettingsControls.map((componentInfo, index) => {
-        const categories = {};
         const Component = componentMapping[componentInfo.type.toUpperCase()];
         const info = {...componentInfo, name: titleCase(componentInfo.name)};
         if (categories[info.category]) {
@@ -197,7 +201,8 @@ const SettingsPage = () => {
           categories[info.category] = true;
           return (
             <>
-            <Typography variant="h4"
+            <Typography data-testid={info.category}
+                        variant="h4"
                         sx={{textDecoration: 'underline'}}
                         display="inline">{titleCase(info.category)}</Typography>
             <Component key={index} {...info} />
@@ -209,6 +214,7 @@ const SettingsPage = () => {
        selectHasAdministerSettingsPermission(state) &&
       <div className="buttons">
         <Button
+          disableRipple
           color="primary"
           onClick={save}>
           Save

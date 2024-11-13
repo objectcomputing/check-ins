@@ -1,5 +1,11 @@
 import React from 'react';
-import { Input, Typography } from '@mui/material';
+import {
+  Select,
+  MenuItem,
+  ListItemText,
+  Input,
+  Typography
+} from '@mui/material';
 import { createLabelId } from '../../../helpers/strings.js';
 
 /**
@@ -13,7 +19,7 @@ import { createLabelId } from '../../../helpers/strings.js';
  * @param {function} props.handleChange - The callback function to handle value changes.
  * @returns {JSX.Element} - The rendered component.
  */
-const SettingsNumber = ({ name, description, value, handleChange }) => {
+const SettingsNumber = ({ name, description, values, value, handleChange }) => {
   const labelId = createLabelId(name);
 
   return (
@@ -24,13 +30,25 @@ const SettingsNumber = ({ name, description, value, handleChange }) => {
         </Typography>
       </label>
       {description && <p>{description}</p>}
+      {values && values.length > 0 ?
+      <Select
+        labelId={labelId}
+        value={value}
+        onChange={handleChange}
+      >
+        {values.map((option) => (
+          <MenuItem key={option} value={option}>
+            <ListItemText primary={option} />
+          </MenuItem>
+        ))}
+      </Select> :
       <Input
         id={labelId}
         className="settings-control"
         type="number"
         value={value}
         onChange={handleChange}
-      />
+      />}
     </div>
   );
 };

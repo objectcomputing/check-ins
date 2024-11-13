@@ -16,10 +16,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Tooltip
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { deleteTeam, updateTeam } from '../../api/team.js';
+import { updateTeam } from '../../api/team.js';
 import SplitButton from '../split-button/SplitButton';
 
 const PREFIX = 'TeamSummaryCard';
@@ -34,7 +35,8 @@ const StyledCard = styled(Card)({
     width: '340px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative',
   },
   [`& .${classes.header}`]: {
     width: '100%'
@@ -45,6 +47,11 @@ const StyledCard = styled(Card)({
     whiteSpace: 'nowrap'
   }
 });
+
+const inactiveStyle = {
+  'color': 'var(--action-disabled)',
+  'font-size': '0.75em',
+};
 
 const propTypes = {
   team: PropTypes.shape({
@@ -59,7 +66,6 @@ const displayName = 'TeamSummaryCard';
 const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const { state, dispatch } = useContext(AppContext);
   const { teams, userProfile, csrf } = state;
-  const [openDelete, setOpenDelete] = useState(false);
   const [openKudos, setOpenKudos] = useState(false);
   // const [selectedTeam, setSelectedTeam] = useState(null);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
@@ -81,45 +87,16 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
       ? false
       : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
 
-  const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleOpenKudos = () => setOpenKudos(true);
-
-  const handleCloseDeleteConfirmation = () => setOpenDelete(false);
   const handleCloseKudos = () => setOpenKudos(false);
 
-  const teamId = team?.id;
-  const deleteATeam = useCallback(async () => {
-    if (teamId && csrf) {
-      const result = await deleteTeam(teamId, csrf);
-      if (result && result.payload && result.payload.status === 200) {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'success',
-            toast: 'Team deleted'
-          }
-        });
-        let newTeams = teams.filter(team => {
-          return team.id !== teamId;
-        });
-        dispatch({
-          type: UPDATE_TEAMS,
-          payload: newTeams
-        });
-      }
-    }
-  }, [teamId, csrf, dispatch, teams]);
-
-  const options =
-    isAdmin || isTeamLead ? ['Edit Team', 'Give Kudos', 'Delete Team'] : ['Edit Team', 'Give Kudos'];
+  const options = ['Edit Team', 'Give Kudos'];
 
   const handleAction = (e, index) => {
     if (index === 0) {
       onTeamSelect(team.id);
     } else if (index === 1) {
       handleOpenKudos();
-    } else if (index === 2) {
-      handleOpenDeleteConfirmation();
     }
   };
 
@@ -131,7 +108,7 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
           title: classes.title,
           subheader: classes.title
         }}
-        title={team.name + (team.active ? ' (Active)' : ' (Inactive)')}
+        title={team.name}
         subheader={
           <Tooltip
             open={tooltipIsOpen}
@@ -146,6 +123,14 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
         }
       />
       <CardContent>
+        {!team.active && (
+          <Typography sx={{ position: 'absolute', top: 10, right: 10,
+                            ...inactiveStyle,
+                          }}
+          >
+            Inactive
+          </Typography>
+        )}
         {team.teamMembers == null ? (
           <React.Fragment key={`empty-team-${team.name}`}>
             <strong>Team Leads: </strong>None Assigned
@@ -195,27 +180,6 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
         {(isAdmin || isTeamLead) && (
           <>
             <SplitButton options={options} onClick={handleAction} />
-            <Dialog
-              open={openDelete}
-              onClose={handleCloseDeleteConfirmation}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">Delete team?</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to delete the team?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseDeleteConfirmation} color="primary">
-                  Cancel
-                </Button>
-                <Button onClick={deleteATeam} color="primary" autoFocus>
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
             <KudosDialog
               open={openKudos}
               onClose={handleCloseKudos}

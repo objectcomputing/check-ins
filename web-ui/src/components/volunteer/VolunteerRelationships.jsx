@@ -19,7 +19,13 @@ import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import OrganizationDialog from '../dialogs/OrganizationDialog';
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken, selectCurrentUser, selectProfileMap } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfileMap,
+  selectHasVolunteeringRelationshipsPermission,
+  selectHasVolunteeringOrganizationsPermission,
+} from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 import { showError } from '../../helpers/toast';
 
@@ -112,8 +118,8 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     setSelectedRelationship({
       memberId: onlyMe ? currentUser.id : '',
       organizationId: '',
-      startDate: null, // Ensure this is a valid date object
-      endDate: null // Ensure this is a valid date object
+      startDate: null,
+      endDate: null
     });
     setRelationshipDialogOpen(true);
   }, [currentUser.id, onlyMe]);
@@ -175,9 +181,19 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       return;
     }
   
-    const formattedStartDate = formatDate(new Date(startDate));
+    const formattedStartDate = startDate ? formatDate(new Date(startDate)) : null;
     const formattedEndDate = endDate ? formatDate(new Date(endDate)) : null;
-  
+ 
+    const data = {
+      ...selectedRelationship,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate
+    };
+    if (!id && !data.memberId) {
+      // For new relationships, a memberId is required.
+      data.memberId = currentUser.id;
+    }
+
     const res = await resolve({
       method: id ? 'PUT' : 'POST',
       url: id ? `${relationshipBaseUrl}/${id}` : relationshipBaseUrl,
@@ -186,7 +202,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
         Accept: 'application/json',
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      data: { ...selectedRelationship, startDate: formattedStartDate, endDate: formattedEndDate },
+      data: data,
     });
     
     if (res.error) return;
@@ -269,6 +285,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     [sortAscending, sortColumn]
   );
 
+  const organizationOptions = Object.keys(organizationMap);
+  if (selectHasVolunteeringOrganizationsPermission(state)) {
+    organizationOptions.unshift('new');
+  }
+
   return (
     <div id="volunteer-relationships">
       {/* Table for showing relationships */}
@@ -301,6 +322,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 <td>{relationship.startDate}</td>
                 <td>{relationship.endDate}</td>
                 <td>
+                  {(relationship.memberId == currentUser.id ||
+                    selectHasVolunteeringRelationshipsPermission(state)) &&
+                  <>
                   <Tooltip title="Edit">
                     <IconButton
                       aria-label="Edit"
@@ -320,17 +344,19 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                       <Delete />
                     </IconButton>
                   </Tooltip>
+                  </>}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {(onlyMe || selectHasVolunteeringRelationshipsPermission(state)) &&
         <IconButton
           aria-label="Add Volunteer Relationship"
           onClick={addRelationship}
         >
           <AddCircleOutline />
-        </IconButton>
+        </IconButton>}
       </div>
 
       {/* Message below the table */}
@@ -347,7 +373,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           getOptionLabel={(option) => 
             option === 'new' ? 'Create a New Organization' : organizationMap[option]?.name || option
           }
-          options={['new', ...Object.keys(organizationMap)]}
+          options={organizationOptions}
           onChange={(event, value) => {
             if (value === 'new') {
               setRelationshipDialogOpen(false); // Close the relationship dialog
@@ -362,7 +388,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           value={selectedRelationship?.organizationId || ''}
         />
           <DatePickerField
-            date={selectedRelationship?.startDate}
+            date={selectedRelationship?.startDate || null}
             label="Start Date"
             setDate={date => setSelectedRelationship({ ...selectedRelationship, startDate: date })}
           />

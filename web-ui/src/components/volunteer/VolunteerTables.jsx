@@ -2,12 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useContext, useReducer, useState } from 'react';
 import { Box, Tab, Tabs, Typography, Card, CardHeader, CardContent, Avatar } from '@mui/material';
 
-import {
-  selectHasVolunteeringEventsPermission,
-  selectHasVolunteeringOrganizationsPermission,
-  selectHasVolunteeringRelationshipsPermission,
-  noPermission,
-} from '../../context/selectors';
 import { AppContext } from '../../context/AppContext';
 
 import Organizations from './Organizations';
@@ -51,15 +45,7 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
   const [n, forceUpdate] = useReducer(n => n + 1, 0);
   const [tabIndex, setTabIndex] = useState(0);
 
-  // React requires that tabs be sequentially numbered.  Use these to ensure
-  // that each tab coinsides with the correct tab content based on the
-  // individual permissions.
-  let tabCount = 0;
-  let tabContent = 0;
-
-  return (selectHasVolunteeringEventsPermission(state) ||
-          selectHasVolunteeringOrganizationsPermission(state) ||
-          selectHasVolunteeringRelationshipsPermission(state)) ? (
+  return (
     <Card className="volunteer-activities-card">
       <CardContent className="volunteer-tables">
         <Tabs
@@ -69,7 +55,7 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
           value={tabIndex}
           variant="fullWidth"
         >
-          {selectHasVolunteeringRelationshipsPermission(state) && <Tab
+          <Tab
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar sx={{ mr: 1 }}>
@@ -78,13 +64,13 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
                 <Typography textTransform="none" variant='h5' component='h2'>Volunteer Orgs</Typography>
               </Box>
             }
-            {...a11yProps(tabCount++)}
+            {...a11yProps(0)}
             sx={{
               minWidth: '150px',
               whiteSpace: 'nowrap'
             }}
-          />}
-          {selectHasVolunteeringEventsPermission(state) && <Tab
+          />
+          <Tab
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar sx={{ mr: 1 }}>
@@ -93,31 +79,29 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
                 <Typography textTransform="none" variant='h5' component='h2'>Events</Typography>
               </Box>
             }
-            {...a11yProps(tabCount++)}
+            {...a11yProps(1)}
             sx={{
               minWidth: '150px',
               whiteSpace: 'nowrap'
             }}
-          />}
+          />
         </Tabs>
-        {selectHasVolunteeringRelationshipsPermission(state) && <TabPanel index={tabContent++} value={tabIndex}>
+        <TabPanel index={0} value={tabIndex}>
           <VolunteerRelationships
             forceUpdate={forceUpdate}
             key={'vr' + n}
             onlyMe={onlyMe}
           />
-        </TabPanel>}
-        {selectHasVolunteeringEventsPermission(state) && <TabPanel index={tabContent++} value={tabIndex}>
+        </TabPanel>
+        <TabPanel index={1} value={tabIndex}>
           <VolunteerEvents
             forceUpdate={forceUpdate}
             key={'vh' + n}
             onlyMe={onlyMe}
           />
-        </TabPanel>}
+        </TabPanel>
       </CardContent>
     </Card>
-  ) : (
-    <h3>{noPermission}</h3>
   );
 };
 

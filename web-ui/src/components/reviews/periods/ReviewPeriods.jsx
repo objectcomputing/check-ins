@@ -99,11 +99,15 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
+// mode will be either "self" or undefined.
+const selfReviewMode = "self";
+
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [periods, setPeriods] = useState([]);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
     reviewStatus: ReviewStatus.PLANNING,
@@ -119,8 +123,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
-  const periods = selectReviewPeriods(state);
   const userProfile = selectUserProfile(state);
+
+  useEffect(() => {
+    setPeriods(selectReviewPeriods(state)
+                 .filter((r) => mode !== selfReviewMode ||
+                                r.reviewStatus === ReviewStatus.OPEN ||
+                                r.reviewStatus === ReviewStatus.CLOSED));
+  }, [state, mode]);
 
   useQueryParameters([
     {
@@ -255,6 +265,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   useEffect(() => {
     const getSelfReviews = async () => {
+      setLoading(true);
       let reviews = {};
       Promise.all(
         periods.map(async period => {
@@ -280,7 +291,17 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             });
           }
         })
-      ).then(() => setSelfReviews(reviews));
+      ).then(() => {
+               // Now that we have the reviews loaded, filter out closed
+               // self-review periods in which the current user is not involved.
+               if (mode == selfReviewMode) {
+                 setPeriods(periods.filter((r) =>
+                              r.reviewStatus !== ReviewStatus.CLOSED ||
+                              !!reviews[r.id]));
+               }
+               setSelfReviews(reviews);
+               setLoading(false);
+             });
     };
     if (
       csrf &&
@@ -291,18 +312,17 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ) {
       getSelfReviews();
     }
-  }, [csrf, periods, currentUserId, selfReviews]);
+  }, [csrf, periods, currentUserId, selfReviews ]);
 
   const onPeriodClick = useCallback(
     id => {
       const status = selectReviewPeriod(state, id)?.reviewStatus;
       switch (status) {
         case ReviewStatus.PLANNING:
-          onPeriodSelected(id);
-          break;
         case ReviewStatus.AWAITING_APPROVAL:
-          // TODO: Check for the required permission.
-          onPeriodSelected(id);
+          if (mode !== selfReviewMode) {
+            onPeriodSelected(id);
+          }
           break;
         case ReviewStatus.OPEN:
           onPeriodSelected(id);
@@ -369,11 +389,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
+              const aName = (a.name || '');
               return a.reviewStatus === b.reviewStatus
-                ? (a.name || '').localeCompare(b.name)
+                ? aName.localeCompare(b.name)
                 : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
-                  : 1;
+                  : (b.reviewStatus === ReviewStatus.OPEN
+                    ? 1
+                    : aName.localeCompare(b.name));
             })
             .map((period) => (
               <div>

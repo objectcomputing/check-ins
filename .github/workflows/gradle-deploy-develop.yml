@@ -15,10 +15,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set up Node LTS
+      - name: Set up Node Stable
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Set up Temurin 21
         uses: actions/setup-java@v4
         with:
@@ -49,7 +49,7 @@ jobs:
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Set up Temurin 21
         uses: actions/setup-java@v4
         with:
@@ -107,7 +107,7 @@ jobs:
             --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
             --set-env-vars "WEB_ADDRESS=${{ env.TARGET_URL }}" \
-            --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
+            --set-env-vars "FROM_ADDRESS=no-reply@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
             --platform "managed" \
