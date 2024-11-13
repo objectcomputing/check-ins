@@ -3,44 +3,128 @@
 exports[`FeedbackResponseCard > renders correctly for radio button responses 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-bhp9pd-MuiPaper-root-MuiCard-root"
   >
     <div
-      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root response-card-content css-46bh2p-MuiCardContent-root"
     >
-      <h6
-        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      <div
+        class="response-card-recipient-info"
       >
-        Responder: 
-        01b7d769-9fa2-43ff-95c7-f3b950a27bf9
-      </h6>
-      <p
-        class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
-      >
-        Answer: 
-        Yes
-      </p>
-      <button
-        aria-label="Deny feedback request"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
-        tabindex="0"
-        type="button"
-      >
-        <svg
-          aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-          data-testid="CloseIcon"
-          focusable="false"
-          viewBox="0 0 24 24"
+        <div
+          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-1wlk0hk-MuiAvatar-root"
         >
-          <path
-            d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+          <img
+            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            src="http://localhost:8080/services/member-profiles/member-photos/undefined"
           />
-        </svg>
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        </div>
+        <p
+          class="MuiTypography-root MuiTypography-body1 responder-name css-ahj2mt-MuiTypography-root"
         />
-      </button>
+      </div>
+      <div
+        class="MuiFormGroup-root MuiFormGroup-row MuiRadioGroup-root MuiRadioGroup-row feedback-answer-radio css-qfz70r-MuiFormGroup-root"
+        role="radiogroup"
+      >
+        <label
+          class="MuiFormControlLabel-root Mui-disabled MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+        >
+          <span
+            aria-disabled="true"
+            class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-checked Mui-disabled MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+            tabindex="-1"
+          >
+            <input
+              checked=""
+              class="PrivateSwitchBase-input css-1m9pwf3"
+              disabled=""
+              name=":r0:"
+              type="radio"
+              value="Yes"
+            />
+            <span
+              class="css-hyxlzm"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+                data-testid="RadioButtonUncheckedIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-11zohuh-MuiSvgIcon-root"
+                data-testid="RadioButtonCheckedIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+                />
+              </svg>
+            </span>
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label Mui-disabled css-ahj2mt-MuiTypography-root"
+          >
+            Yes
+          </span>
+        </label>
+        <label
+          class="MuiFormControlLabel-root Mui-disabled MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+        >
+          <span
+            aria-disabled="true"
+            class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+            tabindex="-1"
+          >
+            <input
+              class="PrivateSwitchBase-input css-1m9pwf3"
+              disabled=""
+              name=":r0:"
+              type="radio"
+              value="No"
+            />
+            <span
+              class="css-hyxlzm"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+                data-testid="RadioButtonUncheckedIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hhw7if-MuiSvgIcon-root"
+                data-testid="RadioButtonCheckedIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+                />
+              </svg>
+            </span>
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label Mui-disabled css-ahj2mt-MuiTypography-root"
+          >
+            No
+          </span>
+        </label>
+      </div>
     </div>
   </div>
 </div>
@@ -49,44 +133,26 @@ exports[`FeedbackResponseCard > renders correctly for radio button responses 1`]
 exports[`FeedbackResponseCard > renders correctly for slider responses 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-bhp9pd-MuiPaper-root-MuiCard-root"
   >
     <div
-      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root response-card-content css-46bh2p-MuiCardContent-root"
     >
-      <h6
-        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      <div
+        class="response-card-recipient-info"
       >
-        Responder: 
-        01b7d769-9fa2-43ff-95c7-f3b950a27bf9
-      </h6>
-      <p
-        class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
-      >
-        Answer: 
-        Neither Agree nor Disagree
-      </p>
-      <button
-        aria-label="Deny feedback request"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
-        tabindex="0"
-        type="button"
-      >
-        <svg
-          aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-          data-testid="CloseIcon"
-          focusable="false"
-          viewBox="0 0 24 24"
+        <div
+          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-1wlk0hk-MuiAvatar-root"
         >
-          <path
-            d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+          <img
+            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            src="http://localhost:8080/services/member-profiles/member-photos/undefined"
           />
-        </svg>
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        </div>
+        <p
+          class="MuiTypography-root MuiTypography-body1 responder-name css-ahj2mt-MuiTypography-root"
         />
-      </button>
+      </div>
     </div>
   </div>
 </div>
@@ -95,44 +161,32 @@ exports[`FeedbackResponseCard > renders correctly for slider responses 1`] = `
 exports[`FeedbackResponseCard > renders correctly for text responses 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-bhp9pd-MuiPaper-root-MuiCard-root"
   >
     <div
-      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root response-card-content css-46bh2p-MuiCardContent-root"
     >
-      <h6
-        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      <div
+        class="response-card-recipient-info"
       >
-        Responder: 
-        01b7d769-9fa2-43ff-95c7-f3b950a27bf9
-      </h6>
-      <p
-        class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
-      >
-        Answer: 
-        I love opossums. I have rehabilitated baby opossums for 25 years, and I intend to do so until my last day!
-      </p>
-      <button
-        aria-label="Deny feedback request"
-        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
-        tabindex="0"
-        type="button"
-      >
-        <svg
-          aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-          data-testid="CloseIcon"
-          focusable="false"
-          viewBox="0 0 24 24"
+        <div
+          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-1wlk0hk-MuiAvatar-root"
         >
-          <path
-            d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+          <img
+            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            src="http://localhost:8080/services/member-profiles/member-photos/undefined"
           />
-        </svg>
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        </div>
+        <p
+          class="MuiTypography-root MuiTypography-body1 responder-name css-ahj2mt-MuiTypography-root"
         />
-      </button>
+      </div>
+      <pre
+        class="fullWidth"
+        style="white-space: pre-wrap;"
+      >
+        I love opossums. I have rehabilitated baby opossums for 25 years, and I intend to do so until my last day!
+      </pre>
     </div>
   </div>
 </div>
