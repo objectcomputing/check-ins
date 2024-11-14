@@ -429,7 +429,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                 null, request.getRecipientId().toString(),
                 currentUserId.toString(), null,
                 Util.nullSafeUUIDToString(request.getReviewPeriodId()),
-                null);
+                null, null);
             return (other.size() == 1);
         }
         return false;
