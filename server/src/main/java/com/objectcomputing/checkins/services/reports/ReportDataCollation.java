@@ -262,7 +262,7 @@ public class ReportDataCollation {
               case FeedbackType.feedback:
                 use = !template.getIsReview() && request.getStatus().equalsIgnoreCase("submitted") &&
                       request.getSendDate() != null && request.getSendDate().isAfter(reviewPeriod.getPeriodStartDate().toLocalDate()) &&
-                      request.getSubmitDate() != null && request.getSubmitDate().isBefore(reviewPeriod.getCloseDate().toLocalDate());
+                      request.getSendDate().isBefore(reviewPeriod.getCloseDate().toLocalDate());
                 break;
             }
             if (use) {
