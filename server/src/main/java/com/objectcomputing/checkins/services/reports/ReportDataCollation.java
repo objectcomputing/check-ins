@@ -222,8 +222,7 @@ public class ReportDataCollation {
       List<FeedbackRequest> requests =
         feedbackRequestServices.findByValues(null, memberId, null, null, null, null, null, null);
 
-        feedbackRequestServices.findByValues(null, memberId, null,
-                reviewPeriod.getPeriodStartDate().toLocalDate(), null, null, null);
+        feedbackRequestServices.findByValues(null, memberId, null, reviewPeriod.getPeriodStartDate().toLocalDate(), null, null, null, null);
       List<FeedbackRequest> filtered = new LinkedList<>();
       // Iterate over each request and find the template.  Determine the purpose
       // of the template.
