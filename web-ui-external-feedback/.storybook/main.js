@@ -1,6 +1,6 @@
 module.exports = {
   "stories": ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
-  "staticDirs": ["../public-external-feedback"], //👈 Configures the static asset folder in Storybook
+  "staticDirs": ["../public"], //👈 Configures the static asset folder in Storybook
   "core": {
     "disableTelemetry": true, // 👈 Disables telemetry
   },

@@ -26,7 +26,7 @@ def distDir = layout.projectDirectory.dir("dist")
 def yarnBuildTask = tasks.register("yarnBuild", YarnTask) {
     group 'build'
     inputs.files(fileTree('node_modules'))
-    inputs.files(fileTree('public-external-feedback'))
+    inputs.files(fileTree('public'))
     inputs.files(fileTree('src'))
     inputs.file('index.html')
     inputs.file('package.json')
