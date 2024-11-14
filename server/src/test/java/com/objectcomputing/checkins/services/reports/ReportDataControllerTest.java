@@ -75,7 +75,7 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
     questionTwo = saveAnotherTemplateQuestion(feedbackTemplate, 2);
     feedbackRequest = saveSampleFeedbackRequest(admin, regular, admin,
                                                 feedbackTemplate.getId(),
-                                                reviewPeriod);
+                                                reviewPeriod, "submitted");
     saveSampleFeedbackAnswer(questionOne.getId(), feedbackRequest.getId());
     saveSampleFeedbackAnswer(questionTwo.getId(), feedbackRequest.getId());
 
