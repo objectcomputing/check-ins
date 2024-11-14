@@ -3,11 +3,18 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
+import jnr.constants.platform.Local;
 
 import java.time.LocalDate;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
+import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTemplateFixture {
 
@@ -51,6 +58,15 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
         return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null));
     }
 
+    default LocalDate getRandomLocalDateTime(LocalDateTime start, LocalDateTime end) {
+        LocalDate startDate = start.toLocalDate();
+        long daysBetween = ChronoUnit.DAYS.between(startDate, end.toLocalDate());
+        Random random = new Random();
+        long randomDays = random.nextLong(daysBetween);
+
+        return startDate.plusDays(randomDays);
+    }
+
     /**
      * Saves a sample feedback request
      * @param creator The {@link MemberProfile} of the creator of the feedback request
@@ -60,8 +76,13 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      * @return The saved {@link FeedbackRequest}
      */
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
-        LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId()));
+        return saveSampleFeedbackRequest(creator, requestee, recipient, templateId, reviewPeriod, "pending");
+    }
+
+    default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod, String status) {
+        LocalDate submitDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), reviewPeriod.getCloseDate());
+        LocalDate sendDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), submitDate.atStartOfDay());
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, sendDate, null, status, submitDate, reviewPeriod.getId()));
     }
 
     default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, String status) {
