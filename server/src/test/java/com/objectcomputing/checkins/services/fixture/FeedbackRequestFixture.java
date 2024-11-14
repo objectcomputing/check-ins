@@ -4,11 +4,16 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
-
+import jnr.constants.platform.Local;
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
+import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTemplateFixture {
 
@@ -90,6 +95,15 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, FeedbackExternalRecipient externalRecipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
         return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), null, templateId, testDate, null, "pending", null, null, externalRecipient.getId()));
+    }
+
+    default LocalDate getRandomLocalDateTime(LocalDateTime start, LocalDateTime end) {
+        LocalDate startDate = start.toLocalDate();
+        long daysBetween = ChronoUnit.DAYS.between(startDate, end.toLocalDate());
+        Random random = new Random();
+        long randomDays = random.nextLong(daysBetween);
+
+        return startDate.plusDays(randomDays);
     }
 
     /**

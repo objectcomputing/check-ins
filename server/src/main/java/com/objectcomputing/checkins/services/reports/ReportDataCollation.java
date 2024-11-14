@@ -22,16 +22,9 @@ import com.objectcomputing.checkins.services.feedback_template.template_question
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursServices;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHours;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.UUID;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
+import java.util.*;
 import java.time.LocalDate;
 import java.time.Month;
 import java.nio.ByteBuffer;
@@ -222,27 +215,29 @@ public class ReportDataCollation {
     private List<Feedback> getFeedbackType(FeedbackType type) {
       List<Feedback> feedback = new ArrayList<Feedback>();
 
+      ReviewPeriod reviewPeriod = reviewPeriodServices.findById(reviewPeriodId);
       // Get the list of requests for the member and review period.
       // We will need to cross-reference the templates.
       LocalDateRange dateRange = getDateRange();
       List<FeedbackRequest> requests =
         feedbackRequestServices.findByValues(null, memberId, null, null, null, null, null, null);
 
+        feedbackRequestServices.findByValues(null, memberId, null,
+                reviewPeriod.getPeriodStartDate().toLocalDate(), null, null, null);
+      List<FeedbackRequest> filtered = new LinkedList<>();
       // Iterate over each request and find the template.  Determine the purpose
       // of the template.
-      ReviewPeriod reviewPeriod = reviewPeriodServices.findById(reviewPeriodId);
       Map<UUID, String> templates = new HashMap<UUID, String>();
       for (FeedbackRequest request: requests) {
         // Make sure we haven't already considered this template.
         // Also, require that the request either be directly associated with
         // our review period or that the request was submitted within the time
         // range of our review period.
-        if (!templates.containsKey(request.getTemplateId()) &&
-            ((request.getReviewPeriodId() != null &&
+        if ((request.getReviewPeriodId() != null &&
               request.getReviewPeriodId().equals(reviewPeriod.getId())) ||
-             (request.getSubmitDate() != null &&
-              dateInRange(request.getSubmitDate(), dateRange.start,
-                          dateRange.end)))) {
+             (request.getStatus().equalsIgnoreCase("submitted") &&
+                     request.getSendDate() != null &&
+                     request.getSendDate().isBefore(reviewPeriod.getCloseDate().toLocalDate()))) {
           try {
             FeedbackTemplate template =
                    feedbackTemplateServices.getById(request.getTemplateId());
@@ -263,7 +258,10 @@ public class ReportDataCollation {
                 break;
             }
             if (use) {
-              templates.put(template.getId(), template.getTitle());
+                filtered.add(request);
+                if(!templates.containsKey(template.getId())) {
+                    templates.put(template.getId(), template.getTitle());
+                }
             }
           } catch(NotFoundException ex) {
             LOG.error(ex.toString());
@@ -277,7 +275,7 @@ public class ReportDataCollation {
         String templateTitle = templates.get(templateId);
         List<Feedback.Answer> feedbackAnswers =
                                    new ArrayList<Feedback.Answer>();
-        for (FeedbackRequest request: requests) {
+        for (FeedbackRequest request: filtered) {
           if (request.getTemplateId().equals(templateId)) {
             UUID recipientId = request.getRecipientId();
             MemberProfile recipient = memberProfileServices.getById(
