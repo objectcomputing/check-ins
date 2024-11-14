@@ -53,11 +53,18 @@ graalvmNative {
 }
 
 configurations {
-    yarnBuildElements {
+    webUi {
         canBeResolved = true
         canBeConsumed = false
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "yarnBuild-elements"))
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "web-ui"))
+        }
+    }
+    webUiExternalFeedback {
+        canBeResolved = true
+        canBeConsumed = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "web-ui-external-feedback"))
         }
     }
 }
@@ -77,8 +84,8 @@ dependencies {
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
 
-    yarnBuildElements(project(":web-ui"))
-    yarnBuildElements(project(":web-ui-external-feedback"))
+    webUi(project(":web-ui"))
+    webUiExternalFeedback(project(":web-ui-external-feedback"))
 
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("io.micronaut:micronaut-http-client")
@@ -173,12 +180,12 @@ tasks.withType(JavaCompile).configureEach {
 if(System.getenv("SKIP_WEB_UI") == null || System.getenv("SKIP_WEB_UI") == "false") {
     processResources {
         into('public') {
-            from configurations.named('yarnBuildElements')
+            from configurations.named('webUi')
         }
     }
     processResources {
         into('public-external-feedback') {
-            from configurations.named('yarnBuildElements')
+            from configurations.named('webUiExternalFeedback')
         }
     }
 }
