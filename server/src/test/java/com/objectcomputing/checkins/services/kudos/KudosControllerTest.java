@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -46,6 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// Disabled in nativetest due to a ReflectiveOperationException from Gson
+// when attempting to post public Kudos to Slack.
+@DisabledInNativeImage
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class KudosControllerTest extends TestContainersSuite implements KudosFixture, TeamFixture, RoleFixture {
     @Inject
