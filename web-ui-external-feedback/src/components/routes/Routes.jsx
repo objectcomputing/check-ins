@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
-import FeedbackSubmitConfirmation from '../feedback_submit_confirmation/FeedbackSubmitConfirmation';
+import FeedbackSubmitExternalRecipientPage from "../../pages/FeedbackSubmitExternalRecipientPage.jsx";
 
 
 export default function Routes() {
@@ -9,8 +9,8 @@ export default function Routes() {
 
   return (
     <Switch>
-      <Route exact path="/externalFeedback/">
-        <FeedbackSubmitConfirmation />
+      <Route path="/externalFeedback/">
+        <FeedbackSubmitExternalRecipientPage />
       </Route>
     </Switch>
   );

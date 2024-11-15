@@ -8,6 +8,8 @@ import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.cookie.SameSite;
+import io.micronaut.http.netty.cookies.NettyCookie;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
@@ -20,7 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +38,7 @@ public class FeedbackRequestExternalRecipientController {
     private final FeedbackRequestServices feedbackReqServices;
     private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestExternalRecipientController.class);
+    private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
     public FeedbackRequestExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
         this.feedbackReqServices = feedbackRequestServices;
@@ -119,6 +124,22 @@ public class FeedbackRequestExternalRecipientController {
         dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
         dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
         return dto;
+    }
+
+
+
+    @Get("/csrf/cookie")
+    public HttpResponse <?> getCsrfToken()  {
+        LOG.info("CsrfModelProcessor, getCsrfToken");
+        SecureRandom random = new SecureRandom();
+        byte[] randomBytes = new byte[24];
+        random.nextBytes(randomBytes);
+        String cookieValue = base64Encoder.encodeToString(randomBytes);
+
+        return HttpResponse.ok()
+                // set cookie
+                .cookie(new NettyCookie("_csrf", cookieValue).path("/").sameSite(SameSite.Strict)).body(cookieValue)
+                ;
     }
 
 }

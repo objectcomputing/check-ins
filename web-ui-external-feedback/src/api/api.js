@@ -1,9 +1,12 @@
 import { UPDATE_TOAST } from '../context/actions';
 import qs from 'qs';
 
-export const BASE_API_URL = import.meta.env.VITE_APP_API_URL
+export const BASE_API_URL = (
+    import.meta.env.VITE_APP_API_URL
   ? import.meta.env.VITE_APP_API_URL
-  : 'http://localhost:8080';
+  : 'http://localhost:8080'
+  ) + '/services/feedback/requests/external/recipients'
+;
 
 export const getAvatarURL = email =>
   BASE_API_URL +

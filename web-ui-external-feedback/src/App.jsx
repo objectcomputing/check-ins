@@ -95,9 +95,6 @@ function App() {
           <AppContextProvider>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <div>
-                <Menu>
-                  <SchemeToggle />
-                </Menu>
                 <div className="App">
                   <Routes />
                 </div>

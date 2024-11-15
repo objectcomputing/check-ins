@@ -134,6 +134,13 @@ export const getFeedbackRequestById = async (id, cookie) => {
   });
 };
 
+export const getFeedbackRequestByIdForExternalRecipient = async (id, cookie) => {
+  return resolve({
+    url: `/${id}`,
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
 export const getAnswerByRequestAndQuestionId = async (
   requestId,
   questionId,
