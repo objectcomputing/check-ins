@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.security.ImpersonationController;
 import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
+import com.objectcomputing.checkins.services.memberprofile.*;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
@@ -39,10 +40,12 @@ public class FeedbackRequestExternalRecipientController {
     private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestExternalRecipientController.class);
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
+    private final MemberProfileServices memberProfileServices;
 
-    public FeedbackRequestExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
+    public FeedbackRequestExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices, MemberProfileServices memberProfileServices) {
         this.feedbackReqServices = feedbackRequestServices;
         this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
+        this.memberProfileServices = memberProfileServices;
     }
 
     /**
@@ -126,7 +129,45 @@ public class FeedbackRequestExternalRecipientController {
         return dto;
     }
 
+    private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
+        return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+                dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
+                dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
+                dto.getTerminationDate(), dto.getBirthDay(), dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
+    }
 
+    private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
+        return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
+                dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
+                dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate(), dto.getBirthDay(),
+                dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
+    }
+
+    private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
+        MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
+        dto.setId(entity.getId());
+        dto.setFirstName(entity.getFirstName());
+        dto.setMiddleName(entity.getMiddleName());
+        dto.setLastName(entity.getLastName());
+        dto.setSuffix(entity.getSuffix());
+        dto.setName(MemberProfileUtils.getFullName(entity));
+        dto.setTitle(entity.getTitle());
+        dto.setPdlId(entity.getPdlId());
+        dto.setLocation(entity.getLocation());
+        dto.setWorkEmail(entity.getWorkEmail());
+        dto.setEmployeeId(entity.getEmployeeId());
+        dto.setStartDate(entity.getStartDate());
+        dto.setBioText(entity.getBioText());
+        dto.setSupervisorid(entity.getSupervisorid());
+        dto.setTerminationDate(entity.getTerminationDate());
+        dto.setBirthDay(entity.getBirthDate());
+        dto.setLastSeen(entity.getLastSeen());
+        return dto;
+    }
+
+    protected URI location(UUID id) {
+        return URI.create("/member-profiles/" + id);
+    }
 
     @Get("/csrf/cookie")
     public HttpResponse <?> getCsrfToken()  {
@@ -140,6 +181,42 @@ public class FeedbackRequestExternalRecipientController {
                 // set cookie
                 .cookie(new NettyCookie("_csrf", cookieValue).path("/").sameSite(SameSite.Strict)).body(cookieValue)
                 ;
+    }
+
+    /**
+     * Find requestee's member profile for the given FeedbackRequest ID
+     *
+     * @param id {@link UUID} ID of the feedback-reqeust record
+     * @return {@link MemberProfileResponseDTO} Returned member profile
+     */
+    @Get("/getRequesteeForFeedbackRequest/{id}")
+    public HttpResponse<MemberProfileResponseDTO> getRequesteeForFeedbackRequest(UUID id) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
+
+        MemberProfile memberProfile = memberProfileServices.getById(feedbackRequest.getRequesteeId());
+        return HttpResponse.ok(fromEntity(memberProfile))
+                .headers(headers -> headers.location(location(memberProfile.getId())));
+    }
+
+    /**
+     * Find requester's member profile for the given FeedbackRequest ID
+     *
+     * @param id {@link UUID} ID of the feedback-reqeust record
+     * @return {@link MemberProfileResponseDTO} Returned member profile
+     */
+    @Get("/getRequesterForFeedbackRequest/{id}")
+    public HttpResponse<MemberProfileResponseDTO> getRequesterForFeedbackRequest(UUID id) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
+
+        MemberProfile memberProfile = memberProfileServices.getById(feedbackRequest.getCreatorId());
+        return HttpResponse.ok(fromEntity(memberProfile))
+                .headers(headers -> headers.location(location(memberProfile.getId())));
     }
 
 }

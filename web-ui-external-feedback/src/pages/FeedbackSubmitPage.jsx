@@ -10,7 +10,7 @@ import {
   selectProfile
 } from '../context/selectors';
 import { AppContext } from '../context/AppContext';
-import { getFeedbackRequestById } from '../api/feedback';
+import {getRequesteeForFeedbackRequest, getFeedbackRequestByIdForExternalRecipient} from '../api/feedback';
 import Typography from '@mui/material/Typography';
 import { UPDATE_TOAST } from '../context/actions';
 import * as queryString from 'query-string';
@@ -36,10 +36,10 @@ const Root = styled('div')({
 const FeedbackSubmitPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const currentUserId = selectCurrentUser(state)?.id;
   const location = useLocation();
   const history = useHistory();
   const query = queryString.parse(location?.search);
+  const requestId = query.request?.toString();
   const tabs = query.tabs?.toString();
   const requestQuery = query.request?.toString();
   const selfRequestQuery = query.selfrequest?.toString();
@@ -51,11 +51,6 @@ const FeedbackSubmitPage = () => {
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
-
-  function isManager(revieweeProfile) {
-    const supervisorId = revieweeProfile?.supervisorid;
-    return supervisorId === currentUserId;
-  }
 
   useEffect(() => {
     if (!requestQuery && !selfRequestQuery) {
@@ -70,32 +65,30 @@ const FeedbackSubmitPage = () => {
     }
 
     async function getFeedbackRequest(query, cookie) {
-      if (!currentUserId || !cookie || feedbackRequestFetched.current) {
+      console.log("FeedbackSubmitExternalRecipientPage, getFeedbackRequest, requestId: ", requestId);
+      if (!cookie || feedbackRequestFetched.current) {
         return null;
       }
+      console.log("FeedbackSubmitExternalRecipientPage, getFeedbackRequest, past if");
 
       // make call to the API
-      let res = await getFeedbackRequestById(query, cookie);
+      let res = await getFeedbackRequestByIdForExternalRecipient(requestId, cookie);
+      console.log("FeedbackSubmitExternalRecipientPage, getFeedbackRequest, res: ", res);
       return res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-        ? res.payload.data
-        : null;
+      res.payload.data &&
+      res.payload.status === 200 &&
+      !res.error
+          ? res.payload.data
+          : null;
     }
 
-    if (
-      csrf &&
-      currentUserId &&
-      requestQuery &&
-      !feedbackRequestFetched.current
-    ) {
+    if (csrf && requestQuery && !feedbackRequestFetched.current) {
       getFeedbackRequest(requestQuery, csrf).then(request => {
         if (request) {
           // Permission to view this feedback request will be checked later.
           if (
-            request.status.toLowerCase() === 'submitted' ||
-            request.submitDate
+              request.status.toLowerCase() === 'submitted' ||
+              request.submitDate
           ) {
             setRequestSubmitted(true);
             setFeedbackRequest(request);
@@ -117,88 +110,70 @@ const FeedbackSubmitPage = () => {
       });
     }
 
-    if (
-      csrf &&
-      currentUserId &&
-      selfRequestQuery
-    ) {
+    if (csrf && selfRequestQuery) {
       getFeedbackRequest(selfRequestQuery, csrf).then(request => {
         if (request) {
           setSelfReviewRequest(request);
         }
       });
     }
-  }, [csrf, currentUserId, requestQuery, history]);
+  }, [csrf, requestQuery, history]);
 
   useEffect(() => {
-    if (feedbackRequest) {
-      feedbackRequestFetched.current = true;
-    }
+    const fetchDataRequestee = async () => {
+      // Your initialization logic here
+      console.log('Page loaded');
+      // Invoke getRequesteeForFeedbackRequest and assign result to a const-variable
+      const requesteeData = await getRequesteeForFeedbackRequest(feedbackRequest?.id, csrf);
+      console.log("FeedbackSubmitPage, useEffect[feedbackRequest, selfReviewRequest, state], requesteeData: ", requesteeData);
+    };
 
-    if (feedbackRequestFetched.current) {
-      const requesteeProfile = selectProfile(
-        state,
-        feedbackRequest?.requesteeId
-      );
-      setRequestee(requesteeProfile);
+    fetchDataRequestee();
+  }, [csrf, feedbackRequest, state])
+  ;
 
-      const recipientProfile = selectProfile(
-        state,
-        feedbackRequest?.recipientId
-      );
-
-      // If this is our review or we are the manager of the reviewer we are
-      // allowed to view this review.
-      if (recipientProfile?.id != currentUserId &&
-          !isManager(recipientProfile)) {
-        // The current user is not the recipients's manager, we need to leave.
-        history.push('/checkins');
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'error',
-            toast: 'You are not authorized to perform this operation.'
-          }
-        });
+  useEffect(() => {
+    console.log('Page loaded 02');
+      if (feedbackRequest) {
+        feedbackRequestFetched.current = true;
       }
-    }
 
-    if (selfReviewRequest) {
-      const recipientProfile = selectProfile(
-        state,
-        selfReviewRequest?.recipientId
-      );
-      setRecipient(recipientProfile);
-    }
+      if (feedbackRequestFetched.current) {
+        const requesteeProfile = selectProfile(
+            state,
+            feedbackRequest?.requesteeId
+        );
+        setRequestee(requesteeProfile);
+      }
   }, [feedbackRequest, selfReviewRequest, state]);
 
   return (
-    <Root className="feedback-submit-page">
-      {requestCanceled ? (
-        <Typography className={classes.announcement} variant="h3">
-          This feedback request has been canceled.
-        </Typography>
-      ) : tabs || requestSubmitted || selfReviewRequest ? (
-        <TeamMemberReview
-          reviews={[feedbackRequest]}
-          selfReview={selfReviewRequest}
-          memberProfile={recipient ?? requestee}
-        />
-      ) : (
-        <>
-          {feedbackRequest &&
-            (showTips ? (
-              <FeedbackSubmissionTips onNextClick={() => setShowTips(false)} />
-            ) : (
-              <FeedbackSubmitForm
-                requesteeName={requestee?.name}
-                requestId={requestQuery}
-                request={feedbackRequest}
-              />
-            ))}
-        </>
-      )}
-    </Root>
+      <Root className="feedback-submit-page">
+        {requestCanceled ? (
+            <Typography className={classes.announcement} variant="h3">
+              This feedback request has been canceled.
+            </Typography>
+        ) : tabs || requestSubmitted || selfReviewRequest ? (
+            <TeamMemberReview
+                reviews={[feedbackRequest]}
+                selfReview={selfReviewRequest}
+                memberProfile={recipient ?? requestee}
+            />
+        ) : (
+            <>
+              {feedbackRequest &&
+                  (showTips ? (
+                      <FeedbackSubmissionTips onNextClick={() => setShowTips(false)} />
+                  ) : (
+                      <FeedbackSubmitForm
+                          requesteeName={requestee?.name}
+                          requestId={requestQuery}
+                          request={feedbackRequest}
+                      />
+                  ))}
+            </>
+        )}
+      </Root>
   );
 };
 export default FeedbackSubmitPage;

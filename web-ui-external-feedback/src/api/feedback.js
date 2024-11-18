@@ -307,14 +307,9 @@ export const getExternalRecipients = async (cookie) => {
   });
 };
 
-export const putExternalRecipientInactivate = async (externalRecipientId, cookie) => {
+export const getRequesteeForFeedbackRequest = async (id, cookie) => {
   return resolve({
-    method: 'PUT',
-    url: `${feedbackExternalRecipientsURL}/inactivate/${externalRecipientId}`,
-    headers: {
-      'X-CSRF-Header': cookie,
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    url: `/getRequesteeForFeedbackRequest/${id}`,
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
