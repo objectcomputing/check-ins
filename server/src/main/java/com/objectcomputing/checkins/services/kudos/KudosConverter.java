@@ -34,7 +34,7 @@ public class KudosConverter {
     }
 
     public String toSlackBlock(Kudos kudos) {
-        // Build some the message text out of the Kudos data.
+        // Build the message text out of the Kudos data.
         List<RichTextElement> content = new ArrayList<>();
 
         // Look up the channel id from Slack
@@ -93,7 +93,7 @@ public class KudosConverter {
     }
 
     private RichTextElement memberAsRichText(UUID memberId) {
-        // Look up the user name to get the user id from Slack
+        // Look up the user id by email address on Slack
         SlackSearch search = new SlackSearch();
         MemberProfile profile = memberProfileServices.getById(memberId);
         String userId = search.findUserId(profile.getWorkEmail());
