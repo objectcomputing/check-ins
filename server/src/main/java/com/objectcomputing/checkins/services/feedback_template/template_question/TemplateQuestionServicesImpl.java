@@ -170,4 +170,5 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
         return (currentUserId != null || (feedbackTemplate.isPresent() && feedbackTemplate.get().getIsForExternalRecipient() != null && feedbackTemplate.get().getIsForExternalRecipient() == true));
     }
+
 }

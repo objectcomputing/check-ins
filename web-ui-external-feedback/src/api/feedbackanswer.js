@@ -2,7 +2,7 @@ import { resolve } from './api.js';
 import { chain } from 'lodash';
 
 const feedbackAnswerUrl = '/services/feedback/answers';
-const questionsAndAnswersUrl = '/services/feedback/questions-and-answers';
+const questionsAndAnswersUrl = '/questions-and-answers';
 
 export const createFeedbackAnswer = async (feedbackAnswer, cookie) => {
   return resolve({
@@ -36,7 +36,7 @@ export const getAnswersFromRequest = async (feedbackRequestId, cookie) => {
 
 export const getQuestionAndAnswer = async (requestId, cookie) => {
   return resolve({
-    url: `${questionsAndAnswersUrl}/${requestId}`,
+    url: `/getAllQuestionsAndAnswers/${requestId}`,
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.security.ImpersonationController;
+import com.objectcomputing.checkins.services.feedback_answer.question_and_answer.QuestionAndAnswerServices;
 import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.memberprofile.*;
 import io.micronaut.core.annotation.Nullable;
@@ -41,11 +42,13 @@ public class FeedbackRequestExternalRecipientController {
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestExternalRecipientController.class);
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
     private final MemberProfileServices memberProfileServices;
+    private final QuestionAndAnswerServices questionAndAnswerServices;
 
-    public FeedbackRequestExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices, MemberProfileServices memberProfileServices) {
+    public FeedbackRequestExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices, MemberProfileServices memberProfileServices, QuestionAndAnswerServices questionAndAnswerServices) {
         this.feedbackReqServices = feedbackRequestServices;
         this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
         this.memberProfileServices = memberProfileServices;
+        this.questionAndAnswerServices = questionAndAnswerServices;
     }
 
     /**
@@ -217,6 +220,15 @@ public class FeedbackRequestExternalRecipientController {
         MemberProfile memberProfile = memberProfileServices.getById(feedbackRequest.getCreatorId());
         return HttpResponse.ok(fromEntity(memberProfile))
                 .headers(headers -> headers.location(location(memberProfile.getId())));
+    }
+
+    @Get("/getAllQuestionsAndAnswers/{requestId}")
+    public List<QuestionAndAnswerServices.Tuple> getAllQuestionsAndAnswers(@Nullable UUID requestId) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(requestId);
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
+        return questionAndAnswerServices.getAllQuestionsAndAnswers(requestId);
     }
 
 }

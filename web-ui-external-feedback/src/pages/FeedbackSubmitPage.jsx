@@ -121,31 +121,23 @@ const FeedbackSubmitPage = () => {
 
   useEffect(() => {
     const fetchDataRequestee = async () => {
-      // Your initialization logic here
-      console.log('Page loaded');
-      // Invoke getRequesteeForFeedbackRequest and assign result to a const-variable
-      const requesteeData = await getRequesteeForFeedbackRequest(feedbackRequest?.id, csrf);
-      console.log("FeedbackSubmitPage, useEffect[feedbackRequest, selfReviewRequest, state], requesteeData: ", requesteeData);
+      if (feedbackRequest) {
+        feedbackRequestFetched.current = true;
+      }
+      if (feedbackRequestFetched.current) {
+        const res = await getRequesteeForFeedbackRequest(feedbackRequest?.id, csrf);
+        const requesteeData = res.payload && res.payload.data && res.payload.status === 200 && !res.error
+            ? res.payload.data
+            : null
+        ;
+        console.log("FeedbackSubmitPage, useEffect[feedbackRequest, selfReviewRequest, state], requesteeData: ", requesteeData);
+        setRequestee(requesteeData)
+      }
     };
 
     fetchDataRequestee();
   }, [csrf, feedbackRequest, state])
   ;
-
-  useEffect(() => {
-    console.log('Page loaded 02');
-      if (feedbackRequest) {
-        feedbackRequestFetched.current = true;
-      }
-
-      if (feedbackRequestFetched.current) {
-        const requesteeProfile = selectProfile(
-            state,
-            feedbackRequest?.requesteeId
-        );
-        setRequestee(requesteeProfile);
-      }
-  }, [feedbackRequest, selfReviewRequest, state]);
 
   return (
       <Root className="feedback-submit-page">
@@ -163,7 +155,9 @@ const FeedbackSubmitPage = () => {
             <>
               {feedbackRequest &&
                   (showTips ? (
-                      <FeedbackSubmissionTips onNextClick={() => setShowTips(false)} />
+                      <FeedbackSubmissionTips onNextClick={() =>
+                          setShowTips(false)
+                      } />
                   ) : (
                       <FeedbackSubmitForm
                           requesteeName={requestee?.name}
