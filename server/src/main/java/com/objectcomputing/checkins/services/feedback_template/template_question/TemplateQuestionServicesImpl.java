@@ -153,12 +153,11 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         return createIsPermitted(templateCreatorId);
     }
 
-    public boolean getIsPermitted(UUID templateQuestionId) {
+    public boolean getIsPermitted(UUID templateId) {
         UUID currentUserId;
         MemberProfile currentUser;
 
-        final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(templateQuestionId);
-        final Optional<FeedbackTemplate> feedbackTemplate = (templateQuestion.isPresent()) ? feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId()) : null;
+        final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateId);
 
         try {
             currentUser = currentUserServices.getCurrentUser();
@@ -168,7 +167,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             currentUserId = null;
         }
 
-        return (currentUserId != null || (feedbackTemplate.isPresent() && feedbackTemplate.get().getIsForExternalRecipient() != null && feedbackTemplate.get().getIsForExternalRecipient() == true));
+        return (currentUserId != null || (feedbackTemplate != null && feedbackTemplate.isPresent() && feedbackTemplate.get().getIsForExternalRecipient() != null && feedbackTemplate.get().getIsForExternalRecipient() == true));
     }
 
 }

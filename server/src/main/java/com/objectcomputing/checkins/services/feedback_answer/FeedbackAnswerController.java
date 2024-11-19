@@ -82,7 +82,7 @@ public class FeedbackAnswerController {
     @Get("/{?questionId,requestId}")
     @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     public List<FeedbackAnswerResponseDTO> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
-        return feedbackAnswerServices.findByValues(questionId, requestId, null)
+        return feedbackAnswerServices.findByValues(questionId, requestId)
                 .stream()
                 .map(this::fromEntity)
                 .toList();

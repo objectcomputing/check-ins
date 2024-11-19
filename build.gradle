@@ -8,5 +8,6 @@ tasks.named("sonarqube") {
 }
 
 tasks.named("sonar") {
+    dependsOn ":web-ui:yarn_run_coverage", ":server:jacocoTestReport"
     dependsOn ":web-ui-external-feedback:yarn_run_coverage", ":server:jacocoTestReport"
 }

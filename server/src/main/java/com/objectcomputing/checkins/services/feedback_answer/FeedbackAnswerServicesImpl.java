@@ -98,7 +98,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     @Override
-    public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId, @Nullable UUID externalRecipientId) {
+    public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         List<FeedbackAnswer> response = new ArrayList<>();
         FeedbackRequest feedbackRequest;
         MemberProfile currentUser;
@@ -123,11 +123,11 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         boolean isRequesteesSupervisor = requesteeId != null && currentUserId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID requesteePDL = requestee.getPdlId();
-        if (currentUserServices.isAdmin() || (currentUserId != null && currentUserId.equals(requesteePDL)) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || (recipientId != null && recipientId.equals(currentUserId))) {
+        if (currentUserServices.isAdmin() || (currentUserId != null && currentUserId.equals(requesteePDL)) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || (recipientId != null && recipientId.equals(currentUserId)) || (currentUserId != null && feedbackRequestServices.selfRevieweeIsCurrentUserReviewee(feedbackRequest, currentUserId))) {
             response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
             return response;
-        } else if (externalRecipientId != null) {
-            response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId), externalRecipientId.toString()));
+        } else if (feedbackRequest.getExternalRecipientId() != null) {
+            response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
             return response;
         }
 
@@ -175,7 +175,11 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         }
         final UUID currentUserId = (currentUser != null) ? currentUserServices.getCurrentUser().getId() : null;
 
-        final boolean isAdmin = currentUserServices.isAdmin();
+        // Admins can always get questions and answers.
+        if (currentUser != null && currentUserServices.isAdmin()) {
+            return true;
+        }
+
         final UUID requestCreatorId = feedbackRequest.getCreatorId();
         UUID requesteeId = feedbackRequest.getRequesteeId();
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
@@ -190,6 +194,6 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
         final UUID requesteePDL = requestee.getPdlId();
 
-        return isAdmin || (currentUserId != null && currentUserId.equals(requesteePDL)) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || (recipientId != null && recipientId.equals(currentUserId)) || feedbackRequest.getExternalRecipientId()!= null;
+        return (currentUserId != null && currentUserId.equals(requesteePDL)) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || (recipientId != null && recipientId.equals(currentUserId)) || feedbackRequest.getExternalRecipientId()!= null;
     }
 }

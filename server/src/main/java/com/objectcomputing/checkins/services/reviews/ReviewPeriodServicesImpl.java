@@ -220,7 +220,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                     createReviewRequest(
                         period, findCreatorId(assignment.getReviewerId()),
                         assignment.getRevieweeId(), assignment.getReviewerId(),
-                        reviewTemplateId, closeDate, null); /** TODO Luch recipient Id **/
+                        reviewTemplateId, closeDate, null);
                 }
             }
 
@@ -230,7 +230,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                     createReviewRequest(period, findCreatorId(memberId),
                                         memberId, memberId,
                                         selfReviewTemplateId,
-                                        selfReviewCloseDate, null); /** TODO Luch recipient Id **/
+                                        selfReviewCloseDate, null);
                 }
             }
 

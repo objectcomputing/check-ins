@@ -220,8 +220,6 @@ public class ReportDataCollation {
       // We will need to cross-reference the templates.
       LocalDateRange dateRange = getDateRange();
       List<FeedbackRequest> requests =
-        feedbackRequestServices.findByValues(null, memberId, null, null, null, null, null, null);
-
         feedbackRequestServices.findByValues(null, memberId, null, reviewPeriod.getPeriodStartDate().toLocalDate(), null, null, null, null);
       List<FeedbackRequest> filtered = new LinkedList<>();
       // Iterate over each request and find the template.  Determine the purpose
@@ -283,7 +281,7 @@ public class ReportDataCollation {
                 recipientId.toString() :
                 MemberProfileUtils.getFullName(recipient));
             List<FeedbackAnswer> answers =
-                   feedbackAnswerServices.findByValues(null, request.getId(), null);
+                   feedbackAnswerServices.findByValues(null, request.getId());
             for (FeedbackAnswer answer : answers) {
               String questionText;
               String questionType = textQuestion;

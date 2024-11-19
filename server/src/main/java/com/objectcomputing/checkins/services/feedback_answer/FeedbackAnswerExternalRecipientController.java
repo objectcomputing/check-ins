@@ -90,12 +90,11 @@ public class FeedbackAnswerExternalRecipientController {
      *
      * @param questionId The attached {@link UUID} of the related question
      * @param requestId  The attached {@link UUID} of the request that corresponds with the answer
-     * @param externalRecipientId  The attached {@link UUID} of the external-recipient that corresponds with the answer
      * @return {@link FeedbackAnswerResponseDTO}
      */
-    @Get("/{?questionId,requestId,externalRecipientId}")
-    public List<FeedbackAnswerResponseDTO> findByValues(@Nullable UUID questionId, @Nullable UUID requestId, @Nullable UUID externalRecipientId) {
-        return feedbackAnswerServices.findByValues(questionId, requestId, externalRecipientId)
+    @Get("/{?questionId,requestId}")
+    public List<FeedbackAnswerResponseDTO> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+        return feedbackAnswerServices.findByValues(questionId, requestId)
                 .stream()
                 .map(this::fromEntity)
                 .toList();

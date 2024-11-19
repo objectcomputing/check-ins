@@ -165,6 +165,7 @@ public class FeedbackTemplate {
     public static boolean customEquals(Boolean a, Boolean b) {
         if (Boolean.FALSE.equals(a) && b == null) return true;
         if (a == null && Boolean.FALSE.equals(b)) return true;
+        // Objects.equals returns true if both are null
         return Objects.equals(a, b);
     }
 
