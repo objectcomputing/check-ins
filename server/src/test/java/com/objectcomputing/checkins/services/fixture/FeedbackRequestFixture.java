@@ -115,8 +115,13 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      * @return The saved {@link FeedbackRequest}
      */
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
-        LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId(), null));
+        return saveSampleFeedbackRequest(creator, requestee, recipient, templateId, reviewPeriod, "pending");
+    }
+
+    default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod, String status) {
+        LocalDate submitDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), reviewPeriod.getCloseDate());
+        LocalDate sendDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), submitDate.atStartOfDay());
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, sendDate, null, status, submitDate, reviewPeriod.getId(), null));
     }
 
     /**

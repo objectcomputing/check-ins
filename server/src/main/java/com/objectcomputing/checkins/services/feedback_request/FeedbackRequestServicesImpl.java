@@ -338,34 +338,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     public FeedbackRequest getById(UUID id) {
-        MemberProfile currentUser;
-
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-        } catch (NotFoundException notFoundException) {
-            currentUser = null;
-        }
-
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
         if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
-        final LocalDate sendDate = feedbackReq.get().getSendDate();
-        final UUID requesteeId = feedbackReq.get().getRequesteeId();
-        final UUID recipientId = feedbackReq.get().getRecipientId();
-        final UUID externalRecipientId = feedbackReq.get().getExternalRecipientId();
-        final UUID recipientOrExternalRecipientId = (recipientId != null) ? recipientId : externalRecipientId;
-        if (currentUser != null) {
-            if (!getIsPermitted(requesteeId, recipientOrExternalRecipientId, sendDate)) {
+        if (feedbackReq.get().getExternalRecipientId() != null) {
+            if (!getIsPermittedForExternalRecipient(feedbackReq.get())) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         } else {
-            if (externalRecipientId == null) {
+            if (!getIsPermitted(feedbackReq.get())) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
-            } else {
-                if (!getIsPermittedForExternalRecipient(requesteeId, sendDate)) {
-                    throw new PermissionException(NOT_AUTHORIZED_MSG);
-                }
             }
         }
         return feedbackReq.get();
@@ -373,8 +356,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, UUID externalRecipientId, List<UUID> requesteeIds) {
-
+        MemberProfile currentUser;
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
+
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+        } catch (NotFoundException notFoundException) {
+            currentUser = null;
+        }
+        if (currentUser == null && externalRecipientId == null) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
         if (requesteeIds != null && !requesteeIds.isEmpty()) {
             LOG.debug("Finding feedback requests for {} requesteeIds.", requesteeIds.size());
             feedbackReqList.addAll(feedbackReqRepository.findByValuesWithRequesteeIds(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDToString(externalRecipientId), Util.nullSafeUUIDListToStringList(requesteeIds)));
@@ -382,26 +374,26 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             LOG.debug("Finding feedback requests one or fewer requesteeIds: {}", requesteeId);
             feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDToString(externalRecipientId)));
         }
-
         feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
             boolean visible = false;
             if (currentUserServices.isAdmin()) {
                 visible = true;
             } else if (request != null) {
-                MemberProfile currentUser;
-                UUID currentUserId;
+                MemberProfile currentUserLambda;
+                UUID currentUserIdLambda;
 
                 try {
-                    currentUser = currentUserServices.getCurrentUser();
-                    currentUserId = currentUser.getId();
+                    currentUserLambda = currentUserServices.getCurrentUser();
+                    currentUserIdLambda = currentUserLambda.getId();
                 } catch (NotFoundException notFoundException) {
-                    currentUser = null;
-                    currentUserId = null;
+                    currentUserLambda = null;
+                    currentUserIdLambda = null;
                 }
-                if (currentUserId != null) {
-                    if (currentUserId.equals(request.getCreatorId())) visible = true;
-                    if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
-                    if (currentUserId.equals(request.getRecipientId())) visible = true;
+                if (currentUserIdLambda != null) {
+                    if (currentUserIdLambda.equals(request.getCreatorId())) visible = true;
+                    if (isSupervisor(request.getRequesteeId(), currentUserIdLambda)) visible = true;
+                    if (currentUserIdLambda.equals(request.getRecipientId())) visible = true;
+                    if (selfRevieweeIsCurrentUserReviewee(request, currentUserIdLambda)) visible = true;
                 } else {
                     if (request.getExternalRecipientId() != null) visible = true;
                 }
@@ -418,8 +410,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                 && memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
     }
 
-    public boolean selfRevieweeIsCurrentUserReviewee(FeedbackRequest request,
-                                                     UUID currentUserId) {
+    public boolean selfRevieweeIsCurrentUserReviewee(FeedbackRequest request, UUID currentUserId) {
         // If we are looking at a self-review request, see if there is a review
         // request in the same review period that is assigned to the current
         // user and the requestee is the same as the self-review request.  If
@@ -446,28 +437,29 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || currentUserId.equals(requesteeId);
     }
 
-    private boolean getIsPermitted(UUID requesteeId, UUID recipientOrExternalRecipientId, LocalDate sendDate) {
-        LocalDate today = LocalDate.now();
-        boolean getIsPermittedReturn;
+    private boolean getIsPermitted(FeedbackRequest feedbackReq) {
+        final LocalDate sendDate = feedbackReq.getSendDate();
+        final UUID requesteeId = feedbackReq.getRequesteeId();
+        final UUID recipientId = feedbackReq.getRecipientId();
+        final LocalDate today = LocalDate.now();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
         // The recipient can only access the feedback request after it has been sent
-        if (sendDate.isAfter(today) && currentUserId.equals(recipientOrExternalRecipientId)) {
+        if (sendDate.isAfter(today) && currentUserId.equals(recipientId)) {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
 
-        getIsPermittedReturn = createIsPermitted(requesteeId) || currentUserId.equals(recipientOrExternalRecipientId);
-        return getIsPermittedReturn;
+        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId) || selfRevieweeIsCurrentUserReviewee(feedbackReq, currentUserId);
     }
 
-    private boolean getIsPermittedForExternalRecipient(UUID requesteeId, LocalDate sendDate) {
-        LocalDate today = LocalDate.now();
+    private boolean getIsPermittedForExternalRecipient(FeedbackRequest feedbackReq) {
+        final LocalDate sendDate = feedbackReq.getSendDate();
+        final LocalDate today = LocalDate.now();
 
         // The recipient can only access the feedback request after it has been sent
         if (sendDate.isAfter(today)) {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
-
         return true;
     }
 

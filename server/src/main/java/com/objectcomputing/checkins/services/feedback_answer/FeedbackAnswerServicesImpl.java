@@ -173,7 +173,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         } catch (NotFoundException e) {
             currentUser = null;
         }
-        final UUID currentUserId = (currentUser != null) ? currentUserServices.getCurrentUser().getId() : null;
+        final UUID currentUserId = (currentUser != null) ? currentUser.getId() : null;
 
         // Admins can always get questions and answers.
         if (currentUser != null && currentUserServices.isAdmin()) {
@@ -181,19 +181,27 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         }
 
         final UUID requestCreatorId = feedbackRequest.getCreatorId();
+        if (requestCreatorId.equals(currentUserId)) return true;
+
         UUID requesteeId = feedbackRequest.getRequesteeId();
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor;
+        if ((recipientId != null && recipientId.equals(currentUserId))) return true;
 
+        // See if the current user is the requestee's supervisor.
         if  (requesteeId != null && currentUserId != null) {
-            isRequesteesSupervisor = memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
-        } else {
-            isRequesteesSupervisor = false;
+            boolean isRequesteesSupervisor = memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
+            if (isRequesteesSupervisor) return true;
         }
 
+        // See if the current user is the requestee's PDL.
         final UUID requesteePDL = requestee.getPdlId();
+        if (currentUserId != null && currentUserId.equals(requesteePDL)) return true;
 
-        return (currentUserId != null && currentUserId.equals(requesteePDL)) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || (recipientId != null && recipientId.equals(currentUserId)) || feedbackRequest.getExternalRecipientId()!= null;
+        if (feedbackRequest.getExternalRecipientId()!= null) return true;
+
+        if (feedbackRequestServices.selfRevieweeIsCurrentUserReviewee(feedbackRequest, currentUserId)) return true;
+
+        return  false;
     }
 }
