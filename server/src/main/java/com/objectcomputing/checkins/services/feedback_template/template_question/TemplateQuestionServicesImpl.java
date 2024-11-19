@@ -116,12 +116,14 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     @Override
     public TemplateQuestion getById(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
-        if (!getIsPermitted(id)) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
-
-        if (templateQuestion.isEmpty()) {
+        if (templateQuestion == null || templateQuestion.isEmpty()) {
             throw new NotFoundException("No feedback question with ID " + id);
+        }
+        final Optional<FeedbackTemplate> feedbackTemplateOptional = feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId());
+        FeedbackTemplate feedbackTemplate = feedbackTemplateOptional != null && feedbackTemplateOptional.isPresent() ? feedbackTemplateOptional.get() : null;
+
+        if (!getIsPermitted(feedbackTemplate)) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return templateQuestion.get();
@@ -131,10 +133,14 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     public List<TemplateQuestion> findByFields(UUID templateId) {
         if (templateId == null) {
             throw new BadArgException("Cannot find template questions for null template ID");
-        } else if (!getIsPermitted(templateId)) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
+        final Optional<FeedbackTemplate> feedbackTemplateOptional = feedbackTemplateRepo.findById(templateId);
+        FeedbackTemplate feedbackTemplate = feedbackTemplateOptional != null && feedbackTemplateOptional.isPresent() ? feedbackTemplateOptional.get() : null;
+
+        if (!getIsPermitted(feedbackTemplate)) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
         return new ArrayList<>(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));
     }
 
@@ -153,13 +159,9 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         return createIsPermitted(templateCreatorId);
     }
 
-    public boolean getIsPermitted(UUID templateId) {
+    public boolean getIsPermitted(FeedbackTemplate feedbackTemplate) {
         UUID currentUserId;
         MemberProfile currentUser;
-
-        final Optional<FeedbackTemplate> feedbackTemplateOptional = feedbackTemplateRepo.findById(templateId);
-        FeedbackTemplate feedbackTemplate;
-        feedbackTemplate = feedbackTemplateOptional.orElse(null);
 
         try {
             currentUser = currentUserServices.getCurrentUser();
@@ -168,7 +170,6 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             currentUser = null;
             currentUserId = null;
         }
-
         if (currentUserId != null) return true;
 
         boolean templateForExternalRecipient = (feedbackTemplate != null && feedbackTemplate.getIsForExternalRecipient() == true);

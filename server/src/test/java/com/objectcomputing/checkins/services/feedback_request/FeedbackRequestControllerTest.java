@@ -803,12 +803,21 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, externalRecipient);
 
         //get feedback request
-        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
-                .basicAuth(unrelatedPdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpRequest<?> requestHttp = HttpRequest.GET(String.format("%s", feedbackRequest.getId())).basicAuth(unrelatedPdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+
+        // Access by un-assigned PDL is allowed since the recipient is an external recipient
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(requestHttp, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+
+        /*
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
+                client.toBlocking().exchange(requestHttp, Map.class));
 
         assertUnauthorized(responseException);
+        */
     }
 
     @Test
@@ -840,13 +849,20 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, externalRecipient);
 
         //get feedback request
-        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
-                .basicAuth(memberProfile2.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId())).basicAuth(memberProfile2.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        // Access by requestee is allowed since the recipient is an external recipient
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+
+        /*
+        Older:
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
         // requestee should not be able to get the feedback request about them
         assertUnauthorized(responseException);
+        */
     }
 
     @Test
@@ -2353,8 +2369,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         getFeedbackRequestRepository().save(feedbackRequest);
 
         //get feedback request
-        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
-                .basicAuth(adminUser.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId())).basicAuth(adminUser.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         // the sendDate must be before the sent date unless its an admin

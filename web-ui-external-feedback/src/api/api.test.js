@@ -6,13 +6,13 @@ const successResult = { id: 123, name: 'test result' };
 
 const server = setupServer(
   ...[
-    http.get('http://localhost:8080/fail', () => {
+    http.get('http://localhost:8080/services/feedback/requests/external/recipients/fail', () => {
       return HttpResponse.json(
         { message: 'Internal Server PROBLEM' },
         { status: 500 }
       );
     }),
-    http.get('http://localhost:8080/success', () => {
+    http.get('http://localhost:8080/services/feedback/requests/external/recipients/success', () => {
       return HttpResponse.json(successResult);
     })
   ]

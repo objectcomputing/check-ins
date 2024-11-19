@@ -415,7 +415,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         // request in the same review period that is assigned to the current
         // user and the requestee is the same as the self-review request.  If
         // so, this user is allowed to see the self-review request.
-        if (request.getRecipientId().equals(request.getRequesteeId())) {
+        if (request.getRecipientId() != null && request.getRecipientId().equals(request.getRequesteeId())) {
             List<FeedbackRequest> other = feedbackReqRepository.findByValues(
                 null, request.getRecipientId().toString(),
                 currentUserId.toString(), null,
@@ -455,9 +455,16 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean getIsPermittedForExternalRecipient(FeedbackRequest feedbackReq) {
         final LocalDate sendDate = feedbackReq.getSendDate();
         final LocalDate today = LocalDate.now();
+        MemberProfile currentUser;
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+        } catch (NotFoundException notFoundException) {
+            currentUser = null;
+        }
 
         // The recipient can only access the feedback request after it has been sent
-        if (sendDate.isAfter(today)) {
+        // Since request is for an external recipient, any logged in user can access it as long as they have feedback-reques-id
+        if (sendDate.isAfter(today) && currentUser == null) {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
         return true;
