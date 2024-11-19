@@ -10,11 +10,12 @@ import java.time.temporal.ChronoUnit;
 public interface ReviewPeriodFixture extends RepositoryFixture {
 
     default ReviewPeriod createADefaultReviewPeriod() {
-        LocalDateTime launchDate = LocalDateTime.now().plusDays(1).atStartOfDay();
-        LocalDateTime selfReviewCloseDate = launchDate.plusDays(2);
-        LocalDateTime closeDate = selfReviewCloseDate.plusDays(2);
-        LocalDateTime startDate = launchDate.minusDays(31);
-        LocalDateTime endDate = launchDate.minusDays(1);
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1)
+                                                .truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
         return getReviewPeriodRepository().save(
           new ReviewPeriod("Period of Time", ReviewStatus.OPEN, null, null,
                            launchDate, selfReviewCloseDate, closeDate,
@@ -26,11 +27,12 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
     }
 
     default ReviewPeriod createADefaultReviewPeriod(ReviewStatus reviewStatus, UUID templateId) {
-        LocalDateTime launchDate = LocalDateTime.now().plusDays(1).atStartOfDay();
-        LocalDateTime selfReviewCloseDate = launchDate.plusDays(2);
-        LocalDateTime closeDate = selfReviewCloseDate.plusDays(3);
-        LocalDateTime startDate = launchDate.minusDays(31);
-        LocalDateTime endDate = launchDate.minusDays(1);
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1)
+                                                .truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
         return getReviewPeriodRepository().save(
           new ReviewPeriod("Period of Time", reviewStatus, templateId, null,
                            launchDate, selfReviewCloseDate, closeDate,
@@ -41,12 +43,12 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
                              LocalDateTime launchDate,
                              ReviewStatus reviewStatus,
                              UUID templateId, UUID selfReviewTemplateId) {
-        launchDate = launchDate.atStartOfDay();
+        launchDate = launchDate.truncatedTo(ChronoUnit.MILLIS);
 
-        LocalDateTime selfReviewCloseDate = launchDate.plusDays(2);
-        LocalDateTime closeDate = selfReviewCloseDate.plusDays(2);
-        LocalDateTime startDate = launchDate.minusDays(31);
-        LocalDateTime endDate = launchDate.minusDays(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(4);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
         return getReviewPeriodRepository().save(
           new ReviewPeriod("Specific Launch Date", reviewStatus, templateId,
                            selfReviewTemplateId,
@@ -55,11 +57,12 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
     }
 
     default ReviewPeriod createASecondaryReviewPeriod() {
-        LocalDateTime launchDate = LocalDateTime.now().plusDays(1).atStartOfDay();
-        LocalDateTime selfReviewCloseDate = launchDate.plusDays(2);
-        LocalDateTime closeDate = selfReviewCloseDate.plusDays(2);
-        LocalDateTime startDate = launchDate.minusDays(31);
-        LocalDateTime endDate = launchDate.minusDays(1);
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1)
+                                                .truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
         return getReviewPeriodRepository().save(
           new ReviewPeriod("Period of Play", ReviewStatus.OPEN, null, null,
                            launchDate, selfReviewCloseDate, closeDate,
@@ -67,17 +70,19 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
     }
 
     default ReviewPeriod createAClosedReviewPeriod() {
-        LocalDateTime launchDate = LocalDateTime.now().plusDays(1).atStartOfDay();
-        LocalDateTime selfReviewCloseDate = launchDate.plusDays(2);
-        LocalDateTime closeDate = selfReviewCloseDate.plusDays(2);
-        LocalDateTime startDate = launchDate.minusDays(31);
-        LocalDateTime endDate = launchDate.minusDays(1);
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1)
+                                                .truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
         return createAClosedReviewPeriod(startDate, endDate);
     }
 
     default ReviewPeriod createAClosedReviewPeriod(
                            LocalDateTime periodStart, LocalDateTime periodEnd) {
-        LocalDateTime launchDate = periodEnd.plusDays(1).atStartOfDay();
+        LocalDateTime launchDate = periodEnd.plusMinutes(1)
+                                                .truncatedTo(ChronoUnit.MILLIS).plusDays(1);
         LocalDateTime selfReviewCloseDate = launchDate.plusDays(3);
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(7);
         return getReviewPeriodRepository().save(
