@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -43,9 +44,10 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
     @Override
     public FeedbackAnswer save(FeedbackAnswer feedbackAnswer) {
+        UUID questionId = feedbackAnswer.getQuestionId();
 
         // Ensure that related question exists
-        templateQuestionServices.getById(feedbackAnswer.getQuestionId());
+        TemplateQuestion templateQuestion = templateQuestionServices.getById(questionId);
 
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!createIsPermitted(relatedFeedbackRequest)) {

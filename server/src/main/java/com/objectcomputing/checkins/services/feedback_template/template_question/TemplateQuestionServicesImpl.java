@@ -157,7 +157,9 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         UUID currentUserId;
         MemberProfile currentUser;
 
-        final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateId);
+        final Optional<FeedbackTemplate> feedbackTemplateOptional = feedbackTemplateRepo.findById(templateId);
+        FeedbackTemplate feedbackTemplate;
+        feedbackTemplate = feedbackTemplateOptional.orElse(null);
 
         try {
             currentUser = currentUserServices.getCurrentUser();
@@ -167,7 +169,12 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             currentUserId = null;
         }
 
-        return (currentUserId != null || (feedbackTemplate != null && feedbackTemplate.isPresent() && feedbackTemplate.get().getIsForExternalRecipient() != null && feedbackTemplate.get().getIsForExternalRecipient() == true));
+        if (currentUserId != null) return true;
+
+        boolean templateForExternalRecipient = (feedbackTemplate != null && feedbackTemplate.getIsForExternalRecipient() == true);
+        if (templateForExternalRecipient) return true;
+
+        return false;
     }
 
 }
