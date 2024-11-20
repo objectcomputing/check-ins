@@ -2,15 +2,19 @@ import React, { useContext } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage.jsx";
+import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation.jsx";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
 
   return (
     <Switch>
-      <Route path="/externalFeedback/">
+      <Route path="/externalFeedback/submit">
         <FeedbackSubmitPage />
       </Route>
+        <Route exact path="/externalFeedback/submit/confirmation">
+            <FeedbackSubmitConfirmation />
+        </Route>
     </Switch>
   );
 }
