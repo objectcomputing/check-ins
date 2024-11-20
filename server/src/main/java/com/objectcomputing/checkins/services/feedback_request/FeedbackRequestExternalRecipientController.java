@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.security.ImpersonationController;
+import com.objectcomputing.checkins.services.feedback_answer.*;
 import com.objectcomputing.checkins.services.feedback_answer.question_and_answer.QuestionAndAnswerServices;
 import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.memberprofile.*;
@@ -43,12 +44,18 @@ public class FeedbackRequestExternalRecipientController {
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
     private final MemberProfileServices memberProfileServices;
     private final QuestionAndAnswerServices questionAndAnswerServices;
+    private final FeedbackAnswerServices feedbackAnswerServices;
 
-    public FeedbackRequestExternalRecipientController(FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices, MemberProfileServices memberProfileServices, QuestionAndAnswerServices questionAndAnswerServices) {
+    public FeedbackRequestExternalRecipientController(
+            FeedbackRequestServices feedbackRequestServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices,
+            MemberProfileServices memberProfileServices, QuestionAndAnswerServices questionAndAnswerServices,
+            FeedbackAnswerServices feedbackAnswerServices
+    ) {
         this.feedbackReqServices = feedbackRequestServices;
         this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
         this.memberProfileServices = memberProfileServices;
         this.questionAndAnswerServices = questionAndAnswerServices;
+        this.feedbackAnswerServices = feedbackAnswerServices;
     }
 
     /**
@@ -229,6 +236,62 @@ public class FeedbackRequestExternalRecipientController {
             throw new BadArgException("This feedback request is not for an external recipient");
         }
         return questionAndAnswerServices.getAllQuestionsAndAnswers(requestId);
+    }
+
+    /**
+     * Create a feedback answer
+     *
+     * @param requestBody {@link FeedbackAnswerCreateDTO} New feedback answer to create
+     * @return {@link FeedbackAnswerResponseDTO}
+     */
+    @Post("/feedback/answers")
+    public HttpResponse<FeedbackAnswerResponseDTO> save(@Body @Valid @NotNull FeedbackAnswerCreateDTO requestBody) {
+        FeedbackAnswer feedbackAnswer = fromDTO(requestBody);
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(feedbackAnswer.getRequestId());
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
+        FeedbackAnswer savedAnswer = feedbackAnswerServices.save(feedbackAnswer);
+        return HttpResponse.created(fromEntity(savedAnswer))
+                .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())))
+                ;
+    }
+
+    /**
+     * Update a feedback answer
+     *
+     * @param requestBody {@link FeedbackAnswerUpdateDTO} The updated feedback answer
+     * @return {@link FeedbackAnswerResponseDTO}
+     */
+    @Put("/feedback/answers")
+    public HttpResponse<FeedbackAnswerResponseDTO> update(@Body @Valid @NotNull FeedbackAnswerUpdateDTO requestBody) {
+        FeedbackAnswer feedbackAnswer = feedbackAnswerServices.getById(fromDTO(requestBody).getId());
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(feedbackAnswer.getRequestId());
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
+        FeedbackAnswer savedAnswer = feedbackAnswerServices.update(feedbackAnswer);
+        return HttpResponse.ok(fromEntity(savedAnswer))
+                .headers(headers -> headers.location(URI.create("/feedback_answer/" + savedAnswer.getId())))
+                ;
+    }
+
+    private FeedbackAnswer fromDTO(FeedbackAnswerCreateDTO dto) {
+        return new FeedbackAnswer(dto.getAnswer(), dto.getQuestionId(), dto.getRequestId(), dto.getSentiment());
+    }
+
+    private FeedbackAnswer fromDTO(FeedbackAnswerUpdateDTO dto) {
+        return new FeedbackAnswer(dto.getId(), dto.getAnswer(), dto.getSentiment());
+    }
+
+    private FeedbackAnswerResponseDTO fromEntity(FeedbackAnswer feedbackAnswer) {
+        FeedbackAnswerResponseDTO dto = new FeedbackAnswerResponseDTO();
+        dto.setId(feedbackAnswer.getId());
+        dto.setAnswer(feedbackAnswer.getAnswer());
+        dto.setQuestionId(feedbackAnswer.getQuestionId());
+        dto.setRequestId(feedbackAnswer.getRequestId());
+        dto.setSentiment(feedbackAnswer.getSentiment());
+        return dto;
     }
 
 }

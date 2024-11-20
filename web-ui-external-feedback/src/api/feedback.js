@@ -2,8 +2,8 @@ import { resolve } from './api.js';
 import { getFeedbackTemplateWithQuestions } from './feedbacktemplate.js';
 
 const feedbackSuggestionURL = '/services/feedback/suggestions';
-const feedbackRequestURL = '/services/feedback/requests';
-const answerURL = '/services/feedback/answers';
+const feedbackRequestURL = '/';
+const answerURL = '/feedback/answers';
 const questionAndAnswerURL = '/services/feedback/questions-and-answers';
 const feedbackExternalRecipientsURL = '/services/feedback/external/recipients';
 
@@ -90,6 +90,10 @@ export const createFeedbackRequest = async (feedbackRequest, cookie) => {
 };
 
 export const updateFeedbackRequest = async (feedbackRequest, cookie) => {
+
+  console.log("feedback.js, updateFeedbackRequest, feedbackRequestURL: ", feedbackRequestURL);
+  console.log("feedback.js, updateFeedbackRequest, feedbackRequest: ", feedbackRequest);
+
   return resolve({
     method: 'PUT',
     url: feedbackRequestURL,

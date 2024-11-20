@@ -496,13 +496,22 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
-        boolean isAdmin = currentUserServices.isAdmin();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (isAdmin || (currentUserId.equals(feedbackRequest.getCreatorId()) && feedbackRequest.getSubmitDate() != null)) {
-            return true;
-        }
+        MemberProfile currentUser;
+        boolean isAdmin = false;
+        try {
+            currentUser = currentUserServices.getCurrentUser();
+            isAdmin = currentUserServices.isAdmin();
+        } catch (NotFoundException notFoundException) {
+            currentUser = null;
 
-        return currentUserId.equals(feedbackRequest.getRecipientId());
+        }
+        if (isAdmin) return true;
+        UUID currentUserId = currentUser != null ? currentUser.getId() : null;
+        if (((currentUserId != null && currentUserId.equals(feedbackRequest.getCreatorId())) && feedbackRequest.getSubmitDate() != null)) return true;
+        if (currentUserId != null && currentUserId.equals(feedbackRequest.getRecipientId()))  return true;
+        if (feedbackRequest.getExternalRecipientId() != null) return true;
+
+        return false;
     }
 
     private FeedbackRequest getFromDTO(FeedbackRequestUpdateDTO dto) {
