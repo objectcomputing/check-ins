@@ -56,7 +56,7 @@ const UploadDocs = () => {
           });
         }
       } catch (e) {
-        console.log(e);
+        console.error("getCheckinFiles: " + e);
       }
     }
     if (csrf) {
@@ -98,7 +98,7 @@ const UploadDocs = () => {
       setFiles([...files, data]);
     } catch (e) {
       setFileColors(fileColors => ({ ...fileColors, [file.name]: 'red' }));
-      console.log({ e });
+      console.error("addFiles: " + e);
     } finally {
       setLoading(false);
     }

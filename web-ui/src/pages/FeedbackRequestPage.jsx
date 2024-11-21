@@ -191,13 +191,6 @@ const FeedbackRequestPage = () => {
         return hasFor() && templateIsValid && hasFrom();
       } else if (activeStep === 3) {
         const dueQueryValid = query.due ? isValidDate(query.due) : true;
-        console.log({
-          hasFor: hasFor(),
-          templateIsValid,
-          hasFrom: hasFrom(),
-          hasSend: hasSend(),
-          dueQueryValid
-        });
         return (
           hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid
         );
