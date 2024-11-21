@@ -4,6 +4,8 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import jnr.constants.platform.Local;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTemplateFixture {
+
+    static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestFixture.class);
 
     /**
      * Creates a sample feedback request
@@ -81,6 +85,8 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
 
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod, String status) {
         LocalDate submitDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), reviewPeriod.getCloseDate());
+        LOG.info("Period start date: {} Generated Submit Date: {}", reviewPeriod.getPeriodStartDate(), submitDate.atStartOfDay());
+        if(submitDate.atStartOfDay().isAfter(LocalDateTime.now())) submitDate = LocalDateTime.now().toLocalDate();
         LocalDate sendDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), submitDate.atStartOfDay());
         return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, sendDate, null, status, submitDate, reviewPeriod.getId()));
     }
