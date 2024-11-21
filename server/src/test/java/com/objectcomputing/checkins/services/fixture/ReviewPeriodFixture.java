@@ -44,7 +44,7 @@ public interface ReviewPeriodFixture extends RepositoryFixture {
                              UUID templateId, UUID selfReviewTemplateId) {
         launchDate = launchDate.truncatedTo(ChronoUnit.DAYS);
 
-        LocalDateTime selfReviewCloseDate = launchDate.plusDays(2);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(4);
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(2);
         LocalDateTime startDate = launchDate.minusDays(31);
         LocalDateTime endDate = launchDate.minusDays(1);
