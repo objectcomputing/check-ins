@@ -229,7 +229,7 @@ const EditPermissionsPage = () => {
         }
       });
     } else {
-      console.log(res?.error);
+      console.error(res?.error);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -253,7 +253,7 @@ const EditPermissionsPage = () => {
         }
       });
     } else {
-      console.log(res?.error);
+      console.error(res?.error);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {

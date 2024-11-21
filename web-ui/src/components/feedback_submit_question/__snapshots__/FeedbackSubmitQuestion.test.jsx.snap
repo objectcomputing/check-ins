@@ -11,6 +11,101 @@ exports[`renders the feedback submit question as a slider 1`] = `
     >
       Do you think the project is going well so far?
     </p>
+    <span
+      class="MuiSlider-root MuiSlider-marked MuiSlider-colorPrimary MuiSlider-sizeMedium feedback-answer-slider css-ltlhnc-MuiSlider-root"
+    >
+      <span
+        class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
+      />
+      <span
+        class="MuiSlider-track css-ttgsjq-MuiSlider-track"
+        style="left: 0%; width: 50%;"
+      />
+      <span
+        class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+        data-index="0"
+        style="left: 0%;"
+      />
+      <span
+        aria-hidden="true"
+        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-1ucwjgd-MuiSlider-markLabel"
+        data-index="0"
+        style="left: 0%;"
+      >
+        Strongly Disagree
+      </span>
+      <span
+        class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+        data-index="1"
+        style="left: 25%;"
+      />
+      <span
+        aria-hidden="true"
+        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-1ucwjgd-MuiSlider-markLabel"
+        data-index="1"
+        style="left: 25%;"
+      >
+        Disagree
+      </span>
+      <span
+        class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+        data-index="2"
+        style="left: 50%;"
+      />
+      <span
+        aria-hidden="true"
+        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-1ucwjgd-MuiSlider-markLabel"
+        data-index="2"
+        style="left: 50%;"
+      >
+        Neither Agree nor Disagree
+      </span>
+      <span
+        class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+        data-index="3"
+        style="left: 75%;"
+      />
+      <span
+        aria-hidden="true"
+        class="MuiSlider-markLabel MuiSlider-markLabel css-1bvr8oc-MuiSlider-markLabel"
+        data-index="3"
+        style="left: 75%;"
+      >
+        Agree
+      </span>
+      <span
+        class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+        data-index="4"
+        style="left: 100%;"
+      />
+      <span
+        aria-hidden="true"
+        class="MuiSlider-markLabel MuiSlider-markLabel css-1bvr8oc-MuiSlider-markLabel"
+        data-index="4"
+        style="left: 100%;"
+      >
+        Strongly Agree
+      </span>
+      <span
+        class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
+        data-index="0"
+        style="left: 50%;"
+      >
+        <input
+          aria-orientation="horizontal"
+          aria-valuemax="4"
+          aria-valuemin="0"
+          aria-valuenow="2"
+          data-index="0"
+          max="4"
+          min="0"
+          step="1"
+          style="border: 0px; height: 100%; margin: -1px; overflow: hidden; padding: 0px; position: absolute; white-space: nowrap; width: 100%; direction: ltr;"
+          type="range"
+          value="2"
+        />
+      </span>
+    </span>
   </div>
 </div>
 `;
@@ -26,6 +121,108 @@ exports[`renders the feedback submit question as radio buttons 1`] = `
     >
       Do you think the project is going well so far?
     </p>
+    <div
+      class="MuiFormGroup-root MuiFormGroup-row MuiRadioGroup-root MuiRadioGroup-row feedback-answer-radio css-qfz70r-MuiFormGroup-root"
+      role="radiogroup"
+    >
+      <label
+        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+      >
+        <span
+          class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-checked MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+        >
+          <input
+            checked=""
+            class="PrivateSwitchBase-input css-1m9pwf3"
+            name=":r1:"
+            type="radio"
+            value="Yes"
+          />
+          <span
+            class="css-hyxlzm"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+              data-testid="RadioButtonUncheckedIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-11zohuh-MuiSvgIcon-root"
+              data-testid="RadioButtonCheckedIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+              />
+            </svg>
+          </span>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </span>
+        <span
+          class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+        >
+          Yes
+        </span>
+      </label>
+      <label
+        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+      >
+        <span
+          class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+        >
+          <input
+            class="PrivateSwitchBase-input css-1m9pwf3"
+            name=":r1:"
+            type="radio"
+            value="No"
+          />
+          <span
+            class="css-hyxlzm"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+              data-testid="RadioButtonUncheckedIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hhw7if-MuiSvgIcon-root"
+              data-testid="RadioButtonCheckedIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+              />
+            </svg>
+          </span>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </span>
+        <span
+          class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+        >
+          No
+        </span>
+      </label>
+    </div>
   </div>
 </div>
 `;
@@ -41,6 +238,44 @@ exports[`renders the feedback submit question as text 1`] = `
     >
       How is the project going so far?
     </p>
+    <div
+      class="MuiFormControl-root MuiTextField-root fullWidth feedback-answer-text-field css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+    >
+      <div
+        class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root"
+      >
+        <textarea
+          aria-invalid="false"
+          class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+          id=":r0:"
+          rows="5"
+          style="height: 0px; overflow: hidden;"
+        >
+          Good
+        </textarea>
+        <textarea
+          aria-hidden="true"
+          class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+          readonly=""
+          style="visibility: hidden; position: absolute; overflow: hidden; height: 0px; top: 0px; left: 0px; transform: translateZ(0); padding-top: 0px; padding-bottom: 0px; width: 100%;"
+          tabindex="-1"
+        />
+        <fieldset
+          aria-hidden="true"
+          class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+        >
+          <legend
+            class="css-ihdtdm"
+          >
+            <span
+              class="notranslate"
+            >
+              ​
+            </span>
+          </legend>
+        </fieldset>
+      </div>
+    </div>
   </div>
 </div>
 `;
