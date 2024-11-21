@@ -43,7 +43,7 @@ const AgendaItems = () => {
   const currentUserId = memberProfile?.id;
   const currentCheckin = selectCheckin(state, checkinId);
 
-  const [agendaItems, setAgendaItems] = useState();
+  const [agendaItems, setAgendaItems] = useState([]);
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
