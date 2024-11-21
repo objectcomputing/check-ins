@@ -37,97 +37,102 @@ const FeedbackAnswerInput = ({
   let inputField;
 
   const handleChange = useCallback(
-    (event, value) => {
-      if (!onAnswerChange) return;
-      if (inputType === 'SLIDER') {
-        onAnswerChange(agreeMarks[value]);
-      } else if (inputType === 'FREQ') {
-        onAnswerChange(frequencyMarks[value]);
-      } else {
-        onAnswerChange(event.target.value);
-      }
-    },
-    [onAnswerChange, inputType]
+      (event, value) => {
+        if (!onAnswerChange) return;
+        if (inputType === 'SLIDER') {
+          onAnswerChange(agreeMarks[value]);
+        } else if (inputType === 'FREQ') {
+          onAnswerChange(frequencyMarks[value]);
+        } else {
+          onAnswerChange(event.target.value);
+        }
+      },
+      [onAnswerChange, inputType]
   );
 
   switch (inputType) {
     case 'TEXT':
       inputField = readOnly ? (
-        <pre style={{ whiteSpace: 'pre-wrap' }} className="fullWidth">
+          <pre style={{ whiteSpace: 'pre-wrap' }} className="fullWidth">
           {answer}
         </pre>
       ) : (
-        <TextField
-          className="fullWidth feedback-answer-text-field"
-          multiline
-          rows={5}
-          variant="outlined"
-          onChange={handleChange}
-          value={answer}
-          onBlur={handleChange}
-        />
+          <TextField
+              className="fullWidth feedback-answer-text-field"
+              multiline
+              rows={5}
+              variant="outlined"
+              onChange={handleChange}
+              value={answer}
+              onBlur={handleChange}
+              style={{width: '100%'}}
+          />
       );
       break;
     case 'RADIO':
       inputField = (
-        <RadioGroup
-          className="feedback-answer-radio"
-          row
-          value={answer}
-          onChange={handleChange}
-        >
-          <FormControlLabel
-            disabled={readOnly}
-            value="Yes"
-            control={<Radio />}
-            label="Yes"
-          />
-          <FormControlLabel
-            disabled={readOnly}
-            value="No"
-            control={<Radio />}
-            label="No"
-          />
-        </RadioGroup>
+          <RadioGroup
+              className="feedback-answer-radio"
+              row
+              value={answer}
+              onChange={handleChange}
+          >
+            <FormControlLabel
+                disabled={readOnly}
+                value="Yes"
+                control={<Radio />}
+                label="Yes"
+            />
+            <FormControlLabel
+                disabled={readOnly}
+                value="No"
+                control={<Radio />}
+                label="No"
+            />
+          </RadioGroup>
       );
       break;
     case 'SLIDER':
       inputField = (
-        <Slider
-          className="feedback-answer-slider"
-          disabled={readOnly}
-          min={0}
-          max={agreeMarks.length - 1}
-          value={agreeMarks.findIndex(mark => mark === answer)}
-          step={1}
-          marks={agreeMarks.map((mark, index) => {
-            return { value: index, label: mark };
-          })}
-          onChange={handleChange}
-        />
+          <Slider
+              className="feedback-answer-slider"
+              disabled={readOnly}
+              min={0}
+              max={agreeMarks.length - 1}
+              value={agreeMarks.findIndex(mark => mark === answer)}
+              step={1}
+              marks={agreeMarks.map((mark, index) => {
+                return { value: index, label: mark };
+              })}
+              onChange={handleChange}
+          />
       );
       break;
     case 'FREQ':
       inputField = (
-        <Slider
-          className="feedback-answer-slider"
-          disabled={readOnly}
-          min={0}
-          max={frequencyMarks.length - 1}
-          value={frequencyMarks.findIndex(mark => mark === answer)}
-          step={1}
-          marks={frequencyMarks.map((mark, index) => {
-            return { value: index, label: mark };
-          })}
-          onChange={handleChange}
-        />
+          <Slider
+              className="feedback-answer-slider"
+              disabled={readOnly}
+              min={0}
+              max={frequencyMarks.length - 1}
+              value={frequencyMarks.findIndex(mark => mark === answer)}
+              step={1}
+              marks={frequencyMarks.map((mark, index) => {
+                return { value: index, label: mark };
+              })}
+              onChange={handleChange}
+          />
       );
       break;
     default:
       inputField = <></>;
       console.warn(`No input rendered for invalid inputType '${inputType}'`);
   }
-  return inputField;
+  return (
+      <div>
+        {inputField}
+      </div>
+  );
 };
 
 FeedbackAnswerInput.propTypes = propTypes;

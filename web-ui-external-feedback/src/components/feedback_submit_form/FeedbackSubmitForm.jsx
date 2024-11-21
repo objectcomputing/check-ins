@@ -24,7 +24,8 @@ const classes = {
   tip: `${PREFIX}-tip`,
   warning: `${PREFIX}-warning`,
   button: `${PREFIX}-button`,
-  coloredButton: `${PREFIX}-coloredButton`
+  coloredButton: `${PREFIX}-coloredButton`,
+  horizontalLine: `${PREFIX}-horizontalLine`
 };
 
 const Root = styled('div')({
@@ -47,6 +48,12 @@ const Root = styled('div')({
   },
   [`& .${classes.coloredButton}`]: {
     margin: '3em 1em 1em 1em'
+  },
+  [`& .${classes.horizontalLine}`]: {
+    width: '100%',
+    border: 'none',
+    borderTop: '1px solid #ccc',
+    margin: '20px 0'
   }
 });
 
@@ -84,17 +91,17 @@ const FeedbackSubmitForm = ({
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([]);
 
   const handleAnswerChange = useCallback(
-    (index, newAnswer) => {
-      // Update local state with answer data until assigned an ID
-      let updatedQuestionAnswerPairs = [...questionAnswerPairs];
+      (index, newAnswer) => {
+        // Update local state with answer data until assigned an ID
+        let updatedQuestionAnswerPairs = [...questionAnswerPairs];
 
-      updatedQuestionAnswerPairs[index].answer = {
-        ...questionAnswerPairs[index].answer,
-        ...newAnswer
-      };
-      setQuestionAnswerPairs(updatedQuestionAnswerPairs);
-    },
-    [questionAnswerPairs]
+        updatedQuestionAnswerPairs[index].answer = {
+          ...questionAnswerPairs[index].answer,
+          ...newAnswer
+        };
+        setQuestionAnswerPairs(updatedQuestionAnswerPairs);
+      },
+      [questionAnswerPairs]
   );
 
   async function updateRequestSubmit() {
@@ -107,9 +114,9 @@ const FeedbackSubmitForm = ({
     let answers = [];
     for (let i = 0; i < questionAnswerPairs.length; ++i) {
       if (
-        questionAnswerPairs[i]?.answer &&
-        questionAnswerPairs[i]?.answer?.id &&
-        questionAnswerPairs[i]?.answer?.answer
+          questionAnswerPairs[i]?.answer &&
+          questionAnswerPairs[i]?.answer?.id &&
+          questionAnswerPairs[i]?.answer?.answer
       ) {
         answers.push(questionAnswerPairs[i].answer);
       }
@@ -120,41 +127,41 @@ const FeedbackSubmitForm = ({
   const onSubmitHandler = () => {
     setIsSubmitting(true);
     updateAllAnswersSubmit()
-      .then(res => {
-        for (let i = 0; i < res.length; ++i) {
-          if (res[i].error) {
-            dispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: 'error',
-                toast: res[i].error
-              }
-            });
-            return false;
+        .then(res => {
+          for (let i = 0; i < res.length; ++i) {
+            if (res[i].error) {
+              dispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                  severity: 'error',
+                  toast: res[i].error
+                }
+              });
+              return false;
+            }
           }
-        }
-        return true;
-      })
-      .then(resTwo => {
-        if (resTwo === false) {
-          setIsSubmitting(false);
-          return;
-        }
-        updateRequestSubmit().then(res => {
-          setIsSubmitting(false);
-          if (res && res.payload && res.payload.data && !res.error) {
-            history.push(`/externalFeedback/confirmation?request=${requestId}`);
-          } else {
-            dispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: 'error',
-                toast: res.error
-              }
-            });
+          return true;
+        })
+        .then(resTwo => {
+          if (resTwo === false) {
+            setIsSubmitting(false);
+            return;
           }
+          updateRequestSubmit().then(res => {
+            setIsSubmitting(false);
+            if (res && res.payload && res.payload.data && !res.error) {
+              history.push(`/externalFeedback/confirmation?request=${requestId}`);
+            } else {
+              dispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                  severity: 'error',
+                  toast: res.error
+                }
+              });
+            }
+          });
         });
-      });
   };
 
   useEffect(() => {
@@ -185,81 +192,81 @@ const FeedbackSubmitForm = ({
   }, [requestId, csrf, dispatch]);
 
   return isLoading ? (
-    <SkeletonLoader type="feedback_requests" />
+      <SkeletonLoader type="feedback_requests" />
   ) : (
-    <Root className="submit-form">
-      <Typography className={classes.announcement} variant="h3">
-        {isReviewing ? 'Reviewing' : 'Submitting'} Feedback on{' '}
-        <b>{requesteeName}</b>
-      </Typography>
-{/*       {!isReviewing && ( */}
-{/*         <div className="wrapper"> */}
-{/*           <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}> */}
-{/*             info-icon */}
-{/*           </InfoIcon> */}
-{/*           <Typography className={classes.tip}> */}
-{/*             <b>Tip of the day: </b> */}
-{/*             {tip} */}
-{/*           </Typography> */}
-{/*         </div> */}
-{/*       )} */}
-      {!isReviewing && (
-        <Alert className={classes.warning} severity="warning">
-          <AlertTitle>Notice!</AlertTitle>
-          Feedback is not anonymous, and can be seen by more than just the
-          feedback requester.
-          <strong> Be mindful of your answers.</strong>
-        </Alert>
-      )}
-      {questionAnswerPairs.map((questionAnswerPair, index) => (
-        <FeedbackSubmitQuestion
-          key={questionAnswerPair.question.id}
-          question={questionAnswerPair.question}
-          readOnly={isReviewing}
-          requestId={questionAnswerPair.request.id}
-          answer={questionAnswerPair.answer}
-          onAnswerChange={newAnswer => {
-            handleAnswerChange(index, newAnswer);
-          }}
-        />
-      ))}
-      {!reviewOnly && (
-        <div className="submit-action-buttons">
-          {isReviewing ? (
-            <React.Fragment>
-              <Button
-                className={classes.coloredButton}
-                disabled={isLoading || isSubmitting}
-                onClick={() => setIsReviewing(false)}
-                variant="contained"
-                color="secondary"
-              >
-                Edit
-              </Button>
-              <Button
-                className={classes.button}
-                disabled={isLoading || isSubmitting}
-                onClick={onSubmitHandler}
-                variant="contained"
-                color="primary"
-              >
-                Submit
-              </Button>
-            </React.Fragment>
-          ) : (
-            <Button
-              className={classes.coloredButton}
-              disabled={isLoading}
-              onClick={() => setIsReviewing(true)}
-              variant="contained"
-              color="primary"
-            >
-              Review Your Responses
-            </Button>
-          )}
-        </div>
-      )}
-    </Root>
+      <Root className="submit-form">
+        <Typography className={classes.announcement} variant="h3">
+          {isReviewing ? 'Reviewing' : 'Submitting'} Feedback on{' '}
+          <b>{requesteeName}</b>
+        </Typography>
+        {/*       {!isReviewing && ( */}
+        {/*         <div className="wrapper"> */}
+        {/*           <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}> */}
+        {/*             info-icon */}
+        {/*           </InfoIcon> */}
+        {/*           <Typography className={classes.tip}> */}
+        {/*             <b>Tip of the day: </b> */}
+        {/*             {tip} */}
+        {/*           </Typography> */}
+        {/*         </div> */}
+        {/*       )} */}
+        {!isReviewing && (
+            <Alert className={classes.warning} severity="warning">
+              <AlertTitle>Notice!</AlertTitle>
+              Feedback is not anonymous, and can be seen by more than just the
+              feedback requester.
+              <strong> Be mindful of your answers.</strong>
+            </Alert>
+        )}
+        {questionAnswerPairs.map((questionAnswerPair, index) => (
+            <FeedbackSubmitQuestion
+                key={questionAnswerPair.question.id}
+                question={questionAnswerPair.question}
+                readOnly={isReviewing}
+                requestId={questionAnswerPair.request.id}
+                answer={questionAnswerPair.answer}
+                onAnswerChange={newAnswer => {
+                  handleAnswerChange(index, newAnswer);
+                }}
+            />
+        ))}
+        {!reviewOnly && (
+            <div className="submit-action-buttons">
+              {isReviewing ? (
+                  <React.Fragment>
+                    <Button
+                        className={classes.coloredButton}
+                        disabled={isLoading || isSubmitting}
+                        onClick={() => setIsReviewing(false)}
+                        variant="contained"
+                        color="secondary"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                        className={classes.button}
+                        disabled={isLoading || isSubmitting}
+                        onClick={onSubmitHandler}
+                        variant="contained"
+                        color="primary"
+                    >
+                      Submit
+                    </Button>
+                  </React.Fragment>
+              ) : (
+                  <Button
+                      className={classes.coloredButton}
+                      disabled={isLoading}
+                      onClick={() => setIsReviewing(true)}
+                      variant="contained"
+                      color="primary"
+                  >
+                    Review Your Responses
+                  </Button>
+              )}
+            </div>
+        )}
+      </Root>
   );
 };
 

@@ -1,8 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-
 import Typography from '@mui/material/Typography';
-
 import './FeedbackSubmitQuestion.css';
 import { debounce } from 'lodash/function';
 import { saveSingleAnswer, updateSingleAnswer } from '../../api/feedback';
@@ -42,93 +40,93 @@ const FeedbackSubmitQuestion = props => {
   }, [props.answer?.id]);
 
   const saveAnswer = useCallback(
-    answer => {
-      savingAnswer.current = true;
-      saveSingleAnswer(answer, csrf).then(res => {
-        if (res?.payload?.data && !res.error) {
-          const answerWithId = {
-            ...answer,
-            id: res.payload.data.id
-          };
-          props.onAnswerChange(answerWithId);
-        } else {
-          savingAnswer.current = false;
-          dispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: 'error',
-              toast: 'Failed to save answer'
-            }
-          });
-        }
-      });
-    },
-    [csrf, dispatch, props]
+      answer => {
+        savingAnswer.current = true;
+        saveSingleAnswer(answer, csrf).then(res => {
+          if (res?.payload?.data && !res.error) {
+            const answerWithId = {
+              ...answer,
+              id: res.payload.data.id
+            };
+            props.onAnswerChange(answerWithId);
+          } else {
+            savingAnswer.current = false;
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'Failed to save answer'
+              }
+            });
+          }
+        });
+      },
+      [csrf, dispatch, props]
   );
 
   const saveAnswerWithDebounce = useRef(debounce(saveAnswer, 2000));
 
   const handleSaveAnswer = useCallback(
-    answerText => {
-      props.onAnswerChange({
-        answer: answerText
-      });
-
-      if (!savingAnswer.current) {
-        const newAnswer = {
-          answer: answerText,
-          questionId: props.question.id,
-          requestId: props.requestId
-        };
-
-        const save = saveAnswerWithDebounce.current;
-        save(newAnswer);
-      }
-    },
-    [props, savingAnswer]
-  );
-
-  const handleUpdateAnswer = useCallback(
-    answerText => {
-      if (props.answer && props.answer.id) {
+      answerText => {
         props.onAnswerChange({
-          id: props.answer.id,
           answer: answerText
         });
 
-        const updatedAnswer = {
-          ...props.answer,
-          answer: answerText
-        };
+        if (!savingAnswer.current) {
+          const newAnswer = {
+            answer: answerText,
+            questionId: props.question.id,
+            requestId: props.requestId
+          };
 
-        const update = updateAnswerWithDebounce.current;
-        update(updatedAnswer, csrf);
-      }
-    },
-    [csrf, props]
+          const save = saveAnswerWithDebounce.current;
+          save(newAnswer);
+        }
+      },
+      [props, savingAnswer]
+  );
+
+  const handleUpdateAnswer = useCallback(
+      answerText => {
+        if (props.answer && props.answer.id) {
+          props.onAnswerChange({
+            id: props.answer.id,
+            answer: answerText
+          });
+
+          const updatedAnswer = {
+            ...props.answer,
+            answer: answerText
+          };
+
+          const update = updateAnswerWithDebounce.current;
+          update(updatedAnswer, csrf);
+        }
+      },
+      [csrf, props]
   );
 
   const isStaticText = props?.question?.inputType?.toUpperCase() === 'NONE';
 
   return (
-    <div className="feedback-submit-question">
-      <Typography
-        style={
-          isStaticText ? { paddingTop: '2rem' } : { paddingBottom: '1rem' }
-        }
-        variant={isStaticText ? 'h6' : 'body1'}
-      >
-        {props.question.question}
-      </Typography>
-      <FeedbackAnswerInput
-        answer={props.answer?.answer}
-        readOnly={props.readOnly}
-        inputType={props.question?.inputType}
-        onAnswerChange={
-          props.answer?.id ? handleUpdateAnswer : handleSaveAnswer
-        }
-      />
-    </div>
+      <div className="feedback-submit-question">
+        <Typography
+            style={
+              isStaticText ? { paddingTop: '2rem' } : { paddingBottom: '1rem' }
+            }
+            variant={isStaticText ? 'h6' : 'body1'}
+        >
+          {props.question.question}
+        </Typography>
+        <FeedbackAnswerInput
+            answer={props.answer?.answer}
+            readOnly={props.readOnly}
+            inputType={props.question?.inputType}
+            onAnswerChange={
+              props.answer?.id ? handleUpdateAnswer : handleSaveAnswer
+            }
+        />
+      </div>
   );
 };
 

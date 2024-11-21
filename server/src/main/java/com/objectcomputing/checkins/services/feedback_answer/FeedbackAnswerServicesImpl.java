@@ -160,7 +160,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
             currentUser = null;
             currentUserId = null;
         }
-        return (recipientId != null && recipientId.equals(currentUserId)) || (currentUserId == null && feedbackRequest.getExternalRecipientId() != null);
+        return (recipientId != null && recipientId.equals(currentUserId)) || (feedbackRequest.getExternalRecipientId() != null);
     }
 
     public boolean updateIsPermitted(FeedbackRequest feedbackRequest) {
