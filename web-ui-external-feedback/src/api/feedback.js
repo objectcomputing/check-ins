@@ -133,7 +133,7 @@ export const deleteFeedbackRequestById = async (id, cookie) => {
 
 export const getFeedbackRequestById = async (id, cookie) => {
   return resolve({
-    url: `${feedbackRequestURL}/${id}`,
+    url: `${feedbackRequestURL}${id}`,
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };

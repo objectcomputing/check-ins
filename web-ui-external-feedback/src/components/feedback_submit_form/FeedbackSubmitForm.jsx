@@ -143,7 +143,7 @@ const FeedbackSubmitForm = ({
         updateRequestSubmit().then(res => {
           setIsSubmitting(false);
           if (res && res.payload && res.payload.data && !res.error) {
-            history.push(`/externalFeedback/submit/confirmation/?request=${requestId}`);
+            history.push(`/externalFeedback/confirmation?request=${requestId}`);
           } else {
             dispatch({
               type: UPDATE_TOAST,

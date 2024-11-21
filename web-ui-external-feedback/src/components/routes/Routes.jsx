@@ -12,7 +12,7 @@ export default function Routes() {
       <Route path="/externalFeedback/submit">
         <FeedbackSubmitPage />
       </Route>
-        <Route exact path="/externalFeedback/submit/confirmation">
+        <Route path="/externalFeedback/confirmation">
             <FeedbackSubmitConfirmation />
         </Route>
     </Switch>

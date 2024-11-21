@@ -36,7 +36,6 @@ const FeedbackSubmitConfirmation = props => {
   const location = useLocation();
   const query = queryString.parse(location?.search);
   const csrf = selectCsrfToken(state);
-  const currentUserId = selectCurrentUser(state)?.id;
   const requestQuery = query.request?.toString();
   const [feedbackRequest, setFeedbackRequest] = useState(null);
   const feedbackRequestFetched = useRef(false);
@@ -45,7 +44,7 @@ const FeedbackSubmitConfirmation = props => {
 
   useEffect(() => {
     async function getFeedbackRequest(cookie) {
-      if (!currentUserId || !cookie || feedbackRequestFetched.current) {
+      if (!cookie || feedbackRequestFetched.current) {
         return null;
       }
 
@@ -59,24 +58,22 @@ const FeedbackSubmitConfirmation = props => {
         : null;
     }
 
-    if (csrf && currentUserId && requestQuery && !feedbackRequestFetched.current) {
+    if (csrf && requestQuery && !feedbackRequestFetched.current) {
       getFeedbackRequest(csrf).then(request => {
         if (request) {
           setFeedbackRequest(request);
         }
       });
     }
-  }, [csrf, currentUserId, requestQuery]);
+  }, [csrf, requestQuery]);
 
   useEffect(() => {
-    console.log("FeedbackSubmitConfirmation, useEffect[feedbackRequest, state], feedbackRequest: ", feedbackRequest);
-
     if (feedbackRequest) {
       feedbackRequestFetched.current = true;
     }
 
     if (feedbackRequestFetched.current) {
-      getRequesteeForFeedbackRequest(feedbackRequest?.requesteeId, csrf).then(response => {
+      getRequesteeForFeedbackRequest(feedbackRequest?.id, csrf).then(response => {
         if (response.payload && response.payload.data && !response.error) {
           setRequestee(response.payload.data);
         }
