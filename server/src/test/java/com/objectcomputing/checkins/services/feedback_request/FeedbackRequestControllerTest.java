@@ -1793,12 +1793,23 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         feedbackReq.setSubmitDate(LocalDate.now());
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
-        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+        final HttpRequest<?> requestHttp = HttpRequest.PUT("", dto)
                 .basicAuth(pdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+
+        // Access by un-assigned PDL is allowed since the recipient is an external recipient
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(requestHttp, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get());
+
+        /*
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
+                client.toBlocking().exchange(requestHttp, Map.class));
 
         assertUnauthorized(responseException);
+        */
     }
 
     @Test
