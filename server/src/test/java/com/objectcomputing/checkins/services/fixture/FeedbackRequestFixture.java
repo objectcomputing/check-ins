@@ -63,6 +63,8 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
     }
 
     default LocalDate getRandomLocalDateTime(LocalDateTime start, LocalDateTime end) {
+        if(start.isEqual(end)) return end.toLocalDate();
+
         LocalDate startDate = start.toLocalDate();
         long daysBetween = ChronoUnit.DAYS.between(startDate, end.toLocalDate());
         Random random = new Random();
