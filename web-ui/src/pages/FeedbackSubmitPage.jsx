@@ -7,6 +7,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import {
   selectCsrfToken,
   selectCurrentUser,
+  selectIsSubordinateOfCurrentUser,
   selectProfile
 } from '../context/selectors';
 import { AppContext } from '../context/AppContext';
@@ -51,11 +52,6 @@ const FeedbackSubmitPage = () => {
   const [requestSubmitted, setRequestSubmitted] = useState(false);
   const [requestCanceled, setRequestCanceled] = useState(false);
   const feedbackRequestFetched = useRef(false);
-
-  function isManager(revieweeProfile) {
-    const supervisorId = revieweeProfile?.supervisorid;
-    return supervisorId === currentUserId;
-  }
 
   useEffect(() => {
     if (!requestQuery && !selfRequestQuery) {
@@ -147,12 +143,12 @@ const FeedbackSubmitPage = () => {
         feedbackRequest?.recipientId
       );
 
-      // If this is our review or we are the manager of the reviewer we are
-      // allowed to view this review.
-      if (recipientProfile?.id != currentUserId &&
-          !isManager(recipientProfile)) {
+      // If we know the current user and it's not the recipient or someone in the person having feedback given's
+      // management heirarchy, then we should issue an error and send them home...
+      if (currentUserId && feedbackRequest?.recipientId != currentUserId &&
+          !selectIsSubordinateOfCurrentUser(feedbackRequest?.requesteeId)) {
         // The current user is not the recipients's manager, we need to leave.
-        history.push('/checkins');
+        history.push('/');
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
@@ -170,7 +166,7 @@ const FeedbackSubmitPage = () => {
       );
       setRecipient(recipientProfile);
     }
-  }, [feedbackRequest, selfReviewRequest, state]);
+  }, [currentUserId, feedbackRequest, selfReviewRequest, state]);
 
   return (
     <Root data-testid={requestQuery} className="feedback-submit-page">

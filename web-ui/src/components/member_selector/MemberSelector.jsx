@@ -153,13 +153,15 @@ const MemberSelector = ({
           action={
             <Box sx={{ mr: 2 }}>
               <Tooltip title={`Change ${memberDescriptor}`} arrow>
-                <IconButton
-                  style={{ margin: '4px 8px 0 0' }}
-                  onClick={() => setDialogOpen(true)}
-                  disabled={disabled}
-                >
-                  <Add />
-                </IconButton>
+                <span>
+                  <IconButton
+                    style={{ margin: '4px 8px 0 0' }}
+                    onClick={() => setDialogOpen(true)}
+                    disabled={disabled}
+                  >
+                    <Add />
+                  </IconButton>
+                </span>
               </Tooltip>
               {exportable && (
                 <Tooltip title="Download">

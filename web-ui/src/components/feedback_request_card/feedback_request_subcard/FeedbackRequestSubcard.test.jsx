@@ -4,11 +4,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppContextProvider } from '../../../context/AppContext';
 import FeedbackRequestSubcard from './FeedbackRequestSubcard';
 
+const defaultTheme = {}
+
 it('renders correctly', () => {
   snapshot(
     <BrowserRouter>
       <AppContextProvider>
-        <ThemeProvider>
+        <ThemeProvider theme={defaultTheme}>
           <FeedbackRequestSubcard
             request={{
               id: 'c15961e4-6e9b-42cd-8140-ece9efe2445c',

@@ -272,10 +272,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
-        final LocalDate sendDate = feedbackReq.get().getSendDate();
-        final UUID requesteeId = feedbackReq.get().getRequesteeId();
-        final UUID recipientId = feedbackReq.get().getRecipientId();
-        if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
+
+        if (!getIsPermitted(feedbackReq.get())) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -303,9 +301,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             if (currentUserServices.isAdmin()) {
                 visible = true;
             } else if (request != null) {
-                if (currentUserId.equals(request.getCreatorId())) visible = true;
-                if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
-                if (currentUserId.equals(request.getRecipientId())) visible = true;
+                if (currentUserId.equals(request.getCreatorId()) ||
+                    isSupervisor(request.getRequesteeId(), currentUserId) ||
+                    currentUserId.equals(request.getRecipientId()) ||
+                    selfRevieweeIsCurrentUserReviewee(request, currentUserId)) {
+                    visible = true;
+                }
             }
             return visible;
         }).toList();
@@ -316,6 +317,23 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean isSupervisor(UUID requesteeId, UUID currentUserId) {
         return requesteeId != null
                 && memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
+    }
+
+    public boolean selfRevieweeIsCurrentUserReviewee(FeedbackRequest request,
+                                                     UUID currentUserId) {
+        // If we are looking at a self-review request, see if there is a review
+        // request in the same review period that is assigned to the current
+        // user and the requestee is the same as the self-review request.  If
+        // so, this user is allowed to see the self-review request.
+        if (request.getRecipientId().equals(request.getRequesteeId())) {
+            List<FeedbackRequest> other = feedbackReqRepository.findByValues(
+                null, request.getRecipientId().toString(),
+                currentUserId.toString(), null,
+                Util.nullSafeUUIDToString(request.getReviewPeriodId()),
+                null);
+            return (other.size() == 1);
+        }
+        return false;
     }
 
     private boolean createIsPermitted(UUID requesteeId) {
@@ -329,8 +347,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || currentUserId.equals(requesteeId);
     }
 
-    private boolean getIsPermitted(UUID requesteeId, UUID recipientId, LocalDate sendDate) {
-        LocalDate today = LocalDate.now();
+    private boolean getIsPermitted(FeedbackRequest feedbackReq) {
+        final LocalDate sendDate = feedbackReq.getSendDate();
+        final UUID requesteeId = feedbackReq.getRequesteeId();
+        final UUID recipientId = feedbackReq.getRecipientId();
+        final LocalDate today = LocalDate.now();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
         // The recipient can only access the feedback request after it has been sent
@@ -338,7 +359,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
 
-        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId);
+        return createIsPermitted(requesteeId) ||
+               currentUserId.equals(recipientId) ||
+               selfRevieweeIsCurrentUserReviewee(feedbackReq, currentUserId);
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {

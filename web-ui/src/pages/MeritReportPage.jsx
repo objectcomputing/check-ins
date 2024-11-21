@@ -19,22 +19,9 @@ import { useQueryParameters } from '../helpers/query-parameters';
 
 import markdown from 'markdown-builder';
 
-const MeritReportPage = () => {
-  const agreeMarks = [
-    'Strongly Disagree',
-    'Disagree',
-    'Neither Agree nor Disagree',
-    'Agree',
-    'Strongly Agree'
-  ];
-  const frequencyMarks = [
-    'Very Infrequently',
-    'Infrequently',
-    'Neither Frequently nor Infrequently',
-    'Frequently',
-    'Very Frequently'
-  ];
+const noneAvailable = "None available during the period covered by this review.";
 
+const MeritReportPage = () => {
   const { state, dispatch } = useContext(AppContext);
 
   const csrf = selectCsrfToken(state);
@@ -272,49 +259,58 @@ const MeritReportPage = () => {
     let text = markdown.headers.h1("Current Information");
     text += years.toFixed(1) + " years\n\n";
     text += markdown.headers.h2("Biographical Notes");
-    text += currentInfo.biography + "\n\n";
+    text += (currentInfo.biography ? currentInfo.biography :
+                                     noneAvailable) + "\n\n";
     return text;
   };
 
   const markdownKudos = (data) => {
     const kudosList = data.kudos;
     let text = markdown.headers.h1("Kudos");
-    for (let kudos of kudosList) {
-      const date = dateFromArray(kudos.dateCreated);
-      text += kudos.message + "\n\n";
-      text += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-              markdown.emphasis.i("Submitted on " + formatDate(date) +
-                                  ", by " + kudos.sender) +
-              "\n\n\n";
+    if (kudosList.length > 0) {
+      for (let kudos of kudosList) {
+        const date = dateFromArray(kudos.dateCreated);
+        text += kudos.message + "\n\n";
+        text += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                markdown.emphasis.i("Submitted on " + formatDate(date) +
+                                    ", by " + kudos.sender) +
+                "\n\n\n";
+      }
+    } else {
+      text += noneAvailable + "\n\n";
     }
     return text;
   };
 
   const markdownReviewsImpl = (title, feedbackList, listMembers) => {
     let text = markdown.headers.h1(title);
-    for(let feedback of feedbackList) {
-      const members = getUniqueMembers(feedback.answers);
-      for(let member of Object.keys(members)) {
-        if (listMembers) {
-          text += member + ": ";
-        }
-        text += "Submitted - " + formatDate(members[member]) + "\n\n";
-      }
-      text += "\n";
-
-      const questions = getUniqueQuestions(feedback.answers);
-      for(let question of Object.keys(questions)) {
-        text += markdown.headers.h3(question) + "\n";
-        for(let answer of questions[question]) {
+    if (feedbackList.length > 0) {
+      for(let feedback of feedbackList) {
+        const members = getUniqueMembers(feedback.answers);
+        for(let member of Object.keys(members)) {
           if (listMembers) {
-            text += answer[0] + ": ";
+            text += member + ": ";
           }
-          text += answer[1] + "\n\n";
+          text += "Submitted - " + formatDate(members[member]) + "\n\n";
         }
         text += "\n";
+
+        const questions = getUniqueQuestions(feedback.answers);
+        for(let question of Object.keys(questions)) {
+          text += markdown.headers.h4(question) + "\n";
+          for(let answer of questions[question]) {
+            if (listMembers) {
+              text += answer[0] + ": ";
+            }
+            text += answer[1] + "\n\n";
+          }
+          text += "\n";
+        }
       }
+      text += "\n";
+    } else {
+      text += noneAvailable + "\n\n";
     }
-    text += "\n";
     return text;
   }
 
@@ -339,22 +335,6 @@ const MeritReportPage = () => {
   };
 
   const getAnswerText = (answer) => {
-    if (answer.type == "SLIDER" || answer.type == "FREQ") {
-      const sentiment = parseFloat(answer.answer);
-      if (!isNaN(sentiment)) {
-        if (answer.type == "SLIDER") {
-          const index = sentiment * agreeMarks.length;
-          if (index >= 0 && index < agreeMarks.length) {
-            return agreeMarks[index];
-          }
-        } else if (answer.type == "FREQ") {
-          const index = sentiment * frequencyMarks.length;
-          if (index >= 0 && index < frequencyMarks.length) {
-            return frequencyMarks[index];
-          }
-        }
-      }
-    }
     return answer.answer;
   };
 
@@ -379,31 +359,35 @@ const MeritReportPage = () => {
   const markdownFeedback = (data) => {
     let text = markdown.headers.h1("Feedback");
     const feedbackList = data.feedback;
-    for(let feedback of feedbackList) {
-      text += markdown.headers.h2("Template: " + feedback.name);
-      const members = getUniqueMembers(feedback.answers);
-      for(let member of Object.keys(members)) {
-        text += member + ": " + formatDate(members[member]) + "\n\n";
-      }
-      text += "\n";
-
-      const questions = getUniqueQuestions(feedback.answers);
-      for(let question of Object.keys(questions)) {
-        text += markdown.headers.h3(question) + "\n";
-        for(let answer of questions[question]) {
-          text += answer[0] + ": " + answer[1] + "\n\n";
+    if (feedbackList.length > 0) {
+      for(let feedback of feedbackList) {
+        text += markdown.headers.h2("Template: " + feedback.name);
+        const members = getUniqueMembers(feedback.answers);
+        for(let member of Object.keys(members)) {
+          text += member + ": " + formatDate(members[member]) + "\n\n";
         }
         text += "\n";
+
+        const questions = getUniqueQuestions(feedback.answers);
+        for(let question of Object.keys(questions)) {
+          text += markdown.headers.h4(question) + "\n";
+          for(let answer of questions[question]) {
+            text += answer[0] + ": " + answer[1] + "\n\n";
+          }
+          text += "\n";
+        }
       }
+      text += "\n";
+    } else {
+      text += noneAvailable + "\n\n";
     }
-    text += "\n";
     return text;
   };
 
   const markdownTitleHistory = (data) => {
     // Get the position history sorted latest to earliest
     const posHistory = data.positionHistory.sort((a, b) => {
-      for(let i = 0; i < a.length; i++) {
+      for(let i = 0; i < a.date.length; i++) {
         if (a.date[i] != b.date[i]) {
           return b.date[i] - a.date[i];
         }
@@ -435,14 +419,13 @@ const MeritReportPage = () => {
 
   const prepareCompensationHistory = (data, fn) => {
     return data.compensationHistory.filter(fn).sort((a, b) => {
-      for(let i = 0; i < a.length; i++) {
+      for(let i = 0; i < a.startDate.length; i++) {
         if (a.startDate[i] != b.startDate[i]) {
           return b.startDate[i] - a.startDate[i];
         }
       }
       return 0;
     }).slice(0, 3);
-
   };
 
   const markdownCompensationHistory = (data) => {
@@ -451,12 +434,17 @@ const MeritReportPage = () => {
     const compTotal = prepareCompensationHistory(data, (comp) => !!comp.totalComp);
 
     let text = markdown.headers.h2("Compensation History");
+    text += markdown.headers.h3("Base Compensation (annual or hourly)");
     text += markdown.lists.ul(compBase,
                 (comp) => formatDate(dateFromArray(comp.startDate)) + " - " +
-                "$" + parseFloat(comp.amount).toFixed(2) + " (base)");
+                "$" + parseFloat(comp.amount).toFixed(2));
+    text += markdown.headers.h3("Total Compensation")
     text += markdown.lists.ul(compTotal,
-                (comp) => dateFromArray(comp.startDate).getFullYear() + " - " +
-                comp.totalComp);
+                (comp) => {
+                    var date = dateFromArray(comp.startDate);
+                    date = date.getMonth() === 0 && date.getDate() === 1 ? date.getFullYear() : formatDate(date);
+                    return date + " - " + comp.totalComp;
+                });
     return text;
   };
 
@@ -513,7 +501,7 @@ const MeritReportPage = () => {
     <div className="merit-report-page">
       <Button color="primary" className="space-between">
         <label htmlFor="file-upload-comp">
-          <h3>Compenstion History File {selectedCompHist && checkMark}</h3>
+          <h3>Compensation History File {selectedCompHist && checkMark}</h3>
           <input
             accept=".csv"
             id="file-upload-comp"

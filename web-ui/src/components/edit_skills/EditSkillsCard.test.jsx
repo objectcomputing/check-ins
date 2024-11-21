@@ -72,7 +72,7 @@ const server = setupServer(
   })
 );
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
