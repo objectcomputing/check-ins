@@ -11,6 +11,7 @@ exports[`renders the feedback submit question as a slider 1`] = `
     >
       Do you think the project is going well so far?
     </p>
+    <div />
   </div>
 </div>
 `;
@@ -26,6 +27,7 @@ exports[`renders the feedback submit question as radio buttons 1`] = `
     >
       Do you think the project is going well so far?
     </p>
+    <div />
   </div>
 </div>
 `;
@@ -41,6 +43,7 @@ exports[`renders the feedback submit question as text 1`] = `
     >
       How is the project going so far?
     </p>
+    <div />
   </div>
 </div>
 `;
