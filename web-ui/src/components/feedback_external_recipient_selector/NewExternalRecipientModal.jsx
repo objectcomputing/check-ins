@@ -20,7 +20,8 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
         }
     }, [open]);
 
-    const handleSubmit = () => {
+    const handleSubmit = (event) => {
+        event.preventDefault();
         if (!validateEmail(email)) {
             setEmailError('Please enter a valid email address');
             return;
@@ -52,47 +53,49 @@ const NewExternalRecipientModal = ({ open, onClose, onSubmit }) => {
                     <CloseIcon />
                 </IconButton>
                 <h2>Create New External Recipient</h2>
-                <TextField
-                    label="Email"
-                    value={email}
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (emailError) setEmailError('');
-                    }}
-                    error={!!emailError}
-                    helperText={emailError}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="First Name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Last Name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Company Name"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit}
-                    disabled={!email || !!emailError}
-                >
-                    Submit
-                </Button>
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        label="Email"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (emailError) setEmailError('');
+                        }}
+                        error={!!emailError}
+                        helperText={emailError}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="First Name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Last Name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Company Name"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={!email || !!emailError}
+                    >
+                        Submit
+                    </Button>
+                </form>
             </Box>
         </Modal>
     );
