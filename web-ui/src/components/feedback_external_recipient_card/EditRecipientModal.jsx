@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, Modal, Select, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
 
@@ -13,6 +13,22 @@ const modalStyle = {
 };
 
 const EditRecipientModal = ({ open, onClose, profile, onChange, onSubmit }) => {
+    const [error, setError] = useState('');
+
+    const handleSubmit = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!profile.firstName || !profile.lastName || !profile.email || !profile.companyName) {
+            setError('All fields must be filled');
+            return;
+        }
+        if (!emailRegex.test(profile.email)) {
+            setError('Invalid email address');
+            return;
+        }
+        setError('');
+        onSubmit();
+    };
+
     return (
         <Modal open={open} onClose={onClose}>
             <Box sx={{ ...modalStyle, width: 400 }}>
@@ -26,6 +42,8 @@ const EditRecipientModal = ({ open, onClose, profile, onChange, onSubmit }) => {
                     onChange={onChange}
                     fullWidth
                     margin="normal"
+                    error={!!error && !profile.firstName}
+                    helperText={!!error && !profile.firstName ? 'First Name is required' : ''}
                 />
                 <TextField
                     label="Last Name"
@@ -34,6 +52,8 @@ const EditRecipientModal = ({ open, onClose, profile, onChange, onSubmit }) => {
                     onChange={onChange}
                     fullWidth
                     margin="normal"
+                    error={!!error && !profile.lastName}
+                    helperText={!!error && !profile.lastName ? 'Last Name is required' : ''}
                 />
                 <TextField
                     label="Email"
@@ -42,6 +62,8 @@ const EditRecipientModal = ({ open, onClose, profile, onChange, onSubmit }) => {
                     onChange={onChange}
                     fullWidth
                     margin="normal"
+                    error={!!error && (!profile.email || error === 'Invalid email address')}
+                    helperText={!!error && (!profile.email ? 'Email is required' : error === 'Invalid email address' ? 'Invalid email address' : '')}
                 />
                 <TextField
                     label="Company Name"
@@ -50,6 +72,8 @@ const EditRecipientModal = ({ open, onClose, profile, onChange, onSubmit }) => {
                     onChange={onChange}
                     fullWidth
                     margin="normal"
+                    error={!!error && !profile.companyName}
+                    helperText={!!error && !profile.companyName ? 'Company Name is required' : ''}
                 />
                 <Select
                     label="Status"
@@ -63,7 +87,7 @@ const EditRecipientModal = ({ open, onClose, profile, onChange, onSubmit }) => {
                     <MenuItem value="Inactive">Inactive</MenuItem>
                 </Select>
                 <Box mt={2} />
-                <Button onClick={onSubmit} variant="contained" color="primary">
+                <Button onClick={handleSubmit} variant="contained" color="primary">
                     Save
                 </Button>
             </Box>

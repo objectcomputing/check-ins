@@ -166,11 +166,11 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
         try {
             const response = await putExternalRecipient(externalRecipient, csrf);
             if (response && !response.error) {
-                externalRecipientsCopy[indexArray] = response.data.payload;
+                externalRecipientsCopy[indexArray] = response.payload.data;
                 hasRenewedFromURL.current = false;
                 setExternalRecipients(externalRecipientsCopy);
             } else {
-                const errorMessage = 'Failed to inactivate recipient';
+                const errorMessage = 'Failed to edit recipient';
                 dispatch({
                     type: UPDATE_TOAST,
                     payload: {
@@ -180,39 +180,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
                 });
             }
         } catch (error) {
-            const errorMessage = ("An error occurred while inactivating the recipient: ", error);
-            dispatch({
-                type: UPDATE_TOAST,
-                payload: {
-                    severity: 'error',
-                    toast: errorMessage
-                }
-            });
-        }
-    }
-
-    async function externalRecipientInactivate(id) {
-        let externalRecipientsCopy = [...externalRecipients];
-        let indexArray = externalRecipientsCopy.findIndex(profile => profile.id === id);
-
-        try {
-            const response = await putExternalRecipientInactivate(id, csrf);
-            if (response && !response.error) {
-                externalRecipientsCopy[indexArray].inactive = true;
-                hasRenewedFromURL.current = false;
-                setExternalRecipients(externalRecipientsCopy);
-            } else {
-                const errorMessage = 'Failed to inactivate recipient';
-                dispatch({
-                    type: UPDATE_TOAST,
-                    payload: {
-                        severity: 'error',
-                        toast: errorMessage
-                    }
-                });
-            }
-        } catch (error) {
-            const errorMessage = ("An error occurred while inactivating the recipient: ", error);
+            const errorMessage = ("An error occurred while editing the recipient: ", error);
             dispatch({
                 type: UPDATE_TOAST,
                 payload: {
@@ -367,7 +335,6 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
                                     key={profile.id}
                                     recipientProfile={profile}
                                     onClick={() => cardClickHandler(profile.id)}
-                                    onInactivateHandle={() => externalRecipientInactivate(profile.id)}
                                     onEditHandle={externalRecipientEdit}
                                 />
                             ))}
@@ -383,7 +350,6 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
             />
         </StyledGrid>
     );
-  //recipientProfile={selectProfile(state, profile.id)}
 };
 
 FeedbackExternalRecipientSelector.propTypes = propTypes;

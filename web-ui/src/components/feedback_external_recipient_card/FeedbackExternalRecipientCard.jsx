@@ -56,13 +56,9 @@ const StyledBox = styled(Box)({
 });
 
 const FeedbackExternalRecipientCard = ({
-                                         recipientProfile, selected, onClick, onInactivateHandle, onEditHandle
+                                         recipientProfile, selected, onClick, onEditHandle
                                        }) => {
   const { state } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-  const supervisorProfile = selectProfileMap(state)[recipientProfile?.supervisorid];
-  const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
-
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editedProfile, setEditedProfile] = useState(recipientProfile);
 
@@ -81,14 +77,9 @@ const FeedbackExternalRecipientCard = ({
   };
 
   const handleEditSubmit = async () => {
-    console.log("FeedbackExternalRecipientCard, handleEditSubmit, editedProfile: ", editedProfile);
     onEditHandle(editedProfile);
     setEditModalOpen(false);
   };
-
-  async function handleInactivate() {
-    onInactivateHandle();
-  }
 
   return (
       <StyledBox display="flex" flexWrap="wrap">
@@ -106,18 +97,7 @@ const FeedbackExternalRecipientCard = ({
                       <CheckCircleIcon style={{ color: green[500] }}>
                         checkmark-image
                       </CheckCircleIcon>
-                  ) : (
-                      <Tooltip title="Inactivate" arrow>
-                        <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleInactivate();
-                            }}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </Tooltip>
-                  )}
+                  ) : null}
                 </>
               }
               disableTypography
@@ -137,12 +117,13 @@ const FeedbackExternalRecipientCard = ({
                 <br/>
                 Status: { recipientProfile?.inactive ? 'Inactive' : 'Active' }
               </Typography>
-              <Button onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditOpen();
-                }}
-              >Edit
-              </Button>
+              { selected ? null : (
+                  <Button onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditOpen();
+                  }}
+                  >Edit</Button>
+              )}
             </Container>
           </CardContent>
         </Card>
@@ -162,7 +143,6 @@ FeedbackExternalRecipientCard.propTypes = {
   recipientProfile: PropTypes.object.isRequired,
   selected: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
-  onInactivateHandle: PropTypes.func.isRequired,
   onEditHandle: PropTypes.func.isRequired,
 };
 
