@@ -1,17 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import { AppContext } from '../../context/AppContext.jsx';
 import { selectCsrfToken, selectProfileMap } from '../../context/selectors.js';
-import { Box, Card, CardHeader, CardContent, Container, Typography, IconButton, Tooltip } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
+import { Box, Card, CardHeader, CardContent, Container, Typography, IconButton, Tooltip, Button } from '@mui/material';
 import { green } from '@mui/material/colors';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
+import PropTypes from 'prop-types';
+import EditRecipientModal from './EditRecipientModal.jsx';
 
 import './FeedbackExternalRecipientCard.css';
-import FeedbackExternalRecipientSelector
-  from "../feedback_external_recipient_selector/FeedbackExternalRecipientSelector.jsx";
-import PropTypes from "prop-types";
 
 const PREFIX = 'FeedbackExternalRecipientCard';
 const classes = {
@@ -24,7 +22,6 @@ const classes = {
 
 const StyledBox = styled(Box)({
   [`&.${classes.root}`]: {
-    // currently defined but not used
     minWidth: '10em',
     maxWidth: '20em',
     marginRight: '2em',
@@ -40,7 +37,6 @@ const StyledBox = styled(Box)({
     cursor: 'pointer'
   },
   [`& .${classes.cardContent}`]: {
-    // currently defined but not used
     display: 'flex',
     alignItems: 'center',
     alignContent: 'center',
@@ -60,18 +56,38 @@ const StyledBox = styled(Box)({
 });
 
 const FeedbackExternalRecipientCard = ({
-                                         recipientProfile,
-                                         selected,
-                                         onClick,
-                                         onInactivateHandle
+                                         recipientProfile, selected, onClick, onInactivateHandle, onEditHandle
                                        }) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const supervisorProfile = selectProfileMap(state)[recipientProfile?.supervisorid];
   const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editedProfile, setEditedProfile] = useState(recipientProfile);
+
+  const handleEditOpen = () => {
+    setEditedProfile(recipientProfile);
+    setEditModalOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditModalOpen(false);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditedProfile({ ...editedProfile, [name]: value });
+  };
+
+  const handleEditSubmit = async () => {
+    console.log("FeedbackExternalRecipientCard, handleEditSubmit, editedProfile: ", editedProfile);
+    onEditHandle(editedProfile);
+    setEditModalOpen(false);
+  };
+
   async function handleInactivate() {
-      onInactivateHandle();
+    onInactivateHandle();
   }
 
   return (
@@ -117,14 +133,36 @@ const FeedbackExternalRecipientCard = ({
                   {recipientProfile?.email}
                 </a>
                 <br />
-                Company: {recipientProfile?.companyName}
+                My Company: {recipientProfile?.companyName}
                 <br />
               </Typography>
+              <Button onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditOpen();
+                }}
+              >Edit
+              </Button>
             </Container>
           </CardContent>
         </Card>
+
+        <EditRecipientModal
+            open={editModalOpen}
+            onClose={handleEditClose}
+            profile={editedProfile}
+            onChange={handleEditChange}
+            onSubmit={handleEditSubmit}
+        />
       </StyledBox>
   );
+};
+
+FeedbackExternalRecipientCard.propTypes = {
+  recipientProfile: PropTypes.object.isRequired,
+  selected: PropTypes.bool,
+  onClick: PropTypes.func.isRequired,
+  onInactivateHandle: PropTypes.func.isRequired,
+  onEditHandle: PropTypes.func.isRequired,
 };
 
 export default FeedbackExternalRecipientCard;

@@ -158,6 +158,10 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
         hasRenewedFromURL.current = false;
     };
 
+    async function externalRecipientEdit(externalRecipient) {
+        console.log("FeedbackExternalRecipientSelector, externalRecipientEdit, externalRecipient: ", externalRecipient);
+    }
+
     async function externalRecipientInactivate(id) {
         let externalRecipientsCopy = [...externalRecipients];
         let indexArray = externalRecipientsCopy.findIndex(profile => profile.id === id);
@@ -323,6 +327,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
                                     recipientProfile={profile}
                                     onClick={() => cardClickHandler(profile.id)}
                                     onInactivateHandle={() => externalRecipientInactivate(profile.id)}
+                                    onEditHandle={externalRecipientEdit}
                                 />
                             ))}
                     </div>
