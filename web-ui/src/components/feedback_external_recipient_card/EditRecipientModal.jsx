@@ -62,7 +62,7 @@ const EditRecipientModal = ({ open, onClose, profile, onChange, onSubmit }) => {
                     <MenuItem value="Active">Active</MenuItem>
                     <MenuItem value="Inactive">Inactive</MenuItem>
                 </Select>
-                <br/>
+                <Box mt={2} />
                 <Button onClick={onSubmit} variant="contained" color="primary">
                     Save
                 </Button>

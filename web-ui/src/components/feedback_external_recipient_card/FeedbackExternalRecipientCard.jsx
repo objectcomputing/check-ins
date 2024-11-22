@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import { AppContext } from '../../context/AppContext.jsx';
 import { selectCsrfToken, selectProfileMap } from '../../context/selectors.js';
-import { Box, Card, CardHeader, CardContent, Container, Typography, IconButton, Tooltip, Button } from '@mui/material';
+import { Box, Card, CardHeader, CardContent, Container, Typography, IconButton, Tooltip, Button, Select, MenuItem } from '@mui/material';
 import { green } from '@mui/material/colors';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
@@ -133,9 +133,32 @@ const FeedbackExternalRecipientCard = ({
                   {recipientProfile?.email}
                 </a>
                 <br />
-                My Company: {recipientProfile?.companyName}
-                <br />
+                Company: {recipientProfile?.companyName}
               </Typography>
+              <Select
+                  label="Status"
+                  name="inactive"
+                  value={recipientProfile?.inactive ? 'Inactive' : 'Active'}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onEditHandle({ ...recipientProfile, inactive: e.target.value === 'Inactive' });
+                  }}
+                  fullWidth
+                  margin="normal"
+                  disabled={true}
+                  sx={{
+                    fontSize: '0.75rem',
+                    '& .MuiSelect-select': {
+                      padding: '4px 8px',
+                    },
+                    '& .MuiMenuItem-root': {
+                      fontSize: '0.75rem',
+                    },
+                  }}
+              >
+                <MenuItem value="Active">Active</MenuItem>
+                <MenuItem value="Inactive">Inactive</MenuItem>
+              </Select>
               <Button onClick={(e) => {
                   e.stopPropagation();
                   handleEditOpen();
