@@ -132,33 +132,11 @@ const FeedbackExternalRecipientCard = ({
                 >
                   {recipientProfile?.email}
                 </a>
-                <br />
+                <br/>
                 Company: {recipientProfile?.companyName}
+                <br/>
+                Status: { recipientProfile?.inactive ? 'Inactive' : 'Active' }
               </Typography>
-              <Select
-                  label="Status"
-                  name="inactive"
-                  value={recipientProfile?.inactive ? 'Inactive' : 'Active'}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    onEditHandle({ ...recipientProfile, inactive: e.target.value === 'Inactive' });
-                  }}
-                  fullWidth
-                  margin="normal"
-                  disabled={true}
-                  sx={{
-                    fontSize: '0.75rem',
-                    '& .MuiSelect-select': {
-                      padding: '4px 8px',
-                    },
-                    '& .MuiMenuItem-root': {
-                      fontSize: '0.75rem',
-                    },
-                  }}
-              >
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
-              </Select>
               <Button onClick={(e) => {
                   e.stopPropagation();
                   handleEditOpen();

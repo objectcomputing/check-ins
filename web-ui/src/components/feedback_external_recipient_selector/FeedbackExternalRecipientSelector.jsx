@@ -5,9 +5,9 @@ import { AppContext } from '../../context/AppContext';
 import {
     selectProfile, selectCsrfToken, selectCurrentUser, selectNormalizedMembers,
 } from '../../context/selectors';
-import {putExternalRecipientInactivate, getExternalRecipients} from '../../api/feedback';
+import {putExternalRecipientInactivate, getExternalRecipients, putExternalRecipient} from '../../api/feedback';
 import Typography from '@mui/material/Typography';
-import { TextField, Grid, InputAdornment } from '@mui/material';
+import {TextField, Grid, InputAdornment, FormControlLabel, Switch} from '@mui/material';
 import { Search } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import './FeedbackExternalRecipientSelector.css';
@@ -56,14 +56,15 @@ const propTypes = {
 };
 
 const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, addExternalRecipientId }) => {
-  const { state, dispatch } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-  const userProfile = selectCurrentUser(state);
-  const { id } = userProfile;
-  const searchTextUpdated = useRef(false);
-  const hasRenewedFromURL = useRef(false);
-  const [searchText, setSearchText] = useState('');
-  const [externalRecipients, setExternalRecipients] = useState([]);
+    const { state, dispatch } = useContext(AppContext);
+    const csrf = selectCsrfToken(state);
+    const userProfile = selectCurrentUser(state);
+    const { id } = userProfile;
+    const searchTextUpdated = useRef(false);
+    const hasRenewedFromURL = useRef(false);
+    const [searchText, setSearchText] = useState('');
+    const [externalRecipients, setExternalRecipients] = useState([]);
+    const [activeRecords, setActiveRecords] = useState(true);
 
 
     useEffect(() => {
@@ -159,7 +160,35 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
     };
 
     async function externalRecipientEdit(externalRecipient) {
-        console.log("FeedbackExternalRecipientSelector, externalRecipientEdit, externalRecipient: ", externalRecipient);
+        let externalRecipientsCopy = [...externalRecipients];
+        let indexArray = externalRecipientsCopy.findIndex(externalRecipientFind => externalRecipientFind.id === externalRecipient.id);
+
+        try {
+            const response = await putExternalRecipient(externalRecipient, csrf);
+            if (response && !response.error) {
+                externalRecipientsCopy[indexArray] = response.data.payload;
+                hasRenewedFromURL.current = false;
+                setExternalRecipients(externalRecipientsCopy);
+            } else {
+                const errorMessage = 'Failed to inactivate recipient';
+                dispatch({
+                    type: UPDATE_TOAST,
+                    payload: {
+                        severity: 'error',
+                        toast: errorMessage
+                    }
+                });
+            }
+        } catch (error) {
+            const errorMessage = ("An error occurred while inactivating the recipient: ", error);
+            dispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                    severity: 'error',
+                    toast: errorMessage
+                }
+            });
+        }
     }
 
     async function externalRecipientInactivate(id) {
@@ -308,6 +337,18 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
                         >
                             <HelpOutlineIcon style={{ color: 'gray', marginLeft: '10px' }} />
                         </Tooltip>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={activeRecords}
+                                    onChange={event => {
+                                        const { checked } = event.target;
+                                        setActiveRecords(checked);
+                                    }}
+                                />
+                            }
+                            label="Active Records Only"
+                        />
                     </div>
                 </Grid>
             </Grid>
@@ -319,7 +360,7 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
                             .filter(
                                 profile =>
                                     !fromQuery ||
-                                    (!fromQuery.includes(profile.id) && profile.id !== forQuery && !!!profile.inactive)
+                                    (!fromQuery.includes(profile.id) && profile.id !== forQuery && ((!!!profile.inactive && activeRecords) || !activeRecords))
                             )
                             .map((profile, index) => (
                                 <FeedbackExternalRecipientCard

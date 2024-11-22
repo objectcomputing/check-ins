@@ -311,3 +311,16 @@ export const putExternalRecipientInactivate = async (externalRecipientId, cookie
     }
   });
 };
+
+export const putExternalRecipient = async (externalRecipient, cookie) => {
+  return resolve({
+    method: 'PUT',
+    url: `${feedbackExternalRecipientsURL}`,
+    data: externalRecipient,
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  });
+};

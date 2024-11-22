@@ -51,20 +51,16 @@ public class FeedbackExternalRecipientController {
     }
 
     /**
-     * Mark a feedback request external recipient as inactive
+     * Update a feedback request external recipient
      *
-     * @param id {@link UUID} ID of the external-recipient
-     * @return {@link HttpResponse}
+     * @param feedbackExternalRecipientUpdateDTO {@link FeedbackExternalRecipientCreateDTO} New feedback-req external recipient to create
+     * @return {@link FeedbackExternalRecipient}
      */
-    @Put("/inactivate/{id}")
-    public HttpResponse<?> inactivate(UUID id) {
-        FeedbackExternalRecipient feedbackExternalRecipient = feedbackExternalRecipientServices.getById(id);
-        if (feedbackExternalRecipient == null) {
-            throw new BadArgException("Invalid external recipient ID");
-        }
-        feedbackExternalRecipient.setInactive(true);
-        feedbackExternalRecipientServices.update(feedbackExternalRecipient);
-        return HttpResponse.ok();
+    @Put
+    public HttpResponse<FeedbackExternalRecipientResponseDTO> update(@Body @Valid @NotNull FeedbackExternalRecipientUpdateDTO feedbackExternalRecipientUpdateDTO) {
+        FeedbackExternalRecipient savedFeedbackExternalRecipient = feedbackExternalRecipientServices.update(feedbackExternalRecipientUpdateDTO);
+        return HttpResponse.created(fromEntity(savedFeedbackExternalRecipient))
+                .headers(headers -> headers.location(URI.create("/feedback_external_recipient/" + savedFeedbackExternalRecipient.getId())));
     }
 
     /**

@@ -21,8 +21,16 @@ public class FeedbackExternalRecipientServicesImpl implements FeedbackExternalRe
     }
 
     @Override
-    public FeedbackExternalRecipient update(FeedbackExternalRecipient feedbackExternalRecipient) {
-        return feedbackExternalRecipientRepository.update(feedbackExternalRecipient);
+    public FeedbackExternalRecipient update(FeedbackExternalRecipientUpdateDTO feedbackExternalRecipientUpdateDTO) {
+        FeedbackExternalRecipient feedbackExternalRecipientExisting = getById(feedbackExternalRecipientUpdateDTO.getId());
+
+        feedbackExternalRecipientExisting.setCompanyName(feedbackExternalRecipientUpdateDTO.getCompanyName());
+        feedbackExternalRecipientExisting.setEmail(feedbackExternalRecipientUpdateDTO.getEmail());
+        feedbackExternalRecipientExisting.setFirstName(feedbackExternalRecipientUpdateDTO.getFirstName());
+        feedbackExternalRecipientExisting.setLastName(feedbackExternalRecipientUpdateDTO.getLastName());
+        feedbackExternalRecipientExisting.setInactive(feedbackExternalRecipientUpdateDTO.getInactive());
+
+        return feedbackExternalRecipientRepository.update(feedbackExternalRecipientExisting);
     }
 
     @Override
