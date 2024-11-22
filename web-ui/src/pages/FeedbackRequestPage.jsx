@@ -192,7 +192,6 @@ const FeedbackRequestPage = () => {
       }
       return false;
     }
-
   }, [memberIds, query, dispatch, handleQueryChange, externalRecipientIds])
   ;
 
@@ -223,13 +222,6 @@ const FeedbackRequestPage = () => {
         return hasFor() && templateIsValid && hasFrom();
       } else if (activeStep === 3) {
         const dueQueryValid = query.due ? isValidDate(query.due) : true;
-        console.log("FeedbackRequestPage, canProceed: ",{
-          hasFor: hasFor(),
-          templateIsValid,
-          hasFrom: hasFrom(),
-          hasSend: hasSend(),
-          dueQueryValid
-        });
         return (
           hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid
         );
@@ -396,8 +388,8 @@ const FeedbackRequestPage = () => {
           res.payload.status === 200 &&
           !res.error
               ? res.payload.data
-              : null;
-
+              : null
+      ;
       if (templateResponse === null) {
         window.snackDispatch({
           type: UPDATE_TOAST,
