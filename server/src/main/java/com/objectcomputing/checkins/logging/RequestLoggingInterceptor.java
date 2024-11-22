@@ -46,8 +46,7 @@ public class RequestLoggingInterceptor implements Ordered {
                     .map(e -> e.getKey() + ":" + e.getValue())
                     .collect(Collectors.joining(","));
             String requestBody = body == null ? "empty" : body;
-            LOG.info(
-                    "User {} {} request to {} with body {} and parameters {} being handled by {}.{}",
+            LOG.info("User: {} - {} request to {} with body {} and parameters {} being handled by {}.{}",
                     username,
                     requestVerb,
                     request.getUri().getPath(),
