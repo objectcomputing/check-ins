@@ -63,6 +63,20 @@ const ManageKudosPage = () => {
   const [approvedKudosLoading, setApprovedKudosLoading] = useState(true);
   const [kudosTab, setKudosTab] = useState("PENDING");
   const [timeRange, setTimeRange] = useState(DateRange.TWO_WEEKS);
+  const [pendingSort, setPendingSort] = useState(SortOption.OLDEST);
+
+  const sortPendingKudos = (pending) => {
+    return pending.sort((a, b) => {
+      const l = pendingSort === SortOption.NEWEST ? a : b;
+      const r = pendingSort === SortOption.NEWEST ? b : a;
+      for(let i = 0; i < l.dateCreated.length; i++) {
+        if (l.dateCreated[i] != r.dateCreated[i]) {
+          return r.dateCreated[i] - l.dateCreated[i];
+        }
+      }
+      return 0;
+    });
+  };
 
   const loadPendingKudos = useCallback(async () => {
     setPendingKudosLoading(true);
@@ -85,17 +99,21 @@ const ManageKudosPage = () => {
   useEffect(() => {
     loadPendingKudos().then(data => {
       if (data) {
-        setPendingKudos(data);
+        setPendingKudos(sortPendingKudos(data));
       }
     });
   }, [csrf, dispatch, loadPendingKudos]);
+
+  useEffect(() => {
+    setPendingKudos(sortPendingKudos([...pendingKudos]));
+  }, [pendingSort]);
 
   const handleTabChange = useCallback((event, newTab) => {
     switch (newTab) {
       case "PENDING":
         loadPendingKudos().then(data => {
           if (data) {
-            setPendingKudos(data);
+            setPendingKudos(sortPendingKudos(data));
           }
         });
         break;
@@ -112,6 +130,33 @@ const ManageKudosPage = () => {
 
     setKudosTab(newTab);
   }, [loadPendingKudos, loadApprovedKudos]);
+
+  const filterApprovedKudos = (kudos) => {
+    if (!kudos.dateApproved) {
+      return false;
+    }
+
+    const now = new Date();
+    const approved = new Date(kudos.dateApproved[0],
+                              kudos.dateApproved[1] - 1,
+                              kudos.dateApproved[2]).getTime();
+    switch(timeRange) {
+      case DateRange.ONE_WEEK:
+        return approved >= (new Date(now.getFullYear(), now.getMonth(),
+                                     now.getDate() - 7).getTime());
+      case DateRange.TWO_WEEKS:
+        return approved >= (new Date(now.getFullYear(), now.getMonth(),
+                                     now.getDate() - 14).getTime());
+      case DateRange.ONE_MONTH:
+        return approved >= (new Date(now.getFullYear(), now.getMonth() - 1,
+                                     now.getDate()).getTime());
+      case DateRange.ONE_YEAR:
+        return approved >= (new Date(now.getFullYear() - 1, now.getMonth(),
+                                     now.getDate()).getTime());
+      case DateRange.ALL_TIME:
+        return true;
+    }
+  };
 
   return selectHasAdministerKudosPermission(state) ? (
     <Root className="manage-kudos-page">
@@ -141,6 +186,8 @@ const ManageKudosPage = () => {
               select
               label="Sort by"
               variant="outlined"
+              value={pendingSort}
+              onChange={(event) => setPendingSort(event.target.value)}
             >
               <MenuItem value={SortOption.NEWEST}>Newest</MenuItem>
               <MenuItem value={SortOption.OLDEST}>Oldest</MenuItem>
@@ -176,7 +223,7 @@ const ManageKudosPage = () => {
             ? Array.from({length: 5}).map((_, index) => <SkeletonLoader key={index} type="kudos"/>)
             : (
               <div>
-                {approvedKudos.map(k =>
+                {approvedKudos.filter(filterApprovedKudos).map(k =>
                   <KudosCard key={k.id} kudos={k}/>
                 )}
               </div>

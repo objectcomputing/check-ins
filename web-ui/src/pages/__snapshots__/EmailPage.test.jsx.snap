@@ -1,0 +1,305 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders an error if user does not have appropriate permission 1`] = `
+<div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
+</div>
+`;
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="email-page css-175t7kh"
+  >
+    <div
+      class="MuiStepper-root MuiStepper-horizontal css-m5vj9m-MuiStepper-root"
+    >
+      <div
+        class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+      >
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal css-ascpo7-MuiStepLabel-root"
+        >
+          <span
+            class="MuiStepLabel-iconContainer Mui-active css-vnkopk-MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-active css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="12"
+              />
+              <text
+                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                dominant-baseline="central"
+                text-anchor="middle"
+                x="12"
+                y="12"
+              >
+                1
+              </text>
+            </svg>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiStepLabel-label Mui-active css-1hv8oq8-MuiStepLabel-label"
+            >
+              Choose Email Format
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
+        class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-j5w0w9-MuiStepConnector-root"
+      >
+        <span
+          class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+        />
+      </div>
+      <div
+        class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+      >
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-ascpo7-MuiStepLabel-root"
+        >
+          <span
+            class="MuiStepLabel-iconContainer Mui-disabled css-vnkopk-MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="12"
+              />
+              <text
+                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                dominant-baseline="central"
+                text-anchor="middle"
+                x="12"
+                y="12"
+              >
+                2
+              </text>
+            </svg>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiStepLabel-label Mui-disabled css-1hv8oq8-MuiStepLabel-label"
+            >
+              Compose Email
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
+        class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-j5w0w9-MuiStepConnector-root"
+      >
+        <span
+          class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+        />
+      </div>
+      <div
+        class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+      >
+        <span
+          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-ascpo7-MuiStepLabel-root"
+        >
+          <span
+            class="MuiStepLabel-iconContainer Mui-disabled css-vnkopk-MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="12"
+              />
+              <text
+                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                dominant-baseline="central"
+                text-anchor="middle"
+                x="12"
+                y="12"
+              >
+                3
+              </text>
+            </svg>
+          </span>
+          <span
+            class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+          >
+            <span
+              class="MuiStepLabel-label Mui-disabled css-1hv8oq8-MuiStepLabel-label"
+            >
+              Select Recipients
+            </span>
+          </span>
+        </span>
+      </div>
+    </div>
+    <div
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root current-step-content-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+    >
+      <div
+        class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+      >
+        <div
+          class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+          >
+            Choose Email Format
+          </span>
+        </div>
+      </div>
+      <div
+        class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      >
+        <div
+          class="email-format-container"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary email-format-button css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            <div
+              class="email-format-button-content"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1pui-MuiSvgIcon-root"
+                data-testid="UploadFileIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm4 18H6V4h7v5h5zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z"
+                />
+              </svg>
+              <h6
+                class="MuiTypography-root MuiTypography-h6 css-tjvwag-MuiTypography-root"
+              >
+                MJML File
+              </h6>
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
+              >
+                Create an email with a custom format using MJML
+              </p>
+            </div>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary email-format-button css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+            tabindex="0"
+            type="button"
+          >
+            <div
+              class="email-format-button-content"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1pui-MuiSvgIcon-root"
+                data-testid="EditIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
+                />
+              </svg>
+              <h6
+                class="MuiTypography-root MuiTypography-h6 css-tjvwag-MuiTypography-root"
+              >
+                Text
+              </h6>
+              <p
+                class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
+              >
+                Write a simple email with no formatting
+              </p>
+            </div>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="stepper-button-container"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary stepper-button css-1rwt2y5-MuiButtonBase-root-MuiButton-root"
+        disabled=""
+        tabindex="-1"
+        type="button"
+      >
+        <span
+          class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1d6wzja-MuiButton-startIcon"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="KeyboardArrowLeftIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M15.41 16.59 10.83 12l4.58-4.59L14 6l-6 6 6 6z"
+            />
+          </svg>
+        </span>
+        Back
+      </button>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary stepper-button css-sghohy-MuiButtonBase-root-MuiButton-root"
+        disabled=""
+        tabindex="-1"
+        type="button"
+      >
+        Next
+        <span
+          class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-9tj150-MuiButton-endIcon"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="KeyboardArrowRightIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

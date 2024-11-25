@@ -1,0 +1,218 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders an error if user does not have appropriate permission 1`] = `
+<div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
+</div>
+`;
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="checkins-report-page"
+  >
+    <div
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root member-selector-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+    >
+      <div
+        class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+      >
+        <div
+          class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+          >
+            <div
+              class="member-selector-card-title-container"
+            >
+              <h5
+                class="MuiTypography-root MuiTypography-h5 MuiTypography-noWrap member-selector-card-title css-1961ak2-MuiTypography-root"
+              >
+                Select PDLs
+              </h5>
+              <h6
+                class="MuiTypography-root MuiTypography-h6 member-selector-card-count css-r8391j-MuiTypography-root"
+              >
+                (
+                0
+                )
+              </h6>
+            </div>
+          </span>
+        </div>
+        <div
+          class="MuiCardHeader-action css-sgoict-MuiCardHeader-action"
+        >
+          <div
+            class="MuiBox-root css-1ay9vb9"
+          >
+            <span
+              aria-label="Change PDL"
+              class=""
+              data-mui-internal-clone-element="true"
+            >
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+                style="margin: 4px 8px 0px 0px;"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  data-testid="AddIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+            </span>
+            <button
+              aria-label="Download"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-1yq5fb3-MuiButtonBase-root-MuiIconButton-root"
+              data-mui-internal-clone-element="true"
+              tabindex="0"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                data-testid="FileDownloadIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 9h-4V3H9v6H5l7 7zM5 18v2h14v-2z"
+                />
+              </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="MuiBox-root css-1l4w6pd"
+    >
+      <div
+        aria-label="Basic button group"
+        class="MuiButtonGroup-root MuiButtonGroup-text css-iv8nej-MuiButtonGroup-root"
+        role="group"
+      >
+        <button
+          aria-label="Previous quarter\`"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+          data-mui-internal-clone-element="true"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="ArrowBackIcon"
+            focusable="false"
+            style="font-size: 1.2em;"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"
+            />
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-16dfr7g-MuiTypography-root"
+        >
+          <nobr>
+            Q4 2024
+          </nobr>
+        </h6>
+        <button
+          aria-label="Next quarter\`"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+          data-mui-internal-clone-element="true"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            data-testid="ArrowForwardIcon"
+            focusable="false"
+            style="font-size: 1.2em;"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+            />
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+      <dl
+        class="MuiGrid-root MuiGrid-container checkins-report-page-dates css-11lq3yg-MuiGrid-root"
+      >
+        <div
+          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+        >
+          <dt
+            class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+          >
+            Start of Quarter
+          </dt>
+          <dd
+            class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
+          >
+            Tue Oct 01 2024
+          </dd>
+        </div>
+        <div
+          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+        >
+          <dt
+            class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+          >
+            End of Quarter
+          </dt>
+          <dd
+            class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
+          >
+            Tue Dec 31 2024
+          </dd>
+        </div>
+      </dl>
+    </div>
+    <div
+      class="checkins-report-page-reports"
+    >
+      <div
+        class="checkins-report-page-no-data"
+      >
+        <h2>
+          No PDLs selected
+        </h2>
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        >
+          Please select some PDLs using the Member Selector.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
