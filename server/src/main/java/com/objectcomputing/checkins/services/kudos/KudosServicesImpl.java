@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.kudos;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.notifications.social_media.SlackPoster;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -21,6 +22,9 @@ import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.transaction.annotation.Transactional;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -49,6 +53,7 @@ class KudosServicesImpl implements KudosServices {
     private final CheckInsConfiguration checkInsConfiguration;
     private final RoleServices roleServices;
     private final MemberProfileServices memberProfileServices;
+    private final SlackPoster slackPoster;
 
     private enum NotificationType {
         creation, approval
@@ -63,7 +68,8 @@ class KudosServicesImpl implements KudosServices {
                              RoleServices roleServices,
                              MemberProfileServices memberProfileServices,
                              @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
-                             CheckInsConfiguration checkInsConfiguration) {
+                             CheckInsConfiguration checkInsConfiguration,
+                             SlackPoster slackPoster) {
         this.kudosRepository = kudosRepository;
         this.kudosRecipientServices = kudosRecipientServices;
         this.kudosRecipientRepository = kudosRecipientRepository;
@@ -74,6 +80,7 @@ class KudosServicesImpl implements KudosServices {
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
         this.checkInsConfiguration = checkInsConfiguration;
+        this.slackPoster = slackPoster;
     }
 
     @Override
@@ -341,6 +348,7 @@ class KudosServicesImpl implements KudosServices {
                                     recipientAddresses.add(member.getWorkEmail());
                                 }
                             }
+                            slackApprovedKudos(kudos);
                             break;
                         case NotificationType.creation:
                             content = getAdminEmailContent(checkInsConfiguration);
@@ -364,6 +372,18 @@ class KudosServicesImpl implements KudosServices {
             }
         } catch(Exception ex) {
           LOG.error("An unexpected error occurred while sending notifications: {}", ex.getLocalizedMessage(), ex);
+        }
+    }
+
+    private void slackApprovedKudos(Kudos kudos) {
+        KudosConverter converter = new KudosConverter(memberProfileServices,
+                                                      kudosRecipientServices);
+
+        String slackBlock = converter.toSlackBlock(kudos);
+        HttpResponse httpResponse =
+            slackPoster.post(converter.toSlackBlock(kudos));
+        if (httpResponse.status() != HttpStatus.OK) {
+            LOG.error("Unable to POST to Slack: " + httpResponse.reason());
         }
     }
 }
