@@ -1771,9 +1771,19 @@ VALUES
 ('d27b679c-3aa8-4c4d-b08e-4eda63cea23f', '105f2968-a182-45a3-892c-eeff76383fe0', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '5', '2022-08-01');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('39dfd281-d0af-4016-848b-8156dfef2b92', PGP_SYM_ENCRYPT('Kudos to Revolver Ocelot!', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2022-10-01', '2022-10-02');
+('39dfd281-d0af-4016-848b-8156dfef2b93', PGP_SYM_ENCRYPT('Kudos to Revolver Ocelot!', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2023-12-01', '2023-12-02', true);
+
+INSERT INTO kudos_recipient
+(id, kudosid, memberid)
+VALUES
+('ebc023e1-b577-4b02-a2fb-fc9472a8474b', '39dfd281-d0af-4016-848b-8156dfef2b93', '105f2968-a182-45a3-892c-eeff76383fe0');
+
+INSERT INTO kudos
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
+VALUES
+('39dfd281-d0af-4016-848b-8156dfef2b92', PGP_SYM_ENCRYPT('Kudos to Revolver Ocelot!', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2022-10-01', null, true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)
@@ -1781,9 +1791,9 @@ VALUES
 ('ebc023e1-b577-4b02-a2fb-fc9472a8474a', '39dfd281-d0af-4016-848b-8156dfef2b92', '105f2968-a182-45a3-892c-eeff76383fe0');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('fbcde196-7703-4f80-ac5e-5ac60b28555e', PGP_SYM_ENCRYPT('Kudos to Huey and Awesome!', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2022-10-01', null);
+('fbcde196-7703-4f80-ac5e-5ac60b28555e', PGP_SYM_ENCRYPT('Kudos to Huey and Awesome!', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2024-10-21', '2024-10-21', true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)
@@ -1796,9 +1806,9 @@ VALUES
 ('bf37c244-f478-42b2-9077-dd4cb052bbb1', 'fbcde196-7703-4f80-ac5e-5ac60b28555e', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('df2766f0-efab-4925-859e-d993e2e38eaa', PGP_SYM_ENCRYPT('Kudos to the Checkins Experts team!', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '2022-09-28', '2022-09-29');
+('df2766f0-efab-4925-859e-d993e2e38eaa', PGP_SYM_ENCRYPT('Kudos to the Checkins Experts team!', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '2024-09-28', '2024-09-29', true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)
@@ -1816,9 +1826,9 @@ VALUES
 ('0ca86d55-cffb-4b84-883c-c4c2e41eff73', 'df2766f0-efab-4925-859e-d993e2e38eaa', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('17e19f16-d731-4242-a74a-43493a556f08', PGP_SYM_ENCRYPT('Kudos to Michael Kimberlin!', '${aeskey}'), 'a90be358-aa3d-49c8-945a-879a93646e45', null, '2022-08-15', '2022-08-25');
+('17e19f16-d731-4242-a74a-43493a556f08', PGP_SYM_ENCRYPT('Kudos to Mischievous Kangaroo!', '${aeskey}'), 'a90be358-aa3d-49c8-945a-879a93646e45', null, '2024-11-01', null, true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)
@@ -1826,9 +1836,9 @@ VALUES
 ('038485ee-8cac-416b-9da6-d838ee345d0e', '17e19f16-d731-4242-a74a-43493a556f08', 'e4b2fe52-1915-4544-83c5-21b8f871f6db');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('6612b8a0-1d45-4155-b0fb-e0b2d9eaafcb', PGP_SYM_ENCRYPT('Wanted to give some kudos to Mischievous Kangaroo and Revolver Ocelot for their recent help on the project. Thank you very much!', '${aeskey}'), '1b4f99da-ef70-4a76-9b37-8bb783b749ad', null, '2022-10-05', null);
+('6612b8a0-1d45-4155-b0fb-e0b2d9eaafcb', PGP_SYM_ENCRYPT('Wanted to give some kudos to Mischievous Kangaroo and Revolver Ocelot for their recent help on the project. Thank you very much!', '${aeskey}'), '1b4f99da-ef70-4a76-9b37-8bb783b749ad', null, '2024-10-29', '2024-10-29', true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)
@@ -1841,9 +1851,9 @@ VALUES
 ('01f639d5-b7b3-47a2-b165-d7a20d01fec2', '6612b8a0-1d45-4155-b0fb-e0b2d9eaafcb', '105f2968-a182-45a3-892c-eeff76383fe0');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('9cdce399-4c02-41ed-a63f-35beb6ecb622', PGP_SYM_ENCRYPT('A huge thank you to the Javascript Gurus team for offering their advice on the tech stack for the new project. Kudos to you all!', '${aeskey}'), '8d75c07e-6adc-437a-8659-7dd953ce6600', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '2022-10-10', '2022-10-11');
+('9cdce399-4c02-41ed-a63f-35beb6ecb622', PGP_SYM_ENCRYPT('A huge thank you to the Javascript Gurus team for offering their advice on the tech stack for the new project. Kudos to you all!', '${aeskey}'), '8d75c07e-6adc-437a-8659-7dd953ce6600', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '2022-10-10', '2022-10-11', true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)
@@ -1861,9 +1871,9 @@ VALUES
 ('f792056b-22ce-4e3d-a442-0fdc3cb35e7b', '9cdce399-4c02-41ed-a63f-35beb6ecb622', '105f2968-a182-45a3-892c-eeff76383fe0');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('39dfd284-d0bf-4017-848c-8156dfef2b93', PGP_SYM_ENCRYPT('Kudos are tasty.', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2024-09-04', '2022-09-04');
+('39dfd284-d0bf-4017-848c-8156dfef2b93', PGP_SYM_ENCRYPT('Kudos are tasty.', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2024-11-10', '2024-11-10', true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)
@@ -1871,9 +1881,9 @@ VALUES
 ('ebc023e2-b578-4b03-a2fc-fc9472a8474b', '39dfd284-d0bf-4017-848c-8156dfef2b93', 'c7406157-a38f-4d48-aaed-04018d846727');
 
 INSERT INTO kudos
-(id, message, senderid, teamid, datecreated, dateapproved)
+(id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
-('39dfd284-d0bf-4017-848c-8156dfef2b94', PGP_SYM_ENCRYPT('Kudos are covered in chocolate.', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2024-09-04', '2022-09-04');
+('39dfd284-d0bf-4017-848c-8156dfef2b94', PGP_SYM_ENCRYPT('Kudos are covered in chocolate.', '${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', null, '2024-09-04', '2022-09-04', true);
 
 INSERT INTO kudos_recipient
 (id, kudosid, memberid)

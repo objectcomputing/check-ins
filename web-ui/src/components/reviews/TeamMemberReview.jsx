@@ -131,6 +131,7 @@ const TeamMemberReview = ({
                   : 'Self-Review'
               }
               {...a11yProps(0)}
+              key={0}
             />
             {reviews &&
               reviews.filter(r => !!r).map((review, index) => {
@@ -148,7 +149,10 @@ const TeamMemberReview = ({
                 }
 
                 return (
-                  <Tab icon={icon} label={label} {...a11yProps(index + 1)} />
+                  <Tab key={index + 1}
+                       icon={icon}
+                       label={label}
+                       {...a11yProps(index + 1)} />
                 );
               })}
           </Tabs>
@@ -158,7 +162,7 @@ const TeamMemberReview = ({
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          <TabPanel value={value} index={0} dir={theme.direction}>
+          <TabPanel key={0} value={value} index={0} dir={theme.direction}>
             {selfReview?.id ? (
               <FeedbackSubmitForm
                 requesteeName={
@@ -179,7 +183,10 @@ const TeamMemberReview = ({
                                 review.status?.toUpperCase() === 'SUBMITTED');
 
               return (
-                <TabPanel value={value} index={index + 1} dir={theme.direction}>
+                <TabPanel key={index + 1}
+                          value={value}
+                          index={index + 1}
+                          dir={theme.direction}>
                   <FeedbackSubmitForm
                     requesteeName={requesteeName}
                     requestId={review.id}
