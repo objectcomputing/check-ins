@@ -7,7 +7,7 @@ env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop
-  TARGET_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
+  TARGET_URL: https://checkins-dev.objectcomputing.com
 jobs:
   test:
     runs-on: ubuntu-latest
