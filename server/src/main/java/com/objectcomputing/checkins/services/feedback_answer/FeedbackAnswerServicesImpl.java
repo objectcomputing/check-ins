@@ -107,10 +107,8 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
         try {
             currentUser = currentUserServices.getCurrentUser();
-
         } catch (NotFoundException e) {
             currentUser = null;
-
         }
         final UUID currentUserId = (currentUser != null) ? currentUser.getId() : null;
 
