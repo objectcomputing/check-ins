@@ -39,29 +39,33 @@ exports[`MemberSelector > renders correctly as a controlled component 1`] = `
         <div
           class="MuiBox-root css-1ay9vb9"
         >
-          <button
+          <span
             aria-label="Change Members"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+            class=""
             data-mui-internal-clone-element="true"
-            style="margin: 4px 8px 0px 0px;"
-            tabindex="0"
-            type="button"
           >
-            <svg
-              aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-              data-testid="AddIcon"
-              focusable="false"
-              viewBox="0 0 24 24"
+            <button
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+              style="margin: 4px 8px 0px 0px;"
+              tabindex="0"
+              type="button"
             >
-              <path
-                d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                data-testid="AddIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+                />
+              </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />
-            </svg>
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </button>
+            </button>
+          </span>
           <button
             aria-label="Download"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-1yq5fb3-MuiButtonBase-root-MuiIconButton-root"
@@ -129,27 +133,31 @@ exports[`MemberSelector > renders correctly when disabled 1`] = `
         <div
           class="MuiBox-root css-1ay9vb9"
         >
-          <button
+          <span
             aria-label="Change Members"
-            class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+            class=""
             data-mui-internal-clone-element="true"
-            disabled=""
-            style="margin: 4px 8px 0px 0px;"
-            tabindex="-1"
-            type="button"
           >
-            <svg
-              aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-              data-testid="AddIcon"
-              focusable="false"
-              viewBox="0 0 24 24"
+            <button
+              class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+              disabled=""
+              style="margin: 4px 8px 0px 0px;"
+              tabindex="-1"
+              type="button"
             >
-              <path
-                d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
-              />
-            </svg>
-          </button>
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                data-testid="AddIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+                />
+              </svg>
+            </button>
+          </span>
         </div>
       </div>
     </div>
@@ -195,29 +203,33 @@ exports[`MemberSelector > renders correctly with default props 1`] = `
         <div
           class="MuiBox-root css-1ay9vb9"
         >
-          <button
+          <span
             aria-label="Change Members"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+            class=""
             data-mui-internal-clone-element="true"
-            style="margin: 4px 8px 0px 0px;"
-            tabindex="0"
-            type="button"
           >
-            <svg
-              aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-              data-testid="AddIcon"
-              focusable="false"
-              viewBox="0 0 24 24"
+            <button
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+              style="margin: 4px 8px 0px 0px;"
+              tabindex="0"
+              type="button"
             >
-              <path
-                d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                data-testid="AddIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+                />
+              </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />
-            </svg>
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </button>
+            </button>
+          </span>
         </div>
       </div>
     </div>

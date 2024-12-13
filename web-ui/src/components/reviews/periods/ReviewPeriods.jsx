@@ -399,9 +399,8 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
                     : aName.localeCompare(b.name));
             })
             .map((period) => (
-              <div>
+              <div key={`review-period-card-${period.id}`}>
                 <ReviewPeriodCard
-                  key={`review-period-card-${period.id}`}
                   mode={mode}
                   onSelect={onPeriodClick}
                   periodId={period.id}

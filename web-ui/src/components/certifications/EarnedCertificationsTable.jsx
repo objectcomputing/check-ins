@@ -94,7 +94,7 @@ const EarnedCertificationsTable = ({
     });
     if (res.error) return;
 
-    const certs = res.payload.data;
+    const certs = res.payload.data ?? [];
     setCertifications(certs.sort((c1, c2) => c1.name.localeCompare(c2.name)));
 
     const certMap = certs.reduce((map, cert) => {
@@ -114,7 +114,7 @@ const EarnedCertificationsTable = ({
     });
     if (res.error) return;
 
-    let earned = res.payload.data;
+    let earned = res.payload.data ?? [];
     if (onlyMe) {
       earned = earned.filter(cert => cert.memberId === currentUser.id);
     }
@@ -512,7 +512,7 @@ const EarnedCertificationsTable = ({
     });
     if (res.error) return;
 
-    const newEarned = res.payload.data;
+    const newEarned = res.payload.data ?? [];
     setEarnedCertifications(earned => {
       if (id) {
         const index = earned.findIndex(c => c.id === id);

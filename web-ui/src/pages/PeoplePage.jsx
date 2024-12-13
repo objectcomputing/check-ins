@@ -42,7 +42,7 @@ const PeoplePage = () => {
   const { state } = useContext(AppContext);
   const loading = selectMemberProfilesLoading(state);
 
-  const [kudosDialogOpen, setKudosDialogOpen] = useState(null);
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
