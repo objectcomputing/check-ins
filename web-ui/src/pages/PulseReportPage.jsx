@@ -145,7 +145,7 @@ const PulseReportPage = () => {
   // This creates data in the format that recharts needs from pulse data.
   useEffect(() => {
     const averageData = {}; // key is member id
-    const lineChartData = [];
+    const lineChartDataPoints = [];
     const frequencies = [];
     for (let i = 1; i <= 5; i++) {
       frequencies.push({ score: i, internal: 0, external: 0 });
@@ -162,11 +162,16 @@ const PulseReportPage = () => {
       const [year, month, day] = submissionDate;
       const monthPadded = month.toString().padStart(2, '0');
       const dayPadded = day.toString().padStart(2, '0');
-      lineChartData.push({
-        date: `${year}-${monthPadded}-${dayPadded}`,
-        internal: internalScore,
-        external: externalScore
-      });
+      const date = `${year}-${monthPadded}-${dayPadded}`;
+      const found = lineChartDataPoints.find(points => points.date === date)
+      if(found) {
+        found?.datapoints?.push(pulse);
+      } else {
+        lineChartDataPoints.push({
+          date,
+          datapoints: [pulse]
+        });
+      }
 
       frequencies[internalScore - 1].internal++;
       frequencies[externalScore - 1].external++;
@@ -200,7 +205,13 @@ const PulseReportPage = () => {
       }
     }
 
-    setLineChartData(lineChartData);
+    setLineChartData(lineChartDataPoints.map(day => (
+      {
+        date: day.date,
+        internal: day.datapoints.reduce((acc, current) => acc + current.internalScore, 0)/day.datapoints.length,
+        external: day.datapoints.reduce((acc, current) => acc + current.externalScore, 0)/day.datapoints.length
+      }
+    )));
     setBarChartData(frequencies);
 
     for (const memberId of Object.keys(averageData)) {

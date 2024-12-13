@@ -19,6 +19,8 @@ import { useQueryParameters } from '../helpers/query-parameters';
 
 import markdown from 'markdown-builder';
 
+const noneAvailable = "None available during the period covered by this review.";
+
 const MeritReportPage = () => {
   const { state, dispatch } = useContext(AppContext);
 
@@ -79,7 +81,8 @@ const MeritReportPage = () => {
       if (data) {
         let periods = data.reduce((result, item) => {
                          if (item.closeDate) {
-                           result.push({label: formatReviewDate(item.closeDate),
+                           result.push({label: item.name + ' - ' +
+                                               formatReviewDate(item.closeDate),
                                         id: item.id});
                          }
                          return result;
@@ -256,49 +259,58 @@ const MeritReportPage = () => {
     let text = markdown.headers.h1("Current Information");
     text += years.toFixed(1) + " years\n\n";
     text += markdown.headers.h2("Biographical Notes");
-    text += currentInfo.biography + "\n\n";
+    text += (currentInfo.biography ? currentInfo.biography :
+                                     noneAvailable) + "\n\n";
     return text;
   };
 
   const markdownKudos = (data) => {
     const kudosList = data.kudos;
     let text = markdown.headers.h1("Kudos");
-    for (let kudos of kudosList) {
-      const date = dateFromArray(kudos.dateCreated);
-      text += kudos.message + "\n\n";
-      text += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-              markdown.emphasis.i("Submitted on " + formatDate(date) +
-                                  ", by " + kudos.sender) +
-              "\n\n\n";
+    if (kudosList.length > 0) {
+      for (let kudos of kudosList) {
+        const date = dateFromArray(kudos.dateCreated);
+        text += kudos.message + "\n\n";
+        text += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                markdown.emphasis.i("Submitted on " + formatDate(date) +
+                                    ", by " + kudos.sender) +
+                "\n\n\n";
+      }
+    } else {
+      text += noneAvailable + "\n\n";
     }
     return text;
   };
 
   const markdownReviewsImpl = (title, feedbackList, listMembers) => {
     let text = markdown.headers.h1(title);
-    for(let feedback of feedbackList) {
-      const members = getUniqueMembers(feedback.answers);
-      for(let member of Object.keys(members)) {
-        if (listMembers) {
-          text += member + ": ";
-        }
-        text += "Submitted - " + formatDate(members[member]) + "\n\n";
-      }
-      text += "\n";
-
-      const questions = getUniqueQuestions(feedback.answers);
-      for(let question of Object.keys(questions)) {
-        text += markdown.headers.h4(question) + "\n";
-        for(let answer of questions[question]) {
+    if (feedbackList.length > 0) {
+      for(let feedback of feedbackList) {
+        const members = getUniqueMembers(feedback.answers);
+        for(let member of Object.keys(members)) {
           if (listMembers) {
-            text += answer[0] + ": ";
+            text += member + ": ";
           }
-          text += answer[1] + "\n\n";
+          text += "Submitted - " + formatDate(members[member]) + "\n\n";
         }
         text += "\n";
+
+        const questions = getUniqueQuestions(feedback.answers);
+        for(let question of Object.keys(questions)) {
+          text += markdown.headers.h4(question) + "\n";
+          for(let answer of questions[question]) {
+            if (listMembers) {
+              text += answer[0] + ": ";
+            }
+            text += answer[1] + "\n\n";
+          }
+          text += "\n";
+        }
       }
+      text += "\n";
+    } else {
+      text += noneAvailable + "\n\n";
     }
-    text += "\n";
     return text;
   }
 
@@ -347,31 +359,35 @@ const MeritReportPage = () => {
   const markdownFeedback = (data) => {
     let text = markdown.headers.h1("Feedback");
     const feedbackList = data.feedback;
-    for(let feedback of feedbackList) {
-      text += markdown.headers.h2("Template: " + feedback.name);
-      const members = getUniqueMembers(feedback.answers);
-      for(let member of Object.keys(members)) {
-        text += member + ": " + formatDate(members[member]) + "\n\n";
-      }
-      text += "\n";
-
-      const questions = getUniqueQuestions(feedback.answers);
-      for(let question of Object.keys(questions)) {
-        text += markdown.headers.h4(question) + "\n";
-        for(let answer of questions[question]) {
-          text += answer[0] + ": " + answer[1] + "\n\n";
+    if (feedbackList.length > 0) {
+      for(let feedback of feedbackList) {
+        text += markdown.headers.h2("Template: " + feedback.name);
+        const members = getUniqueMembers(feedback.answers);
+        for(let member of Object.keys(members)) {
+          text += member + ": " + formatDate(members[member]) + "\n\n";
         }
         text += "\n";
+
+        const questions = getUniqueQuestions(feedback.answers);
+        for(let question of Object.keys(questions)) {
+          text += markdown.headers.h4(question) + "\n";
+          for(let answer of questions[question]) {
+            text += answer[0] + ": " + answer[1] + "\n\n";
+          }
+          text += "\n";
+        }
       }
+      text += "\n";
+    } else {
+      text += noneAvailable + "\n\n";
     }
-    text += "\n";
     return text;
   };
 
   const markdownTitleHistory = (data) => {
     // Get the position history sorted latest to earliest
     const posHistory = data.positionHistory.sort((a, b) => {
-      for(let i = 0; i < a.length; i++) {
+      for(let i = 0; i < a.date.length; i++) {
         if (a.date[i] != b.date[i]) {
           return b.date[i] - a.date[i];
         }
@@ -537,6 +553,7 @@ const MeritReportPage = () => {
         <Autocomplete
           id="reviewPeriodSelect"
           options={reviewPeriods ? reviewPeriods : []}
+          getOptionLabel={(option) => option.label || ""}
           value={reviewPeriodId}
           onChange={onReviewPeriodChange}
           renderInput={params => (

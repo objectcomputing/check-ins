@@ -10,7 +10,7 @@ it('renders the feedback submit question as text', () => {
           id: '1',
           question: 'How is the project going so far?',
           questionNumber: 1,
-          questionType: 'TEXT'
+          inputType: 'TEXT'
         }}
         readOnly={false}
         answer={{
@@ -34,7 +34,7 @@ it('renders the feedback submit question as radio buttons', () => {
           id: '1',
           question: 'Do you think the project is going well so far?',
           questionNumber: 1,
-          questionType: 'RADIO'
+          inputType: 'RADIO'
         }}
         readOnly={false}
         answer={{
@@ -58,7 +58,7 @@ it('renders the feedback submit question as a slider', () => {
           id: '1',
           question: 'Do you think the project is going well so far?',
           questionNumber: 1,
-          questionType: 'SLIDER'
+          inputType: 'SLIDER'
         }}
         readOnly={false}
         answer={{

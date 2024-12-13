@@ -1,0 +1,143 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly - canceled 1`] = `
+<div>
+  <div
+    class="feedback-submit-page css-qzd6ow"
+    data-testid="canceled-request-id"
+  >
+    <h3
+      class="MuiTypography-root MuiTypography-h3 FeedbackSubmitPage-announcement css-gepadz-MuiTypography-root"
+    >
+      This feedback request has been canceled.
+    </h3>
+  </div>
+</div>
+`;
+
+exports[`renders correctly - submitted 1`] = `
+<div>
+  <div
+    class="feedback-submit-page css-qzd6ow"
+    data-testid="request-id"
+  >
+    <div
+      class="css-1cq2gqh"
+    >
+      <div
+        class="MuiBox-root css-180b3ld"
+      >
+        <header
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-hip9hq-MuiPaper-root-MuiAppBar-root"
+        >
+          <div
+            class="MuiTabs-root css-1ujnqem-MuiTabs-root"
+          >
+            <div
+              class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+              style="overflow: hidden; margin-bottom: 0px;"
+            >
+              <div
+                class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+                role="tablist"
+              >
+                <button
+                  aria-controls="full-width-tabpanel-0"
+                  aria-selected="false"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorInherit MuiTab-fullWidth css-u40yv4-MuiButtonBase-root-MuiTab-root"
+                  id="full-width-tab-0"
+                  role="tab"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                    data-testid="HourglassEmptyIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2zm10 14.5V20H8v-3.5l4-4zm-4-5-4-4V4h8v3.5z"
+                    />
+                  </svg>
+                  Self-Review
+                </button>
+                <button
+                  aria-controls="full-width-tabpanel-1"
+                  aria-selected="true"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorInherit MuiTab-fullWidth Mui-selected css-u40yv4-MuiButtonBase-root-MuiTab-root"
+                  id="full-width-tab-1"
+                  role="tab"
+                  tabindex="0"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                    data-testid="CheckCircleIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"
+                    />
+                  </svg>
+                  Your Review
+                  <span
+                    class="MuiTabs-indicator css-11yukd5-MuiTabs-indicator"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div
+          style="overflow-x: hidden;"
+        >
+          <div
+            class="react-swipeable-view-container"
+            style="flex-direction: row; transition: all 0s ease 0s; direction: ltr; display: flex; will-change: transform;"
+          >
+            <div
+              aria-hidden="false"
+              data-swipeable="true"
+              style="width: 100%; flex-shrink: 0; overflow: auto;"
+            >
+              <div
+                aria-labelledby="full-width-tab-1"
+                dir="ltr"
+                id="full-width-tabpanel-1"
+                role="tabpanel"
+              >
+                <div
+                  class="MuiBox-root css-19kzrtu"
+                >
+                  <p
+                    class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+                  >
+                    <div
+                      class="submit-form css-1upxzzf"
+                    >
+                      <span
+                        class="MuiTypography-root MuiTypography-h3 FeedbackSubmitForm-announcement css-gepadz-MuiTypography-root"
+                      >
+                        Reviewing
+                         Feedback on
+                         
+                        <b>
+                          James Johnson
+                        </b>
+                      </span>
+                    </div>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

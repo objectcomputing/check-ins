@@ -15,7 +15,7 @@ const teams = [
     description: '',
     teamMembers: [
       {
-        memberid: '3fa4-5717-4562-b3fc-2c963f66afa9',
+        memberId: '3fa4-5717-4562-b3fc-2c963f66afa9',
         name: 'testname',
         lead: true
       }
