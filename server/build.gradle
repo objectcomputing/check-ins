@@ -12,7 +12,6 @@ group "com.objectcomputing.checkins"
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
 }
 
 micronaut {
@@ -70,7 +69,6 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     compileOnly ("org.projectlombok:lombok")
-    implementation("com.github.Steppschuh:Java-Markdown-Generator:master-SNAPSHOT")
 
     annotationProcessor ("org.projectlombok:lombok")
     annotationProcessor ("io.micronaut:micronaut-inject-java")
@@ -81,6 +79,7 @@ dependencies {
 
     yarnBuildElements(project(":web-ui"))
 
+    implementation("net.steppschuh.markdowngenerator:markdowngenerator:1.3.1.1")
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-management")
