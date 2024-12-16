@@ -1,0 +1,168 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root volunteer-activities-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardContent-root volunteer-tables css-46bh2p-MuiCardContent-root"
+    >
+      <div
+        class="MuiTabs-root css-1ujnqem-MuiTabs-root"
+      >
+        <div
+          class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+          style="overflow: hidden; margin-bottom: 0px;"
+        >
+          <div
+            class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+            role="tablist"
+          >
+            <button
+              aria-controls="full-width-tabpanel-0"
+              aria-selected="true"
+              class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit MuiTab-fullWidth Mui-selected css-1750il-MuiButtonBase-root-MuiTab-root"
+              id="full-width-tab-0"
+              role="tab"
+              tabindex="0"
+              type="button"
+            >
+              <div
+                class="MuiBox-root css-70qvj9"
+              >
+                <div
+                  class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-19vflyy-MuiAvatar-root"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="HandshakeIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M16.48 10.41c-.39.39-1.04.39-1.43 0l-4.47-4.46-7.05 7.04-.66-.63c-1.17-1.17-1.17-3.07 0-4.24l4.24-4.24c1.17-1.17 3.07-1.17 4.24 0L16.48 9c.39.39.39 1.02 0 1.41m.7-2.12c.78.78.78 2.05 0 2.83-1.27 1.27-2.61.22-2.83 0l-3.76-3.76-5.57 5.57c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.42 0l4.62-4.62.71.71-4.62 4.62c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.42 0l4.62-4.62.71.71-4.62 4.62c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l4.62-4.62.71.71-4.62 4.62c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l8.32-8.34c1.17-1.17 1.17-3.07 0-4.24l-4.24-4.24c-1.15-1.15-3.01-1.17-4.18-.06z"
+                    />
+                  </svg>
+                </div>
+                <h2
+                  class="MuiTypography-root MuiTypography-h5 css-3f0kcs-MuiTypography-root"
+                >
+                  Volunteer Orgs
+                </h2>
+              </div>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              aria-controls="full-width-tabpanel-1"
+              aria-selected="false"
+              class="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit MuiTab-fullWidth css-1750il-MuiButtonBase-root-MuiTab-root"
+              id="full-width-tab-1"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              <div
+                class="MuiBox-root css-70qvj9"
+              >
+                <div
+                  class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-19vflyy-MuiAvatar-root"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="EventIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M17 12h-5v5h5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1zm3 18H5V8h14z"
+                    />
+                  </svg>
+                </div>
+                <h2
+                  class="MuiTypography-root MuiTypography-h5 css-3f0kcs-MuiTypography-root"
+                >
+                  Events
+                </h2>
+              </div>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+          <span
+            class="MuiTabs-indicator css-11yukd5-MuiTabs-indicator"
+            style="left: 0px; width: 0px;"
+          />
+        </div>
+      </div>
+      <div
+        aria-labelledby="full-width-tab-0"
+        id="full-width-tabpanel-0"
+        role="tabpanel"
+      >
+        <div
+          class="MuiBox-root css-19kzrtu"
+        >
+          <div
+            id="volunteer-relationships"
+          >
+            <div
+              class="row"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th
+                      style="cursor: pointer;"
+                    >
+                      Member
+                      🔼
+                    </th>
+                    <th
+                      style="cursor: pointer;"
+                    >
+                      Organization
+                    </th>
+                    <th
+                      style="cursor: pointer;"
+                    >
+                      Start Date
+                    </th>
+                    <th
+                      style="cursor: pointer;"
+                    >
+                      End Date
+                    </th>
+                    <th
+                      class="actions-th"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody />
+              </table>
+            </div>
+            <p
+              class="warning"
+            >
+              The administrator may edit organizations to ensure accuracy.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        aria-labelledby="full-width-tab-1"
+        hidden=""
+        id="full-width-tabpanel-1"
+        role="tabpanel"
+      />
+    </div>
+  </div>
+</div>
+`;

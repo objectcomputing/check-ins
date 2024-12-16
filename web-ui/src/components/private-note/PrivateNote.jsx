@@ -91,7 +91,7 @@ const PrivateNote = () => {
           }
         }
       } catch (e) {
-        console.log(e);
+        console.error("getPrivateNotes: " + e);
       }
       setIsLoading(false);
     }

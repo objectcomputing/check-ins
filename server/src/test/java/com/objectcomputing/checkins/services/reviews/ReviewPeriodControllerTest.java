@@ -833,7 +833,7 @@ class ReviewPeriodControllerTest
         // launch date, the self-review closes 4 days after the launch date.
         // So, to get the three day email, we just need to add 1 day to the
         // launch date.
-        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
         checkSelfReviewEmail(launchDate, launchDate.plusDays(1),
                              " closes in three days!");
     }
@@ -844,7 +844,7 @@ class ReviewPeriodControllerTest
         // launch date, the self-review closes 4 days after the launch date.
         // So, to get the one day email, we just need to add 3 days to the
         // launch date.
-        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
         checkSelfReviewEmail(launchDate, launchDate.plusDays(3),
                              " closes in one day!");
     }
