@@ -149,14 +149,13 @@ const MeritReportPage = () => {
   };
 
   const createReportMarkdownDocuments = async () => {
-    let data;
     let error;
 
     // Get the list of selected member ids.
-    let selected = selectedMembers.reduce((result, item) => {
-                     result.push(item.id);
-                     return result;
-                   }, []);
+    const selected = selectedMembers.reduce((result, item) => {
+                       result.push(item.id);
+                       return result;
+                     }, []);
 
     // Check for required parameters before calling the server.
     if (selected.length == 0) {
@@ -170,7 +169,6 @@ const MeritReportPage = () => {
                                  csrf, {memberIds: selected,
                                         reviewPeriodId: reviewPeriodId.id});
       error = res?.error?.message;
-      data = res?.payload?.data;
     }
 
     // Display the error, if there was one.
@@ -182,9 +180,16 @@ const MeritReportPage = () => {
           toast: error
         }
       });
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'success',
+          toast: selected.length == 1 ? 'The report has been generated'
+                                      : 'The reports have been generated'
+        }
+      });
     }
-
-    return data;
   };
 
   const uploadDocument = async (directory, name, text) => {
