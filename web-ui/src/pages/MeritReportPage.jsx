@@ -79,7 +79,8 @@ const MeritReportPage = () => {
       if (data) {
         let periods = data.reduce((result, item) => {
                          if (item.closeDate) {
-                           result.push({label: formatReviewDate(item.closeDate),
+                           result.push({label: item.name + " - " +
+                                               formatReviewDate(item.closeDate),
                                         id: item.id});
                          }
                          return result;
@@ -309,7 +310,7 @@ const MeritReportPage = () => {
             <TextField
               {...params}
               className="fullWidth"
-              label="ReviewPeriod"
+              label="Review Period"
               placeholder="Choose review period"
             />
           )}
