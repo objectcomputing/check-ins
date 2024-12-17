@@ -26,12 +26,13 @@ export const downloadData = (url, cookie, params) => {
 
 export const initiate = (url, cookie, params) => {
   return resolve({
-    method: 'GET',
-    params: params,
+    method: 'POST',
     headers: {
       'X-CSRF-Header': cookie,
       Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
     },
-    url: url
+    url: url,
+    data: params,
   });
 };

@@ -17,6 +17,7 @@ import com.objectcomputing.checkins.services.file.FileServices;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.multipart.CompletedFileUpload;
@@ -30,6 +31,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,10 +123,9 @@ public class ReportDataController {
       }
     }
 
-    @Get(uri="/generate")
+    @Post(uri="/generate")
     @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
-    public HttpStatus generate(@NotNull List<UUID> memberIds,
-                               @NotNull UUID reviewPeriodId) {
+    public HttpStatus generate(@Body @Valid ReportDataDTO dto) {
         MarkdownGeneration markdown =
                 new MarkdownGeneration(reportDataServices,
                                        kudosRepository,
@@ -137,7 +138,7 @@ public class ReportDataController {
                                        templateQuestionServices,
                                        employeeHoursServices,
                                        fileServices);
-        markdown.upload(memberIds, reviewPeriodId);
+        markdown.upload(dto.getMemberIds(), dto.getReviewPeriodId());
         return HttpStatus.OK;
     }
 }

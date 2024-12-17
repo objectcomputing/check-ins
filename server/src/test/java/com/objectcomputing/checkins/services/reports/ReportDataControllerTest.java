@@ -31,6 +31,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.UUID;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -116,10 +118,12 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
     final String response = client.toBlocking().retrieve(request);
     assertNotNull(response);
 
-    request = HttpRequest.GET(
-          String.format("/generate?memberIds=%s&reviewPeriodId=%s",
-                        target.getId(),
-                        reviewPeriod.getId().toString()))
+    ReportDataDTO dto = new ReportDataDTO();
+    ArrayList<UUID> memberIds = new ArrayList<>();
+    memberIds.add(target.getId());
+    dto.setReviewPeriodId(reviewPeriod.getId());
+    dto.setMemberIds(memberIds);
+    request = HttpRequest.POST("/generate", dto)
                 .basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
     client.toBlocking().exchange(request);
 
@@ -129,10 +133,12 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
 
   @Test
   void processReportDataWithoutPermission() {
-    final HttpRequest<?> request = HttpRequest.GET(
-          String.format("/generate?memberIds=%s&reviewPeriodId=%s",
-                        regular.getId(),
-                        reviewPeriod.getId()))
+    ReportDataDTO dto = new ReportDataDTO();
+    ArrayList<UUID> memberIds = new ArrayList<>();
+    memberIds.add(regular.getId());
+    dto.setReviewPeriodId(reviewPeriod.getId());
+    dto.setMemberIds(memberIds);
+    final HttpRequest<?> request = HttpRequest.POST("/generate", dto)
                 .basicAuth(regular.getWorkEmail(), MEMBER_ROLE);
     HttpClientResponseException responseException =
       assertThrows(HttpClientResponseException.class,
