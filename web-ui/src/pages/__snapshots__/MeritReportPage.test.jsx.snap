@@ -173,7 +173,7 @@ exports[`renders correctly 1`] = `
             for="reviewPeriodSelect"
             id="reviewPeriodSelect-label"
           >
-            ReviewPeriod
+            Review Period
           </label>
           <div
             class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root"
@@ -248,7 +248,7 @@ exports[`renders correctly 1`] = `
                 class="css-yjsfm1"
               >
                 <span>
-                  ReviewPeriod
+                  Review Period
                 </span>
               </legend>
             </fieldset>
