@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   Legend,
   Line,
-  LineChart,
+  ComposedChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -48,7 +48,7 @@ import './PulseReportPage.css';
 // Recharts doesn't support using CSS variables, so we can't
 // easily use color variables defined in variables.css.
 const ociDarkBlue = '#2c519e';
-//const ociLightBlue = '#76c8d4'; // not currently used
+const ociLightBlue = '#76c8d4';
 // const ociOrange = '#f8b576'; // too light
 const orange = '#b26801';
 
@@ -209,7 +209,8 @@ const PulseReportPage = () => {
       {
         date: day.date,
         internal: day.datapoints.reduce((acc, current) => acc + current.internalScore, 0)/day.datapoints.length,
-        external: day.datapoints.reduce((acc, current) => acc + current.externalScore, 0)/day.datapoints.length
+        external: day.datapoints.reduce((acc, current) => acc + current.externalScore, 0)/day.datapoints.length,
+        responses: day.datapoints.length,
       }
     )));
     setBarChartData(frequencies);
@@ -436,7 +437,7 @@ const PulseReportPage = () => {
       />
       <CardContent>
         <ResponsiveContainer width="100%" aspect={3.0}>
-          <LineChart data={lineChartData} height={300}>
+          <ComposedChart data={lineChartData} height={300}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               angle={-90}
@@ -449,10 +450,10 @@ const PulseReportPage = () => {
             <Tooltip />
             <Legend />
             <Line
-              type="monotone"
               dataKey="internal"
               stroke={ociDarkBlue}
               dot={false}
+              type="monotone"
             />
             <Line
               dataKey="external"
@@ -460,7 +461,13 @@ const PulseReportPage = () => {
               stroke={orange}
               type="monotone"
             />
-          </LineChart>
+            <Bar
+              dataKey="responses"
+              barSize={20}
+              fill={ociLightBlue}
+              type="monotone"
+            />
+          </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>
