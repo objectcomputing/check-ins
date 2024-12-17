@@ -356,11 +356,12 @@ class MarkdownGeneration {
           .append(new Heading("Base Compensation (annual or hourly)", 3))
           .append("\n");
         List<String> list = new ArrayList<>();
+        final String compFormat = "%.2f";
         for (CompensationHistory.Compensation comp : compBase) {
             String value = comp.amount();
             try {
                 double val = Double.parseDouble(value);
-                value = String.format("%.2f", val);
+                value = String.format(compFormat, val);
             } catch (Exception e) {
             }
             list.add(formatDate(comp.startDate()) + " - $" + value);
@@ -384,13 +385,14 @@ class MarkdownGeneration {
         sb.append(new Heading("Employee Hours", 2)).append("\n");
         List<String> list = new ArrayList<>();
         ReportHours hours = data.getReportHours();
+        final String hourFormat = "%.2f";
         list.add("Contribution Hours: " +
-                 String.format("%f", hours.contributionHours()));
-        list.add("PTO Hours: " + String.format("%f", hours.ptoHours()));
+                 String.format(hourFormat, hours.contributionHours()));
+        list.add("PTO Hours: " + String.format(hourFormat, hours.ptoHours()));
         list.add("Overtime Hours: " +
-                 String.format("%f", hours.overtimeHours()));
+                 String.format(hourFormat, hours.overtimeHours()));
         list.add("Billable Utilization: " +
-                 String.format("%f", hours.billableUtilization()));
+                 String.format(hourFormat, hours.billableUtilization()));
         sb.append(new UnorderedList<>(list)).append("\n\n");
     }
 }

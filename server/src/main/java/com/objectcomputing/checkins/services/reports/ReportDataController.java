@@ -15,6 +15,7 @@ import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursService
 import com.objectcomputing.checkins.services.file.FileServices;
 
 import io.micronaut.http.MediaType;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Get;
@@ -122,8 +123,8 @@ public class ReportDataController {
 
     @Get(uri="/generate")
     @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
-    public void generate(@NotNull List<UUID> memberIds,
-                         @NotNull UUID reviewPeriodId) {
+    public HttpStatus generate(@NotNull List<UUID> memberIds,
+                               @NotNull UUID reviewPeriodId) {
         MarkdownGeneration markdown =
                 new MarkdownGeneration(reportDataServices,
                                        kudosRepository,
@@ -137,5 +138,6 @@ public class ReportDataController {
                                        employeeHoursServices,
                                        fileServices);
         markdown.upload(memberIds, reviewPeriodId);
+        return HttpStatus.OK;
     }
 }
