@@ -105,7 +105,7 @@ const PulseReportPage = () => {
   const [averageData, setAverageData] = useState({});
   const [barChartData, setBarChartData] = useState([]);
   const [expanded, setExpanded] = useState(false);
-  const [lineChartData, setLineChartData] = useState([]);
+  const [scoreChartData, setScoreChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
   const [scope, setScope] = useState('Individual');
   const [scoreType, setScoreType] = useState(ScoreOption.COMBINED);
@@ -131,7 +131,7 @@ const PulseReportPage = () => {
       });
       date.setDate(date.getDate() + 1);
     }
-    setLineChartData(data);
+    setScoreChartData(data);
 
     const frequencies = [];
     for (let i = 1; i <= 5; i++) {
@@ -150,7 +150,7 @@ const PulseReportPage = () => {
   // This creates data in the format that recharts needs from pulse data.
   useEffect(() => {
     const averageData = {}; // key is member id
-    const lineChartDataPoints = [];
+    const scoreChartDataPoints = [];
     const frequencies = [];
     for (let i = 1; i <= 5; i++) {
       frequencies.push({ score: i, internal: 0, external: 0 });
@@ -168,11 +168,11 @@ const PulseReportPage = () => {
       const monthPadded = month.toString().padStart(2, '0');
       const dayPadded = day.toString().padStart(2, '0');
       const date = `${year}-${monthPadded}-${dayPadded}`;
-      const found = lineChartDataPoints.find(points => points.date === date)
+      const found = scoreChartDataPoints.find(points => points.date === date)
       if(found) {
         found?.datapoints?.push(pulse);
       } else {
-        lineChartDataPoints.push({
+        scoreChartDataPoints.push({
           date,
           datapoints: [pulse]
         });
@@ -210,7 +210,7 @@ const PulseReportPage = () => {
       }
     }
 
-    setLineChartData(lineChartDataPoints.map(day => {
+    setScoreChartData(scoreChartDataPoints.map(day => {
       const iScores = {};
       const eScores = {};
 
@@ -506,7 +506,7 @@ const PulseReportPage = () => {
       />
       <CardContent>
         <ResponsiveContainer width="100%" aspect={3.0}>
-          <BarChart data={lineChartData} height={300}>
+          <BarChart data={scoreChartData} height={300}>
             <Tooltip content={<CustomTooltip />} />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
