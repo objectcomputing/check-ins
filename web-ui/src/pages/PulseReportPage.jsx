@@ -6,14 +6,19 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
-  Line,
-  ComposedChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis
 } from 'recharts';
-import { Comment } from '@mui/icons-material';
+import {
+  Comment,
+  SentimentVeryDissatisfied,
+  SentimentDissatisfied,
+  SentimentNeutral,
+  SentimentSatisfied,
+  SentimentVerySatisfied,
+} from '@mui/icons-material';
 import {
   Avatar,
   Card,
@@ -48,7 +53,7 @@ import './PulseReportPage.css';
 // Recharts doesn't support using CSS variables, so we can't
 // easily use color variables defined in variables.css.
 const ociDarkBlue = '#2c519e';
-const ociLightBlue = '#76c8d4';
+//const ociLightBlue = '#76c8d4'; // not currently used
 // const ociOrange = '#f8b576'; // too light
 const orange = '#b26801';
 
@@ -205,14 +210,31 @@ const PulseReportPage = () => {
       }
     }
 
-    setLineChartData(lineChartDataPoints.map(day => (
-      {
+    setLineChartData(lineChartDataPoints.map(day => {
+      const iScores = {};
+      const eScores = {};
+
+      day.datapoints.forEach(datapoint => {
+        iScores[datapoint.internalScore] =
+            (iScores[datapoint.internalScore] || 0) + 1;
+        eScores[datapoint.externalScore] =
+            (eScores[datapoint.externalScore] || 0) + 1;
+      });
+
+      return {
         date: day.date,
-        internal: day.datapoints.reduce((acc, current) => acc + current.internalScore, 0)/day.datapoints.length,
-        external: day.datapoints.reduce((acc, current) => acc + current.externalScore, 0)/day.datapoints.length,
-        responses: day.datapoints.length,
-      }
-    )));
+        internalVeryDissatisfied: iScores[1],
+        internalDissatisfied: iScores[2],
+        internalNeutral: iScores[3],
+        internalSatisfied: iScores[4],
+        internalVerySatisfied: iScores[5],
+        externalVeryDissatisfied: eScores[1],
+        externalDissatisfied: eScores[2],
+        externalNeutral: eScores[3],
+        externalSatisfied: eScores[4],
+        externalVerySatisfied: eScores[5],
+      };
+    }));
     setBarChartData(frequencies);
 
     for (const memberId of Object.keys(averageData)) {
@@ -407,6 +429,53 @@ const PulseReportPage = () => {
     setTeamMembers(members);
   };
 
+  const dataInfo = [
+    {key: "internalVeryDissatisfied", stackId: "internal", color: "#273e58", },
+    {key: "internalDissatisfied", stackId: "internal", color: "#1a3c6d", },
+    {key: "internalNeutral", stackId: "internal", color: "#2c519e", },
+    {key: "internalSatisfied", stackId: "internal", color: "#4b7ac7", },
+    {key: "internalVerySatisfied", stackId: "internal", color: "#6fa3e6", },
+    {key: "externalVeryDissatisfied", stackId: "external", color: "#704401", },
+    {key: "externalDissatisfied", stackId: "external", color: "#8a5200", },
+    {key: "externalNeutral", stackId: "external", color: "#b26801", },
+    {key: "externalSatisfied", stackId: "external", color: "#d48a2c", },
+    {key: "externalVerySatisfied", stackId: "external", color: "#e0a456", },
+  ];
+
+  const labelToSentiment = (label) => {
+    const suffix = label.includes("internal") ? "At Work" : "Outside Work";
+    switch(label.replace("internal", "").replace("external", "")) {
+      case "VeryDissatisfied":
+        return <><SentimentVeryDissatisfied/> {suffix}</>;
+      case "Dissatisfied":
+        return <><SentimentDissatisfied/> {suffix}</>;
+      case "Neutral":
+        return <><SentimentNeutral/> {suffix}</>;
+      case "Satisfied":
+        return <><SentimentSatisfied/> {suffix}</>;
+      case "VerySatisfied":
+        return <><SentimentVerySatisfied/> {suffix}</>;
+    }
+    return "ERROR";
+  };
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p>{label}</p>
+          {payload.map(p => {
+            return <div style={{color: `${p.color}`}}>
+                     {p.value} {p.name.props.children}
+                   </div>;
+          })}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   const scoreCard = highest => {
     const label = scope === 'Manager' ? 'Team' : 'Individual';
     const property = propertyMap[scoreType];
@@ -432,12 +501,13 @@ const PulseReportPage = () => {
   const lineChart = () => (
     <Card>
       <CardHeader
-        title={'Average pulse scores for "At Work" and "Outside Work"'}
+        title={'Pulse scores for "At Work" and "Outside Work"'}
         titleTypographyProps={{ variant: 'h5', component: 'h2' }}
       />
       <CardContent>
         <ResponsiveContainer width="100%" aspect={3.0}>
-          <ComposedChart data={lineChartData} height={300}>
+          <BarChart data={lineChartData} height={300}>
+            <Tooltip content={<CustomTooltip />} />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               angle={-90}
@@ -446,28 +516,22 @@ const PulseReportPage = () => {
               padding={{ left: 30, right: 30 }}
               tickMargin={45}
             />
-            <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} />
+            <YAxis />
             <Tooltip />
             <Legend />
-            <Line
-              dataKey="internal"
-              stroke={ociDarkBlue}
-              dot={false}
-              type="monotone"
-            />
-            <Line
-              dataKey="external"
-              dot={false}
-              stroke={orange}
-              type="monotone"
-            />
-            <Bar
-              dataKey="responses"
-              barSize={20}
-              fill={ociLightBlue}
-              type="monotone"
-            />
-          </ComposedChart>
+            {dataInfo.map((obj) => {
+               return <Bar
+                        key={obj.key}
+                        dataKey={obj.key}
+                        fill={obj.color}
+                        barSize={20}
+                        type="monotone"
+                        stackId={obj.stackId}
+                        name={labelToSentiment(obj.key)}
+                      />;
+              })
+            }
+          </BarChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>
