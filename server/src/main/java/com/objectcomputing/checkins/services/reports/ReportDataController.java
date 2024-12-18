@@ -12,8 +12,12 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursServices;
+import com.objectcomputing.checkins.services.file.FileServices;
+
 import io.micronaut.http.MediaType;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.multipart.CompletedFileUpload;
@@ -27,6 +31,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +56,7 @@ public class ReportDataController {
     private final FeedbackAnswerServices feedbackAnswerServices;
     private final TemplateQuestionServices templateQuestionServices;
     private final EmployeeHoursServices employeeHoursServices;
+    private final FileServices fileServices;
 
     public ReportDataController(ReportDataServices reportDataServices,
                           KudosRepository kudosRepository,
@@ -61,7 +67,8 @@ public class ReportDataController {
                           FeedbackRequestServices feedbackRequestServices,
                           FeedbackAnswerServices feedbackAnswerServices,
                           TemplateQuestionServices templateQuestionServices,
-                          EmployeeHoursServices employeeHoursServices) {
+                          EmployeeHoursServices employeeHoursServices,
+                          FileServices fileServices) {
         this.reportDataServices = reportDataServices;
         this.kudosRepository = kudosRepository;
         this.kudosRecipientRepository = kudosRecipientRepository;
@@ -72,6 +79,7 @@ public class ReportDataController {
         this.feedbackAnswerServices = feedbackAnswerServices;
         this.templateQuestionServices = templateQuestionServices;
         this.employeeHoursServices = employeeHoursServices;
+        this.fileServices = fileServices;
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
@@ -115,35 +123,22 @@ public class ReportDataController {
       }
     }
 
-    @Get
+    @Post(uri="/generate")
     @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
-    public List<ReportDataDTO> get(@NotNull List<UUID> memberIds,
-                                   @NotNull UUID reviewPeriodId) {
-        List<ReportDataDTO> list = new ArrayList<ReportDataDTO>();
-        for (UUID memberId : memberIds) {
-            ReportDataCollation data = new ReportDataCollation(
-                                           memberId, reviewPeriodId,
-                                           kudosRepository,
-                                           kudosRecipientRepository,
-                                           memberProfileServices,
-                                           reviewPeriodServices,
-                                           reportDataServices,
-                                           feedbackTemplateServices,
-                                           feedbackRequestServices,
-                                           feedbackAnswerServices,
-                                           templateQuestionServices,
-                                           employeeHoursServices);
-            list.add(new ReportDataDTO(memberId, reviewPeriodId,
-                                    data.getStartDate(), data.getEndDate(),
-                                    data.getMemberProfile(), data.getKudos(),
-                                    data.getCompensationHistory(),
-                                    data.getCurrentInformation(),
-                                    data.getPositionHistory(),
-                                    data.getSelfReviews(),
-                                    data.getReviews(),
-                                    data.getFeedback(),
-                                    data.getReportHours()));
-        }
-        return list;
+    public HttpStatus generate(@Body @Valid ReportDataDTO dto) {
+        MarkdownGeneration markdown =
+                new MarkdownGeneration(reportDataServices,
+                                       kudosRepository,
+                                       kudosRecipientRepository,
+                                       memberProfileServices,
+                                       reviewPeriodServices,
+                                       feedbackTemplateServices,
+                                       feedbackRequestServices,
+                                       feedbackAnswerServices,
+                                       templateQuestionServices,
+                                       employeeHoursServices,
+                                       fileServices);
+        markdown.upload(dto.getMemberIds(), dto.getReviewPeriodId());
+        return HttpStatus.OK;
     }
 }
