@@ -68,7 +68,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
         LocalDate startDate = start.toLocalDate();
         long daysBetween = ChronoUnit.DAYS.between(startDate, end.toLocalDate());
         Random random = new Random();
-        long randomDays = random.nextLong(daysBetween);
+        long randomDays = daysBetween > 0 ? random.nextLong(daysBetween) : 0;
 
         return startDate.plusDays(randomDays);
     }

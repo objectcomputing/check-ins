@@ -3,12 +3,14 @@ package com.objectcomputing.checkins.services.kudos;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
+import com.objectcomputing.checkins.services.SlackPosterReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.KudosFixture;
 import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipient;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientServicesImpl;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.Team;
 import io.micronaut.core.type.Argument;
@@ -28,6 +30,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -46,11 +55,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// Disabled in nativetest due to a ReflectiveOperationException from Gson
+// when attempting to post public Kudos to Slack.
+@DisabledInNativeImage
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+@Property(name = "replace.slackposter", value = StringUtils.TRUE)
 class KudosControllerTest extends TestContainersSuite implements KudosFixture, TeamFixture, RoleFixture {
     @Inject
     @Named(MailJetFactory.HTML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
+
+    @Inject
+    private SlackPosterReplacement slackPoster;
 
     @Inject
     @Client("/services/kudos")
@@ -89,6 +105,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
         message = "Kudos!";
         emailSender.reset();
+        slackPoster.reset();
     }
 
     @ParameterizedTest
@@ -206,7 +223,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     }
 
     @Test
-    void testApproveKudos() {
+    void testApproveKudos() throws JsonProcessingException {
         Kudos kudos = createPublicKudos(senderId);
         assertNull(kudos.getDateApproved());
         KudosRecipient recipient = createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
@@ -227,6 +244,52 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
                 ),
                 emailSender.events.getFirst()
         );
+
+        // Check the posted slack block
+        assertEquals(1, slackPoster.posted.size());
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode posted = mapper.readTree(slackPoster.posted.get(0));
+
+        assertEquals(JsonNodeType.OBJECT, posted.getNodeType());
+        JsonNode blocks = posted.get("blocks");
+        assertEquals(JsonNodeType.ARRAY, blocks.getNodeType());
+
+        var iter = blocks.elements();
+        assertTrue(iter.hasNext());
+        JsonNode block = iter.next();
+
+        assertEquals(JsonNodeType.OBJECT, block.getNodeType());
+        JsonNode elements = block.get("elements");
+        assertEquals(JsonNodeType.ARRAY, elements.getNodeType());
+
+        iter = elements.elements();
+        assertTrue(iter.hasNext());
+        JsonNode element = iter.next();
+
+        assertEquals(JsonNodeType.OBJECT, element.getNodeType());
+        JsonNode innerElements = element.get("elements");
+        assertEquals(JsonNodeType.ARRAY, innerElements.getNodeType());
+
+        iter = innerElements.elements();
+        assertTrue(iter.hasNext());
+
+        // The real SlackPoster will look up user ids in Slack and use those in
+        // the posted message.  Failing the lookup, it will use @<full name>.
+        String from = "@" + MemberProfileUtils.getFullName(sender);
+        String to = "@" + MemberProfileUtils.getFullName(recipientMembers.get(0));
+        boolean foundFrom = false;
+        boolean foundTo = false;
+        while(iter.hasNext()) {
+            element = iter.next();
+            assertEquals(JsonNodeType.OBJECT, element.getNodeType());
+            String value = element.get("text").asText();
+            if (value.equals(from)) {
+                foundFrom = true;
+            } else if (value.equals(to)) {
+                foundTo = true;
+            }
+        }
+        assertTrue(foundFrom && foundTo);
     }
 
     @Test
