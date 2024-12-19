@@ -233,7 +233,9 @@ const PulseReportPage = () => {
         pieCounts[datapoint.externalScore - 1].value++;
       });
     }
-    setPieChartData(pieCounts);
+    // Filter out data with a zero value so that the pie chart does not attempt
+    // to display them.
+    setPieChartData(pieCounts.filter((p) => p.value != 0));
 
     setScoreChartData(scoreChartDataPoints.map(day => {
       const iScores = {};
