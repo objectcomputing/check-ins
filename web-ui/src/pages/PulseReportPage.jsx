@@ -6,6 +6,8 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -32,7 +34,8 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -53,7 +56,7 @@ import './PulseReportPage.css';
 // Recharts doesn't support using CSS variables, so we can't
 // easily use color variables defined in variables.css.
 const ociDarkBlue = '#2c519e';
-//const ociLightBlue = '#76c8d4'; // not currently used
+const ociLightBlue = '#76c8d4';
 // const ociOrange = '#f8b576'; // too light
 const orange = '#b26801';
 
@@ -67,6 +70,12 @@ const propertyMap = {
   [ScoreOption.INTERNAL]: 'internalAverage',
   [ScoreOption.EXTERNAL]: 'externalAverage',
   [ScoreOption.COMBINED]: 'combinedAverage'
+};
+
+const ScoreOptionLabel = {
+  'Internal': 'At Work',
+  'External': 'Outside Work',
+  'Combined': 'Both',
 };
 
 /*
@@ -112,6 +121,7 @@ const PulseReportPage = () => {
   const [selectedPulse, setSelectedPulse] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
 
   /*
   // This generates random data to use in the line chart.
@@ -209,6 +219,21 @@ const PulseReportPage = () => {
         averages.internalScores.push(internalScore);
       }
     }
+
+    let pieCounts = [
+      {name: "veryDissatisfied", value: 0},
+      {name: "dissatisfied", value: 0},
+      {name: "neutral", value: 0},
+      {name: "satisfied", value: 0},
+      {name: "verySatisfied", value: 0},
+    ];
+    for(let day of scoreChartDataPoints) {
+      day.datapoints.forEach(datapoint => {
+        pieCounts[datapoint.internalScore - 1].value++;
+        pieCounts[datapoint.externalScore - 1].value++;
+      });
+    }
+    setPieChartData(pieCounts);
 
     setScoreChartData(scoreChartDataPoints.map(day => {
       const iScores = {};
@@ -319,27 +344,6 @@ const PulseReportPage = () => {
       <CardContent>
         <div className="average-header row">
           <Typography variant="h5">Average Scores</Typography>
-          <FormControl style={{ width: '8rem' }}>
-            <TextField
-              select
-              size="small"
-              label="Score Type"
-              onChange={e => setScoreType(e.target.value)}
-              sx={{ width: '8rem' }}
-              value={scoreType}
-              variant="outlined"
-            >
-              <MenuItem value={ScoreOption.INTERNAL}>
-                {ScoreOption.INTERNAL}
-              </MenuItem>
-              <MenuItem value={ScoreOption.EXTERNAL}>
-                {ScoreOption.EXTERNAL}
-              </MenuItem>
-              <MenuItem value={ScoreOption.COMBINED}>
-                {ScoreOption.COMBINED}
-              </MenuItem>
-            </TextField>
-          </FormControl>
           <FormControl style={{ width: '7.5rem' }}>
             <TextField
               select
@@ -363,7 +367,7 @@ const PulseReportPage = () => {
     </Card>
   );
 
-  const barChart = () => (
+  const scoreDistributionChart = () => (
     <Card>
       <CardHeader
         title="Distribution of pulse scores for selected team members"
@@ -386,8 +390,20 @@ const PulseReportPage = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="internal" fill={ociDarkBlue} />
-          <Bar dataKey="external" fill={orange} />
+          {(scoreType == ScoreOption.COMBINED || scoreType == ScoreOption.INTERNAL) &&
+            <Bar
+              dataKey="internal"
+              fill={ociDarkBlue}
+              name={ScoreOptionLabel[ScoreOption.INTERNAL]}
+            />
+            }
+          {(scoreType == ScoreOption.COMBINED || scoreType == ScoreOption.EXTERNAL) &&
+            <Bar
+              dataKey="external"
+              fill={orange}
+              name={ScoreOptionLabel[ScoreOption.EXTERNAL]}
+            />
+          }
         </BarChart>
         <ExpandMore
           expand={expanded}
@@ -443,7 +459,9 @@ const PulseReportPage = () => {
   ];
 
   const labelToSentiment = (label) => {
-    const suffix = label.includes("internal") ? "At Work" : "Outside Work";
+    const suffix = label.includes("internal")
+            ? ScoreOptionLabel[ScoreOption.INTERNAL]
+            : ScoreOptionLabel[ScoreOption.EXTERNAL];
     switch(label.replace("internal", "").replace("external", "")) {
       case "VeryDissatisfied":
         return <><SentimentVeryDissatisfied/> {suffix}</>;
@@ -465,7 +483,7 @@ const PulseReportPage = () => {
         <div className="custom-tooltip">
           <p>{label}</p>
           {payload.map(p => {
-            return <div style={{color: `${p.color}`}}>
+            return <div key={p.dataKey} style={{color: `${p.color}`}}>
                      {p.value} {p.name.props.children}
                    </div>;
           })}
@@ -498,10 +516,95 @@ const PulseReportPage = () => {
     );
   };
 
-  const lineChart = () => (
+  const pulseScoresTitle = () => {
+    let title = "Pulse scores for";
+    if (scoreType == ScoreOption.COMBINED ||
+        scoreType == ScoreOption.INTERNAL) {
+      title += ` "${ScoreOptionLabel[ScoreOption.INTERNAL]}"`;
+    }
+    if (scoreType == ScoreOption.COMBINED) {
+      title += " and";
+    }
+    if (scoreType == ScoreOption.COMBINED ||
+        scoreType == ScoreOption.EXTERNAL) {
+      title += ` "${ScoreOptionLabel[ScoreOption.EXTERNAL]}"`;
+    }
+    return title;
+  };
+
+  const pieLabelToSentiment = (label) => {
+    switch(label.toLowerCase()) {
+      case "verydissatisfied":
+        //return <SentimentVeryDissatisfied />;
+        return "😦";
+      case "dissatisfied":
+        //return <SentimentDissatisfied />;
+        return "🙁";
+      case "neutral":
+        //return <SentimentNeutral />;
+        return "😐";
+      case "satisfied":
+        //return <SentimentSatisfied />;
+        return "🙂";
+      case "verysatisfied":
+        //return <SentimentVerySatisfied />;
+        return "😀";
+    }
+    return "ERROR";
+  };
+
+  const RADIAN = Math.PI / 180;
+  const renderPieLabel = function({ cx, cy, midAngle, innerRadius, outerRadius,
+                                    percent, index, name, value }) {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <>
+      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'}
+            dominantBaseline="central">
+        {pieLabelToSentiment(name)} {value}
+      </text>
+      </>
+    );
+  };
+
+  const titleWords = (text) => {
+    if (text.match(/^[a-z]+$/)) {
+      // Uppercase the first letter
+      text = text[0].toUpperCase() + text.substring(1);
+    } else {
+      // Split words and uppercase the first word
+      let words = text.split(/(?<=[a-z])(?=[A-Z\d])/);
+      words[0] = words[0][0].toUpperCase() + words[0].substring(1);
+      text= "";
+      let separator = "";
+      for(let word of words) {
+        text += `${separator}${word}`;
+        separator = " ";
+      }
+    }
+    return text;
+  };
+
+  const CustomPieTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p className="label">{titleWords(payload[0].name)} : {payload[0].value}</p>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const pulseScoresChart = () => (
+  <>
     <Card>
       <CardHeader
-        title={'Pulse scores for "At Work" and "Outside Work"'}
+        title={pulseScoresTitle()}
         titleTypographyProps={{ variant: 'h5', component: 'h2' }}
       />
       <CardContent>
@@ -519,7 +622,12 @@ const PulseReportPage = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            {dataInfo.map((obj) => {
+            {dataInfo.filter(o => scoreType == ScoreOption.COMBINED ||
+                                  (scoreType == ScoreOption.INTERNAL &&
+                                      o.key.includes("internal")) ||
+                                  (scoreType == ScoreOption.EXTERNAL &&
+                                      o.key.includes("external")))
+                     .map((obj) => {
                return <Bar
                         key={obj.key}
                         dataKey={obj.key}
@@ -535,6 +643,31 @@ const PulseReportPage = () => {
         </ResponsiveContainer>
       </CardContent>
     </Card>
+    <Card>
+      <CardHeader
+        title="Total Responses"
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
+      <CardContent>
+        <ResponsiveContainer width="100%" aspect={3.0}>
+          <PieChart width={300} height={300}>
+          <Tooltip
+            wrapperStyle={{ color: "black", backgroundColor: "white", paddingLeft: "10px", paddingRight: "10px" }}
+            content={<CustomPieTooltip />}
+          />
+            <Pie
+              data={pieChartData}
+              dataKey="value"
+              nameKey="name"
+              fill={ociLightBlue}
+              labelLine={false}
+              label={renderPieLabel}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  </>
   );
 
   const responseSummary = () => {
@@ -584,6 +717,25 @@ const PulseReportPage = () => {
     );
   };
 
+  const toggleLabels = {
+    left: {
+      title: ScoreOptionLabel[ScoreOption.INTERNAL],
+      value: ScoreOption.INTERNAL,
+    },
+    center: {
+      title: ScoreOptionLabel[ScoreOption.Combined],
+      value: ScoreOption.COMBINED,
+    },
+    right: {
+      title: ScoreOptionLabel[ScoreOption.EXTERNAL],
+      value: ScoreOption.EXTERNAL,
+    },
+  };
+
+  const toggleChange = (event, value) => {
+    setScoreType(value);
+  };
+
   return selectHasViewPulseReportPermission(state) ? (
     <div className="pulse-report-page">
       <div className="date-pickers">
@@ -601,6 +753,18 @@ const PulseReportPage = () => {
             value={dayjs(dateTo)}
           />
         </LocalizationProvider>
+        <ToggleButtonGroup
+          value={scoreType}
+          exclusive
+          onChange={toggleChange}
+        >
+          <ToggleButton value={ScoreOption.INTERNAL}>
+             {ScoreOptionLabel[ScoreOption.INTERNAL]}</ToggleButton>
+          <ToggleButton value={ScoreOption.COMBINED}>
+             {ScoreOptionLabel[ScoreOption.COMBINED]}</ToggleButton>
+          <ToggleButton value={ScoreOption.EXTERNAL}>
+             {ScoreOptionLabel[ScoreOption.EXTERNAL]}</ToggleButton>
+        </ToggleButtonGroup>
       </div>
 
       {pulses.length === 0 ? (
@@ -614,9 +778,9 @@ const PulseReportPage = () => {
             onChange={handleTeamMembersChange}
             selected={teamMembers}
           />
-          {lineChart()}
+          {pulseScoresChart()}
           {averageScores()}
-          {barChart()}
+          {scoreDistributionChart()}
           <Modal open={showComments} onClose={() => setShowComments(false)}>
             <Card className="feedback-request-enable-edits-modal">
               <CardHeader
