@@ -535,19 +535,14 @@ const PulseReportPage = () => {
   const pieLabelToSentiment = (label) => {
     switch(label.toLowerCase()) {
       case "verydissatisfied":
-        //return <SentimentVeryDissatisfied />;
         return "😦";
       case "dissatisfied":
-        //return <SentimentDissatisfied />;
         return "🙁";
       case "neutral":
-        //return <SentimentNeutral />;
         return "😐";
       case "satisfied":
-        //return <SentimentSatisfied />;
         return "🙂";
       case "verysatisfied":
-        //return <SentimentVerySatisfied />;
         return "😀";
     }
     return "ERROR";
