@@ -16,7 +16,6 @@ const PulsePage = () => {
   const { state } = useContext(AppContext);
   const currentUser = selectCurrentUser(state);
   const csrf = selectCsrfToken(state);
-  const history = useHistory();
 
   const [externalComment, setExternalComment] = useState('');
   const [externalScore, setExternalScore] = useState(center);
@@ -102,12 +101,9 @@ const PulsePage = () => {
     const res = await initiate(pulseURL, csrf, data);
     if (res.error) return;
 
+    setSubmittedToday(true);
     if (submitAnonymously) {
-      setSubmittedToday(true);
       Cookies.set(cookieName, 'true', { expires: 1 });
-    } else {
-      // Refresh browser to show that pulses where already submitted today.
-      history.go(0);
     }
   };
 
