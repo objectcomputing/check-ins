@@ -145,7 +145,7 @@ const PulsePage = () => {
               Submit
             </Button>
             <div style={{ padding: '.3rem' }}/>
-             <label>
+            <label>
               <Checkbox
                 disableRipple
                 id="submit-anonymously"
