@@ -55,11 +55,14 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
             if (pulseResponse.getId() != null) {
                 throw new BadArgException(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()));
-            } else if (memberRepo.findById(memberId).isEmpty()) {
+            } else if (memberId != null &&
+                       memberRepo.findById(memberId).isEmpty()) {
                 throw new BadArgException(String.format("Member %s doesn't exists", memberId));
             } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
-            } else if (!currentUserId.equals(memberId) && !isSubordinateTo(memberId, currentUserId)) {
+            } else if (memberId != null &&
+                       !currentUserId.equals(memberId) &&
+                       !isSubordinateTo(memberId, currentUserId)) {
                 throw new BadArgException(String.format("User %s does not have permission to create pulse response for user %s", currentUserId, memberId));
             }
             pulseResponseRet = pulseResponseRepo.save(pulseResponse);
@@ -94,7 +97,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new BadArgException(String.format("Member %s doesn't exist", memberId));
             } else if (memberId == null) {
-                throw new BadArgException(String.format("Invalid pulseresponse %s", pulseResponse));
+                throw new BadArgException("Cannot update anonymous pulse response");
             } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
             } else if (!currentUserId.equals(memberId) && !isSubordinateTo(memberId, currentUserId)) {

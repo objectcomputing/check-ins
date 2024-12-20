@@ -1,0 +1,1 @@
+ALTER TABLE pulse_response DROP CONSTRAINT pulse_response_teamMemberId_fkey;
