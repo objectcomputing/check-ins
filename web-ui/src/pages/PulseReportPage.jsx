@@ -467,7 +467,7 @@ const PulseReportPage = () => {
       return (
         <div className="custom-tooltip">
           <p>{label}</p>
-          {payload.map(p => {
+          {payload.slice().reverse().map(p => {
             return <div style={{color: `${p.color}`}}>
                      {p.value} {p.name.props.children}
                    </div>;
