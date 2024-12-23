@@ -468,15 +468,15 @@ const PulseReportPage = () => {
   };
 
   const dataInfo = [
-    {key: "internalVeryDissatisfied", stackId: "internal", color: ociDarkBlue, },
-    {key: "internalDissatisfied", stackId: "internal", color: pSBC(.05, ociDarkBlue), },
-    {key: "internalNeutral", stackId: "internal", color: pSBC(.10, ociDarkBlue), },
-    {key: "internalSatisfied", stackId: "internal", color: pSBC(.15, ociDarkBlue), },
-    {key: "internalVerySatisfied", stackId: "internal", color: pSBC(.2, ociDarkBlue), },
-    {key: "externalVeryDissatisfied", stackId: "external", color: pSBC(-.8, ociOrange), },
-    {key: "externalDissatisfied", stackId: "external", color: pSBC(-.6, ociOrange), },
-    {key: "externalNeutral", stackId: "external", color: pSBC(-.4, ociOrange), },
-    {key: "externalSatisfied", stackId: "external", color: pSBC(-.2, ociOrange), },
+    {key: "internalVeryDissatisfied", stackId: "internal", color: pSBC(-.9, ociDarkBlue), },
+    {key: "internalDissatisfied", stackId: "internal", color: pSBC(-.75, ociDarkBlue), },
+    {key: "internalNeutral", stackId: "internal", color: pSBC(-.5, ociDarkBlue), },
+    {key: "internalSatisfied", stackId: "internal", color: pSBC(-.25, ociDarkBlue), },
+    {key: "internalVerySatisfied", stackId: "internal", color: ociDarkBlue, },
+    {key: "externalVeryDissatisfied", stackId: "external", color: pSBC(-.9, ociOrange), },
+    {key: "externalDissatisfied", stackId: "external", color: pSBC(-.75, ociOrange), },
+    {key: "externalNeutral", stackId: "external", color: pSBC(-.5, ociOrange), },
+    {key: "externalSatisfied", stackId: "external", color: pSBC(-.25, ociOrange), },
     {key: "externalVerySatisfied", stackId: "external", color: ociOrange, },
   ];
 
