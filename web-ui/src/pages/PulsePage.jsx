@@ -1,8 +1,9 @@
+import Cookies from 'js-cookie';
 import { format } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Typography } from '@mui/material';
-import { resolve } from '../api/api.js';
+import { Button, Checkbox, Typography } from '@mui/material';
+import { downloadData, initiate } from '../api/generic.js';
 import Pulse from '../components/pulse/Pulse.jsx';
 import { AppContext } from '../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
@@ -15,7 +16,6 @@ const PulsePage = () => {
   const { state } = useContext(AppContext);
   const currentUser = selectCurrentUser(state);
   const csrf = selectCsrfToken(state);
-  const history = useHistory();
 
   const [externalComment, setExternalComment] = useState('');
   const [externalScore, setExternalScore] = useState(center);
@@ -23,9 +23,19 @@ const PulsePage = () => {
   const [internalScore, setInternalScore] = useState(center);
   const [pulse, setPulse] = useState(null);
   const [submittedToday, setSubmittedToday] = useState(false);
+  const [submitAnonymously, setSubmitAnonymously] = useState(false);
+
   const today = format(new Date(), 'yyyy-MM-dd');
+  const cookieName = "pulse_submitted_anonymously";
+  const pulseURL = '/services/pulse-responses';
 
   useEffect(() => {
+    const submitted = Cookies.get(cookieName);
+    if (submitted) {
+      setSubmittedToday(true);
+      return;
+    }
+
     if (!pulse) return;
 
     const now = new Date();
@@ -52,19 +62,8 @@ const PulsePage = () => {
       dateTo: today,
       teamMemberId: currentUser.id
     };
-    const queryString = Object.entries(query)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
 
-    const res = await resolve({
-      method: 'GET',
-      url: `/services/pulse-responses?${queryString}`,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    const res = await downloadData(pulseURL, csrf, query);
     if (res.error) return;
 
     // Sort pulse responses by date, latest to earliest
@@ -97,22 +96,15 @@ const PulsePage = () => {
       internalScore: internalScore + 1, // converts to 1-based
       submissionDate: today,
       updatedDate: today,
-      teamMemberId: myId
+      teamMemberId: submitAnonymously ? null : myId,
     };
-    const res = await resolve({
-      method: 'POST',
-      url: '/services/pulse-responses',
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data
-    });
+    const res = await initiate(pulseURL, csrf, data);
     if (res.error) return;
 
-    // Refresh browser to show that pulses where already submitted today.
-    history.go(0);
+    setSubmittedToday(true);
+    if (submitAnonymously) {
+      Cookies.set(cookieName, 'true', { expires: 1 });
+    }
   };
 
   return (
@@ -141,9 +133,25 @@ const PulsePage = () => {
             setScore={setExternalScore}
             title="How are you feeling about life outside of work?"
           />
-          <Button onClick={submit} variant="contained">
-            Submit
-          </Button>
+          <div className="submit-row">
+            <Button
+              style={{ marginTop: 0 }}
+              onClick={submit}
+              variant="contained">
+              Submit
+            </Button>
+            <div style={{ padding: '.3rem' }}/>
+            <label>
+              <Checkbox
+                disableRipple
+                id="submit-anonymously"
+                type="checkbox"
+                checked={submitAnonymously}
+                onChange={(event) => setSubmitAnonymously(event.target.checked)}
+              />
+              Submit Anonymously
+            </label>
+          </div>
         </>
       )}
     </div>
