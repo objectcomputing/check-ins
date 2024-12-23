@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Legend,
   Pie,
+  Cell,
   PieChart,
   ResponsiveContainer,
   Tooltip,
@@ -40,6 +41,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
+import { pSBC } from '../helpers/colors.js';
 import { getAvatarURL, resolve } from '../api/api.js';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext.jsx';
@@ -56,9 +58,8 @@ import './PulseReportPage.css';
 // Recharts doesn't support using CSS variables, so we can't
 // easily use color variables defined in variables.css.
 const ociDarkBlue = '#2c519e';
-const ociLightBlue = '#76c8d4';
-// const ociOrange = '#f8b576'; // too light
-const orange = '#b26801';
+//const ociLightBlue = '#76c8d4'; // not currently used
+const ociOrange = '#f8b576';
 
 const ScoreOption = {
   INTERNAL: 'Internal',
@@ -121,7 +122,8 @@ const PulseReportPage = () => {
   const [selectedPulse, setSelectedPulse] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [pieChartData, setPieChartData] = useState([]);
+  const [internalPieChartData, setInternalPieChartData] = useState([]);
+  const [externalPieChartData, setExternalPieChartData] = useState([]);
 
   /*
   // This generates random data to use in the line chart.
@@ -220,22 +222,37 @@ const PulseReportPage = () => {
       }
     }
 
-    let pieCounts = [
-      {name: "veryDissatisfied", value: 0},
-      {name: "dissatisfied", value: 0},
-      {name: "neutral", value: 0},
-      {name: "satisfied", value: 0},
-      {name: "verySatisfied", value: 0},
+    let internalPieCounts = [
+      {name: "internalVeryDissatisfied", value: 0},
+      {name: "internalDissatisfied", value: 0},
+      {name: "internalNeutral", value: 0},
+      {name: "internalSatisfied", value: 0},
+      {name: "internalVerySatisfied", value: 0},
     ];
     for(let day of scoreChartDataPoints) {
       day.datapoints.forEach(datapoint => {
-        pieCounts[datapoint.internalScore - 1].value++;
-        pieCounts[datapoint.externalScore - 1].value++;
+        internalPieCounts[datapoint.internalScore - 1].value++;
       });
     }
     // Filter out data with a zero value so that the pie chart does not attempt
     // to display them.
-    setPieChartData(pieCounts.filter((p) => p.value != 0));
+    setInternalPieChartData(internalPieCounts.filter((p) => p.value != 0));
+
+    let externalPieCounts = [
+      {name: "externalVeryDissatisfied", value: 0},
+      {name: "externalDissatisfied", value: 0},
+      {name: "externalNeutral", value: 0},
+      {name: "externalSatisfied", value: 0},
+      {name: "externalVerySatisfied", value: 0},
+    ];
+    for(let day of scoreChartDataPoints) {
+      day.datapoints.forEach(datapoint => {
+        externalPieCounts[datapoint.externalScore - 1].value++;
+      });
+    }
+    // Filter out data with a zero value so that the pie chart does not attempt
+    // to display them.
+    setExternalPieChartData(externalPieCounts.filter((p) => p.value != 0));
 
     setScoreChartData(scoreChartDataPoints.map(day => {
       const iScores = {};
@@ -402,7 +419,7 @@ const PulseReportPage = () => {
           {(scoreType == ScoreOption.COMBINED || scoreType == ScoreOption.EXTERNAL) &&
             <Bar
               dataKey="external"
-              fill={orange}
+              fill={ociOrange}
               name={ScoreOptionLabel[ScoreOption.EXTERNAL]}
             />
           }
@@ -448,16 +465,16 @@ const PulseReportPage = () => {
   };
 
   const dataInfo = [
-    {key: "internalVeryDissatisfied", stackId: "internal", color: "#273e58", },
-    {key: "internalDissatisfied", stackId: "internal", color: "#1a3c6d", },
-    {key: "internalNeutral", stackId: "internal", color: "#2c519e", },
-    {key: "internalSatisfied", stackId: "internal", color: "#4b7ac7", },
-    {key: "internalVerySatisfied", stackId: "internal", color: "#6fa3e6", },
-    {key: "externalVeryDissatisfied", stackId: "external", color: "#704401", },
-    {key: "externalDissatisfied", stackId: "external", color: "#8a5200", },
-    {key: "externalNeutral", stackId: "external", color: "#b26801", },
-    {key: "externalSatisfied", stackId: "external", color: "#d48a2c", },
-    {key: "externalVerySatisfied", stackId: "external", color: "#e0a456", },
+    {key: "internalVeryDissatisfied", stackId: "internal", color: ociDarkBlue, },
+    {key: "internalDissatisfied", stackId: "internal", color: pSBC(.05, ociDarkBlue), },
+    {key: "internalNeutral", stackId: "internal", color: pSBC(.10, ociDarkBlue), },
+    {key: "internalSatisfied", stackId: "internal", color: pSBC(.15, ociDarkBlue), },
+    {key: "internalVerySatisfied", stackId: "internal", color: pSBC(.2, ociDarkBlue), },
+    {key: "externalVeryDissatisfied", stackId: "external", color: pSBC(-.8, ociOrange), },
+    {key: "externalDissatisfied", stackId: "external", color: pSBC(-.6, ociOrange), },
+    {key: "externalNeutral", stackId: "external", color: pSBC(-.4, ociOrange), },
+    {key: "externalSatisfied", stackId: "external", color: pSBC(-.2, ociOrange), },
+    {key: "externalVerySatisfied", stackId: "external", color: ociOrange, },
   ];
 
   const labelToSentiment = (label) => {
@@ -518,8 +535,8 @@ const PulseReportPage = () => {
     );
   };
 
-  const pulseScoresTitle = () => {
-    let title = "Pulse scores for";
+  const sectionTitle = (prefix) => {
+    let title = `${prefix} for`;
     if (scoreType == ScoreOption.COMBINED ||
         scoreType == ScoreOption.INTERNAL) {
       title += ` "${ScoreOptionLabel[ScoreOption.INTERNAL]}"`;
@@ -535,16 +552,16 @@ const PulseReportPage = () => {
   };
 
   const pieLabelToSentiment = (label) => {
-    switch(label.toLowerCase()) {
-      case "verydissatisfied":
+    switch(label.replace("internal", "").replace("external", "")) {
+      case "VeryDissatisfied":
         return "😦";
-      case "dissatisfied":
+      case "Dissatisfied":
         return "🙁";
-      case "neutral":
+      case "Neutral":
         return "😐";
-      case "satisfied":
+      case "Satisfied":
         return "🙂";
-      case "verysatisfied":
+      case "VerySatisfied":
         return "😀";
     }
     return "ERROR";
@@ -589,7 +606,10 @@ const PulseReportPage = () => {
     if (active && payload && payload.length) {
       return (
         <div className="custom-tooltip">
-          <p className="label">{titleWords(payload[0].name)} : {payload[0].value}</p>
+          <p className="label">
+            {titleWords(payload[0].name
+                          .replace("internal", "")
+                          .replace("external", ""))} : {payload[0].value}</p>
         </div>
       );
     }
@@ -597,11 +617,17 @@ const PulseReportPage = () => {
     return null;
   };
 
+  const pieSliceColor = (entry, index) => {
+    return <Cell
+             key={`cell-${index}`}
+             fill={dataInfo.find((value) => value.key == entry.name).color} />;
+  };
+
   const pulseScoresChart = () => (
   <>
     <Card>
       <CardHeader
-        title={pulseScoresTitle()}
+        title={sectionTitle("Pulse Scores")}
         titleTypographyProps={{ variant: 'h5', component: 'h2' }}
       />
       <CardContent>
@@ -642,26 +668,60 @@ const PulseReportPage = () => {
     </Card>
     <Card>
       <CardHeader
-        title="Total Responses"
+        title={sectionTitle("Total Responses")}
         titleTypographyProps={{ variant: 'h5', component: 'h2' }}
       />
       <CardContent>
-        <ResponsiveContainer width="100%" aspect={3.0}>
-          <PieChart width={300} height={300}>
-          <Tooltip
-            wrapperStyle={{ color: "black", backgroundColor: "white", paddingLeft: "10px", paddingRight: "10px" }}
-            content={<CustomPieTooltip />}
-          />
-            <Pie
-              data={pieChartData}
-              dataKey="value"
-              nameKey="name"
-              fill={ociLightBlue}
-              labelLine={false}
-              label={renderPieLabel}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+        <div style={{ display: 'flex', justifyContent: 'center'}}>
+          {(scoreType == ScoreOption.COMBINED ||
+            scoreType == ScoreOption.INTERNAL) &&
+            <div style={{ width: '50%'}}>
+              <ResponsiveContainer width="100%" aspect={2.0}>
+                <PieChart>
+                  <Tooltip
+                    wrapperStyle={{ color: "black", backgroundColor: "white",
+                                    paddingLeft: "10px", paddingRight: "10px",
+                                    zIndex: 2 }}
+                    content={<CustomPieTooltip />}
+                  />
+                  <Pie
+                    data={internalPieChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    labelLine={false}
+                    label={renderPieLabel}
+                  >
+                    {internalPieChartData.map(pieSliceColor)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          }
+          {(scoreType == ScoreOption.COMBINED ||
+            scoreType == ScoreOption.EXTERNAL) &&
+            <div style={{ width: '50%'}}>
+              <ResponsiveContainer width="100%" aspect={2.0}>
+                <PieChart width="50%">
+                  <Tooltip
+                    wrapperStyle={{ color: "black", backgroundColor: "white",
+                                    paddingLeft: "10px", paddingRight: "10px",
+                                    zIndex: 2 }}
+                    content={<CustomPieTooltip />}
+                  />
+                  <Pie
+                    data={externalPieChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    labelLine={false}
+                    label={renderPieLabel}
+                  >
+                    {externalPieChartData.map(pieSliceColor)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          }
+        </div>
       </CardContent>
     </Card>
   </>

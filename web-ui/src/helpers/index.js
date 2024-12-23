@@ -4,3 +4,4 @@ export * from './datetime';
 export * from './query-parameters';
 export * from './sanitizehtml';
 export * from './strings';
+export * from './colors';
