@@ -173,7 +173,7 @@ const PulseReportPage = () => {
 
     for (const pulse of pulses) {
       const memberId = pulse.teamMemberId;
-      if (!teamMemberIds.includes(memberId)) continue;
+      if (memberId && !teamMemberIds.includes(memberId)) continue;
 
       const { externalScore, internalScore, submissionDate } = pulse;
       const [year, month, day] = submissionDate;
@@ -193,18 +193,21 @@ const PulseReportPage = () => {
       frequencies[internalScore - 1].internal++;
       frequencies[externalScore - 1].external++;
 
-      const member = memberMap[memberId];
-      const { supervisorid } = member;
-      const memberIdToUse = managerMode ? supervisorid : memberId;
+      let memberIdToUse;
+      if (memberId) {
+        const member = memberMap[memberId];
+        const { supervisorid } = member;
+        memberIdToUse = managerMode ? supervisorid : memberId;
 
-      /* For debugging ...
-      if (supervisorid) {
-        const supervisor = memberMap[supervisorid];
-        console.log(`The supervisor of ${member.name} is ${supervisor.name}`);
-      } else {
-        console.log(`${member.name} has no supervisor`);
+        /* For debugging ...
+        if (supervisorid) {
+          const supervisor = memberMap[supervisorid];
+          console.log(`The supervisor of ${member.name} is ${supervisor.name}`);
+        } else {
+          console.log(`${member.name} has no supervisor`);
+        }
+        */
       }
-      */
 
       // When in manager mode, if the member
       // doesn't have a supervisor then skip this data.
