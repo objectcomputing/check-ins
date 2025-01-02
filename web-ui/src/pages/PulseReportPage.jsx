@@ -6,6 +6,9 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
+  Pie,
+  Cell,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -32,11 +35,13 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
+import { pSBC } from '../helpers/colors.js';
 import { getAvatarURL, resolve } from '../api/api.js';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { AppContext } from '../context/AppContext.jsx';
@@ -54,8 +59,7 @@ import './PulseReportPage.css';
 // easily use color variables defined in variables.css.
 const ociDarkBlue = '#2c519e';
 //const ociLightBlue = '#76c8d4'; // not currently used
-// const ociOrange = '#f8b576'; // too light
-const orange = '#b26801';
+const ociOrange = '#f8b576';
 
 const ScoreOption = {
   INTERNAL: 'Internal',
@@ -67,6 +71,12 @@ const propertyMap = {
   [ScoreOption.INTERNAL]: 'internalAverage',
   [ScoreOption.EXTERNAL]: 'externalAverage',
   [ScoreOption.COMBINED]: 'combinedAverage'
+};
+
+const ScoreOptionLabel = {
+  'Internal': 'At Work',
+  'External': 'Outside Work',
+  'Combined': 'Both',
 };
 
 /*
@@ -112,6 +122,8 @@ const PulseReportPage = () => {
   const [selectedPulse, setSelectedPulse] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
+  const [internalPieChartData, setInternalPieChartData] = useState([]);
+  const [externalPieChartData, setExternalPieChartData] = useState([]);
 
   /*
   // This generates random data to use in the line chart.
@@ -161,7 +173,7 @@ const PulseReportPage = () => {
 
     for (const pulse of pulses) {
       const memberId = pulse.teamMemberId;
-      if (!teamMemberIds.includes(memberId)) continue;
+      if (memberId && !teamMemberIds.includes(memberId)) continue;
 
       const { externalScore, internalScore, submissionDate } = pulse;
       const [year, month, day] = submissionDate;
@@ -181,18 +193,21 @@ const PulseReportPage = () => {
       frequencies[internalScore - 1].internal++;
       frequencies[externalScore - 1].external++;
 
-      const member = memberMap[memberId];
-      const { supervisorid } = member;
-      const memberIdToUse = managerMode ? supervisorid : memberId;
+      let memberIdToUse;
+      if (memberId) {
+        const member = memberMap[memberId];
+        const { supervisorid } = member;
+        memberIdToUse = managerMode ? supervisorid : memberId;
 
-      /* For debugging ...
-      if (supervisorid) {
-        const supervisor = memberMap[supervisorid];
-        console.log(`The supervisor of ${member.name} is ${supervisor.name}`);
-      } else {
-        console.log(`${member.name} has no supervisor`);
+        /* For debugging ...
+        if (supervisorid) {
+          const supervisor = memberMap[supervisorid];
+          console.log(`The supervisor of ${member.name} is ${supervisor.name}`);
+        } else {
+          console.log(`${member.name} has no supervisor`);
+        }
+        */
       }
-      */
 
       // When in manager mode, if the member
       // doesn't have a supervisor then skip this data.
@@ -209,6 +224,38 @@ const PulseReportPage = () => {
         averages.internalScores.push(internalScore);
       }
     }
+
+    let internalPieCounts = [
+      {name: "internalVeryDissatisfied", value: 0},
+      {name: "internalDissatisfied", value: 0},
+      {name: "internalNeutral", value: 0},
+      {name: "internalSatisfied", value: 0},
+      {name: "internalVerySatisfied", value: 0},
+    ];
+    for(let day of scoreChartDataPoints) {
+      day.datapoints.forEach(datapoint => {
+        internalPieCounts[datapoint.internalScore - 1].value++;
+      });
+    }
+    // Filter out data with a zero value so that the pie chart does not attempt
+    // to display them.
+    setInternalPieChartData(internalPieCounts.filter((p) => p.value != 0));
+
+    let externalPieCounts = [
+      {name: "externalVeryDissatisfied", value: 0},
+      {name: "externalDissatisfied", value: 0},
+      {name: "externalNeutral", value: 0},
+      {name: "externalSatisfied", value: 0},
+      {name: "externalVerySatisfied", value: 0},
+    ];
+    for(let day of scoreChartDataPoints) {
+      day.datapoints.forEach(datapoint => {
+        externalPieCounts[datapoint.externalScore - 1].value++;
+      });
+    }
+    // Filter out data with a zero value so that the pie chart does not attempt
+    // to display them.
+    setExternalPieChartData(externalPieCounts.filter((p) => p.value != 0));
 
     setScoreChartData(scoreChartDataPoints.map(day => {
       const iScores = {};
@@ -319,27 +366,6 @@ const PulseReportPage = () => {
       <CardContent>
         <div className="average-header row">
           <Typography variant="h5">Average Scores</Typography>
-          <FormControl style={{ width: '8rem' }}>
-            <TextField
-              select
-              size="small"
-              label="Score Type"
-              onChange={e => setScoreType(e.target.value)}
-              sx={{ width: '8rem' }}
-              value={scoreType}
-              variant="outlined"
-            >
-              <MenuItem value={ScoreOption.INTERNAL}>
-                {ScoreOption.INTERNAL}
-              </MenuItem>
-              <MenuItem value={ScoreOption.EXTERNAL}>
-                {ScoreOption.EXTERNAL}
-              </MenuItem>
-              <MenuItem value={ScoreOption.COMBINED}>
-                {ScoreOption.COMBINED}
-              </MenuItem>
-            </TextField>
-          </FormControl>
           <FormControl style={{ width: '7.5rem' }}>
             <TextField
               select
@@ -363,7 +389,7 @@ const PulseReportPage = () => {
     </Card>
   );
 
-  const barChart = () => (
+  const scoreDistributionChart = () => (
     <Card>
       <CardHeader
         title="Distribution of pulse scores for selected team members"
@@ -386,8 +412,20 @@ const PulseReportPage = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="internal" fill={ociDarkBlue} />
-          <Bar dataKey="external" fill={orange} />
+          {(scoreType == ScoreOption.COMBINED || scoreType == ScoreOption.INTERNAL) &&
+            <Bar
+              dataKey="internal"
+              fill={ociDarkBlue}
+              name={ScoreOptionLabel[ScoreOption.INTERNAL]}
+            />
+            }
+          {(scoreType == ScoreOption.COMBINED || scoreType == ScoreOption.EXTERNAL) &&
+            <Bar
+              dataKey="external"
+              fill={ociOrange}
+              name={ScoreOptionLabel[ScoreOption.EXTERNAL]}
+            />
+          }
         </BarChart>
         <ExpandMore
           expand={expanded}
@@ -430,20 +468,22 @@ const PulseReportPage = () => {
   };
 
   const dataInfo = [
-    {key: "internalVeryDissatisfied", stackId: "internal", color: "#273e58", },
-    {key: "internalDissatisfied", stackId: "internal", color: "#1a3c6d", },
-    {key: "internalNeutral", stackId: "internal", color: "#2c519e", },
-    {key: "internalSatisfied", stackId: "internal", color: "#4b7ac7", },
-    {key: "internalVerySatisfied", stackId: "internal", color: "#6fa3e6", },
-    {key: "externalVeryDissatisfied", stackId: "external", color: "#704401", },
-    {key: "externalDissatisfied", stackId: "external", color: "#8a5200", },
-    {key: "externalNeutral", stackId: "external", color: "#b26801", },
-    {key: "externalSatisfied", stackId: "external", color: "#d48a2c", },
-    {key: "externalVerySatisfied", stackId: "external", color: "#e0a456", },
+    {key: "internalVeryDissatisfied", stackId: "internal", color: pSBC(-.9, ociDarkBlue), },
+    {key: "internalDissatisfied", stackId: "internal", color: pSBC(-.75, ociDarkBlue), },
+    {key: "internalNeutral", stackId: "internal", color: pSBC(-.5, ociDarkBlue), },
+    {key: "internalSatisfied", stackId: "internal", color: pSBC(-.25, ociDarkBlue), },
+    {key: "internalVerySatisfied", stackId: "internal", color: ociDarkBlue, },
+    {key: "externalVeryDissatisfied", stackId: "external", color: pSBC(-.9, ociOrange), },
+    {key: "externalDissatisfied", stackId: "external", color: pSBC(-.75, ociOrange), },
+    {key: "externalNeutral", stackId: "external", color: pSBC(-.5, ociOrange), },
+    {key: "externalSatisfied", stackId: "external", color: pSBC(-.25, ociOrange), },
+    {key: "externalVerySatisfied", stackId: "external", color: ociOrange, },
   ];
 
   const labelToSentiment = (label) => {
-    const suffix = label.includes("internal") ? "At Work" : "Outside Work";
+    const suffix = label.includes("internal")
+            ? ScoreOptionLabel[ScoreOption.INTERNAL]
+            : ScoreOptionLabel[ScoreOption.EXTERNAL];
     switch(label.replace("internal", "").replace("external", "")) {
       case "VeryDissatisfied":
         return <><SentimentVeryDissatisfied/> {suffix}</>;
@@ -464,8 +504,8 @@ const PulseReportPage = () => {
       return (
         <div className="custom-tooltip">
           <p>{label}</p>
-          {payload.map(p => {
-            return <div style={{color: `${p.color}`}}>
+          {payload.slice().reverse().map(p => {
+            return <div key={p.dataKey} style={{color: `${p.color}`}}>
                      {p.value} {p.name.props.children}
                    </div>;
           })}
@@ -498,10 +538,99 @@ const PulseReportPage = () => {
     );
   };
 
-  const lineChart = () => (
+  const sectionTitle = (prefix) => {
+    let title = `${prefix} for`;
+    if (scoreType == ScoreOption.COMBINED ||
+        scoreType == ScoreOption.INTERNAL) {
+      title += ` "${ScoreOptionLabel[ScoreOption.INTERNAL]}"`;
+    }
+    if (scoreType == ScoreOption.COMBINED) {
+      title += " and";
+    }
+    if (scoreType == ScoreOption.COMBINED ||
+        scoreType == ScoreOption.EXTERNAL) {
+      title += ` "${ScoreOptionLabel[ScoreOption.EXTERNAL]}"`;
+    }
+    return title;
+  };
+
+  const pieLabelToSentiment = (label) => {
+    switch(label.replace("internal", "").replace("external", "")) {
+      case "VeryDissatisfied":
+        return "😦";
+      case "Dissatisfied":
+        return "🙁";
+      case "Neutral":
+        return "😐";
+      case "Satisfied":
+        return "🙂";
+      case "VerySatisfied":
+        return "😀";
+    }
+    return "ERROR";
+  };
+
+  const RADIAN = Math.PI / 180;
+  const renderPieLabel = function({ cx, cy, midAngle, innerRadius, outerRadius,
+                                    percent, index, name, value }) {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <>
+      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'}
+            dominantBaseline="central">
+        {pieLabelToSentiment(name)} {value}
+      </text>
+      </>
+    );
+  };
+
+  const titleWords = (text) => {
+    if (text.match(/^[a-z]+$/)) {
+      // Uppercase the first letter
+      text = text[0].toUpperCase() + text.substring(1);
+    } else {
+      // Split words and uppercase the first word
+      let words = text.split(/(?<=[a-z])(?=[A-Z\d])/);
+      words[0] = words[0][0].toUpperCase() + words[0].substring(1);
+      text= "";
+      let separator = "";
+      for(let word of words) {
+        text += `${separator}${word}`;
+        separator = " ";
+      }
+    }
+    return text;
+  };
+
+  const CustomPieTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p className="label">
+            {titleWords(payload[0].name
+                          .replace("internal", "")
+                          .replace("external", ""))} : {payload[0].value}</p>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const pieSliceColor = (entry, index) => {
+    return <Cell
+             key={`cell-${index}`}
+             fill={dataInfo.find((value) => value.key == entry.name).color} />;
+  };
+
+  const pulseScoresChart = () => (
+  <>
     <Card>
       <CardHeader
-        title={'Pulse scores for "At Work" and "Outside Work"'}
+        title={sectionTitle("Pulse Scores")}
         titleTypographyProps={{ variant: 'h5', component: 'h2' }}
       />
       <CardContent>
@@ -519,7 +648,12 @@ const PulseReportPage = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            {dataInfo.map((obj) => {
+            {dataInfo.filter(o => scoreType == ScoreOption.COMBINED ||
+                                  (scoreType == ScoreOption.INTERNAL &&
+                                      o.key.includes("internal")) ||
+                                  (scoreType == ScoreOption.EXTERNAL &&
+                                      o.key.includes("external")))
+                     .map((obj) => {
                return <Bar
                         key={obj.key}
                         dataKey={obj.key}
@@ -535,6 +669,65 @@ const PulseReportPage = () => {
         </ResponsiveContainer>
       </CardContent>
     </Card>
+    <Card>
+      <CardHeader
+        title={sectionTitle("Total Responses")}
+        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+      />
+      <CardContent>
+        <div style={{ display: 'flex', justifyContent: 'center'}}>
+          {(scoreType == ScoreOption.COMBINED ||
+            scoreType == ScoreOption.INTERNAL) &&
+            <div style={{ width: '50%'}}>
+              <ResponsiveContainer width="100%" aspect={2.0}>
+                <PieChart>
+                  <Tooltip
+                    wrapperStyle={{ color: "black", backgroundColor: "white",
+                                    paddingLeft: "10px", paddingRight: "10px",
+                                    zIndex: 2 }}
+                    content={<CustomPieTooltip />}
+                  />
+                  <Pie
+                    data={internalPieChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    labelLine={false}
+                    label={renderPieLabel}
+                  >
+                    {internalPieChartData.map(pieSliceColor)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          }
+          {(scoreType == ScoreOption.COMBINED ||
+            scoreType == ScoreOption.EXTERNAL) &&
+            <div style={{ width: '50%'}}>
+              <ResponsiveContainer width="100%" aspect={2.0}>
+                <PieChart width="50%">
+                  <Tooltip
+                    wrapperStyle={{ color: "black", backgroundColor: "white",
+                                    paddingLeft: "10px", paddingRight: "10px",
+                                    zIndex: 2 }}
+                    content={<CustomPieTooltip />}
+                  />
+                  <Pie
+                    data={externalPieChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    labelLine={false}
+                    label={renderPieLabel}
+                  >
+                    {externalPieChartData.map(pieSliceColor)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          }
+        </div>
+      </CardContent>
+    </Card>
+  </>
   );
 
   const responseSummary = () => {
@@ -584,6 +777,25 @@ const PulseReportPage = () => {
     );
   };
 
+  const toggleLabels = {
+    left: {
+      title: ScoreOptionLabel[ScoreOption.INTERNAL],
+      value: ScoreOption.INTERNAL,
+    },
+    center: {
+      title: ScoreOptionLabel[ScoreOption.Combined],
+      value: ScoreOption.COMBINED,
+    },
+    right: {
+      title: ScoreOptionLabel[ScoreOption.EXTERNAL],
+      value: ScoreOption.EXTERNAL,
+    },
+  };
+
+  const toggleChange = (event, value) => {
+    setScoreType(value);
+  };
+
   return selectHasViewPulseReportPermission(state) ? (
     <div className="pulse-report-page">
       <div className="date-pickers">
@@ -601,6 +813,18 @@ const PulseReportPage = () => {
             value={dayjs(dateTo)}
           />
         </LocalizationProvider>
+        <ToggleButtonGroup
+          value={scoreType}
+          exclusive
+          onChange={toggleChange}
+        >
+          <ToggleButton value={ScoreOption.INTERNAL}>
+             {ScoreOptionLabel[ScoreOption.INTERNAL]}</ToggleButton>
+          <ToggleButton value={ScoreOption.COMBINED}>
+             {ScoreOptionLabel[ScoreOption.COMBINED]}</ToggleButton>
+          <ToggleButton value={ScoreOption.EXTERNAL}>
+             {ScoreOptionLabel[ScoreOption.EXTERNAL]}</ToggleButton>
+        </ToggleButtonGroup>
       </div>
 
       {pulses.length === 0 ? (
@@ -614,9 +838,9 @@ const PulseReportPage = () => {
             onChange={handleTeamMembersChange}
             selected={teamMembers}
           />
-          {lineChart()}
+          {pulseScoresChart()}
           {averageScores()}
-          {barChart()}
+          {scoreDistributionChart()}
           <Modal open={showComments} onClose={() => setShowComments(false)}>
             <Card className="feedback-request-enable-edits-modal">
               <CardHeader
