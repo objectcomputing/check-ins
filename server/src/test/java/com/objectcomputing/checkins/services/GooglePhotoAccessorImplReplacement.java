@@ -28,6 +28,12 @@ public class GooglePhotoAccessorImplReplacement implements GooglePhotoAccessor {
         photos.put(email, photo);
     }
 
+    public void setPhotoData(String email, byte[] photoData) {
+        UserPhoto photo = new UserPhoto();
+        photo.setPhotoData(new String(photoData));
+        photos.put(email, photo);
+    }
+
     @Override
     public byte[] getPhotoData(String workEmail) {
         UserPhoto photo = photos.get(workEmail);
