@@ -55,7 +55,7 @@ public class SlackSearch {
     }
 
     public String findUserId(String userEmail) {
-        String token = System.getenv(env);
+        String token = configuration.getApplication().getNotifications().getSlack().getBotToken();
         if (token != null) {
             try {
                 MethodsClient client = Slack.getInstance().methods(token);
