@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.notifications.social_media;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -16,6 +17,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 import java.io.IOException;
 
+import jnr.ffi.annotations.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +26,11 @@ public class SlackSearch {
     private static final Logger LOG = LoggerFactory.getLogger(SlackSearch.class);
     private static final String env = "SLACK_BOT_TOKEN";
 
+    @Inject
+    private CheckInsConfiguration configuration;
+
     public String findChannelId(String channelName) {
-        String token = System.getenv(env);
+        String token = configuration.getApplication().getNotifications().getSlack().getBotToken();
         if (token != null) {
             try {
                 MethodsClient client = Slack.getInstance().methods(token);

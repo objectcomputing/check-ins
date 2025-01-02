@@ -31,6 +31,9 @@ public class CheckInsConfiguration {
         @NotNull
         private GoogleApiConfig googleApi;
 
+        @NotNull
+        private NotificationsConfig notifications;
+
         @Getter
         @Setter
         @ConfigurationProperties("feedback")
@@ -64,6 +67,26 @@ public class CheckInsConfiguration {
 
                 @NotBlank
                 private String scopeForDirectoryApi;
+            }
+        }
+
+        @Getter
+        @Setter
+        @ConfigurationProperties("notifications")
+        public static class NotificationsConfig {
+
+            @NotNull
+            private SlackConfig slack;
+
+            @Getter
+            @Setter
+            @ConfigurationProperties("slack")
+            public static class SlackConfig {
+                @NotBlank
+                private String webhookUrl;
+
+                @NotBlank
+                private String botToken;
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.notifications.social_media;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -16,9 +17,12 @@ public class SlackPoster {
     @Inject
     private HttpClient slackClient;
 
+    @Inject
+    private CheckInsConfiguration configuration;
+
     public HttpResponse post(String slackBlock) {
         // See if we can have a webhook URL.
-        String slackWebHook = System.getenv("SLACK_WEBHOOK_URL");
+        String slackWebHook = configuration.getApplication().getNotifications().getSlack().getWebhookUrl();
         if (slackWebHook != null) {
             // POST it to Slack.
             BlockingHttpClient client = slackClient.toBlocking();
