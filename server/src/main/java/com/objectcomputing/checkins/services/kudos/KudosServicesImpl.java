@@ -54,6 +54,7 @@ class KudosServicesImpl implements KudosServices {
     private final RoleServices roleServices;
     private final MemberProfileServices memberProfileServices;
     private final SlackPoster slackPoster;
+    private final KudosConverter converter;
 
     private enum NotificationType {
         creation, approval
@@ -69,7 +70,9 @@ class KudosServicesImpl implements KudosServices {
                              MemberProfileServices memberProfileServices,
                              @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              CheckInsConfiguration checkInsConfiguration,
-                             SlackPoster slackPoster) {
+                             SlackPoster slackPoster,
+                             KudosConverter converter
+                      ) {
         this.kudosRepository = kudosRepository;
         this.kudosRecipientServices = kudosRecipientServices;
         this.kudosRecipientRepository = kudosRecipientRepository;
@@ -81,6 +84,7 @@ class KudosServicesImpl implements KudosServices {
         this.emailSender = emailSender;
         this.checkInsConfiguration = checkInsConfiguration;
         this.slackPoster = slackPoster;
+        this.converter = converter;
     }
 
     @Override
@@ -376,10 +380,6 @@ class KudosServicesImpl implements KudosServices {
     }
 
     private void slackApprovedKudos(Kudos kudos) {
-        KudosConverter converter = new KudosConverter(memberProfileServices,
-                                                      kudosRecipientServices);
-
-        String slackBlock = converter.toSlackBlock(kudos);
         HttpResponse httpResponse =
             slackPoster.post(converter.toSlackBlock(kudos));
         if (httpResponse.status() != HttpStatus.OK) {

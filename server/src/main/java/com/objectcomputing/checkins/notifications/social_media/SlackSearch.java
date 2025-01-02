@@ -24,10 +24,12 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class SlackSearch {
     private static final Logger LOG = LoggerFactory.getLogger(SlackSearch.class);
-    private static final String env = "SLACK_BOT_TOKEN";
 
-    @Inject
     private CheckInsConfiguration configuration;
+
+    public SlackSearch(CheckInsConfiguration checkInsConfiguration) {
+        this.configuration = checkInsConfiguration;
+    }
 
     public String findChannelId(String channelName) {
         String token = configuration.getApplication().getNotifications().getSlack().getBotToken();

@@ -14,11 +14,14 @@ import com.slack.api.model.block.element.RichTextElement;
 import com.slack.api.model.block.element.RichTextSectionElement;
 import com.slack.api.util.json.GsonFactory;
 import com.google.gson.Gson;
+import io.micronaut.core.annotation.Introspected;
+import jakarta.inject.Singleton;
 
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
 
+@Singleton
 public class KudosConverter {
     private record InternalBlock(
       List<LayoutBlock> blocks
@@ -26,11 +29,14 @@ public class KudosConverter {
 
     private final MemberProfileServices memberProfileServices;
     private final KudosRecipientServices kudosRecipientServices;
+    private final SlackSearch slackSearch;
 
     public KudosConverter(MemberProfileServices memberProfileServices,
-                          KudosRecipientServices kudosRecipientServices) {
+                          KudosRecipientServices kudosRecipientServices,
+                          SlackSearch slackSearch) {
       this.memberProfileServices = memberProfileServices;
       this.kudosRecipientServices = kudosRecipientServices;
+      this.slackSearch = slackSearch;
     }
 
     public String toSlackBlock(Kudos kudos) {
@@ -39,8 +45,7 @@ public class KudosConverter {
 
         // Look up the channel id from Slack
         String channelName = "kudos";
-        SlackSearch search = new SlackSearch();
-        String channelId = search.findChannelId(channelName);
+        String channelId = slackSearch.findChannelId(channelName);
         if (channelId == null) {
             content.add(
                 RichTextSectionElement.Text.builder()
@@ -94,9 +99,8 @@ public class KudosConverter {
 
     private RichTextElement memberAsRichText(UUID memberId) {
         // Look up the user id by email address on Slack
-        SlackSearch search = new SlackSearch();
         MemberProfile profile = memberProfileServices.getById(memberId);
-        String userId = search.findUserId(profile.getWorkEmail());
+        String userId = slackSearch.findUserId(profile.getWorkEmail());
         if (userId == null) {
           String name = MemberProfileUtils.getFullName(profile);
           return RichTextSectionElement.Text.builder()
