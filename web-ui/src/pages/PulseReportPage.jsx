@@ -33,7 +33,8 @@ import {
   MenuItem,
   Modal,
   TextField,
-  Typography
+  Typography,
+  Link,
 } from '@mui/material';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -79,6 +80,8 @@ const ScoreOptionLabel = {
   'Combined': 'Both',
 };
 
+const pulsesPerPage = 15;
+
 /*
 // Returns a random, integer score between 1 and 5.
 // We may want to uncomment this later for testing.
@@ -117,6 +120,7 @@ const PulseReportPage = () => {
   const [expanded, setExpanded] = useState(false);
   const [scoreChartData, setScoreChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
+  const [pulsesUpperBounds, setPulsesUpperBounds] = useState(pulsesPerPage);
   const [scope, setScope] = useState('Individual');
   const [scoreType, setScoreType] = useState(ScoreOption.COMBINED);
   const [selectedPulse, setSelectedPulse] = useState(null);
@@ -329,6 +333,7 @@ const PulseReportPage = () => {
       return compare;
     });
     setPulses(pulses);
+    setPulsesUpperBounds(pulsesPerPage);
   };
 
   useEffect(() => {
@@ -385,63 +390,6 @@ const PulseReportPage = () => {
           {scoreCard(true)}
           {scoreCard(false)}
         </div>
-      </CardContent>
-    </Card>
-  );
-
-  const scoreDistributionChart = () => (
-    <Card>
-      <CardHeader
-        title="Distribution of pulse scores for selected team members"
-        titleTypographyProps={{ variant: 'h5', component: 'h2' }}
-      />
-      <CardContent>
-        <BarChart
-          width={500}
-          height={300}
-          data={barChartData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="score" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          {(scoreType == ScoreOption.COMBINED || scoreType == ScoreOption.INTERNAL) &&
-            <Bar
-              dataKey="internal"
-              fill={ociDarkBlue}
-              name={ScoreOptionLabel[ScoreOption.INTERNAL]}
-            />
-            }
-          {(scoreType == ScoreOption.COMBINED || scoreType == ScoreOption.EXTERNAL) &&
-            <Bar
-              dataKey="external"
-              fill={ociOrange}
-              name={ScoreOptionLabel[ScoreOption.EXTERNAL]}
-            />
-          }
-        </BarChart>
-        <ExpandMore
-          expand={expanded}
-          onClick={() => setExpanded(!expanded)}
-          aria-expanded={expanded}
-          aria-label={expanded ? 'show less' : 'show more'}
-          size="large"
-        />
-        <Collapse
-          className="bottom-row"
-          in={expanded}
-          timeout="auto"
-          unmountOnExit
-        >
-          {responseSummary()}
-        </Collapse>
       </CardContent>
     </Card>
   );
@@ -725,16 +673,33 @@ const PulseReportPage = () => {
             </div>
           }
         </div>
+        <ExpandMore
+          expand={expanded}
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+          aria-label={expanded ? 'show less' : 'show more'}
+          size="large"
+        />
+        <Collapse
+          className="bottom-row"
+          in={expanded}
+          timeout="auto"
+          unmountOnExit
+        >
+          {responseSummary()}
+        </Collapse>
       </CardContent>
     </Card>
   </>
   );
 
   const responseSummary = () => {
-    let filteredPulses = pulses;
+    const pulsesSlice = pulses.slice(0, pulsesUpperBounds);
+
+    let filteredPulses = pulsesSlice;
     const teamMemberIds = teamMembers.map(member => member.id);
     if (teamMemberIds.length) {
-      filteredPulses = pulses.filter(pulse =>
+      filteredPulses = pulsesSlice.filter(pulse =>
         teamMemberIds.includes(pulse.teamMemberId)
       );
     }
@@ -773,6 +738,14 @@ const PulseReportPage = () => {
             </div>
           );
         })}
+        {pulsesUpperBounds < pulses.length &&
+         <Link to="#" style={{ cursor: 'pointer' }} onClick={(event) => {
+           event.preventDefault();
+           setPulsesUpperBounds(pulsesUpperBounds + pulsesPerPage);
+         }}>
+           Load more...
+         </Link>
+        }
       </>
     );
   };
@@ -840,7 +813,6 @@ const PulseReportPage = () => {
           />
           {pulseScoresChart()}
           {averageScores()}
-          {scoreDistributionChart()}
           <Modal open={showComments} onClose={() => setShowComments(false)}>
             <Card className="feedback-request-enable-edits-modal">
               <CardHeader
