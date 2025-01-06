@@ -14,7 +14,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.StringUtils;
