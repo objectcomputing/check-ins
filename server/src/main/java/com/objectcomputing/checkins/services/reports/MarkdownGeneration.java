@@ -82,7 +82,7 @@ class MarkdownGeneration {
 
     private static final Logger LOG = LoggerFactory.getLogger(MarkdownGeneration.class);
     private static final String noneAvailable = "None available during the period covered by this review.";
-    private static final String directory = "merit-reports";
+    public static final String directory = "merit-reports";
 
     private final ReportDataServices reportDataServices;
     private final KudosRepository kudosRepository;
