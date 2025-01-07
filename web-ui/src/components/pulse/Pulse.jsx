@@ -44,7 +44,10 @@ const Pulse = ({
   title
 }) => (
   <div className="pulse">
-    <Typography variant="h6">{title}</Typography>
+    <div className="title-row">
+      <Typography variant="h6">{title}</Typography>
+      {commentRequired && <Typography variant="h6" color="red">*</Typography>}
+    </div>
     <div className="icon-row">
       {icons.map((sentiment, index) => (
         <Tooltip key={`sentiment-${index}`} title={tooltips[index]} arrow>
@@ -70,7 +73,7 @@ const Pulse = ({
       }}
       placeholder="Comment"
       required={commentRequired}
-      rows={4}
+      maxRows={4}
       value={comment}
     />
   </div>

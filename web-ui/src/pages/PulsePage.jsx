@@ -120,10 +120,11 @@ const PulsePage = () => {
           <Pulse
             key="pulse-internal"
             comment={internalComment}
+            commentRequired={true}
             score={internalScore}
             setComment={setInternalComment}
             setScore={setInternalScore}
-            title="How are you feeling about work today? (*)"
+            title="How are you feeling about work today?"
           />
           <Pulse
             key="pulse-external"
