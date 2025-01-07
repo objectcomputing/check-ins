@@ -22,6 +22,8 @@ import {
   SentimentSatisfied,
   SentimentVerySatisfied,
 } from '@mui/icons-material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {
   Avatar,
   Card,
@@ -120,7 +122,7 @@ const PulseReportPage = () => {
   const [expanded, setExpanded] = useState(false);
   const [scoreChartData, setScoreChartData] = useState([]);
   const [pulses, setPulses] = useState([]);
-  const [pulsesUpperBounds, setPulsesUpperBounds] = useState(pulsesPerPage);
+  const [pulsesPageNumber, setPulsesPageNumber] = useState(0);
   const [scope, setScope] = useState('Individual');
   const [scoreType, setScoreType] = useState(ScoreOption.COMBINED);
   const [selectedPulse, setSelectedPulse] = useState(null);
@@ -333,7 +335,7 @@ const PulseReportPage = () => {
       return compare;
     });
     setPulses(pulses);
-    setPulsesUpperBounds(pulsesPerPage);
+    setPulsesPageNumber(0);
   };
 
   useEffect(() => {
@@ -694,7 +696,10 @@ const PulseReportPage = () => {
   );
 
   const responseSummary = () => {
-    const pulsesSlice = pulses.slice(0, pulsesUpperBounds);
+    const leftDisabled = (pulsesPageNumber <= 0);
+    const rightDisabled = (((pulsesPageNumber + 1) * pulsesPerPage) >= pulses.length);
+    const start = pulsesPageNumber * pulsesPerPage;
+    const pulsesSlice = pulses.slice(start, start + pulsesPerPage);
 
     let filteredPulses = pulsesSlice;
     const teamMemberIds = teamMembers.map(member => member.id);
@@ -738,14 +743,26 @@ const PulseReportPage = () => {
             </div>
           );
         })}
-        {pulsesUpperBounds < pulses.length &&
-         <Link to="#" style={{ cursor: 'pointer' }} onClick={(event) => {
-           event.preventDefault();
-           setPulsesUpperBounds(pulsesUpperBounds + pulsesPerPage);
-         }}>
-           Load more...
-         </Link>
-        }
+        <Link to="#"
+              style={leftDisabled ? { cursor: 'auto' } : { cursor: 'pointer' }}
+              onClick={(event) => {
+          event.preventDefault();
+          if (!leftDisabled) {
+            setPulsesPageNumber(pulsesPageNumber - 1);
+          }
+        }}>
+          <ArrowBackIcon/>
+        </Link>
+        <Link to="#"
+              style={rightDisabled ? { cursor: 'auto' } : { cursor: 'pointer' }}
+              onClick={(event) => {
+                event.preventDefault();
+                if (!rightDisabled) {
+                  setPulsesPageNumber(pulsesPageNumber + 1);
+                }
+              }}>
+          <ArrowForwardIcon/>
+        </Link>
       </>
     );
   };
