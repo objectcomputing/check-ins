@@ -110,6 +110,8 @@ jobs:
             --set-env-vars "FROM_ADDRESS=no-reply@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
+            --set-env-vars "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" \
+            --set-env-vars "SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}" \
             --platform "managed" \
             --max-instances 2 \
             --allow-unauthenticated
