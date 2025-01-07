@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.kudos;
 
-import com.objectcomputing.checkins.notifications.social_media.SlackPoster;
 import com.objectcomputing.checkins.notifications.social_media.SlackSearch;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientServices;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipient;
@@ -14,7 +13,7 @@ import com.slack.api.model.block.element.RichTextElement;
 import com.slack.api.model.block.element.RichTextSectionElement;
 import com.slack.api.util.json.GsonFactory;
 import com.google.gson.Gson;
-import io.micronaut.core.annotation.Introspected;
+
 import jakarta.inject.Singleton;
 
 import java.util.UUID;
@@ -42,28 +41,9 @@ public class KudosConverter {
     public String toSlackBlock(Kudos kudos) {
         // Build the message text out of the Kudos data.
         List<RichTextElement> content = new ArrayList<>();
-
-        // Look up the channel id from Slack
-        String channelName = "kudos";
-        String channelId = slackSearch.findChannelId(channelName);
-        if (channelId == null) {
-            content.add(
-                RichTextSectionElement.Text.builder()
-                    .text("#" + channelName)
-                    .style(boldItalic())
-                    .build()
-            );
-        } else {
-            content.add(
-                RichTextSectionElement.Channel.builder()
-                    .channelId(channelId)
-                    .style(limitedBoldItalic())
-                    .build()
-            );
-        }
         content.add(
             RichTextSectionElement.Text.builder()
-                .text(" from ")
+                .text("Kudos from ")
                 .style(boldItalic())
                 .build()
         );
