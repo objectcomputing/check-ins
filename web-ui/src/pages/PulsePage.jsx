@@ -120,7 +120,7 @@ const PulsePage = () => {
           <Pulse
             key="pulse-internal"
             comment={internalComment}
-            commentRequired={true}
+            iconRequired={true}
             score={internalScore}
             setComment={setInternalComment}
             setScore={setInternalScore}
@@ -138,6 +138,7 @@ const PulsePage = () => {
             <Button
               style={{ marginTop: 0 }}
               onClick={submit}
+              disabled={internalScore == null}
               variant="contained">
               Submit
             </Button>
