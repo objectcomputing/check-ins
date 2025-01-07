@@ -8,11 +8,20 @@ exports[`renders correctly 1`] = `
     <div
       class="pulse"
     >
-      <h6
-        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      <div
+        class="title-row"
       >
-        How are you feeling about work today? (*)
-      </h6>
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+        >
+          How are you feeling about work today?
+        </h6>
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-1i2vuon-MuiTypography-root"
+        >
+          *
+        </h6>
+      </div>
       <div
         class="icon-row"
       >
@@ -190,12 +199,19 @@ exports[`renders correctly 1`] = `
         data-testid="comment-input"
       >
         <label
-          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary Mui-required MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
           data-shrink="false"
           for=":r5:"
           id=":r5:-label"
         >
           Comment
+          <span
+            aria-hidden="true"
+            class="MuiFormLabel-asterisk MuiInputLabel-asterisk css-wgai2y-MuiFormLabel-asterisk"
+          >
+             
+            *
+          </span>
         </label>
         <div
           class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-multiline css-8ewcdo-MuiInputBase-root-MuiOutlinedInput-root"
@@ -205,7 +221,7 @@ exports[`renders correctly 1`] = `
             class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
             id=":r5:"
             placeholder="Comment"
-            rows="4"
+            required=""
             style="height: 0px; overflow: hidden;"
           />
           <textarea
@@ -224,6 +240,8 @@ exports[`renders correctly 1`] = `
             >
               <span>
                 Comment
+                 
+                *
               </span>
             </legend>
           </fieldset>
@@ -233,11 +251,15 @@ exports[`renders correctly 1`] = `
     <div
       class="pulse"
     >
-      <h6
-        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      <div
+        class="title-row"
       >
-        How are you feeling about life outside of work?
-      </h6>
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+        >
+          How are you feeling about life outside of work?
+        </h6>
+      </div>
       <div
         class="icon-row"
       >
@@ -430,7 +452,6 @@ exports[`renders correctly 1`] = `
             class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
             id=":rb:"
             placeholder="Comment"
-            rows="4"
             style="height: 0px; overflow: hidden;"
           />
           <textarea
