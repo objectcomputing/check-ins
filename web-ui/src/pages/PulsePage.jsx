@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Checkbox, Typography } from '@mui/material';
-import { downloadData, initiate } from '../api/generic.js';
+import { initiate } from '../api/generic.js';
 import Pulse from '../components/pulse/Pulse.jsx';
 import { AppContext } from '../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
@@ -53,39 +53,6 @@ const PulsePage = () => {
     setExternalScore(pulse.externalScore == undefined ?
                        center : pulse.externalScore - 1);
   }, [pulse]);
-
-  const loadTodayPulse = async () => {
-    if (!csrf || !currentUser?.id) return;
-
-    const query = {
-      dateFrom: today,
-      dateTo: today,
-      teamMemberId: currentUser.id
-    };
-
-    const res = await downloadData(pulseURL, csrf, query);
-    if (res.error) return;
-
-    // Sort pulse responses by date, latest to earliest
-    const pulses = res.payload.data?.sort((a, b) => {
-      const l = a.submissionDate;
-      const r = b.submissionDate;
-      if (r[0] == l[0]) {
-        if (r[1] == l[1]) {
-          return r[2] - l[2];
-        } else {
-          return r[1] - l[1];
-        }
-      } else {
-        return r[0] - l[0];
-      }
-    });
-    setPulse(pulses.at(0));
-  };
-
-  useEffect(() => {
-    loadTodayPulse();
-  }, [csrf, currentUser]);
 
   const submit = async () => {
     const myId = currentUser?.id;
