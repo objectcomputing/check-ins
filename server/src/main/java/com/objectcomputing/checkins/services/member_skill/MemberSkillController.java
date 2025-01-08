@@ -49,7 +49,7 @@ public class MemberSkillController {
                             memberSkill.getSkillid(),
                             memberSkill.getSkilllevel(),
                             memberSkill.getLastuseddate(),
-                            memberSkill.interested)
+                            memberSkill.isInterested())
         );
         return HttpResponse.created(createdMemberSkill)
                 .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId()))));

@@ -29,5 +29,5 @@ public class MemberSkillCreateDTO {
     private LocalDate lastuseddate;
 
     @Schema(description = "the member interest")
-    public boolean interested;
+    private boolean interested;
 }
