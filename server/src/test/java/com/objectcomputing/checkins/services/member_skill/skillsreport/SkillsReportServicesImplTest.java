@@ -2,6 +2,11 @@ package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.SkillFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.MemberSkillFixture;
+import com.objectcomputing.checkins.services.skills.Skill;
+import com.objectcomputing.checkins.services.member_skill.skillsreport.SkillLevel;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -12,10 +17,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import jakarta.inject.Inject;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,49 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-// Disabled in nativeTest, as we get an exception from Mockito
-//    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
-@DisabledInNativeImage
-class SkillsReportServicesImplTest extends TestContainersSuite {
-
-    @Mock
-    private MemberSkillRepository memberSkillRepository;
-
-    @Mock
-    private MemberProfileRepository memberProfileRepository;
-
-    @Mock
-    private MemberProfileServices memberProfileServices;
-
-    @Mock
-    private SkillRepository skillRepository;
-
-    @InjectMocks
+class SkillsReportServicesImplTest extends TestContainersSuite
+                                   implements MemberProfileFixture, MemberSkillFixture, SkillFixture {
+    @Inject
     private SkillsReportServicesImpl skillsReportServices;
-
-    private AutoCloseable mockFinalizer;
-
-    @BeforeAll
-    void initMocks() {
-        mockFinalizer = MockitoAnnotations.openMocks(this);
-    }
-
-    @BeforeEach
-    void resetMocks() {
-        reset(memberSkillRepository, memberProfileRepository, skillRepository);
-    }
-
-    @AfterAll
-    void finalizeMocks() throws Exception {
-        mockFinalizer.close();
-    }
 
     @Test
     void testReportSkillNotExist() {
@@ -89,13 +53,10 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
 
     @Test
     void testReportMemberProfileNotExist() {
-        final SkillLevelDTO dto = new SkillLevelDTO();
-        final UUID skillId = UUID.randomUUID();
-        dto.setId(skillId);
-        when(skillRepository.existsById(skillId)).thenReturn(true);
+        final Skill skill = createADefaultSkill();
 
         final List<SkillLevelDTO> skills = new ArrayList<>();
-        skills.add(dto);
+        skills.add(new SkillLevelDTO(skill.getId(), SkillLevel.NOVICE));
 
         final SkillsReportRequestDTO request = new SkillsReportRequestDTO();
         request.setSkills(skills);
@@ -111,72 +72,39 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         request.setSkills(new ArrayList<>());
         final SkillsReportResponseDTO response = skillsReportServices.report(request);
         assertNotNull(response);
-
-        verify(memberSkillRepository, never()).findBySkillid(any(UUID.class));
-        verify(memberProfileServices, never()).getById(any(UUID.class));
+        assertEquals(0, response.getTeamMembers().size());
     }
 
     @Test
     void testReport() {
-        final UUID skillId1 = UUID.randomUUID();
-        final UUID skillId2 = UUID.randomUUID();
-        final UUID skillId3 = UUID.randomUUID();
-        final UUID skillId4 = UUID.randomUUID();
-        final UUID memberId1 = UUID.randomUUID();
-        final UUID memberId2 = UUID.randomUUID();
-        final UUID memberId3 = UUID.randomUUID();
-        final UUID memberId4 = UUID.randomUUID();
+        Skill skill1 = createSkill("Skill1", false, "First", false);
+        Skill skill2 = createSkill("Skill2", false, "Second", false);
+        Skill skill3 = createSkill("Skill3", false, "Third", false);
+        Skill skill4 = createSkill("Skill4", false, "Fourth", false);
 
-        final MemberSkill ms1 = new MemberSkill(memberId1, skillId1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), true);
-        final MemberSkill ms2 = new MemberSkill(memberId1, skillId2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
-        final MemberSkill ms3 = new MemberSkill(memberId2, skillId3, SkillLevel.NOVICE_LEVEL, LocalDate.now(), true);
-        final MemberSkill ms4 = new MemberSkill(memberId2, skillId4, SkillLevel.EXPERT_LEVEL, LocalDate.now(), false);
-        final MemberSkill ms5 = new MemberSkill(memberId3, skillId2, SkillLevel.NONE_LEVEL, LocalDate.now(), true);
-        final MemberSkill ms6 = new MemberSkill(memberId3, skillId3, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
-        final MemberSkill ms7 = new MemberSkill(memberId4, skillId1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), true);
-        final MemberSkill ms8 = new MemberSkill(memberId4, skillId2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
-        final MemberSkill ms9 = new MemberSkill(memberId4, skillId4, SkillLevel.EXPERT_LEVEL, LocalDate.now(), true);
+        MemberProfile member1 = createADefaultMemberProfile();
+        MemberProfile member2 = createASecondDefaultMemberProfile();
+        MemberProfile member3 = createAThirdDefaultMemberProfile();
+        MemberProfile member4 = createADefaultMemberProfileForPdl(member1);
 
-        final List<MemberSkill> skillList1 = new ArrayList<>();
-        skillList1.add(ms1);
-        skillList1.add(ms7);
-        final List<MemberSkill> skillList2 = new ArrayList<>();
-        skillList2.add(ms2);
-        skillList2.add(ms5);
-        skillList2.add(ms8);
-        final List<MemberSkill> skillList3 = new ArrayList<>();
-        skillList3.add(ms3);
-        skillList3.add(ms6);
-        final List<MemberSkill> skillList4 = new ArrayList<>();
-        skillList4.add(ms4);
-        skillList4.add(ms9);
+        final UUID skillId1 = skill1.getId();
+        final UUID skillId2 = skill2.getId();
+        final UUID skillId3 = skill3.getId();
+        final UUID skillId4 = skill4.getId();
+        final UUID memberId1 = member1.getId();
+        final UUID memberId2 = member2.getId();
+        final UUID memberId3 = member3.getId();
+        final UUID memberId4 = member4.getId();
 
-        when(memberSkillRepository.findBySkillid(skillId1)).thenReturn(skillList1);
-        when(memberSkillRepository.findBySkillid(skillId2)).thenReturn(skillList2);
-        when(memberSkillRepository.findBySkillid(skillId3)).thenReturn(skillList3);
-        when(memberSkillRepository.findBySkillid(skillId4)).thenReturn(skillList4);
-        MemberProfile joey = new MemberProfile("Joey", null, "Tribbiani", null,
-                null, null, null, null, null, null, null,
-                null, null, null, null, null, null);
-        MemberProfile chandler = new MemberProfile("Chandler", null, "Bing", null,
-                null, null, null, null, null, null, null,
-                null, null,null, null, null, null);
-        MemberProfile ross = new MemberProfile("Ross", null, "Geller", null,
-                null, null, null, null, null, null, null,
-                null, null,null, null, null, null);
-        when(memberProfileServices.getById(memberId1)).thenReturn(joey);
-        when(memberProfileServices.getById(memberId2)).thenReturn(chandler);
-        when(memberProfileServices.getById(memberId3)).thenReturn(null);
-        when(memberProfileServices.getById(memberId4)).thenReturn(ross);
-
-        when(skillRepository.existsById(skillId1)).thenReturn(true);
-        when(skillRepository.existsById(skillId2)).thenReturn(true);
-        when(skillRepository.existsById(skillId3)).thenReturn(true);
-        when(skillRepository.existsById(skillId4)).thenReturn(true);
-        when(memberProfileRepository.existsById(memberId1)).thenReturn(true);
-        when(memberProfileRepository.existsById(memberId2)).thenReturn(true);
-        when(memberProfileRepository.existsById(memberId3)).thenReturn(true);
-        when(memberProfileRepository.existsById(memberId4)).thenReturn(true);
+        final MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms2 = createMemberSkill(member1, skill2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms3 = createMemberSkill(member2, skill3, SkillLevel.NOVICE_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms4 = createMemberSkill(member2, skill4, SkillLevel.EXPERT_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms5 = createMemberSkill(member3, skill2, SkillLevel.NONE_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms6 = createMemberSkill(member3, skill3, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms7 = createMemberSkill(member4, skill1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms8 = createMemberSkill(member4, skill2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms9 = createMemberSkill(member4, skill4, SkillLevel.EXPERT_LEVEL, LocalDate.now(), true);
 
         // List of skills required in first request
         final SkillLevelDTO dto1 = new SkillLevelDTO();
@@ -203,17 +131,13 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
             assertTrue(elem.getId().equals(memberId1) ||
                     elem.getId().equals(memberId3) || elem.getId().equals(memberId4));
             if (elem.getId().equals(memberId1)) {
-                assertReturnedMember1(elem, skillId1, skillId2);
+                assertReturnedMember1(elem, skillId1, skillId2, member1.getFirstName() + " " + member1.getLastName());
             } else if (elem.getId().equals(memberId3)) {
-                assertReturnedMember3(elem, skillId2, skillId3);
+                assertReturnedMember3(elem, skillId2, skillId3, member3.getFirstName() + " " + member3.getLastName());
             } else {
-                assertReturnedMember4(elem, skillId1, skillId2);
+                assertReturnedMember4(elem, skillId1, skillId2, member4.getFirstName() + " " + member4.getLastName());
             }
         }
-        verify(memberSkillRepository, times(3)).findBySkillid(any(UUID.class));
-        verify(memberProfileServices, times(3)).getById(any(UUID.class));
-        verify(skillRepository, times(3)).existsById(any(UUID.class));
-        verify(memberProfileRepository, never()).existsById(any(UUID.class));
 
         // Specify a list of members
         final Set<UUID> members =  new HashSet<>();
@@ -227,24 +151,16 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         for (TeamMemberSkillDTO elem : response2.getTeamMembers()) {
             assertTrue(elem.getId().equals(memberId3) || elem.getId().equals(memberId4));
             if (elem.getId().equals(memberId3)) {
-                assertReturnedMember3(elem, skillId2, skillId3);
+                assertReturnedMember3(elem, skillId2, skillId3, member3.getFirstName() + " " + member3.getLastName());
             } else {
-                assertReturnedMember4(elem, skillId1, skillId2);
+                assertReturnedMember4(elem, skillId1, skillId2, member4.getFirstName() + " " + member4.getLastName());
             }
         }
-        verify(memberSkillRepository, times(6)).findBySkillid(any(UUID.class));
-        verify(memberProfileServices, times(6)).getById(any(UUID.class));
-        verify(skillRepository, times(6)).existsById(any(UUID.class));
-        verify(memberProfileRepository, times(3)).existsById(any(UUID.class));
 
         // Each returned member must satisfy all requested skills
         request1.setInclusive(true);
         final SkillsReportResponseDTO response3 = skillsReportServices.report(request1);
         assertTrue(response3.getTeamMembers().isEmpty());
-        verify(memberSkillRepository, times(9)).findBySkillid(any(UUID.class));
-        verify(memberProfileServices, times(9)).getById(any(UUID.class));
-        verify(skillRepository, times(9)).existsById(any(UUID.class));
-        verify(memberProfileRepository, times(6)).existsById(any(UUID.class));
 
         // Another request
         final SkillLevelDTO dto4 = new SkillLevelDTO();
@@ -265,7 +181,7 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
 
         assertEquals(1, response4.getTeamMembers().size());
         assertEquals(memberId4, response4.getTeamMembers().get(0).getId());
-        assertEquals("Ross Geller", response4.getTeamMembers().get(0).getName());
+        assertEquals(member4.getFirstName() + " " + member4.getLastName(), response4.getTeamMembers().get(0).getName());
         assertEquals(2, response4.getTeamMembers().get(0).getSkills().size());
         for (SkillLevelDTO skill : response4.getTeamMembers().get(0).getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId4));
@@ -275,14 +191,10 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
                 assertEquals(SkillLevel.convertFromString(SkillLevel.EXPERT_LEVEL), skill.getLevel());
             }
         }
-        verify(memberSkillRepository, times(11)).findBySkillid(any(UUID.class));
-        verify(memberProfileServices, times(12)).getById(any(UUID.class));
-        verify(skillRepository, times(11)).existsById(any(UUID.class));
-        verify(memberProfileRepository, times(6)).existsById(any(UUID.class));
     }
 
-    private void assertReturnedMember1(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2) {
-        assertEquals("Joey Tribbiani", elem.getName());
+    private void assertReturnedMember1(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2, String fullName) {
+        assertEquals(fullName, elem.getName());
         assertEquals(2, elem.getSkills().size());
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
@@ -294,8 +206,8 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         }
     }
 
-    private void assertReturnedMember3(TeamMemberSkillDTO elem, UUID skillId2, UUID skillId3) {
-        assertNull(elem.getName());
+    private void assertReturnedMember3(TeamMemberSkillDTO elem, UUID skillId2, UUID skillId3, String fullName) {
+        assertEquals(fullName, elem.getName());
         assertEquals(2, elem.getSkills().size());
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId3));
@@ -307,8 +219,8 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         }
     }
 
-    private void assertReturnedMember4(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2) {
-        assertEquals("Ross Geller", elem.getName());
+    private void assertReturnedMember4(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2, String fullName) {
+        assertEquals(fullName, elem.getName());
         assertEquals(2, elem.getSkills().size());
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
