@@ -1,6 +1,13 @@
 package com.objectcomputing.checkins.services.file;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.FileServicesImplReplacement;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.CheckInFixture;
+import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
+import com.objectcomputing.checkins.services.checkins.CheckIn;
+import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -10,12 +17,14 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.client.multipart.MultipartBody;
 import io.micronaut.http.multipart.CompletedFileUpload;
-import io.micronaut.test.annotation.MockBean;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
+
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,22 +35,16 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static io.micronaut.http.MediaType.MULTIPART_FORM_DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-// Disabled in nativeTest, as we get an exception from Mockito
-//     => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
-@DisabledInNativeImage
-class FileControllerTest extends TestContainersSuite {
+@Property(name = "replace.fileservicesimpl", value = StringUtils.TRUE)
+class FileControllerTest extends TestContainersSuite
+                         implements MemberProfileFixture, CheckInFixture, CheckInDocumentFixture {
 
     @Inject
     @Client("/services/files")
@@ -51,7 +54,18 @@ class FileControllerTest extends TestContainersSuite {
     private final static String filePath = "testFile.txt";
 
     @Inject
-    private FileServices fileServices;
+    private FileServicesImplReplacement fileServices;
+
+    private CheckIn checkIn;
+    private MemberProfile pdl;
+    private MemberProfile member;
+
+    @BeforeEach
+    void reset() {
+        pdl = createADefaultMemberProfile();
+        member = createADefaultMemberProfileForPdl(pdl);
+        checkIn = createADefaultCheckIn(member, pdl);
+    }
 
     @BeforeAll
     void createTestFile() throws IOException {
@@ -68,21 +82,12 @@ class FileControllerTest extends TestContainersSuite {
 
     @Test
     void testFindAll() {
+        String fileId = "some.id";
+        FileInfoDTO testFileInfoDto = fileServices.addFile(fileId, new byte[0]);
 
-        UUID testCheckinId = UUID.randomUUID();
 
-        FileInfoDTO testFileInfoDto = new FileInfoDTO();
-        testFileInfoDto.setFileId("some.id");
-        testFileInfoDto.setName(testFile.getName());
-        testFileInfoDto.setCheckInId(testCheckinId);
-        testFileInfoDto.setSize(testFile.length());
 
-        Set<FileInfoDTO> testResultFromService = new HashSet<>();
-        testResultFromService.add(testFileInfoDto);
-
-        when(fileServices.findFiles(null)).thenReturn(testResultFromService);
-
-        final HttpRequest<?> request = HttpRequest.GET("").basicAuth("some.email.id", MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET("").basicAuth(member.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
 
         assertNotNull(response);
@@ -92,26 +97,20 @@ class FileControllerTest extends TestContainersSuite {
         assertEquals(testFileInfoDto.getFileId(), result.iterator().next().getFileId());
         assertEquals(testFileInfoDto.getCheckInId(), result.iterator().next().getCheckInId());
         assertEquals(testFileInfoDto.getName(), result.iterator().next().getName());
-        verify(fileServices, times(1)).findFiles(null);
+    }
+
+    private FileInfoDTO createUploadedDocument(String fileId) {
+        return fileServices.addFile(fileId, new byte[50], (id) -> {
+            return createACustomCheckInDocument(checkIn, id);
+        });
     }
 
     @Test
     void testFindByCheckinId() {
+        String fileId = "some.id";
+        FileInfoDTO testFileInfoDto = createUploadedDocument(fileId);
 
-        UUID testCheckinId = UUID.randomUUID();
-
-        FileInfoDTO testFileInfoDto = new FileInfoDTO();
-        testFileInfoDto.setFileId("some.id");
-        testFileInfoDto.setName(testFile.getName());
-        testFileInfoDto.setCheckInId(testCheckinId);
-        testFileInfoDto.setSize(testFile.length());
-
-        Set<FileInfoDTO> testResultFromService = new HashSet<>();
-        testResultFromService.add(testFileInfoDto);
-
-        when(fileServices.findFiles(testCheckinId)).thenReturn(testResultFromService);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("?id=%s", testCheckinId)).basicAuth("some.email.id", MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("?id=%s", checkIn.getId())).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
 
         assertNotNull(response);
@@ -121,61 +120,44 @@ class FileControllerTest extends TestContainersSuite {
         assertEquals(testFileInfoDto.getFileId(), result.iterator().next().getFileId());
         assertEquals(testFileInfoDto.getCheckInId(), result.iterator().next().getCheckInId());
         assertEquals(testFileInfoDto.getName(), result.iterator().next().getName());
-        verify(fileServices, times(1)).findFiles(testCheckinId);
     }
 
     @Test
     void testDownloadDocument() {
         String uploadDocId = "some.upload.id";
-
-        when(fileServices.downloadFiles(uploadDocId)).thenReturn(testFile);
+        FileInfoDTO testFileInfoDto = createUploadedDocument(uploadDocId);
 
         final HttpRequest<?> request= HttpRequest.GET(String.format("/%s/download", uploadDocId))
-                                                            .basicAuth("some.email.id", MEMBER_ROLE);
+                                                            .basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<File> response = client.toBlocking().exchange(request, File.class);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatus());
-        verify(fileServices, times(1)).downloadFiles(uploadDocId);
     }
 
     @Test
     void testUploadEndpoint() {
-
-        UUID testCheckinId = UUID.randomUUID();
-
-        FileInfoDTO testFileInfoDto = new FileInfoDTO();
-        testFileInfoDto.setFileId("some.id");
-        testFileInfoDto.setName(testFile.getName());
-        testFileInfoDto.setCheckInId(testCheckinId);
-        testFileInfoDto.setSize(testFile.length());
-
-        when(fileServices.uploadFile(any(UUID.class), any(CompletedFileUpload.class))).thenReturn(testFileInfoDto);
-
-        final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", testCheckinId), MultipartBody.builder()
+        final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", checkIn.getId()), MultipartBody.builder()
                                         .addPart("file", testFile).build())
-                                        .basicAuth("some.email.id", MEMBER_ROLE)
+                                        .basicAuth(member.getWorkEmail(), MEMBER_ROLE)
                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> response = client.toBlocking().exchange(request, FileInfoDTO.class);
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         FileInfoDTO result = response.getBody().get();
-        assertEquals(testFileInfoDto.getSize(), result.getSize());
-        assertEquals(testFileInfoDto.getFileId(), result.getFileId());
-        assertEquals(testFileInfoDto.getCheckInId(), result.getCheckInId());
-        assertEquals(testFileInfoDto.getName(), result.getName());
-        verify(fileServices, times(1)).uploadFile(any(UUID.class), any(CompletedFileUpload.class));
+        assertEquals(testFile.length(), result.getSize());
+        assertEquals(checkIn.getId(), result.getCheckInId());
+        assertEquals(testFile.getName(), result.getName());
     }
 
     @Test
     void testUploadEndpointFailsForInvalidFile() {
-        UUID testCheckinId = UUID.randomUUID();
         File badFile = new File("");
 
-        final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", testCheckinId), MultipartBody.builder()
+        final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", checkIn.getId()), MultipartBody.builder()
                 .addPart("file", badFile).build())
-                .basicAuth("some.email", MEMBER_ROLE)
+                .basicAuth(member.getWorkEmail(), MEMBER_ROLE)
                 .contentType(MULTIPART_FORM_DATA);
 
         final IllegalArgumentException responseException = assertThrows(IllegalArgumentException.class, () ->
@@ -183,42 +165,31 @@ class FileControllerTest extends TestContainersSuite {
 
         // Note: exception message is different here depending on your operating system. Better to just check the type.
         assertTrue(responseException.getMessage().contains("java.io.FileNotFoundException"));
-        verify(fileServices, times(0)).uploadFile(any(UUID.class), any(CompletedFileUpload.class));
     }
 
     @Test
     void testDeleteEndpoint() {
-
         String uploadDocId = "some.upload.id";
-        when(fileServices.deleteFile(uploadDocId)).thenReturn(true);
+        FileInfoDTO testFileInfoDto = createUploadedDocument(uploadDocId);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", uploadDocId))
-                                        .basicAuth("some.email.id", MEMBER_ROLE);
+                                        .basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatus());
-        verify(fileServices, times(1)).deleteFile(uploadDocId);
     }
 
     @Test
     void testHandleBadArgs() {
-
         String uploadDocId = "some.upload.id";
-        doThrow(FileRetrievalException.class).when(fileServices).deleteFile(uploadDocId);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", uploadDocId))
-                .basicAuth("some.email.id", MEMBER_ROLE);
+                .basicAuth(member.getWorkEmail(), MEMBER_ROLE);
 
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        verify(fileServices, times(1)).deleteFile(uploadDocId);
-    }
-
-    @MockBean(FileServices.class)
-    public FileServices fileServices() {
-        return mock(FileServices.class);
     }
 }

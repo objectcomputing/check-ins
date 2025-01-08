@@ -2,67 +2,68 @@ package com.objectcomputing.checkins.services.request_notifications;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.pulse.PulseServices;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-// Disabled in nativeTest, as we get an exception from Mockito
-//     => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
-@DisabledInNativeImage
-class CheckServicesImplTest extends TestContainersSuite {
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+class CheckServicesImplTest extends TestContainersSuite
+                            implements FeedbackTemplateFixture, FeedbackRequestFixture, MemberProfileFixture {
 
-    @Mock
-    private FeedbackRequestServicesImpl feedbackRequestServices;
+    @Inject
+    @Named(MailJetFactory.MJML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
 
-    @Mock
-    private FeedbackRequestRepository feedbackRequestRepository;
-
-    @Mock
-    private PulseServices pulseServices;
-
-    @Mock
-    private ReviewPeriodServices reviewPeriodServices;
-
-    @InjectMocks
+    @Inject
     private CheckServicesImpl checkServices;
 
-    AutoCloseable openMocks;
-
     @BeforeEach
-    void initMocks() {
-        openMocks = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterEach
-    void resetMocks() throws Exception {
-        openMocks.close();
+    void resetTest() {
+        emailSender.reset();
     }
 
     @Test
     void sendScheduledEmails() {
-        FeedbackRequest retrievedRequest = new FeedbackRequest();
-        retrievedRequest.setStatus("pending");
-        List<FeedbackRequest> list = Collections.singletonList(retrievedRequest);
-        when(feedbackRequestRepository.findBySendDateNotAfterAndStatusEqual(any(),eq("pending"))).thenReturn(list);
+        // Create a pending feedback request.
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+
+        FeedbackTemplate template = createFeedbackTemplate(pdlMemberProfile.getId());
+        getFeedbackTemplateRepository().save(template);
+        FeedbackRequest retrievedRequest =
+            saveSampleFeedbackRequest(pdlMemberProfile,
+                                      employeeMemberProfile,
+                                      recipient, template.getId());
+
+        // Send emails for today
         checkServices.sendScheduledEmails();
-        verify(feedbackRequestServices).sendNewRequestEmail(retrievedRequest);
-        retrievedRequest.setStatus("sent");
-        verify(feedbackRequestRepository).update(retrievedRequest);
+
+        // One for the feedback request and, possibly, one for the pulse email.
+        assertTrue(emailSender.events.size() > 0);
+        assertEquals(pdlMemberProfile.getWorkEmail(),
+                     emailSender.events.get(0).get(2));
+        assertEquals("Feedback request",
+                     emailSender.events.get(0).get(3));
     }
 }
