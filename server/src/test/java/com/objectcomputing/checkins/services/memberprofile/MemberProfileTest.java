@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
@@ -18,8 +19,6 @@ import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
-import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,13 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
-// Disabled in nativeTest, as we get an exception from Mockito
-//    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.Mockito
-@DisabledInNativeImage
-class MemberProfileTest extends TestContainersSuite {
+class MemberProfileTest extends TestContainersSuite
+                        implements MemberProfileFixture {
 
     @Inject
     protected Validator validator;
@@ -46,29 +42,12 @@ class MemberProfileTest extends TestContainersSuite {
     @Named(MailJetFactory.HTML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
-    private MemberProfileRepository memberRepo;
-
+    @Inject
     private MemberProfileServicesImpl memberProfileServices;
 
     @BeforeEach
-    @Tag("mocked")
     void setUp() {
-        memberRepo = Mockito.mock(MemberProfileRepository.class);
-        CurrentUserServices currentUserServices = Mockito.mock(CurrentUserServices.class);
-        RoleServices roleServices = Mockito.mock(RoleServices.class);
-        CheckInServices checkinServices = Mockito.mock(CheckInServices.class);
-        MemberSkillServices memberSkillServices = Mockito.mock(MemberSkillServices.class);
-        TeamMemberServices teamMemberServices = Mockito.mock(TeamMemberServices.class);
         emailSender.reset();
-
-        memberProfileServices = new MemberProfileServicesImpl(
-                memberRepo,
-                currentUserServices,
-                roleServices,
-                checkinServices,
-                memberSkillServices,
-                teamMemberServices,
-                emailSender);
     }
 
     @Test
@@ -195,38 +174,26 @@ class MemberProfileTest extends TestContainersSuite {
     }
 
     @Test
-    @Tag("mocked")
     void testSaveProfileWithExistingEmail() {
-        String workEmail = "existing@example.com";
-        MemberProfile existingProfile = new MemberProfile(UUID.randomUUID(), "Jane", null, "Doe", null, null, null, null, workEmail, null, null, null, null, null, null, null, null, null);
+        MemberProfile existingProfile = createADefaultMemberProfile();
+        String workEmail = existingProfile.getWorkEmail();
         MemberProfile newProfile = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, workEmail, null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findByWorkEmail(workEmail)).thenReturn(Optional.of(existingProfile));
 
         assertThrows(AlreadyExistsException.class, () -> memberProfileServices.saveProfile(newProfile));
     }
 
     @Test
-    @Tag("mocked")
     void testSaveProfileWithNewEmail() {
-        UUID pdlId = UUID.randomUUID();
-        UUID supervisorId = UUID.randomUUID();
-
-        MemberProfile pdlProfile = new MemberProfile(pdlId,"Jane", null, "Smith", null, null, null, null, "jane.smith@example.com", null, null, null, null, null, null, null, null, null);
-        MemberProfile supervisorProfile = new MemberProfile(supervisorId, "Janine", null, "Smith", null, null, null, null, "janine.smith@example.com", null, null, null, null, null, null, null, null, null);
-        MemberProfile newProfile = new MemberProfile("John", null, "Smith", null, null, pdlId, null, "john.smith@example.com", null, null, null, supervisorId, null, null, null, null, null);
-
-
-        // Mocking findByWorkEmail to return an empty Optional indicating no existing profile with the email
-        when(memberRepo.findByWorkEmail(newProfile.getWorkEmail())).thenReturn(Optional.empty());
-
-        // Mocking save to return the profile that is being saved
-        when(memberRepo.save(newProfile)).thenReturn(newProfile);
-
-        // Mocking findById to return the profile after saving
-        when(memberRepo.findById(newProfile.getId())).thenReturn(Optional.of(newProfile));
-        when(memberRepo.findById(pdlId)).thenReturn(Optional.of(pdlProfile));
-        when(memberRepo.findById(supervisorId)).thenReturn(Optional.of(supervisorProfile));
+        MemberProfile pdlProfile = createADefaultMemberProfile();
+        MemberProfile supervisorProfile = createADefaultSupervisor();
+        MemberProfile newProfile = new MemberProfile("Charizard", null, "Char",
+                null, "Local fire hazard", pdlProfile.getId(),
+                "New York, New York",
+                "charizard@objectcomputing.com", "local-kaiju",
+                LocalDate.now().minusDays(3).minusYears(5),
+                "Needs supervision due to building being ultra flammable",
+                supervisorProfile.getId(), null, null, null, null,
+                LocalDate.now());
 
         MemberProfile savedProfile = memberProfileServices.saveProfile(newProfile);
 
@@ -236,26 +203,26 @@ class MemberProfileTest extends TestContainersSuite {
 
         assertEquals(2, emailSender.events.size());
         assertEquals(List.of(
-                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com", pdlProfile.getWorkEmail()),
-                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com", supervisorProfile.getWorkEmail())
+                        List.of("SEND_EMAIL", "null", "null",
+                                String.format("You have been assigned as the PDL of %s %s", newProfile.getFirstName(), newProfile.getLastName()),
+                                String.format("%s %s will now report to you as their PDL. Please engage with them: %s", newProfile.getFirstName(), newProfile.getLastName(), newProfile.getWorkEmail()),
+                                pdlProfile.getWorkEmail()),
+                        List.of("SEND_EMAIL", "null", "null",
+                                String.format("You have been assigned as the supervisor of %s %s", newProfile.getFirstName(), newProfile.getLastName()),
+                                String.format("%s %s will now report to you as their supervisor. Please engage with them: %s", newProfile.getFirstName(), newProfile.getLastName(), newProfile.getWorkEmail()),
+                                supervisorProfile.getWorkEmail())
                 ),
                 emailSender.events
         );
     }
 
     @Test
-    @Tag("mocked")
     void testUpdateProfileWithChangedPDL() {
-        UUID id = UUID.randomUUID();
-        UUID pdlId = UUID.randomUUID();
-        MemberProfile existingProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
-        MemberProfile updatedProfile = new MemberProfile(id, "John", null, "Smith", null, null, pdlId, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
-        MemberProfile pdlProfile = new MemberProfile(pdlId, "Jane", null, "Doe", null, null, null, null, "jane.doe@example.com", null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findById(id)).thenReturn(Optional.of(existingProfile));
-        when(memberRepo.findByWorkEmail(updatedProfile.getWorkEmail())).thenReturn(Optional.of(updatedProfile));
-        when(memberRepo.findById(pdlId)).thenReturn(Optional.of(pdlProfile));
-        when(memberRepo.update(updatedProfile)).thenReturn(updatedProfile);
+        MemberProfile existingProfile = createADefaultMemberProfile();
+        MemberProfile pdlProfile = createASecondDefaultMemberProfile();
+        UUID id = existingProfile.getId();
+        UUID pdlId = pdlProfile.getId();
+        MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, pdlId, null, existingProfile.getWorkEmail(), null, null, null, null, null, null, null, null, null);
 
         MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
 
@@ -263,44 +230,38 @@ class MemberProfileTest extends TestContainersSuite {
 
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: " + existingProfile.getWorkEmail(), pdlProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null",
+                        String.format("You have been assigned as the PDL of %s %s", existingProfile.getFirstName(), existingProfile.getLastName()),
+                        String.format("%s %s will now report to you as their PDL. Please engage with them: %s", existingProfile.getFirstName(), existingProfile.getLastName(), existingProfile.getWorkEmail()),
+                        pdlProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
 
     @Test
-    @Tag("mocked")
     void testUpdateProfileWithChangedSupervisor() {
-        UUID id = UUID.randomUUID();
-        UUID supervisorId = UUID.randomUUID();
-        MemberProfile existingProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
-        MemberProfile updatedProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, supervisorId, null, null, null, null, null);
-        MemberProfile supervisorProfile = new MemberProfile(supervisorId, "Jane", null, "Doe", null, null, null, null, "jane.doe@example.com", null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findById(id)).thenReturn(Optional.of(existingProfile));
-        when(memberRepo.findByWorkEmail(updatedProfile.getWorkEmail())).thenReturn(Optional.of(updatedProfile));
-        when(memberRepo.findById(supervisorId)).thenReturn(Optional.of(supervisorProfile));
-        when(memberRepo.update(updatedProfile)).thenReturn(updatedProfile);
+        MemberProfile existingProfile = createADefaultMemberProfile();
+        MemberProfile supervisorProfile = createASecondDefaultMemberProfile();
+        UUID id = existingProfile.getId();
+        UUID supervisorId = supervisorProfile.getId();
+        MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, null, null, existingProfile.getWorkEmail(), null, null, null, supervisorId, null, null, null, null, null);
 
         MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
 
         assertEquals(updatedProfile, result);
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: " + existingProfile.getWorkEmail(), supervisorProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null",
+                        String.format("You have been assigned as the supervisor of %s %s", existingProfile.getFirstName(), existingProfile.getLastName()),
+                        String.format("%s %s will now report to you as their supervisor. Please engage with them: %s", existingProfile.getFirstName(), existingProfile.getLastName(), existingProfile.getWorkEmail()),
+                        supervisorProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
 
     @Test
-    @Tag("mocked")
     void testUpdateProfileWithNoChange() {
-        UUID id = UUID.randomUUID();
-        MemberProfile existingProfile = new MemberProfile(id, "John", null, "Smith", null, null, null, null, "john.smith@example.com", null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findById(id)).thenReturn(Optional.of(existingProfile));
-        when(memberRepo.findByWorkEmail(existingProfile.getWorkEmail())).thenReturn(Optional.of(existingProfile));
-        when(memberRepo.update(existingProfile)).thenReturn(existingProfile);
+        MemberProfile existingProfile = createADefaultMemberProfile();
 
         MemberProfile result = memberProfileServices.saveProfile(existingProfile);
 
@@ -309,81 +270,71 @@ class MemberProfileTest extends TestContainersSuite {
     }
 
     @Test
-    @Tag("mocked")
     void testEmailAssignmentWithValidPDL() {
-        UUID pdlId = UUID.randomUUID();
-        MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, pdlId, null, "john.smith@example.com",
-                null, null, null, null, null, null, null, null, null);
-        MemberProfile pdlProfile = new MemberProfile(UUID.randomUUID(), "Jane", null, "Doe", null, null, null, null, "jane.doe@example.com",
-                null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findById(pdlId)).thenReturn(Optional.of(pdlProfile));
+        MemberProfile pdlProfile = createADefaultMemberProfile();
+        MemberProfile member = createADefaultMemberProfileForPdl(pdlProfile);
 
         memberProfileServices.emailAssignment(member, true);
 
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com", pdlProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null",
+                        String.format("You have been assigned as the PDL of %s %s", member.getFirstName(), member.getLastName()),
+                        String.format("%s %s will now report to you as their PDL. Please engage with them: %s", member.getFirstName(), member.getLastName(), member.getWorkEmail()),
+                        pdlProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
 
     @Test
-    @Tag("mocked")
     void testEmailAssignmentWithValidSupervisor() {
-        UUID supervisorId = UUID.randomUUID();
-        MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, "john.smith@example.com",
-                null, null, null, supervisorId, null, null, null, null, null);
-        MemberProfile supervisorProfile = new MemberProfile(UUID.randomUUID(), "Jane", null, "Doe", null, null, null, null, "jane.doe@example.com",
-                null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findById(supervisorId)).thenReturn(Optional.of(supervisorProfile));
+        MemberProfile pdlProfile = createADefaultMemberProfile();
+        MemberProfile supervisorProfile = createADefaultSupervisor();
+        MemberProfile member = createAProfileWithSupervisorAndPDL(
+                                   supervisorProfile, pdlProfile);
 
         memberProfileServices.emailAssignment(member, false);
 
         assertEquals(1, emailSender.events.size());
         assertEquals(
-                List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com", supervisorProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null",
+                        String.format("You have been assigned as the supervisor of %s %s", member.getFirstName(), member.getLastName()),
+                        String.format("%s %s will now report to you as their supervisor. Please engage with them: %s", member.getFirstName(), member.getLastName(), member.getWorkEmail()),
+                        supervisorProfile.getWorkEmail()),
                 emailSender.events.getFirst()
         );
     }
 
     @Test
-    @Tag("mocked")
     void testEmailAssignmentWithValidPdlAndSupervisor() {
-        UUID pdlId = UUID.randomUUID();
-        UUID supervisorId = UUID.randomUUID();
-        MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, pdlId, null, "john.smith@example.com",
-                null, null, null, supervisorId, null, null, null, null, null);
-        MemberProfile pdlProfile = new MemberProfile(UUID.randomUUID(), "Jane", null, "Doe", null, null, null, null, "jane.doe@example.com",
-                null, null, null, null, null, null, null, null, null);
-
-        MemberProfile supervisorProfile = new MemberProfile(UUID.randomUUID(), "Janine", null, "Doe", null, null, null, null, "janine.doe@example.com",
-                null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findById(pdlId)).thenReturn(Optional.of(pdlProfile));
-        when(memberRepo.findById(supervisorId)).thenReturn(Optional.of(supervisorProfile));
+        MemberProfile pdlProfile = createADefaultMemberProfile();
+        MemberProfile supervisorProfile = createADefaultSupervisor();
+        MemberProfile member = createAProfileWithSupervisorAndPDL(
+                                   supervisorProfile, pdlProfile);
 
         memberProfileServices.emailAssignment(member, true); // for PDL
         memberProfileServices.emailAssignment(member, false); // for supervisor
 
         assertEquals(2, emailSender.events.size());
         assertEquals(List.of(
-                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the PDL of John Smith", "John Smith will now report to you as their PDL. Please engage with them: john.smith@example.com", pdlProfile.getWorkEmail()),
-                        List.of("SEND_EMAIL", "null", "null", "You have been assigned as the supervisor of John Smith", "John Smith will now report to you as their supervisor. Please engage with them: john.smith@example.com", supervisorProfile.getWorkEmail())
+                List.of("SEND_EMAIL", "null", "null",
+                        String.format("You have been assigned as the PDL of %s %s", member.getFirstName(), member.getLastName()),
+                        String.format("%s %s will now report to you as their PDL. Please engage with them: %s", member.getFirstName(), member.getLastName(), member.getWorkEmail()),
+                        pdlProfile.getWorkEmail()),
+                List.of("SEND_EMAIL", "null", "null",
+                        String.format("You have been assigned as the supervisor of %s %s", member.getFirstName(), member.getLastName()),
+                        String.format("%s %s will now report to you as their supervisor. Please engage with them: %s", member.getFirstName(), member.getLastName(), member.getWorkEmail()),
+                        supervisorProfile.getWorkEmail())
                 ),
                 emailSender.events
         );
     }
 
     @Test
-    @Tag("mocked")
     void testEmailAssignmentWithInvalidPDL() {
+        MemberProfile existingProfile = createADefaultMemberProfile();
         UUID pdlId = UUID.randomUUID();
-        MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, pdlId, null, "john.smith@example.com",
-                null, null, null, null, null, null, null, null, null);
-
-        when(memberRepo.findById(pdlId)).thenReturn(Optional.empty());
+        MemberProfile member = new MemberProfile(existingProfile.getId(), existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, pdlId, null, existingProfile.getWorkEmail(), null, null, null, null, null, null, null, null, null);
 
         memberProfileServices.emailAssignment(member, true);
 
@@ -391,13 +342,10 @@ class MemberProfileTest extends TestContainersSuite {
     }
 
     @Test
-    @Tag("mocked")
     void testEmailAssignmentWithInvalidSupervisor() {
+        MemberProfile existingProfile = createADefaultMemberProfile();
         UUID supervisorId = UUID.randomUUID();
-        MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, "john.smith@example.com",
-                null, null, null, supervisorId, null, null, null, null, null);
-
-        when(memberRepo.findById(supervisorId)).thenReturn(Optional.empty());
+        MemberProfile member = new MemberProfile(existingProfile.getId(), existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, null, null, existingProfile.getWorkEmail(), null, null, null, supervisorId, null, null, null, null, null);
 
         memberProfileServices.emailAssignment(member, true);
 
@@ -405,7 +353,6 @@ class MemberProfileTest extends TestContainersSuite {
     }
 
     @Test
-    @Tag("mocked")
     void testEmailAssignmentWithInvalidMember() {
         MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null);
@@ -416,7 +363,6 @@ class MemberProfileTest extends TestContainersSuite {
     }
 
     @Test
-    @Tag("mocked")
     void testEmailAssignmentWithNullRoleId() {
         MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, "john.smith@example.com",
                 null, null, null, null, null, null, null, null, null);
