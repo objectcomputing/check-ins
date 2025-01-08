@@ -77,7 +77,7 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
     void testReportSkillNotExist() {
         final SkillLevelDTO dto = new SkillLevelDTO();
         dto.setId(UUID.randomUUID());
-        dto.setLevel(SkillLevel.INTERMEDIATE);
+        dto.setLevel(SkillLevel.PRACTITIONER);
 
         final List<SkillLevelDTO> skills = new ArrayList<>();
         skills.add(dto);
@@ -127,15 +127,15 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         final UUID memberId3 = UUID.randomUUID();
         final UUID memberId4 = UUID.randomUUID();
 
-        final MemberSkill ms1 = new MemberSkill(memberId1, skillId1, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        final MemberSkill ms2 = new MemberSkill(memberId1, skillId2, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
-        final MemberSkill ms3 = new MemberSkill(memberId2, skillId3, SkillLevel.NOVICE_LEVEL, LocalDate.now());
-        final MemberSkill ms4 = new MemberSkill(memberId2, skillId4, SkillLevel.EXPERT_LEVEL, LocalDate.now());
-        final MemberSkill ms5 = new MemberSkill(memberId3, skillId2, SkillLevel.INTERESTED_LEVEL, LocalDate.now());
-        final MemberSkill ms6 = new MemberSkill(memberId3, skillId3, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
-        final MemberSkill ms7 = new MemberSkill(memberId4, skillId1, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
-        final MemberSkill ms8 = new MemberSkill(memberId4, skillId2, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        final MemberSkill ms9 = new MemberSkill(memberId4, skillId4, SkillLevel.EXPERT_LEVEL, LocalDate.now());
+        final MemberSkill ms1 = new MemberSkill(memberId1, skillId1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms2 = new MemberSkill(memberId1, skillId2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms3 = new MemberSkill(memberId2, skillId3, SkillLevel.NOVICE_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms4 = new MemberSkill(memberId2, skillId4, SkillLevel.EXPERT_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms5 = new MemberSkill(memberId3, skillId2, SkillLevel.NONE_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms6 = new MemberSkill(memberId3, skillId3, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms7 = new MemberSkill(memberId4, skillId1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), true);
+        final MemberSkill ms8 = new MemberSkill(memberId4, skillId2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), false);
+        final MemberSkill ms9 = new MemberSkill(memberId4, skillId4, SkillLevel.EXPERT_LEVEL, LocalDate.now(), true);
 
         final List<MemberSkill> skillList1 = new ArrayList<>();
         skillList1.add(ms1);
@@ -183,10 +183,10 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         final SkillLevelDTO dto2 = new SkillLevelDTO();
         final SkillLevelDTO dto3 = new SkillLevelDTO();
         dto1.setId(skillId1);
-        dto1.setLevel(SkillLevel.INTERMEDIATE);
+        dto1.setLevel(SkillLevel.PRACTITIONER);
         dto2.setId(skillId2);
         dto3.setId(skillId3);
-        dto3.setLevel(SkillLevel.ADVANCED);
+        dto3.setLevel(SkillLevel.PRACTITIONER);
 
         final List<SkillLevelDTO> requestedSkills1 = new ArrayList<>();
         requestedSkills1.add(dto1);
@@ -250,9 +250,9 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         final SkillLevelDTO dto4 = new SkillLevelDTO();
         final SkillLevelDTO dto5 = new SkillLevelDTO();
         dto4.setId(skillId2);
-        dto4.setLevel(SkillLevel.INTERMEDIATE);
+        dto4.setLevel(SkillLevel.PRACTITIONER);
         dto5.setId(skillId4);
-        dto5.setLevel(SkillLevel.ADVANCED);
+        dto5.setLevel(SkillLevel.PRACTITIONER);
 
         final List<SkillLevelDTO> requestedSkills2 = new ArrayList<>();
         requestedSkills2.add(dto4);
@@ -270,7 +270,7 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         for (SkillLevelDTO skill : response4.getTeamMembers().get(0).getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId4));
             if (skill.getId().equals(skillId2)) {
-                assertEquals(SkillLevel.convertFromString(SkillLevel.INTERMEDIATE_LEVEL), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(SkillLevel.PRACTITIONER_LEVEL), skill.getLevel());
             } else {
                 assertEquals(SkillLevel.convertFromString(SkillLevel.EXPERT_LEVEL), skill.getLevel());
             }
@@ -287,9 +287,9 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
             if (skill.getId().equals(skillId1)) {
-                assertEquals(SkillLevel.convertFromString(SkillLevel.INTERMEDIATE_LEVEL), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(SkillLevel.PRACTITIONER_LEVEL), skill.getLevel());
             } else {
-                assertEquals(SkillLevel.convertFromString(SkillLevel.ADVANCED_LEVEL), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(SkillLevel.PRACTITIONER_LEVEL), skill.getLevel());
             }
         }
     }
@@ -300,9 +300,9 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId3));
             if (skill.getId().equals(skillId2)) {
-                assertEquals(SkillLevel.convertFromString(SkillLevel.INTERESTED_LEVEL), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(SkillLevel.NONE_LEVEL), skill.getLevel());
             } else {
-                assertEquals(SkillLevel.convertFromString(SkillLevel.ADVANCED_LEVEL), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(SkillLevel.PRACTITIONER_LEVEL), skill.getLevel());
             }
         }
     }
@@ -313,9 +313,9 @@ class SkillsReportServicesImplTest extends TestContainersSuite {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
             if (skill.getId().equals(skillId1)) {
-                assertEquals(SkillLevel.convertFromString(SkillLevel.ADVANCED_LEVEL), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(SkillLevel.PRACTITIONER_LEVEL), skill.getLevel());
             } else {
-                assertEquals(SkillLevel.convertFromString(SkillLevel.INTERMEDIATE_LEVEL), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(SkillLevel.PRACTITIONER_LEVEL), skill.getLevel());
             }
         }
     }

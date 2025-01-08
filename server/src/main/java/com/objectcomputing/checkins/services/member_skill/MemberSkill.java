@@ -62,6 +62,19 @@ public class MemberSkill {
     public MemberSkill() {
     }
 
+    // Used in tests
+    public MemberSkill(UUID memberid, UUID skillid) {
+        this.memberid = memberid;
+        this.skillid = skillid;
+    }
+
+    // Used in tests
+    public MemberSkill(UUID id, UUID memberid, UUID skillid) {
+        this.id = id;
+        this.memberid = memberid;
+        this.skillid = skillid;
+    }
+
     public MemberSkill(UUID memberid, UUID skillid, String skilllevel, LocalDate lastuseddate, boolean interested) {
         this.memberid = memberid;
         this.skillid = skillid;
