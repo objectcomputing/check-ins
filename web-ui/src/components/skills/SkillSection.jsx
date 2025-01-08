@@ -187,7 +187,7 @@ const SkillSection = ({ userId }) => {
   const filter = createFilterOptions();
 
   const handleInterest = async (id, interested) => {
-    if (csrf && interested) {
+    if (csrf) {
       const mSkill = { ...myMemberSkills.find(s => s.skillid === id) };
       mSkill.interested = interested;
       await updateMemberSkill(mSkill, csrf);
