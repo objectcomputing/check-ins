@@ -117,6 +117,7 @@ dependencies {
     implementation("io.micrometer:context-propagation")
 
     implementation 'ch.digitalfondue.mjml4j:mjml4j:1.0.3'
+    implementation("com.slack.api:slack-api-client:1.44.1")
 
     testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
