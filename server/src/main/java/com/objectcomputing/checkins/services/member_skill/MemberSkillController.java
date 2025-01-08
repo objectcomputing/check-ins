@@ -45,7 +45,11 @@ public class MemberSkillController {
     @Post
     public HttpResponse<MemberSkill> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<?> request) {
         MemberSkill createdMemberSkill = memberSkillsService.save(
-                new MemberSkill(memberSkill.getMemberid(), memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())
+            new MemberSkill(memberSkill.getMemberid(),
+                            memberSkill.getSkillid(),
+                            memberSkill.getSkilllevel(),
+                            memberSkill.getLastuseddate(),
+                            memberSkill.interested)
         );
         return HttpResponse.created(createdMemberSkill)
                 .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId()))));

@@ -20,7 +20,7 @@ import {
   updateMemberSkill
 } from '../../api/memberskill.js';
 import { getSkill, createSkill } from '../../api/skill.js';
-import SkillSlider from './SkillSlider';
+import SkillLevel from './SkillLevel';
 
 import {
   Avatar,
@@ -36,7 +36,10 @@ import {
   List,
   ListItem,
   Modal,
-  TextField
+  TextField,
+  Switch,
+  FormControlLabel,
+  Grid,
 } from '@mui/material';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import BuildIcon from '@mui/icons-material/Build';
@@ -132,7 +135,8 @@ const SkillSection = ({ userId }) => {
         return;
       }
       const res = await createMemberSkill(
-        { skillid: curSkill.id, memberid: userId, skilllevel: 3 },
+        { skillid: curSkill.id, memberid: userId,
+          skilllevel: 2, interested: true },
         csrf
       );
       const data =
@@ -179,6 +183,19 @@ const SkillSection = ({ userId }) => {
     }
   };
   const filter = createFilterOptions();
+
+  const handleInterest = async (id, interested) => {
+    if (csrf && interested) {
+      const mSkill = { ...myMemberSkills.find(s => s.skillid === id) };
+      mSkill.interested = interested;
+      await updateMemberSkill(mSkill, csrf);
+      const copy = [
+        ...myMemberSkills.filter(skill => skill.id !== mSkill.id),
+        mSkill
+      ];
+      dispatch({ type: UPDATE_MEMBER_SKILLS, payload: copy });
+    }
+  };
 
   const SkillSelector = () => (
     <Autocomplete
@@ -292,32 +309,41 @@ const SkillSection = ({ userId }) => {
             </div>
             <SkillSelector />
           </div>
-          <List>
+          <Grid container spacing={3}>
             {mySkills &&
               mySkills.map(memberSkill => {
                 return (
-                  <ListItem
-                    key={`MemberSkill-${memberSkill.id}`}
-                    className={classes.skillRow}
-                  >
-                    <SkillSlider
-                      description={memberSkill.description}
-                      id={memberSkill.id}
-                      name={memberSkill.name}
-                      startLevel={
-                        memberSkill.skilllevel ? memberSkill.skilllevel : 3
-                      }
-                      lastUsedDate={memberSkill.lastuseddate}
-                      onDelete={id => {
-                        handleOpenDeleteConfirmation();
-                        setSelectedSkillId(id);
-                      }}
-                      onUpdate={handleUpdate}
-                    />
-                  </ListItem>
+                  <Grid item>
+                  <Card>
+                  <CardContent>
+                    <div
+                      key={`MemberSkill-${memberSkill.id}`}
+                      className={classes.skillRow}
+                    >
+                      <SkillLevel
+                        description={memberSkill.description}
+                        id={memberSkill.id}
+                        name={memberSkill.name}
+                        startLevel={memberSkill.skilllevel}
+                        lastUsedDate={memberSkill.lastuseddate}
+                        onDelete={id => {
+                          handleOpenDeleteConfirmation();
+                          setSelectedSkillId(id);
+                        }}
+                        onUpdate={handleUpdate}
+                      />
+                      <FormControlLabel
+                        control={<Switch checked={memberSkill.interested}
+                        onChange={() => handleInterest(memberSkill.id, !memberSkill.interested)} />}
+                        label="Interested in learning or doing more with this skill?"
+                      />
+                    </div>
+                  </CardContent>
+                  </Card>
+                  </Grid>
                 );
               })}
-          </List>
+          </Grid>
           </CardContent>
           <CardActions>
             <div>

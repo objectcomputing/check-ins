@@ -26,7 +26,8 @@ public class MemberSkillCreateDTO {
     private String skilllevel;
 
     @Schema(description = "the last used date of the skill")
-
     private LocalDate lastuseddate;
 
+    @Schema(description = "the member interest")
+    public boolean interested;
 }
