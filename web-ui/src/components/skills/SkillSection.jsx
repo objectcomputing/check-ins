@@ -79,6 +79,7 @@ const SkillSection = ({ userId }) => {
     let thisSkill = await getSkill(memberSkill.skillid, csrf);
     thisSkill.lastuseddate = memberSkill.lastuseddate;
     thisSkill.skilllevel = memberSkill.skilllevel;
+    thisSkill.interested = memberSkill.interested;
     return thisSkill;
   };
 
@@ -91,6 +92,7 @@ const SkillSection = ({ userId }) => {
         let skill = result.payload.data;
         skill.skilllevel = result.skilllevel;
         skill.lastuseddate = result.lastuseddate;
+        skill.interested = result.interested;
         return skill;
       });
       currentUserSkills.sort((a, b) => a.name.localeCompare(b.name));
@@ -313,13 +315,9 @@ const SkillSection = ({ userId }) => {
             {mySkills &&
               mySkills.map(memberSkill => {
                 return (
-                  <Grid item>
+                  <Grid item key={`MemberSkill-${memberSkill.id}`}>
                   <Card>
-                  <CardContent>
-                    <div
-                      key={`MemberSkill-${memberSkill.id}`}
-                      className={classes.skillRow}
-                    >
+                    <CardContent>
                       <SkillLevel
                         description={memberSkill.description}
                         id={memberSkill.id}
@@ -337,8 +335,7 @@ const SkillSection = ({ userId }) => {
                         onChange={() => handleInterest(memberSkill.id, !memberSkill.interested)} />}
                         label="Interested in learning or doing more with this skill?"
                       />
-                    </div>
-                  </CardContent>
+                    </CardContent>
                   </Card>
                   </Grid>
                 );
