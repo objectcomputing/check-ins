@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.reports;
 
 import com.objectcomputing.checkins.services.kudos.Kudos;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.FileServicesImplReplacement;
 import com.objectcomputing.checkins.services.fixture.KudosFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
@@ -127,8 +128,10 @@ class ReportDataControllerTest extends TestContainersSuite implements MemberProf
                 .basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
     client.toBlocking().exchange(request);
 
-    validateReportData(fileServices.documentName,
-                       fileServices.documentText, target);
+    String documentName = target.getWorkEmail();
+    String documentText = fileServices.getFile(MarkdownGeneration.directory +
+                                               "/" + documentName);
+    validateReportData(documentName, documentText, target);
   }
 
   @Test
