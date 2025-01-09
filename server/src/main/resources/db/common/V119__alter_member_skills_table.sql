@@ -1,4 +1,4 @@
-ALTER TABLE member_skills ADD COLUMN interested boolean DEFAULT false;
+ALTER TABLE member_skills ADD COLUMN interested boolean;
 
 -- If the original skilllevel was 'interested', set the new column value to true
 UPDATE member_skills SET interested = true WHERE skilllevel = '1';
