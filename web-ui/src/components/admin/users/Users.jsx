@@ -10,7 +10,7 @@ import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
 import {
   createMember,
-  reportAllMembersCsv
+  reportSelectedMembersCsv
 } from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
 import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
@@ -110,7 +110,8 @@ const Users = () => {
   });
 
   const downloadMembers = async () => {
-    let res = await reportAllMembersCsv(csrf);
+    const res = await reportSelectedMembersCsv(
+                        normalizedMembers.map((m) => m.id), csrf);
     if (res?.error) {
       dispatch({
         type: UPDATE_TOAST,
