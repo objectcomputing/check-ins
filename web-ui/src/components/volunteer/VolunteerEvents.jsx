@@ -258,7 +258,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
         <Autocomplete
           disableClearable
           getOptionLabel={(option) => 
-            option === 'new' ? 'Create a New Organization' : (relationshipMap[option]?.organizationId && organizationMap[relationshipMap[option].organizationId]?.name) || 'Unknown'
+            option === 'new' ? 'Create a New Organization' : (relationshipMap[option]?.organizationId && organizationMap[relationshipMap[option].organizationId]?.name) || ''
           }
           options={['new', ...relationships.filter((rel) => !rel.endDate).map((rel) => rel.id)]} // Use relationship IDs
           onChange={(event, value) => {
