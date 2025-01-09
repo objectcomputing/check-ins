@@ -197,7 +197,9 @@ const PulseReportPage = () => {
       }
 
       frequencies[internalScore - 1].internal++;
-      frequencies[externalScore - 1].external++;
+      if (externalScore != null) {
+        frequencies[externalScore - 1].external++;
+      }
 
       let memberIdToUse;
       if (memberId) {
@@ -256,7 +258,9 @@ const PulseReportPage = () => {
     ];
     for(let day of scoreChartDataPoints) {
       day.datapoints.forEach(datapoint => {
-        externalPieCounts[datapoint.externalScore - 1].value++;
+        if (datapoint.externalScore != null) {
+          externalPieCounts[datapoint.externalScore - 1].value++;
+        }
       });
     }
     // Filter out data with a zero value so that the pie chart does not attempt

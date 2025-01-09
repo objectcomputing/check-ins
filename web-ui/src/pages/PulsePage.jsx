@@ -84,7 +84,7 @@ const PulsePage = () => {
     const myId = currentUser?.id;
     const data = {
       externalFeelings: externalComment,
-      externalScore: externalScore + 1, // converts to 1-based
+      externalScore: externalScore == null ? null : externalScore + 1, // converts to 1-based
       internalFeelings: internalComment,
       internalScore: internalScore + 1, // converts to 1-based
       submissionDate: today,
