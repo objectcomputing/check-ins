@@ -77,7 +77,7 @@ public class PulseResponse {
     protected PulseResponse() {
     }
 
-    public PulseResponse(UUID id, Integer internalScore, Integer externalScore, LocalDate submissionDate, @Nullable UUID teamMemberId, String internalFeelings, String externalFeelings) {
+    public PulseResponse(UUID id, Integer internalScore, @Nullable Integer externalScore, LocalDate submissionDate, @Nullable UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
         this.internalScore = internalScore;
         this.externalScore = externalScore;
