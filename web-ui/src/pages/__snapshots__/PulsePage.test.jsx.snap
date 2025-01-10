@@ -8,11 +8,20 @@ exports[`renders correctly 1`] = `
     <div
       class="pulse"
     >
-      <h6
-        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      <div
+        class="title-row"
       >
-        How are you feeling about work today? (*)
-      </h6>
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+        >
+          How are you feeling about work today?
+        </h6>
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-1i2vuon-MuiTypography-root"
+        >
+          *
+        </h6>
+      </div>
       <div
         class="icon-row"
       >
@@ -205,7 +214,6 @@ exports[`renders correctly 1`] = `
             class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
             id=":r5:"
             placeholder="Comment"
-            rows="4"
             style="height: 0px; overflow: hidden;"
           />
           <textarea
@@ -233,11 +241,15 @@ exports[`renders correctly 1`] = `
     <div
       class="pulse"
     >
-      <h6
-        class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+      <div
+        class="title-row"
       >
-        How are you feeling about life outside of work?
-      </h6>
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-2ulfj5-MuiTypography-root"
+        >
+          How are you feeling about life outside of work?
+        </h6>
+      </div>
       <div
         class="icon-row"
       >
@@ -430,7 +442,6 @@ exports[`renders correctly 1`] = `
             class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
             id=":rb:"
             placeholder="Comment"
-            rows="4"
             style="height: 0px; overflow: hidden;"
           />
           <textarea
