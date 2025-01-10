@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = VolunteeringClients.Event.ENABLED, value = "true")
 class VolunteeringEventControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, VolunteeringFixture {
+    static final double fiveHours = 5.0;
+    static final double tenHours = 10.0;
 
     @Inject
     VolunteeringClients.Event eventClient;
@@ -63,7 +65,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         LocalDate now = LocalDate.now();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
 
-        var event = new VolunteeringEventDTO(relationship.getId(), now, 10, "Notes");
+        var event = new VolunteeringEventDTO(relationship.getId(), now, tenHours, "Notes");
         var createdEvent = eventClient.create(timAuth, event);
 
         assertEquals(HttpStatus.CREATED, createdEvent.getStatus());
@@ -83,7 +85,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         LocalDate now = LocalDate.now();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
 
-        var event = new VolunteeringEventDTO(relationship.getId(), now, 10, "Notes");
+        var event = new VolunteeringEventDTO(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
@@ -104,7 +106,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), ADMIN_ROLE);
 
-        var event = new VolunteeringEventDTO(relationship.getId(), now, 10, "Notes");
+        var event = new VolunteeringEventDTO(relationship.getId(), now, tenHours, "Notes");
         var createdEvent = eventClient.create(bobAuth, event);
 
         assertEquals(HttpStatus.CREATED, createdEvent.getStatus());
@@ -124,9 +126,9 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
 
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
-        var updated = eventClient.update(timAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, 5, "New notes"));
+        var updated = eventClient.update(timAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, fiveHours, "New notes"));
         assertEquals(event.getId(), updated.getId());
         assertEquals("New notes", updated.getNotes());
     }
@@ -138,12 +140,12 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
 
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
 
-        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, 5, "New notes")));
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, fiveHours, "New notes")));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(bob.getId(), relationship.getId()), e.getMessage());
     }
@@ -157,12 +159,12 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
 
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         VolunteeringRelationship bobRelationship = createVolunteeringRelationship(bob.getId(), organization.getId(), now);
 
-        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(timAuth, event.getId(), new VolunteeringEventDTO(bobRelationship.getId(), now, 5, "New notes")));
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(timAuth, event.getId(), new VolunteeringEventDTO(bobRelationship.getId(), now, fiveHours, "New notes")));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(tim.getId(), bobRelationship.getId()), e.getMessage());
     }
@@ -175,13 +177,13 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
 
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
         VolunteeringRelationship bobRelationship = createVolunteeringRelationship(bob.getId(), organization.getId(), now);
 
-        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(bobRelationship.getId(), now, 5, "New notes")));
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(bobRelationship.getId(), now, fiveHours, "New notes")));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(bob.getId(), relationship.getId()), e.getMessage());
     }
@@ -192,13 +194,13 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         MemberProfile tim = createADefaultMemberProfile();
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
         VolunteeringRelationship bobsRelationship = createVolunteeringRelationship(bob.getId(), organization.getId(), now);
 
-        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(bobsRelationship.getId(), now, 5, "New notes")));
+        var e = assertThrows(HttpClientResponseException.class, () -> eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(bobsRelationship.getId(), now, fiveHours, "New notes")));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("Member %s does not have permission to update Volunteering event for relationship %s".formatted(bob.getId(), relationship.getId()), e.getMessage());
     }
@@ -209,12 +211,12 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         MemberProfile tim = createADefaultMemberProfile();
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), ADMIN_ROLE);
 
-        var updated = eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, 5, "New notes"));
+        var updated = eventClient.update(bobAuth, event.getId(), new VolunteeringEventDTO(relationship.getId(), now, fiveHours, "New notes"));
         assertEquals(event.getId(), updated.getId());
         assertEquals("New notes", updated.getNotes());
     }
@@ -226,7 +228,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         String timAuth = auth(tim.getWorkEmail(), MEMBER_ROLE);
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         var deletedEvent = eventClient.delete(timAuth, event.getId());
         assertEquals(HttpStatus.OK, deletedEvent.getStatus());
@@ -238,7 +240,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         MemberProfile tim = createADefaultMemberProfile();
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), MEMBER_ROLE);
@@ -254,7 +256,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         MemberProfile tim = createADefaultMemberProfile();
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
         MemberProfile bob = memberWithoutBoss("bob");
         String bobAuth = auth(bob.getWorkEmail(), ADMIN_ROLE);
@@ -304,13 +306,13 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         var bobClosed = createVolunteeringRelationship(bob.getId(), closedOrg.getId(), now.minusDays(100), now.minusDays(50), false);
         var clairClosed = createVolunteeringRelationship(claire.getId(), closedOrg.getId(), now.minusDays(1), now);
 
-        var aliceLiftEvent1 = createVolunteeringEvent(aliceLiftForLife.getId(), now.minusDays(2), 10, "aliceLiftEvent1"); // 2 days ago
+        var aliceLiftEvent1 = createVolunteeringEvent(aliceLiftForLife.getId(), now.minusDays(2), tenHours, "aliceLiftEvent1"); // 2 days ago
         var aliceLiftEvent2 = createVolunteeringEvent(aliceLiftForLife.getId(), now, 8, "aliceLiftEvent2"); // today
         var bobLiftEvent1 = createVolunteeringEvent(bobLiftForLife.getId(), now, 6, "bobLiftEvent1"); // today
         var clairLiftEvent1 = createVolunteeringEvent(claireLiftForLife.getId(), now.minusDays(3), 4, "clairLiftEvent1"); // 3 days ago
         var aliceFoodEvent1 = createVolunteeringEvent(aliceFood.getId(), now.minusDays(20), 2, "aliceFoodEvent1"); // 20 days ago
         var clairFoodEvent1 = createVolunteeringEvent(claireFood.getId(), now, 1, "clairFoodEvent1"); // today
-        var bobClosedEvent1 = createVolunteeringEvent(bobClosed.getId(), now.minusDays(76), 10, "bobClosedEvent1"); // 76 days ago
+        var bobClosedEvent1 = createVolunteeringEvent(bobClosed.getId(), now.minusDays(76), tenHours, "bobClosedEvent1"); // 76 days ago
         var clairClosedEvent1 = createVolunteeringEvent(clairClosed.getId(), now.minusDays(1), 0, "clairClosedEvent1"); // yesterday
 
         // List all events, sorted by event date and then by organization name
@@ -353,10 +355,10 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         String timAuth = auth(tim.getWorkEmail(), MEMBER_ROLE);
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
         UUID randomId = UUID.randomUUID();
 
-        VolunteeringEventDTO newEvent = new VolunteeringEventDTO(randomId, now, 10, "Notes");
+        VolunteeringEventDTO newEvent = new VolunteeringEventDTO(randomId, now, tenHours, "Notes");
 
         // Creating an event with a non-existent relationship should fail
         var e = assertThrows(HttpClientResponseException.class, () -> eventClient.create(timAuth, newEvent));
@@ -376,9 +378,9 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         String timAuth = auth(tim.getWorkEmail(), MEMBER_ROLE);
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
-        VolunteeringEventDTO newEvent = new VolunteeringEventDTO(relationship.getId(), null, 10, "Notes");
+        VolunteeringEventDTO newEvent = new VolunteeringEventDTO(relationship.getId(), null, tenHours, "Notes");
 
         // Creating an event with a null date should fail
         var e = assertThrows(HttpClientResponseException.class, () -> eventClient.create(timAuth, newEvent));
@@ -400,9 +402,9 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
         String timAuth = auth(tim.getWorkEmail(), MEMBER_ROLE);
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
 
-        VolunteeringEventDTO newEvent = new VolunteeringEventDTO(relationship.getId(), now, -1, "Notes");
+        VolunteeringEventDTO newEvent = new VolunteeringEventDTO(relationship.getId(), now, -1.0, "Notes");
 
         // Creating an event with negative hours should fail
         var e = assertThrows(HttpClientResponseException.class, () -> eventClient.create(timAuth, newEvent));
@@ -422,7 +424,7 @@ class VolunteeringEventControllerTest extends TestContainersSuite implements Mem
 
         VolunteeringOrganization organization = createDefaultVolunteeringOrganization();
         VolunteeringRelationship relationship = createVolunteeringRelationship(tim.getId(), organization.getId(), now);
-        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, 10, "Notes");
+        VolunteeringEvent event = createVolunteeringEvent(relationship.getId(), now, tenHours, "Notes");
         String postBody = """
                 {
                   "relationshipId": "%s",
