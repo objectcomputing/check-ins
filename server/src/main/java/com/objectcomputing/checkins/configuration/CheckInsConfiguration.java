@@ -34,6 +34,9 @@ public class CheckInsConfiguration {
         @NotNull
         private NotificationsConfig notifications;
 
+        @NotNull
+        private PulseResponseConfig pulseResponse;
+
         @Getter
         @Setter
         @ConfigurationProperties("feedback")
@@ -87,6 +90,26 @@ public class CheckInsConfiguration {
 
                 @NotBlank
                 private String botToken;
+            }
+        }
+
+        @Getter
+        @Setter
+        @ConfigurationProperties("pulse-response")
+        public static class PulseResponseConfig {
+
+            @NotNull
+            private SlackConfig slack;
+
+            @Getter
+            @Setter
+            @ConfigurationProperties("slack")
+            public static class SlackConfig {
+                @NotBlank
+                private String signingSecret;
+
+                @NotBlank
+                private String webhookUrl;
             }
         }
     }
