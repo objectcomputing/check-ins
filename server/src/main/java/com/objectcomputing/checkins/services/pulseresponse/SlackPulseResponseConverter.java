@@ -35,26 +35,46 @@ public class SlackPulseResponseConverter {
                 PulseResponseCreateDTO response = new PulseResponseCreateDTO();
                 response.setTeamMemberId(lookupUser(memberProfileServices, map));
                 response.setSubmissionDate(LocalDate.now());
+
                 response.setInternalScore(Integer.parseInt(
-                    getMappedValue(values, "internalScore")));
+                    getMappedValue(values, "internalScore", true)));
                 response.setInternalFeelings(
-                    getMappedValue(values, "internalFeelings"));
-                response.setExternalScore(Integer.parseInt(
-                    getMappedValue(values, "externalScore")));
+                    getMappedValue(values, "internalFeelings", false));
+
+                String score = getMappedValue(values, "externalScore", false);
+                if (!score.isEmpty()) {
+                    response.setExternalScore(Integer.parseInt(score));
+                }
                 response.setExternalFeelings(
-                    getMappedValue(values, "externalFeelings"));
+                    getMappedValue(values, "externalFeelings", false));
 
                 return response;
             } catch(JsonProcessingException ex) {
                 throw new BadArgException(ex.getMessage());
+            } catch(NumberFormatException ex) {
+                throw new BadArgException("Pulse scores must be integers");
             }
         } else {
             throw new BadArgException("Invalid pulse response body");
         }
     }
 
-    private static String getMappedValue(Map<String, Object> map, String key) {
-        return (String)((Map<String, Object>)map.get(key)).get("value");
+    private static String getMappedValue(Map<String, Object> map,
+                                         String key, boolean required) {
+        final String valueKey = "value";
+        if (map.containsKey(key)) {
+            final Map<String, Object> other = (Map<String, Object>)map.get(key);
+            if (other.containsKey(valueKey)) {
+                return (String)other.get(valueKey);
+            }
+        }
+
+        if (required) {
+            throw new BadArgException(
+                String.format("Expected %s.%s was not found", key, valueKey));
+        } else {
+            return "";
+        }
     }
 
     private static UUID lookupUser(MemberProfileServices memberProfileServices,
