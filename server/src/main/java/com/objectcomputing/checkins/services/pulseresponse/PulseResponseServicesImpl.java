@@ -49,6 +49,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     @Override
     public PulseResponse save(PulseResponse pulseResponse) {
         if (pulseResponse != null) {
+            verifyPulseData(pulseResponse);
             final UUID memberId = pulseResponse.getTeamMemberId();
             UUID currentUserId = currentUserServices.getCurrentUser().getId();
             if (memberId != null &&
@@ -80,13 +81,14 @@ public class PulseResponseServicesImpl implements PulseResponseService {
                 submitted = existing.isPresent();
             }
             if (!submitted) {
+                verifyPulseData(pulseResponse);
                 return saveCommon(pulseResponse);
             }
         }
         return null;
     }
 
-    private PulseResponse saveCommon(PulseResponse pulseResponse) {
+    private void verifyPulseData(PulseResponse pulseResponse) {
         final UUID memberId = pulseResponse.getTeamMemberId();
         LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
         if (pulseResponse.getId() != null) {
@@ -97,7 +99,9 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
             throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
         }
+    }
 
+    private PulseResponse saveCommon(PulseResponse pulseResponse) {
         PulseResponse pulseResponseRet = pulseResponseRepo.save(pulseResponse);
 
         // Send low pulse survey score if appropriate
