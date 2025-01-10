@@ -50,13 +50,13 @@ class SkillsReportControllerTest extends TestContainersSuite
 
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
-        final MemberSkill memberSkill = createMemberSkill(memberProfile, skill, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        final MemberSkill memberSkill = createMemberSkill(memberProfile, skill, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
 
         final SkillsReportRequestDTO skillsReportRequestDTO = new SkillsReportRequestDTO();
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         skillLevelDTO.setId(skill.getId());
-        skillLevelDTO.setLevel(SkillLevel.INTERMEDIATE);
+        skillLevelDTO.setLevel(SkillLevel.PRACTITIONER);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
@@ -84,7 +84,7 @@ class SkillsReportControllerTest extends TestContainersSuite
 
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
-        createMemberSkill(memberProfile, skill, SkillLevel.INTERMEDIATE_LEVEL, null);
+        createMemberSkill(memberProfile, skill, SkillLevel.PRACTITIONER_LEVEL, null);
 
         final SkillsReportRequestDTO skillsReportRequestDTO = new SkillsReportRequestDTO();
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
@@ -116,7 +116,7 @@ class SkillsReportControllerTest extends TestContainersSuite
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         final UUID skillId = UUID.randomUUID();
         skillLevelDTO.setId(skillId);
-        skillLevelDTO.setLevel(SkillLevel.ADVANCED);
+        skillLevelDTO.setLevel(SkillLevel.PRACTITIONER);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
