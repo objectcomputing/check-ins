@@ -39,10 +39,9 @@ public class PulseSlackPoster {
                                            .getSlack().getWebhookUrl();
         if (slackWebHook != null && !slackBlocks.isEmpty()) {
             // POST it to Slack.
-            BlockingHttpClient client = slackClient.toBlocking();
             HttpRequest<String> request = HttpRequest.POST(slackWebHook,
                                                            slackBlocks);
-            client.exchange(request);
+            slackClient.exchange(request);
         }
     }
 
