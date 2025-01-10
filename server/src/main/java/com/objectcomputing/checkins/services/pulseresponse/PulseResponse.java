@@ -52,7 +52,7 @@ public class PulseResponse {
 
     @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
-    @NotNull
+    @Nullable
     @Schema(description = "id of the teamMember this entry is associated with")
     private UUID teamMemberId;
 
@@ -77,7 +77,7 @@ public class PulseResponse {
     protected PulseResponse() {
     }
 
-    public PulseResponse(UUID id, Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+    public PulseResponse(UUID id, Integer internalScore, @Nullable Integer externalScore, LocalDate submissionDate, @Nullable UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
         this.internalScore = internalScore;
         this.externalScore = externalScore;
@@ -88,7 +88,7 @@ public class PulseResponse {
     }
 
     public PulseResponse(Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
-        this(null,internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
+        this(null, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 
     public UUID getId() {

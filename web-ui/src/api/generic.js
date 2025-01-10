@@ -20,6 +20,19 @@ export const downloadData = (url, cookie, params) => {
       'X-CSRF-Header': cookie,
       Accept: 'application/json',
     },
-    url: url //fullURL
+    url: url
+  });
+};
+
+export const initiate = (url, cookie, params) => {
+  return resolve({
+    method: 'POST',
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    url: url,
+    data: params,
   });
 };
