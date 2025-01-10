@@ -42,16 +42,9 @@ const PulsePage = () => {
     const [year, month, day] = pulse.submissionDate;
     setSubmittedToday(
       year === now.getFullYear() &&
-        month === now.getMonth() + 1 &&
-        day === now.getDate()
+      month === now.getMonth() + 1 &&
+      day === now.getDate()
     );
-
-    setInternalComment(pulse.internalFeelings ?? '');
-    setExternalComment(pulse.externalFeelings ?? '');
-    setInternalScore(pulse.internalScore == undefined ?
-                       center : pulse.internalScore - 1);
-    setExternalScore(pulse.externalScore == undefined ?
-                       center : pulse.externalScore - 1);
   }, [pulse]);
 
   const loadTodayPulse = async () => {
@@ -91,7 +84,7 @@ const PulsePage = () => {
     const myId = currentUser?.id;
     const data = {
       externalFeelings: externalComment,
-      externalScore: externalScore + 1, // converts to 1-based
+      externalScore: externalScore == null ? null : externalScore + 1, // converts to 1-based
       internalFeelings: internalComment,
       internalScore: internalScore + 1, // converts to 1-based
       submissionDate: today,
@@ -120,10 +113,11 @@ const PulsePage = () => {
           <Pulse
             key="pulse-internal"
             comment={internalComment}
+            iconRequired={true}
             score={internalScore}
             setComment={setInternalComment}
             setScore={setInternalScore}
-            title="How are you feeling about work today? (*)"
+            title="How are you feeling about work today?"
           />
           <Pulse
             key="pulse-external"
@@ -137,6 +131,7 @@ const PulsePage = () => {
             <Button
               style={{ marginTop: 0 }}
               onClick={submit}
+              disabled={internalScore == null}
               variant="contained">
               Submit
             </Button>
