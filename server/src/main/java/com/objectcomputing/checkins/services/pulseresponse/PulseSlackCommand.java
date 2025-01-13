@@ -33,7 +33,7 @@ public class PulseSlackCommand {
     public boolean send(String triggerId) {
         String slackBlocks = getSlackBlocks();
 
-        // See if we can have a token.
+        // See if we have a token.
         String token = configuration.getApplication()
                                     .getPulseResponse()
                                     .getSlack().getBotToken();

@@ -5,9 +5,6 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.inject.Singleton;
-
-@Singleton
 public class FormUrlEncodedDecoder {
     public Map<String, Object> decode(String formUrlEncodedString, Charset charset) {
         Map<String, Object> queryParams = new HashMap<>();
