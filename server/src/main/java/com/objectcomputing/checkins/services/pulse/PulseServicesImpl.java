@@ -47,9 +47,6 @@ public class PulseServicesImpl implements PulseServices {
   @Inject
   private PulseEmail email;
 
-  @Inject
-  private PulseSlackPoster slackPoster;
-
   private final DayOfWeek emailDay = DayOfWeek.MONDAY;
 
   private String setting = "bi-weekly";
@@ -106,7 +103,6 @@ public class PulseServicesImpl implements PulseServices {
           if (sent.isEmpty()) {
             LOG.info("Sending Pulse Email");
             email.send();
-            slackPoster.send();
             automatedEmailRepository.save(new AutomatedEmail(key));
           } else {
             LOG.info("The Pulse Email has already been sent today");

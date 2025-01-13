@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.util.form.FormUrlEncodedDecoder;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 
+import io.micronaut.http.MediaType;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpStatus;
@@ -27,6 +29,8 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 @Controller("/services/pulse-responses")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -36,13 +40,16 @@ public class PulseResponseController {
     private final PulseResponseService pulseResponseServices;
     private final MemberProfileServices memberProfileServices;
     private final SlackSignatureVerifier slackSignatureVerifier;
+    private final PulseSlackCommand pulseSlackCommand;
 
     public PulseResponseController(PulseResponseService pulseResponseServices,
                                    MemberProfileServices memberProfileServices,
-                                   SlackSignatureVerifier slackSignatureVerifier) {
+                                   SlackSignatureVerifier slackSignatureVerifier,
+                                   PulseSlackCommand pulseSlackCommand) {
         this.pulseResponseServices = pulseResponseServices;
         this.memberProfileServices = memberProfileServices;
         this.slackSignatureVerifier = slackSignatureVerifier;
+        this.pulseSlackCommand = pulseSlackCommand;
     }
 
     /**
@@ -103,6 +110,33 @@ public class PulseResponseController {
             throw new NotFoundException("No role item for UUID");
         }
         return result;
+    }
+
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @Post(uri = "/command", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public HttpResponse commandPulseResponse(
+               @Header("X-Slack-Signature") String signature,
+               @Header("X-Slack-Request-Timestamp") String timestamp,
+               @Body String requestBody) {
+        // Validate the request
+        if (slackSignatureVerifier.verifyRequest(signature,
+                                                 timestamp, requestBody)) {
+            // Convert the request body to a map of values.
+            FormUrlEncodedDecoder formUrlEncodedDecoder = new FormUrlEncodedDecoder();
+            Map<String, Object> body =
+                formUrlEncodedDecoder.decode(requestBody,
+                                             StandardCharsets.UTF_8);
+
+            // Respond to the slack command.
+            String triggerId = (String)body.get("trigger_id");
+            if (pulseSlackCommand.send(triggerId)) {
+                return HttpResponse.ok();
+            } else {
+                return HttpResponse.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Secured(SecurityRule.IS_ANONYMOUS)

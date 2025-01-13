@@ -109,7 +109,7 @@ public class CheckInsConfiguration {
                 private String signingSecret;
 
                 @NotBlank
-                private String webhookUrl;
+                private String botToken;
             }
         }
     }

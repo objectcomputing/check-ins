@@ -104,7 +104,7 @@ check-ins:
     pulse-response:
       slack:
         signing-secret: ${ SLACK_PULSE_SIGNING_SECRET }
-        webhook-url: ${ SLACK_PULSE_WEBHOOK_URL }
+        bot-token: ${ SLACK_PULSE_BOT_TOKEN }
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:

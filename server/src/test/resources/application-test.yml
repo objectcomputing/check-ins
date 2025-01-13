@@ -48,7 +48,7 @@ check-ins:
     pulse-response:
       slack:
         signing-secret: BOGUS_SIGNING_SECRET
-        webhook-url: https://bogus.objectcomputing.com/slack
+        bot-token: BOGUS_TOKEN
 ---
 aes:
   key: BOGUS_TEST_KEY
