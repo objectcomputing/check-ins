@@ -41,7 +41,7 @@ public interface VolunteeringFixture extends RepositoryFixture {
         return getVolunteeringRelationshipRepository().save(new VolunteeringRelationship(memberId, organizationId, startDate, endDate, active));
     }
 
-    default VolunteeringEvent createVolunteeringEvent(UUID relationshipId, LocalDate now, int i, String notes) {
+    default VolunteeringEvent createVolunteeringEvent(UUID relationshipId, LocalDate now, double i, String notes) {
         return getVolunteeringEventRepository().save(new VolunteeringEvent(relationshipId, now, i, notes));
     }
 }
