@@ -14,95 +14,6 @@ exports[`renders correctly 1`] = `
     class="checkins-report-page"
   >
     <div
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root member-selector-card css-bhp9pd-MuiPaper-root-MuiCard-root"
-    >
-      <div
-        class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
-      >
-        <div
-          class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
-        >
-          <span
-            class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
-          >
-            <div
-              class="member-selector-card-title-container"
-            >
-              <h5
-                class="MuiTypography-root MuiTypography-h5 MuiTypography-noWrap member-selector-card-title css-1961ak2-MuiTypography-root"
-              >
-                Select PDLs
-              </h5>
-              <h6
-                class="MuiTypography-root MuiTypography-h6 member-selector-card-count css-r8391j-MuiTypography-root"
-              >
-                (
-                0
-                )
-              </h6>
-            </div>
-          </span>
-        </div>
-        <div
-          class="MuiCardHeader-action css-sgoict-MuiCardHeader-action"
-        >
-          <div
-            class="MuiBox-root css-1ay9vb9"
-          >
-            <span
-              aria-label="Change PDL"
-              class=""
-              data-mui-internal-clone-element="true"
-            >
-              <button
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
-                style="margin: 4px 8px 0px 0px;"
-                tabindex="0"
-                type="button"
-              >
-                <svg
-                  aria-hidden="true"
-                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-                  data-testid="AddIcon"
-                  focusable="false"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
-                  />
-                </svg>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
-              </button>
-            </span>
-            <button
-              aria-label="Download"
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-1yq5fb3-MuiButtonBase-root-MuiIconButton-root"
-              data-mui-internal-clone-element="true"
-              tabindex="0"
-              type="button"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-                data-testid="FileDownloadIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M19 9h-4V3H9v6H5l7 7zM5 18v2h14v-2z"
-                />
-              </svg>
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
       class="MuiBox-root css-1l4w6pd"
     >
       <div
@@ -201,16 +112,48 @@ exports[`renders correctly 1`] = `
       class="checkins-report-page-reports"
     >
       <div
-        class="checkins-report-page-no-data"
+        class="team-member-map MuiBox-root css-0"
       >
-        <h2>
-          No PDLs selected
-        </h2>
-        <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        <div
+          class="MuiBox-root css-k008qs"
         >
-          Please select some PDLs using the Member Selector.
-        </p>
+          <div
+            class="MuiBox-root css-kzfr2u"
+          >
+            <h5
+              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+            >
+              Member
+            </h5>
+          </div>
+          <div
+            class="MuiBox-root css-1rr4qq7"
+          >
+            <h5
+              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+            >
+              PDL
+            </h5>
+          </div>
+          <div
+            class="MuiBox-root css-1rr4qq7"
+          >
+            <h5
+              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+            >
+              Check-In Date
+            </h5>
+          </div>
+          <div
+            class="MuiBox-root css-1rr4qq7"
+          >
+            <h5
+              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+            >
+              Status
+            </h5>
+          </div>
+        </div>
       </div>
     </div>
   </div>
