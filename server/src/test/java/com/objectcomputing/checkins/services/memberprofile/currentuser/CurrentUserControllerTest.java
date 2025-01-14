@@ -14,47 +14,21 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
 
-// Disabled in nativeTest, as we get an exception from Mockito
-//    => java.lang.NoClassDefFoundError: Could not initialize class org.mockito.internal.configuration.plugins.Plugins
-@DisabledInNativeImage
 class CurrentUserControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     private static final Map<String, Object> userAttributes = new HashMap<>();
-    private static final String firstName = "some.first.name";
-    private static final String lastName = "some.last.name";
-    private static final String userEmail = "some.email.address";
     private static final String imageUrl = "some.picture.url";
-
-    @Mock
-    CurrentUserServices currentUserServices;
 
     @Inject
     CurrentUserController currentUserController;
-
-    private AutoCloseable mockFinalizer;
-
-    @BeforeAll
-    void setupMocks() {
-        mockFinalizer = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterAll
-    void close() throws Exception {
-        mockFinalizer.close();
-    }
 
     @Test
     void testCurrentUserReturnsUnauthorizedWhenAuthenticationFails() {
@@ -64,12 +38,14 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
 
     @Test
     void testCurrentUserReturnsValidDTO() {
+        final MemberProfile expected = createADefaultMemberProfile();
         Authentication auth = new Authentication() {
             @NonNull
             @Override
             public Map<String, Object> getAttributes() {
-                userAttributes.put("name", firstName + ' ' + lastName);
-                userAttributes.put("email", userEmail);
+                userAttributes.put("name", expected.getFirstName() + ' ' +
+                                           expected.getLastName());
+                userAttributes.put("email", expected.getWorkEmail());
                 userAttributes.put("picture", imageUrl);
                 return userAttributes;
             }
@@ -80,21 +56,14 @@ class CurrentUserControllerTest extends TestContainersSuite implements MemberPro
             }
         };
 
-        MemberProfile expected = mkMemberProfile();
-        expected.setWorkEmail(userEmail);
-        expected.setFirstName(firstName);
-        expected.setLastName(lastName);
-
-        when(currentUserServices.findOrSaveUser(firstName, lastName, userEmail)).thenReturn(expected);
-
         HttpResponse<CurrentUserDTO> actual = currentUserController.currentUser(auth);
 
         assertEquals(HttpStatus.OK, actual.getStatus());
         CurrentUserDTO currentUserDTO = actual.body();
         assertNotNull(currentUserDTO);
-        assertEquals(userEmail, currentUserDTO.getMemberProfile().getWorkEmail());
-        assertEquals(firstName, currentUserDTO.getFirstName());
-        assertEquals(lastName, currentUserDTO.getLastName());
+        assertEquals(expected.getWorkEmail(), currentUserDTO.getMemberProfile().getWorkEmail());
+        assertEquals(expected.getFirstName(), currentUserDTO.getFirstName());
+        assertEquals(expected.getLastName(), currentUserDTO.getLastName());
         assertEquals(imageUrl, currentUserDTO.getImageUrl());
         assertNotNull(actual.getHeaders().get("location"));
     }

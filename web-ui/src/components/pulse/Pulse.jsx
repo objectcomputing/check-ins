@@ -30,6 +30,7 @@ const tooltips = [
 const propTypes = {
   comment: PropTypes.string,
   commentRequired: PropTypes.bool,
+  iconRequired: PropTypes.bool,
   score: PropTypes.number,
   setComment: PropTypes.func,
   setScore: PropTypes.func,
@@ -38,13 +39,17 @@ const propTypes = {
 const Pulse = ({
   comment,
   commentRequired,
+  iconRequired,
   score,
   setComment,
   setScore,
   title
 }) => (
   <div className="pulse">
-    <Typography variant="h6">{title}</Typography>
+    <div className="title-row">
+      <Typography variant="h6">{title}</Typography>
+      {iconRequired && <Typography variant="h6" color="red">*</Typography>}
+    </div>
     <div className="icon-row">
       {icons.map((sentiment, index) => (
         <Tooltip key={`sentiment-${index}`} title={tooltips[index]} arrow>
@@ -52,7 +57,7 @@ const Pulse = ({
             aria-label="sentiment"
             className={index === score ? 'selected' : ''}
             data-testid={`score-button-${index}`}
-            onClick={() => setScore(index)}
+            onClick={() => setScore(score == index ? null : index)}
             sx={{ color: colors[index] }}
           >
             {sentiment}
@@ -70,7 +75,7 @@ const Pulse = ({
       }}
       placeholder="Comment"
       required={commentRequired}
-      rows={4}
+      maxRows={4}
       value={comment}
     />
   </div>

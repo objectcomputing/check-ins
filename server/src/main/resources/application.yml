@@ -102,6 +102,10 @@ check-ins:
     feedback:
       max-suggestions: 6
       request-subject: "Feedback request"
+    notifications:
+      slack:
+        webhook-url: ${ SLACK_WEBHOOK_URL }
+        bot-token: ${ SLACK_BOT_TOKEN }
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:
