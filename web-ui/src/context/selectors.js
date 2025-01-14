@@ -610,7 +610,7 @@ const getCheckinDate = checkin => {
   return new Date(year, month - 1, day, hour, minute, 0);
 };
 
-const pastCheckin = checkin => Date.now() >= getCheckinDate(checkin).getTime();
+export const pastCheckin = checkin => Date.now() >= getCheckinDate(checkin).getTime();
 
 export const selectFilteredCheckinsForTeamMemberAndPDL = createSelector(
   selectCheckinsForTeamMemberAndPDL,

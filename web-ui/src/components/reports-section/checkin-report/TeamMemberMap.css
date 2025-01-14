@@ -10,11 +10,16 @@
 
     .team-member-map-summmary-content {
       display: grid;
-      grid-template-columns: 2fr 2fr 1fr;
+      grid-template-columns: 2fr 2fr 2fr 1fr;
       gap: 1rem;
       align-items: center;
       width: 100%;
       margin: 0 0.75rem;
+
+      .team-member-map-pdl {
+        display: flex;
+        gap: 1rem;
+      }
     }
 
     .team-member-map-summmary-latest-activity {

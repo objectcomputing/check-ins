@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -11,7 +11,10 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getAvatarURL } from '../../../api/api.js';
 import { AppContext } from '../../../context/AppContext.jsx';
-import { selectFilteredCheckinsForTeamMemberAndPDL } from '../../../context/selectors.js';
+import {
+  selectCheckinsForMember,
+  pastCheckin,
+} from '../../../context/selectors.js';
 import {
   getCheckinDateForPeriod,
   getLastCheckinDate,
@@ -20,25 +23,65 @@ import {
 import LinkSection from './LinkSection.jsx';
 import './TeamMemberMap.css';
 
-const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
-  const { state } = useContext(AppContext);
-  const epoch = new Date(0);
+const SortOption = {
+  BY_MEMBER: 0,
+  BY_PDL: 1,
+};
 
+const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
+  const { state } = useContext(AppContext);
+  const [sortBy, setSortBy] = useState(SortOption.BY_MEMBER);
+
+  const epoch = new Date(0);
+  const pdls = members.reduce((map, member) => {
+    if (member.pdlId && !map[member.pdlId]) {
+      map[member.pdlId] = members.find((m) => m.id === member.pdlId);
+    }
+    return map;
+  }, {});
+
+  const sortByName = (left, right) => {
+    if (left && right) {
+      return `${left.lastName} ${left.firstName}`.localeCompare(
+             `${right.lastName} ${right.firstName}`);
+    } else {
+      return left ? -1 : 1;
+    }
+  };
+
+  const sortByPDLName = (a, b) => sortByName(pdls[a.pdlId], pdls[b.pdlId]);
+
+  members.sort(sortBy == SortOption.BY_MEMBER ? sortByName : sortByPDLName);
+
+  // TODO: Figure out how to do the column headers correctly.
   return (
     <Box className="team-member-map">
-      {members?.length > 0 ? (
+      <Box display="flex">
+        <Box flex={2} onClick={() => { setSortBy(SortOption.BY_MEMBER); }}>
+          <Typography variant="h5">Member</Typography>
+        </Box>
+        <Box flex={1} onClick={() => { setSortBy(SortOption.BY_PDL); }}>
+          <Typography variant="h5">PDL</Typography>
+        </Box>
+        <Box flex={1}>
+          <Typography variant="h5">Check-In Date</Typography>
+        </Box>
+        <Box flex={1}>
+          <Typography variant="h5">Status</Typography>
+        </Box>
+      </Box>
+      {
         members.map(member => {
-          const checkins = selectFilteredCheckinsForTeamMemberAndPDL(
+          const pdl = pdls[member.pdlId];
+          const checkins = selectCheckinsForMember(
             state,
             member.id,
-            id,
-            closed,
-            planned
-          );
+          ).filter(checkin => closed || !checkin.completed)
+           .filter(checkin => planned || pastCheckin(checkin));
 
           return (
             <Accordion
-              key={member.id + id}
+              key={member.id}
               className="team-member-map-accordion"
             >
               <AccordionSummary
@@ -56,6 +99,23 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
                       {member.title}
                     </Typography>
                   </hgroup>
+                  {pdl
+                    ? <div className="team-member-map-pdl">
+                        <Avatar
+                          sx={{ width: 54, height: 54 }}
+                          src={getAvatarURL(pdl.workEmail)}
+                        />
+                        <hgroup>
+                          <Typography variant="h6">{pdl.name}</Typography>
+                          <Typography sx={{ color: 'var(--muted)' }} variant="body2">
+                            {pdl.title}
+                          </Typography>
+                        </hgroup>
+                      </div>
+                    : <Typography component="nobr" variant="h6">
+                        No PDL Assigned
+                      </Typography>
+                  }
                   <Typography
                     variant="caption"
                     component={'time'}
@@ -64,9 +124,6 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
                     className="team-member-map-summmary-latest-activity"
                   >
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                      <Typography variant="overline" sx={{ mb: -1 }}>
-                        Check-In date:
-                      </Typography>
                       {getCheckinDateForPeriod(
                         checkins,
                         reportDate
@@ -135,11 +192,7 @@ const TeamMemberMap = ({ members, id, closed, planned, reportDate }) => {
             </Accordion>
           );
         })
-      ) : (
-        <div className="team-member-map-no-data">
-          <Typography>No team members associated with this PDL.</Typography>
-        </div>
-      )}
+      }
     </Box>
   );
 };
