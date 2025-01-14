@@ -6,6 +6,7 @@ import io.micronaut.data.repository.CrudRepository;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,4 +15,5 @@ public interface PulseResponseRepository extends CrudRepository<PulseResponse, U
 
     List<PulseResponse> findByTeamMemberId(@NotNull UUID teamMemberId);
     List<PulseResponse> findBySubmissionDateBetween(@NotNull LocalDate dateFrom, @NotNull LocalDate dateTo);
+    Optional<PulseResponse> getByTeamMemberIdAndSubmissionDate(@NotNull UUID teamMemberId, @NotNull LocalDate submissionDate);
 }

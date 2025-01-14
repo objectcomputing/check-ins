@@ -9,6 +9,7 @@ public interface PulseResponseService {
     PulseResponse read(UUID id);
 
     PulseResponse save(PulseResponse pulseResponse);
+    PulseResponse unsecureSave(PulseResponse pulseResponse);
 
     PulseResponse update(PulseResponse pulseResponse);
 
