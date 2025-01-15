@@ -287,6 +287,22 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
+    void testAnonymousGetFindByfindBySubmissionDateBetween() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        PulseResponse pulseResponse = createADefaultAnonymousPulseResponse();
+
+        LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
+        LocalDate testDateTo = Util.MAX.toLocalDate();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Set.of(pulseResponse), response.body());
+    }
+
+    @Test
     void testGetFindById() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
