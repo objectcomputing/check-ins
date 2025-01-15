@@ -11,11 +11,11 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getAvatarURL } from '../../../api/api.js';
 import { AppContext } from '../../../context/AppContext.jsx';
+import { selectCheckinsForMember } from '../../../context/selectors.js';
 import {
-  selectCheckinsForMember,
-  pastCheckin,
-} from '../../../context/selectors.js';
-import {
+  isPastCheckin,
+  getCheckinDate,
+  getQuarterBeginEndWithGrace,
   getCheckinDateForPeriod,
   getLastCheckinDate,
   statusForPeriodByMemberScheduling
@@ -72,12 +72,30 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
       </Box>
       {
         members.map(member => {
-          const pdl = pdls[member.pdlId];
+          let pdl = pdls[member.pdlId];
           const checkins = selectCheckinsForMember(
             state,
             member.id,
           ).filter(checkin => closed || !checkin.completed)
-           .filter(checkin => planned || pastCheckin(checkin));
+           .filter(checkin => planned || isPastCheckin(checkin));
+
+          // If there are checkins, we're going to sort them with the latest
+          // first.  Since the member's PDL could have changed since the last
+          // checkin, we are going to use the PDL id of the checkin instead
+          // of the current PDL.  They may be the same, but again they may not.
+          if (checkins.length > 0) {
+            checkins.sort((a, b) => getCheckinDate(b) - getCheckinDate(a));
+            const latest = checkins[0];
+            const { startOfQuarter, endOfQuarter } =
+                                      getQuarterBeginEndWithGrace(reportDate);
+            const checkinDate = getCheckinDate(latest);
+            if (checkinDate >= startOfQuarter && checkinDate <= endOfQuarter) {
+              console.log(member.firstName);
+              console.log("Current PDL: " + JSON.stringify(pdl));
+              pdl = pdls[checkins[0].pdlId];
+              console.log("PDL at the time: " + JSON.stringify(pdl));
+            }
+          }
 
           return (
             <Accordion

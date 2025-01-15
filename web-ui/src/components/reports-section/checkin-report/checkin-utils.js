@@ -29,6 +29,21 @@ export const getLastCheckinDate = checkins => {
 };
 
 /**
+ * Get the dates the reporting period including a grace period.
+ * @param {Date} reportDate - The date of the report.
+ * @returns {{ startOfQuarter: Date, endOfQuarter: Date }} The start and end dates of the quarter pluas a grace period.
+ */
+export const getQuarterBeginEndWithGrace = (reportDate) => {
+  const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
+  const endOfQuarterWithGrace = new Date(endOfQuarter);
+  endOfQuarterWithGrace.setDate(endOfQuarter.getDate() + 30);
+  return {
+    startOfQuarter: startOfQuarter,
+    endOfQuarter: endOfQuarterWithGrace
+  };
+};
+
+/**
  * Get the date of the last scheduled check-in for the reporting period.
  * Include the grace period for the end of the quarter.
  * @param {Checkin[]} checkins - Check-ins for a member.
@@ -36,13 +51,11 @@ export const getLastCheckinDate = checkins => {
  * @returns {Date} The date of the last scheduled check-in.
  */
 export const getCheckinDateForPeriod = (checkins, reportDate) => {
-  const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
-  const endOfQuarterWithGrace = new Date(endOfQuarter);
-  endOfQuarterWithGrace.setDate(endOfQuarter.getDate() + 30);
+  const { startOfQuarter, endOfQuarter } = getQuarterBeginEndWithGrace(reportDate);
   const scheduled = checkins.filter(checkin => {
     const checkinDate = getCheckinDate(checkin);
     return (
-      checkinDate >= startOfQuarter && checkinDate <= endOfQuarterWithGrace // Include grace period
+      checkinDate >= startOfQuarter && checkinDate <= endOfQuarter // Include grace period
     );
   });
   return getLastCheckinDate(scheduled);
@@ -74,3 +87,11 @@ export const statusForPeriodByMemberScheduling = (
   if (completed.length === scheduled.length) return 'Completed';
   return 'Scheduled';
 };
+
+/**
+ * Returns true if the checkin was in the past.
+ * @param {Checkin} checkin - A check-in.
+ * @returns {bool} Status of boolean check.
+ */
+export const isPastCheckin = (checkin) => Date.now() >= getCheckinDate(checkin).getTime();
+
