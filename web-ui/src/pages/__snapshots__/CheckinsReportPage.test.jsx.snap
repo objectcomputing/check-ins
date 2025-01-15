@@ -119,6 +119,7 @@ exports[`renders correctly 1`] = `
         >
           <div
             class="MuiBox-root css-kzfr2u"
+            style="cursor: pointer;"
           >
             <h5
               class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
@@ -128,6 +129,7 @@ exports[`renders correctly 1`] = `
           </div>
           <div
             class="MuiBox-root css-1rr4qq7"
+            style="cursor: pointer;"
           >
             <h5
               class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
@@ -136,7 +138,7 @@ exports[`renders correctly 1`] = `
             </h5>
           </div>
           <div
-            class="MuiBox-root css-1rr4qq7"
+            class="MuiBox-root css-1guejwj"
           >
             <h5
               class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
