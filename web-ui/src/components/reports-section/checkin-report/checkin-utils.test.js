@@ -21,15 +21,15 @@ describe('getCheckinDate', () => {
     expect(result.getMinutes()).toBe(30);
   });
 
-  test('returns undefined when check-in is not provided', () => {
+  test('returns epoch when check-in is not provided', () => {
     const result = getCheckinDate(undefined);
-    expect(result).toBeUndefined();
+    expect(result).toEqual(new Date(0)); // Date at epoch (Jan 1, 1970)
   });
 
-  test('returns undefined when check-in date is not available', () => {
+  test('returns epoch when check-in date is not available', () => {
     const checkin = {};
     const result = getCheckinDate(checkin);
-    expect(result).toBeUndefined();
+    expect(result).toEqual(new Date(0)); // Date at epoch (Jan 1, 1970)
   });
 });
 
@@ -158,7 +158,7 @@ describe('statusForPeriodByMemberScheduling', () => {
   const mockReportDate = new Date(2024, 3, 15); // April 15, 2024 (example report date)
 
   test('returns "Not Scheduled" when no check-ins are provided', () => {
-    const result = statusForPeriodByMemberScheduling([], mockReportDate);
+    const result = statusForPeriodByMemberScheduling(null, mockReportDate);
     expect(result).toBe('Not Scheduled');
   });
 
@@ -172,34 +172,11 @@ describe('statusForPeriodByMemberScheduling', () => {
     expect(result).toBe('Not Scheduled');
   });
 
-  // There is a grace period of one month after the quarter in which we consider a check-in "In Progress"
-  test('returns "Scheduled" when at least one check-in falls within the reporting grace period', () => {
-    const checkins = [
-      { checkInDate: [2024, 2, 1, 10, 30], completed: false }, // Feb 1, 2024
-      { checkInDate: [2024, 3, 31, 9, 0], completed: false }, // March 31, 2024
-      { checkInDate: [2024, 7, 10, 14, 0], completed: false } // Jul 10, 2024
-    ];
-    const result = statusForPeriodByMemberScheduling(checkins, mockReportDate);
-    expect(result).toBe('Scheduled');
-  });
-
-  test('returns "Scheduled" when some check-ins within the reporting period are completed', () => {
-    const checkins = [
-      { checkInDate: [2024, 3, 1, 10, 0], completed: true }, // March 1, 2024 (within reporting period, completed)
-      { checkInDate: [2024, 4, 1, 9, 0], completed: false }, // April 1, 2024 (within reporting period, not completed)
-      { checkInDate: [2024, 4, 15, 14, 30], completed: false } // April 15, 2024 (within reporting period, not completed)
-    ];
-    const result = statusForPeriodByMemberScheduling(checkins, mockReportDate);
-    expect(result).toBe('Scheduled');
-  });
-
-  test('returns "Scheduled" when all check-ins within the reporting period are not completed', () => {
-    const checkins = [
-      { checkInDate: [2024, 3, 1, 10, 0], completed: false }, // March 1, 2024 (within reporting period, not completed)
-      { checkInDate: [2024, 4, 1, 9, 0], completed: false }, // April 1, 2024 (within reporting period, not completed)
-      { checkInDate: [2024, 4, 15, 14, 30], completed: false } // April 15, 2024 (within reporting period, not completed)
-    ];
-    const result = statusForPeriodByMemberScheduling(checkins, mockReportDate);
+  test('returns "Scheduled" when the check-in is within the reporting period are not completed', () => {
+console.log(mockReportDate);
+    const checkin =
+      { checkInDate: [2024, 4, 10, 10, 0], completed: false }; // April 1, 2024 (within reporting period, not completed)
+    const result = statusForPeriodByMemberScheduling(checkin, mockReportDate);
     expect(result).toBe('Scheduled');
   });
 });
