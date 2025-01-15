@@ -85,21 +85,27 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
 
   return (
     <Box className="team-member-map">
-      <Box display="flex">
-        <Box flex={2} onClick={() => { setSortBy(SortOption.BY_MEMBER); }}
-             style={{ cursor: 'pointer' }}>
-          <Typography variant="h5">Member</Typography>
-        </Box>
-        <Box flex={1} onClick={() => { setSortBy(SortOption.BY_PDL); }}
-             style={{ cursor: 'pointer' }}>
-          <Typography variant="h5">PDL</Typography>
-        </Box>
-        <Box flex={1}
-             sx={{ display: { xs: 'none', sm: 'none', md: 'grid' } }}>
-          <Typography variant="h5">Check-In Date</Typography>
-        </Box>
-        <Box flex={1}>
-          <Typography variant="h5">Status</Typography>
+      {/* This header row mimics the configuration of the individual member
+          rows so that each header lines up exactly with the columns. */}
+      <Box className="team-member-map-row">
+        <Box className="team-member-map-row-summary">
+          <Box onClick={() => { setSortBy(SortOption.BY_MEMBER); }}
+               style={{ cursor: 'pointer' }}>
+            <Typography variant="h5">Member</Typography>
+          </Box>
+          <div className="team-member-map-summmary-content">
+            <hgroup>{/* This forces the PDL header over. */}</hgroup>
+            <Box onClick={() => { setSortBy(SortOption.BY_PDL); }}
+                 style={{ cursor: 'pointer' }}>
+              <Typography variant="h5">PDL</Typography>
+            </Box>
+            <Box sx={{ display: { xs: 'none', sm: 'none', md: 'grid' } }}>
+              <Typography variant="h5">Check-In Date</Typography>
+            </Box>
+            <Box>
+              <Typography variant="h5">Status</Typography>
+            </Box>
+          </div>
         </Box>
       </Box>
       {

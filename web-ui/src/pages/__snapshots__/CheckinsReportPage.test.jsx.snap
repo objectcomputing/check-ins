@@ -115,45 +115,54 @@ exports[`renders correctly 1`] = `
         class="team-member-map MuiBox-root css-0"
       >
         <div
-          class="MuiBox-root css-k008qs"
+          class="team-member-map-row MuiBox-root css-0"
         >
           <div
-            class="MuiBox-root css-kzfr2u"
-            style="cursor: pointer;"
+            class="team-member-map-row-summary MuiBox-root css-0"
           >
-            <h5
-              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+            <div
+              class="MuiBox-root css-0"
+              style="cursor: pointer;"
             >
-              Member
-            </h5>
-          </div>
-          <div
-            class="MuiBox-root css-1rr4qq7"
-            style="cursor: pointer;"
-          >
-            <h5
-              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+              <h5
+                class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+              >
+                Member
+              </h5>
+            </div>
+            <div
+              class="team-member-map-summmary-content"
             >
-              PDL
-            </h5>
-          </div>
-          <div
-            class="MuiBox-root css-1guejwj"
-          >
-            <h5
-              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
-            >
-              Check-In Date
-            </h5>
-          </div>
-          <div
-            class="MuiBox-root css-1rr4qq7"
-          >
-            <h5
-              class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
-            >
-              Status
-            </h5>
+              <hgroup />
+              <div
+                class="MuiBox-root css-0"
+                style="cursor: pointer;"
+              >
+                <h5
+                  class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+                >
+                  PDL
+                </h5>
+              </div>
+              <div
+                class="MuiBox-root css-1mvoz6j"
+              >
+                <h5
+                  class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+                >
+                  Check-In Date
+                </h5>
+              </div>
+              <div
+                class="MuiBox-root css-0"
+              >
+                <h5
+                  class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+                >
+                  Status
+                </h5>
+              </div>
+            </div>
           </div>
         </div>
       </div>
