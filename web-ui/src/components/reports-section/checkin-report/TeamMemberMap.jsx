@@ -6,8 +6,11 @@ import {
   Chip,
   Typography,
   AccordionDetails,
-  Box
+  Box,
+  Card,
+  CardContent,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getAvatarURL } from '../../../api/api.js';
 import { AppContext } from '../../../context/AppContext.jsx';
@@ -15,12 +18,9 @@ import { selectCheckinsForMember } from '../../../context/selectors.js';
 import {
   isPastCheckin,
   getCheckinDate,
-  getQuarterBeginEndWithGrace,
-  getCheckinDateForPeriod,
-  getLastCheckinDate,
   statusForPeriodByMemberScheduling
 } from './checkin-utils.js';
-import LinkSection from './LinkSection.jsx';
+import { getQuarterBeginEnd } from '../../../helpers';
 import './TeamMemberMap.css';
 
 const SortOption = {
@@ -33,12 +33,13 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
   const [sortBy, setSortBy] = useState(SortOption.BY_MEMBER);
 
   const epoch = new Date(0);
-  const pdls = members.reduce((map, member) => {
-    if (member.pdlId && !map[member.pdlId]) {
-      map[member.pdlId] = members.find((m) => m.id === member.pdlId);
-    }
+  const memberMap = members.reduce((map, member) => {
+    map[member.id] = member;
     return map;
   }, {});
+
+  const linkStyle={ textDecoration: 'none' };
+  const checkinPath = (member, checkin) => `/checkins/${member.id}/${checkin.id}`;
 
   const sortByName = (left, right) => {
     if (left && right) {
@@ -50,34 +51,32 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
   };
 
   const sortByPDLName = (a, b) =>
-          sortByName(pdls[a.reportDatePDLId], pdls[b.reportDatePDLId]);
+        sortByName(memberMap[a.reportDatePDLId], memberMap[b.reportDatePDLId]);
 
   // We're going to cache the checkins into the member data structures so that
   // we can properly sort by PDL when the PDL, in the past, is different than
   // the current PDL.
-  const { startOfQuarter, endOfQuarter } = getQuarterBeginEndWithGrace(reportDate);
+  const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
   members.map(member => {
-    const checkins = selectCheckinsForMember(
+    member.checkins = selectCheckinsForMember(
       state,
       member.id,
     ).filter(checkin => closed || !checkin.completed)
-     .filter(checkin => planned || isPastCheckin(checkin));
-    member.checkins = checkins;
+     .filter(checkin => planned || isPastCheckin(checkin))
+     .filter(checkin => (getCheckinDate(checkin) <= endOfQuarter));
 
     // If there are checkins, we're going to sort them with the latest
     // first.  Since the member's PDL could have changed since the last
     // checkin, we are going to use the PDL id of the checkin instead
     // of the current PDL.  They may be the same, but again they may not.
+    member.checkin = null;
     member.reportDatePDLId = member.pdlId;
-    if (checkins.length > 0) {
-      checkins.sort((a, b) => getCheckinDate(b) - getCheckinDate(a));
-
-      for(let checkin of checkins) {
-        const checkinDate = getCheckinDate(checkin);
-        if (checkinDate >= startOfQuarter && checkinDate <= endOfQuarter) {
-          member.reportDatePDLId = checkin.pdlId;
-          break;
-        }
+    if (member.checkins.length > 0) {
+      member.checkins.sort((a, b) => getCheckinDate(b) - getCheckinDate(a));
+      const checkin = member.checkins[0];
+      if (getCheckinDate(checkin) >= startOfQuarter) {
+        member.checkin = checkin;
+        member.reportDatePDLId = member.checkin.pdlId;
       }
     }
   });
@@ -105,18 +104,10 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
       </Box>
       {
         members.map(member => {
-          const pdl = pdls[member.reportDatePDLId];
-          const checkins = member.checkins;
-
+          const pdl = memberMap[member.reportDatePDLId];
           return (
-            <Accordion
-              key={member.id}
-              className="team-member-map-accordion"
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                className="team-member-map-accordion-summary"
-              >
+            <Card key={member.id} className="team-member-map-row">
+              <CardContent className="team-member-map-row-summary">
                 <Avatar
                   sx={{ width: 54, height: 54 }}
                   src={getAvatarURL(member.workEmail)}
@@ -148,15 +139,12 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
                   <Typography
                     variant="caption"
                     component={'time'}
-                    dateTime={getLastCheckinDate(checkins).toISOString()}
+                    dateTime={getCheckinDate(member.checkin).toISOString()}
                     sx={{ display: { xs: 'none', sm: 'none', md: 'grid' } }}
                     className="team-member-map-summmary-latest-activity"
                   >
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                      {getCheckinDateForPeriod(
-                        checkins,
-                        reportDate
-                      ).getFullYear() === epoch.getFullYear() ? (
+                      {member.checkin == null ? (
                         <Typography component="nobr" variant="h6">
                           No activity yet{' '}
                           <span role="img" aria-label="unscheduled">
@@ -164,20 +152,17 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
                           </span>
                         </Typography>
                       ) : (
-                        <>
+                        <Link style={linkStyle}
+                              to={checkinPath(member, member.checkin)}>
                           <Typography component="nobr" variant="h6">
-                            {getCheckinDateForPeriod(
-                              checkins,
-                              reportDate
-                            ).toLocaleDateString(navigator.language, {
+                            {getCheckinDate(member.checkin)
+                             .toLocaleDateString(navigator.language, {
                               year: 'numeric',
                               month: '2-digit',
                               day: 'numeric'
                             })}{' '}
-                            {getCheckinDateForPeriod(
-                              checkins,
-                              reportDate
-                            ).getTime() > new Date().getTime() ? (
+                            {getCheckinDate(member.checkin)
+                            .getTime() > new Date().getTime() ? (
                               <span role="img" aria-label="scheduled">
                                 📆
                               </span>
@@ -187,18 +172,27 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
                               </span>
                             )}
                           </Typography>
-                        </>
+                        </Link>
                       )}
+                      {member.checkin == null && member.checkins.length > 0 &&
+                        <span>Last Activity: {
+                          <Link style={linkStyle}
+                                to={checkinPath(member, member.checkins[0])}>
+                            {getCheckinDate(member.checkins[0]).toString()
+                               .split(' ').slice(0, 5).join(' ')}
+                          </Link>}
+                        </span>
+                      }
                     </Box>
                   </Typography>
                   <Chip
                     label={statusForPeriodByMemberScheduling(
-                      checkins,
+                      member.checkin,
                       reportDate
                     )}
                     color={
                       statusForPeriodByMemberScheduling(
-                        checkins,
+                        member.checkin,
                         reportDate
                       ) === 'Done'
                         ? 'secondary'
@@ -206,19 +200,8 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
                     }
                   />
                 </div>
-              </AccordionSummary>
-              <AccordionDetails id="accordion-checkin-date">
-                {checkins.length === 0
-                  ? 'No check-in activity found for this member and PDL.'
-                  : checkins.map(checkin => (
-                      <LinkSection
-                        key={checkin.id}
-                        checkin={checkin}
-                        member={member}
-                      />
-                    ))}
-              </AccordionDetails>
-            </Accordion>
+              </CardContent>
+            </Card>
           );
         })
       }

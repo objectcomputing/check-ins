@@ -10,7 +10,7 @@ import { getQuarterBeginEnd } from '../../../helpers';
  * @returns {Date} The date of the check-in.
  */
 export const getCheckinDate = checkin => {
-  if (!checkin || !checkin.checkInDate) return;
+  if (!checkin || !checkin.checkInDate) return new Date(0);
   const [year, month, day, hour, minute] = checkin.checkInDate;
   return new Date(year, month - 1, day, hour, minute, 0);
 };
@@ -29,34 +29,16 @@ export const getLastCheckinDate = checkins => {
 };
 
 /**
- * Get the dates the reporting period including a grace period.
- * @param {Date} reportDate - The date of the report.
- * @returns {{ startOfQuarter: Date, endOfQuarter: Date }} The start and end dates of the quarter pluas a grace period.
- */
-export const getQuarterBeginEndWithGrace = (reportDate) => {
-  const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
-  const endOfQuarterWithGrace = new Date(endOfQuarter);
-  endOfQuarterWithGrace.setDate(endOfQuarter.getDate() + 30);
-  return {
-    startOfQuarter: startOfQuarter,
-    endOfQuarter: endOfQuarterWithGrace
-  };
-};
-
-/**
  * Get the date of the last scheduled check-in for the reporting period.
- * Include the grace period for the end of the quarter.
  * @param {Checkin[]} checkins - Check-ins for a member.
  * @param {Date} reportDate - The date of the report.
  * @returns {Date} The date of the last scheduled check-in.
  */
 export const getCheckinDateForPeriod = (checkins, reportDate) => {
-  const { startOfQuarter, endOfQuarter } = getQuarterBeginEndWithGrace(reportDate);
+  const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
   const scheduled = checkins.filter(checkin => {
     const checkinDate = getCheckinDate(checkin);
-    return (
-      checkinDate >= startOfQuarter && checkinDate <= endOfQuarter // Include grace period
-    );
+    return (checkinDate >= startOfQuarter && checkinDate <= endOfQuarter);
   });
   return getLastCheckinDate(scheduled);
 };
@@ -64,27 +46,20 @@ export const getCheckinDateForPeriod = (checkins, reportDate) => {
 /**
  * Determine check-in status for a member during the reporting period.
  * Include the grace period for the end of the quarter.
- * @param {Checkin[]} checkins - Check-ins for a member.
+ * @param {Checkin} checkin - Latest Check-in for a member.
  * @param {Date} reportDate - The date of the report.
  * @returns {SchedulingStatus} The status of the check-ins.
  */
 export const statusForPeriodByMemberScheduling = (
-  checkins = [],
+  checkin,
   reportDate
 ) => {
-  if (checkins.length === 0) return 'Not Scheduled';
+  if (!checkin) return 'Not Scheduled';
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
-  const endOfQuarterWithGrace = new Date(endOfQuarter);
-  endOfQuarterWithGrace.setMonth(endOfQuarter.getMonth() + 1);
-  const scheduled = checkins.filter(checkin => {
-    const checkinDate = getCheckinDate(checkin);
-    return (
-      checkinDate >= startOfQuarter && checkinDate <= endOfQuarterWithGrace // Include grace period
-    );
-  });
-  if (scheduled.length === 0) return 'Not Scheduled';
-  const completed = scheduled.filter(checkin => checkin.completed);
-  if (completed.length === scheduled.length) return 'Completed';
+  const checkinDate = getCheckinDate(checkin);
+  const scheduled = checkinDate >= startOfQuarter && checkinDate <= endOfQuarter;
+  if (!scheduled) return 'Not Scheduled';
+  if (checkin.completed) return 'Completed';
   return 'Scheduled';
 };
 

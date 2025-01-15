@@ -1,12 +1,11 @@
-.team-member-map-accordion {
-  .team-member-map-accordion-summary {
+.team-member-map-row {
+  .team-member-map-row-summary {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 1.5rem;
     margin-top: 0.5rem;
-    cursor: pointer;
 
     .team-member-map-summmary-content {
       display: grid;
