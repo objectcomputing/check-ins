@@ -1,17 +1,13 @@
 import React, { useContext, useState } from 'react';
 import {
-  Accordion,
-  AccordionSummary,
   Avatar,
   Chip,
   Typography,
-  AccordionDetails,
   Box,
   Card,
   CardContent,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getAvatarURL } from '../../../api/api.js';
 import { AppContext } from '../../../context/AppContext.jsx';
 import { selectCheckinsForMember } from '../../../context/selectors.js';
@@ -54,8 +50,7 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
         sortByName(memberMap[a.reportDatePDLId], memberMap[b.reportDatePDLId]);
 
   // We're going to cache the checkins into the member data structures so that
-  // we can properly sort by PDL when the PDL, in the past, is different than
-  // the current PDL.
+  // we only have to do this once per member.
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
   members.map(member => {
     member.checkins = selectCheckinsForMember(
@@ -67,8 +62,9 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
 
     // If there are checkins, we're going to sort them with the latest
     // first.  Since the member's PDL could have changed since the last
-    // checkin, we are going to use the PDL id of the checkin instead
-    // of the current PDL.  They may be the same, but again they may not.
+    // checkin, we are going to use the PDL id of the checkin with the report
+    // date range instead of the current PDL.  They may be the same, but again
+    // they may not.
     member.checkin = null;
     member.reportDatePDLId = member.pdlId;
     if (member.checkins.length > 0) {

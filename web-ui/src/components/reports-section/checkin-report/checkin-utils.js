@@ -45,7 +45,6 @@ export const getCheckinDateForPeriod = (checkins, reportDate) => {
 
 /**
  * Determine check-in status for a member during the reporting period.
- * Include the grace period for the end of the quarter.
  * @param {Checkin} checkin - Latest Check-in for a member.
  * @param {Date} reportDate - The date of the report.
  * @returns {SchedulingStatus} The status of the check-ins.

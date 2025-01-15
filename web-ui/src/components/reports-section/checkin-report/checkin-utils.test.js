@@ -173,7 +173,6 @@ describe('statusForPeriodByMemberScheduling', () => {
   });
 
   test('returns "Scheduled" when the check-in is within the reporting period are not completed', () => {
-console.log(mockReportDate);
     const checkin =
       { checkInDate: [2024, 4, 10, 10, 0], completed: false }; // April 1, 2024 (within reporting period, not completed)
     const result = statusForPeriodByMemberScheduling(checkin, mockReportDate);
