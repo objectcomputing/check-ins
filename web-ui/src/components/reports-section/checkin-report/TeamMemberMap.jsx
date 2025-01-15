@@ -84,17 +84,19 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
 
   members.sort(sortBy == SortOption.BY_MEMBER ? sortByName : sortByPDLName);
 
-  // TODO: Figure out how to do the column headers correctly.
   return (
     <Box className="team-member-map">
       <Box display="flex">
-        <Box flex={2} onClick={() => { setSortBy(SortOption.BY_MEMBER); }}>
+        <Box flex={2} onClick={() => { setSortBy(SortOption.BY_MEMBER); }}
+             style={{ cursor: 'pointer' }}>
           <Typography variant="h5">Member</Typography>
         </Box>
-        <Box flex={1} onClick={() => { setSortBy(SortOption.BY_PDL); }}>
+        <Box flex={1} onClick={() => { setSortBy(SortOption.BY_PDL); }}
+             style={{ cursor: 'pointer' }}>
           <Typography variant="h5">PDL</Typography>
         </Box>
-        <Box flex={1}>
+        <Box flex={1}
+             sx={{ display: { xs: 'none', sm: 'none', md: 'grid' } }}>
           <Typography variant="h5">Check-In Date</Typography>
         </Box>
         <Box flex={1}>
@@ -147,7 +149,7 @@ const TeamMemberMap = ({ members, closed, planned, reportDate }) => {
                     variant="caption"
                     component={'time'}
                     dateTime={getLastCheckinDate(checkins).toISOString()}
-                    sx={{ display: { xs: 'none', sm: 'grid' } }}
+                    sx={{ display: { xs: 'none', sm: 'none', md: 'grid' } }}
                     className="team-member-map-summmary-latest-activity"
                   >
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
