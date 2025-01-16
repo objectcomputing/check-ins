@@ -19,17 +19,17 @@
     <mj-section background-color="#ffffff">
       <mj-column>
         <mj-text>
-          <h2>You have received a feedback request.</h2>
+          <h2>We would love to hear from you!</h2>
         </mj-text>
-          <mj-text font-size="16px">Hello, %s!</mj-text>
-        <mj-text font-size="16px"><strong>%s</strong> is requesting feedback %sfrom you.</mj-text>
-        <mj-text font-size="16px">This request is due %s.</mj-text>
-        <mj-text font-size="16px">Please go to <a href="%s">your unique link</a> to complete this request.</mj-text>
+        <mj-text font-size="16px">Hello, %s!</mj-text>
+        <mj-text font-size="16px"><strong>%s</strong>, from Object Computing, would like to hear your thoughts %s.</mj-text>
+        <mj-text font-size="16px">Please submit your response %s.</mj-text>
+        <mj-text font-size="16px">You can go to <a href="%s">your unique link</a> to complete this request.</mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#feb672" padding="10px">
       <mj-column vertical-align="top" width="100%%">
-        <mj-text align="center" color="#FFF" font-size="16px">Thank you for everything you do!</mj-text>
+        <mj-text align="center" color="#FFF" font-size="16px">We appreciate your time!</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

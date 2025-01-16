@@ -56,6 +56,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private record ReviewPeriodInfo(String subject, LocalDate closeDate) {}
     @Value("classpath:mjml/feedback_request.mjml")
     private Readable feedbackRequestTemplate;
+    @Value("classpath:mjml/external_feedback_request.mjml")
+    private Readable externalFeedbackRequestTemplate;
     @Value("classpath:mjml/update_request.mjml")
     private Readable updateRequestTemplate;
     @Value("classpath:mjml/reviewer_email.mjml")
@@ -152,7 +154,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         String senderName = MemberProfileUtils.getFullName(creator);
         UUID recipientOrExternalRecipientId;
-        String reviewerFirstName, reviewerEmail, urlFeedbackSubmit;
+        String reviewerFirstName, reviewerEmail, urlFeedbackSubmit, template;
 
         if (storedRequest.getExternalRecipientId() != null) {
             recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
@@ -160,6 +162,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             reviewerFirstName = reviewerExternalRecipient.getFirstName();
             reviewerEmail = reviewerExternalRecipient.getEmail();
             urlFeedbackSubmit = "/externalFeedback/submit?request=";
+            template = externalFeedbackRequestTemplate;
         } else {
             recipientOrExternalRecipientId = storedRequest.getRecipientId();
             reviewerMemberProfile = memberProfileServices.getById(recipientOrExternalRecipientId);
@@ -167,15 +170,16 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             reviewerFirstName = reviewerMemberProfile.getFirstName();
             reviewerEmail = reviewerMemberProfile.getWorkEmail();
             urlFeedbackSubmit = "/feedback/submit?request=";
+            template = feedbackRequestTemplate;
         }
 
         String newContent = String.format(
-                templateToString(feedbackRequestTemplate),
+                templateToString(template),
                 reviewerFirstName, senderName,
                 recipientOrExternalRecipientId.equals(storedRequest.getRequesteeId()) ? "" : String.format("on <strong>%s</strong> ", MemberProfileUtils.getFullName(requestee)),
                 storedRequest.getDueDate() == null ?
-                                    "This request does not have a due date." :
-                                    String.format("This request is due on %s %d, %d.",
+                                    "soon" :
+                                    String.format("before %s %d, %d",
                                                   storedRequest.getDueDate().getMonth(),
                                                   storedRequest.getDueDate().getDayOfMonth(),
                                                   storedRequest.getDueDate().getYear()),
