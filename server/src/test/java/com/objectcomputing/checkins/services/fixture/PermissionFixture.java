@@ -66,6 +66,7 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_ASSIGN_ROLE_PERMISSIONS,
         Permission.CAN_VIEW_SKILL_CATEGORIES,
         Permission.CAN_EDIT_SKILL_CATEGORIES,
+        Permission.CAN_EDIT_SKILLS,
         Permission.CAN_VIEW_PRIVATE_NOTE,
         Permission.CAN_CREATE_PRIVATE_NOTE,
         Permission.CAN_UPDATE_PRIVATE_NOTE,
@@ -98,7 +99,8 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_CREATE_KUDOS,
         Permission.CAN_IMPERSONATE_MEMBERS,
         Permission.CAN_SEND_EMAIL,
-        Permission.CAN_CREATE_MERIT_REPORT
+        Permission.CAN_CREATE_MERIT_REPORT,
+        Permission.CAN_UPLOAD_HOURS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {

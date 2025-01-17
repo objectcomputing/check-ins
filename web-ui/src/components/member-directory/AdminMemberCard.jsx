@@ -78,6 +78,10 @@ const AdminMemberCard = ({ member, index }) => {
 
   const options = () => {
     let entries = [];
+    // This is "Create" permission because there is no "Edit" permission.  This
+    // is due to the fact that users can edit their own profiles.  But, only
+    // certain users can create new profiles.  So, we associate the edit feature
+    // with profile creation.
     if (selectHasCreateMembersPermission(state)) {
       entries.push('Edit');
     }
@@ -221,11 +225,13 @@ const AdminMemberCard = ({ member, index }) => {
           selectHasDeleteMembersPermission(state) ||
           selectHasImpersonateMembersPermission(state)) && (
           <CardActions>
-            <SplitButton
-              className="split-button"
-              options={options()}
-              onClick={handleAction}
-            />
+            {options().length > 0 &&
+              <SplitButton
+                className="split-button"
+                options={options()}
+                onClick={handleAction}
+              />
+            }
             <Dialog
               open={openDelete}
               onClose={handleCloseDeleteConfirmation}

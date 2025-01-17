@@ -134,6 +134,10 @@ export const selectHasMeritReportPermission = hasPermission(
   'CAN_CREATE_MERIT_REPORT'
 );
 
+export const selectHasUploadHoursPermission = hasPermission(
+  'CAN_UPLOAD_HOURS'
+);
+
 export const selectHasEarnedCertificationsPermission = hasPermission(
   'CAN_MANAGE_EARNED_CERTIFICATIONS'
 );
@@ -188,6 +192,10 @@ export const selectHasSendEmailPermission = hasPermission(
 
 export const selectCanViewCheckinsPermission = hasPermission(
   'CAN_VIEW_CHECKINS'
+);
+
+export const selectCanEditSkills = hasPermission(
+  'CAN_EDIT_SKILLS'
 );
 
 export const selectIsPDL = createSelector(

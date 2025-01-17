@@ -121,10 +121,6 @@ class KudosServicesImpl implements KudosServices {
 
     @Override
     public Kudos approve(Kudos kudos) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
-
         UUID kudosId = kudos.getId();
         Kudos existingKudos = kudosRepository.findById(kudosId).orElseThrow(() ->
                 new BadArgException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
@@ -173,10 +169,6 @@ class KudosServicesImpl implements KudosServices {
 
     @Override
     public void delete(UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
-
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(id)));
 

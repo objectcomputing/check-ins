@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
 @Singleton
 @CacheConfig("member-cache")
@@ -110,27 +111,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
             emailAssignment(createdMemberProfile, true); // PDL
             emailAssignment(createdMemberProfile, false); // Supervisor
             return createdMemberProfile;
-        }
-
-        Optional<MemberProfile> existingProfileOpt = memberProfileRepository.findById(memberProfile.getId());
-        MemberProfile updatedMemberProfile = memberProfileRepository.update(memberProfile);
-        if (existingProfileOpt.isEmpty()) {
-            LOG.error("MemberProfile with id {} not found", memberProfile.getId());
         } else {
-            MemberProfile existingProfile = existingProfileOpt.get();
-
-            boolean pdlChanged = !Objects.equals(existingProfile.getPdlId(), memberProfile.getPdlId());
-            boolean supervisorChanged = !Objects.equals(existingProfile.getSupervisorid(), memberProfile.getSupervisorid());
-
-            if (pdlChanged) {
-                emailAssignment(updatedMemberProfile, true); // PDL
-            }
-            if (supervisorChanged) {
-                emailAssignment(updatedMemberProfile, false); // Supervisor
-            }
+            throw new BadArgException("New member created with an id");
         }
-
-        return updatedMemberProfile;
     }
 
     public void emailAssignment(MemberProfile member, boolean isPDL) {
@@ -165,9 +148,6 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Override
     @CacheInvalidate(cacheNames = {"member-cache"})
     public boolean deleteProfile(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("Requires admin privileges");
-        }
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
         Set<Role> userRoles = (memberProfile != null) ? roleServices.findUserRoles(memberProfile.getId()) : Collections.emptySet();
 
@@ -237,6 +217,47 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Override
     @CacheInvalidate(cacheNames = {"member-cache"})
     public MemberProfile updateProfile(MemberProfile memberProfile) {
+        if (memberProfile.getId() == null) {
+            throw new BadArgException("Null profile id in update");
+        }
+
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
+        if (!isAdmin && (currentUser == null || !currentUser.getId().equals(memberProfile.getId()))) {
+             throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
+
+        MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
+
+        if (emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
+            throw new AlreadyExistsException(String.format("Email %s already exists in database",
+                    memberProfile.getWorkEmail()));
+        }
+
+        Optional<MemberProfile> existingProfileOpt = memberProfileRepository.findById(memberProfile.getId());
+        MemberProfile updatedMemberProfile = memberProfileRepository.update(memberProfile);
+        if (existingProfileOpt.isEmpty()) {
+            LOG.error("MemberProfile with id {} not found", memberProfile.getId());
+        } else {
+            MemberProfile existingProfile = existingProfileOpt.get();
+
+            boolean pdlChanged = !Objects.equals(existingProfile.getPdlId(), memberProfile.getPdlId());
+            boolean supervisorChanged = !Objects.equals(existingProfile.getSupervisorid(), memberProfile.getSupervisorid());
+
+            if (pdlChanged) {
+                emailAssignment(updatedMemberProfile, true); // PDL
+            }
+            if (supervisorChanged) {
+                emailAssignment(updatedMemberProfile, false); // Supervisor
+            }
+        }
+
+        return updatedMemberProfile;
+    }
+
+    @Override
+    @CacheInvalidate(cacheNames = {"member-cache"})
+    public MemberProfile updateCurrentUserProfile(MemberProfile memberProfile) {
         return memberProfileRepository.update(memberProfile);
     }
 }
