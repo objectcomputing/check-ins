@@ -133,8 +133,9 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     // The current user can view the pulse response if they are the team member who submitted the pulse response
     // or if they are the supervisor of the team member who submitted the pulse response
     private boolean canViewDueToReportingHierarchy(PulseResponse pulse, UUID currentUserId) {
-        return pulse.getTeamMemberId().equals(currentUserId) ||
-                isSubordinateTo(pulse.getTeamMemberId(), currentUserId);
+        UUID id = pulse.getTeamMemberId();
+        return id != null &&
+               (id.equals(currentUserId) || isSubordinateTo(id, currentUserId));
     }
 
     private boolean isSubordinateTo(UUID reportMember, UUID currentUserId) {
