@@ -12,8 +12,12 @@ import {
   selectIsPDL,
   selectIsAdmin,
   selectCheckin,
-  selectProfile
+  selectProfile,
+  selectCanViewPrivateNotesPermission,
+  selectCanCreatePrivateNotesPermission,
+  selectCanUpdatePrivateNotesPermission,
 } from '../../context/selectors';
+import { UPDATE_TOAST } from '../../context/actions';
 import { debounce } from 'lodash/function';
 import { Editor } from '@tinymce/tinymce-react';
 import LockIcon from '@mui/icons-material/Lock';
@@ -49,19 +53,36 @@ const PrivateNote = () => {
 
   useEffect(() => {
     async function getPrivateNotes() {
-      setIsLoading(true);
-      try {
-        let res = await getPrivateNoteByCheckinId(checkinId, csrf);
-        if (res.error) throw new Error(res.error);
-        const currentNote =
-          res.payload && res.payload.data && res.payload.data.length > 0
-            ? res.payload.data[0]
-            : null;
-        if (currentNote) {
-          setNote(currentNote);
-        } else if (currentUserId === pdlId) {
-          if (!noteRef.current.some(id => id === checkinId)) {
-            noteRef.current.push(checkinId);
+      if (selectCanViewPrivateNotesPermission(state)) {
+        setIsLoading(true);
+        try {
+          let res = await getPrivateNoteByCheckinId(checkinId, csrf);
+          if (res.error) throw new Error(res.error);
+          const currentNote =
+            res.payload && res.payload.data && res.payload.data.length > 0
+              ? res.payload.data[0]
+              : null;
+          if (currentNote) {
+            setNote(currentNote);
+          } else if (currentUserId === pdlId) {
+            if (!noteRef.current.some(id => id === checkinId) &&
+                selectCanCreatePrivateNotesPermission(state)) {
+              noteRef.current.push(checkinId);
+              res = await createPrivateNote(
+                {
+                  checkinid: checkinId,
+                  createdbyid: currentUserId,
+                  description: ''
+                },
+                csrf
+              );
+              noteRef.current = noteRef.current.filter(id => id !== checkinId);
+              if (res.error) throw new Error(res.error);
+              if (res && res.payload && res.payload.data) {
+                setNote(res.payload.data);
+              }
+            }
+          } else if (selectCanCreatePrivateNotesPermission(state)) {
             res = await createPrivateNote(
               {
                 checkinid: checkinId,
@@ -70,30 +91,16 @@ const PrivateNote = () => {
               },
               csrf
             );
-            noteRef.current = noteRef.current.filter(id => id !== checkinId);
             if (res.error) throw new Error(res.error);
             if (res && res.payload && res.payload.data) {
               setNote(res.payload.data);
             }
           }
-        } else {
-          res = await createPrivateNote(
-            {
-              checkinid: checkinId,
-              createdbyid: currentUserId,
-              description: ''
-            },
-            csrf
-          );
-          if (res.error) throw new Error(res.error);
-          if (res && res.payload && res.payload.data) {
-            setNote(res.payload.data);
-          }
+        } catch (e) {
+          console.error("getPrivateNotes: " + e);
         }
-      } catch (e) {
-        console.error("getPrivateNotes: " + e);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }
     if (csrf) {
       getPrivateNotes();
@@ -101,6 +108,28 @@ const PrivateNote = () => {
   }, [csrf, checkinId, currentUserId, pdlId]);
 
   const handleNoteChange = (content, delta, source, editor) => {
+    if (note == null) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: selectCanCreatePrivateNotesPermission(state)
+            ? 'No private note was created'
+            : 'No permission to create private notes'
+        }
+      });
+      return;
+    }
+    if (!selectCanUpdatePrivateNotesPermission(state)) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: 'No permission to update private notes'
+        }
+      });
+      return;
+    }
     if (Object.keys(note).length === 0 || !csrf || currentCheckin?.completed) {
       return;
     }
