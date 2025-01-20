@@ -66,11 +66,8 @@ const Users = () => {
     setIncludeTerminated(!includeTerminated);
   };
 
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
-
   const normalizedMembers =
-    isAdmin && includeTerminated
+    includeTerminated && selectHasCreateMembersPermission(state)
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
 

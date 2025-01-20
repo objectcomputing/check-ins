@@ -18,6 +18,7 @@ import { AppContext } from '../context/AppContext';
 import {
   selectRoles,
   selectHasPermissionAssignmentPermission,
+  selectHasViewPermissionPermission,
   noPermission,
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
@@ -91,10 +92,12 @@ const EditPermissionsPage = () => {
 
   useEffect(() => {
     const getRolePermissions = async () => {
-      const res = await getRolePermissionsList(csrf);
-      const data = res.payload?.data && !res.error ? res.payload.data : null;
-      if (data) {
-        setRolePermissionsList(data);
+      if (selectHasViewPermissionPermission(state)) {
+        const res = await getRolePermissionsList(csrf);
+        const data = res.payload?.data && !res.error ? res.payload.data : null;
+        if (data) {
+          setRolePermissionsList(data);
+        }
       }
     };
     const getPermissions = async () => {

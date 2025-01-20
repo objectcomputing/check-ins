@@ -40,7 +40,6 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
         List<EmployeeHours> employeeHoursList = new ArrayList<>();
         Set<EmployeeHours> employeeHours = new HashSet<>();
         EmployeeHoursResponseDTO responseDTO = new EmployeeHoursResponseDTO();
-        validate(!isAdmin, NOT_AUTHORIZED_MSG);
         responseDTO.setRecordCountDeleted(employeehourRepo.count());
         employeehourRepo.deleteAll();
         try {
@@ -57,11 +56,6 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
         return  responseDTO;
     }
 
-
-    @Override
-    public EmployeeHours read(UUID id) {
-        return employeehourRepo.findById(id).orElse(null);
-    }
 
     @Override
     public Set<EmployeeHours> findByFields(String employeeId) {

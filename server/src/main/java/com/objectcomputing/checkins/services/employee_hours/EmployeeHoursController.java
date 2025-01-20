@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.MediaType;
@@ -40,24 +42,12 @@ public class EmployeeHoursController {
 
 
     /**
-     * @param id
-     * @return
-     */
-    @Get("/{id}")
-    public EmployeeHours readEmployeeHours(@NotNull UUID id) {
-        EmployeeHours result = employeeHoursServices.read(id);
-        if (result == null) {
-            throw new NotFoundException("No employee hours for employee id");
-        }
-        return result;
-    }
-
-    /**
      * Parse the CSV file and store it to employee hours table
      * @param file
      * @{@link HttpResponse<EmployeeHoursResponseDTO>}
      */
     @Post(uri="/upload" , consumes = MediaType.MULTIPART_FORM_DATA)
+    @RequiredPermission(Permission.CAN_UPLOAD_HOURS)
     public EmployeeHoursResponseDTO upload(CompletedFileUpload file){
         return employeeHoursServices.save(file);
     }

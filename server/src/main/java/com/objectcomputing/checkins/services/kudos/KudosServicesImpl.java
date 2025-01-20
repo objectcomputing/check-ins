@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.kudos;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
@@ -121,10 +122,6 @@ class KudosServicesImpl implements KudosServices {
 
     @Override
     public Kudos approve(Kudos kudos) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
-
         UUID kudosId = kudos.getId();
         Kudos existingKudos = kudosRepository.findById(kudosId).orElseThrow(() ->
                 new BadArgException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
@@ -151,7 +148,7 @@ class KudosServicesImpl implements KudosServices {
 
         if (kudos.getDateApproved() == null) {
             // If not yet approved, only admins and the sender can access the kudos
-            if (!currentUserServices.isAdmin() && !isSender) {
+            if (!hasAdministerKudosPermission() && !isSender) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         } else {
@@ -162,7 +159,7 @@ class KudosServicesImpl implements KudosServices {
                     .stream()
                     .anyMatch(recipient -> recipient.getMemberId().equals(currentUserId));
 
-            if (!currentUserServices.isAdmin() && !isSender && !isRecipient) {
+            if (!hasAdministerKudosPermission() && !isSender && !isRecipient) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
         }
@@ -173,10 +170,6 @@ class KudosServicesImpl implements KudosServices {
 
     @Override
     public void delete(UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
-
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(id)));
 
@@ -196,7 +189,7 @@ class KudosServicesImpl implements KudosServices {
         } else if (senderId != null) {
             return findAllFromMember(senderId);
         } else {
-            if (!currentUserServices.isAdmin()) {
+            if (!hasAdministerKudosPermission()) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
 
@@ -215,7 +208,7 @@ class KudosServicesImpl implements KudosServices {
     }
 
     private List<KudosResponseDTO> findByPending(boolean isPending) {
-        if (!currentUserServices.isAdmin()) {
+        if (!hasAdministerKudosPermission()) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -235,10 +228,10 @@ class KudosServicesImpl implements KudosServices {
 
 
     private List<KudosResponseDTO> findAllToMember(UUID memberId) {
-        boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-        if (!currentUserId.equals(memberId) && !isAdmin) {
+        if (!currentUserId.equals(memberId) &&
+            !hasAdministerKudosPermission()) {
             throw new PermissionException("You are not authorized to retrieve the kudos another user has received");
         }
 
@@ -261,10 +254,10 @@ class KudosServicesImpl implements KudosServices {
 
     private List<KudosResponseDTO> findAllFromMember(UUID senderId) {
 
-        boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-        if (!currentUserId.equals(senderId) && !isAdmin) {
+        if (!currentUserId.equals(senderId) &&
+            !hasAdministerKudosPermission()) {
             throw new PermissionException("You are not authorized to retrieve the kudos another user has sent");
         }
 
@@ -385,5 +378,9 @@ class KudosServicesImpl implements KudosServices {
         if (httpResponse.status() != HttpStatus.OK) {
             LOG.error("Unable to POST to Slack: " + httpResponse.reason());
         }
+    }
+
+    private boolean hasAdministerKudosPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_KUDOS);
     }
 }

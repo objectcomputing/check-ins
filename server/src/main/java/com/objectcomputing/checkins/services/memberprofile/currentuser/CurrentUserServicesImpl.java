@@ -2,12 +2,14 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 import jakarta.inject.Singleton;
@@ -15,6 +17,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
@@ -23,14 +26,18 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     private final SecurityService securityService;
     private final RoleServices roleServices;
     private final MemberRoleServices memberRoleServices;
+    private final RolePermissionServices rolePermissionServices;
 
     public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
                                    RoleServices roleServices,
-                                   SecurityService securityService, MemberRoleServices memberRoleServices) {
+                                   SecurityService securityService,
+                                   MemberRoleServices memberRoleServices,
+                                   RolePermissionServices rolePermissionServices) {
         this.memberProfileRepo = memberProfileRepository;
         this.roleServices = roleServices;
         this.securityService = securityService;
         this.memberRoleServices = memberRoleServices;
+        this.rolePermissionServices = rolePermissionServices;
     }
 
     @Override
@@ -46,6 +53,14 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     @Override
     public boolean hasRole(RoleType role) {
         return securityService.hasRole(role.toString());
+    }
+
+    @Override
+    public boolean hasPermission(Permission permission) {
+        List<Permission> userPermissions =
+            rolePermissionServices.findUserPermissions(getCurrentUser().getId());
+        return userPermissions.stream().map(Permission::name)
+                              .anyMatch(str -> str.equals(permission.name()));
     }
 
     @Override

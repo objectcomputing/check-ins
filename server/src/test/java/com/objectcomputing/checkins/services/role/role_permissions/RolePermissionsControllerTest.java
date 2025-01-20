@@ -112,4 +112,19 @@ class RolePermissionsControllerTest extends TestContainersSuite implements Membe
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(0, getRolePermissionRepository().findByIds(memberRole.getId().toString(), birthdayPermission).size());
     }
+
+    @Test
+    void testRemoveAssignRolePermissionFromAdminRole() {
+        MemberProfile sender = createADefaultMemberProfile();
+        assignAdminRole(sender);
+
+        Role adminRole = getRoleRepository().findByRole(RoleType.ADMIN.name()).orElseThrow();
+        Permission permission = Permission.CAN_ASSIGN_ROLE_PERMISSIONS;
+
+        final HttpRequest<?> request = HttpRequest.DELETE("/", new RolePermissionDTO(adminRole.getId(), permission))
+                .basicAuth(sender.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+    }
 }
