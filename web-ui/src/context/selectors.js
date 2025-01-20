@@ -162,6 +162,10 @@ export const selectHasAdministerKudosPermission = hasPermission(
   'CAN_ADMINISTER_KUDOS'
 );
 
+export const selectHasCreateKudosPermission = hasPermission(
+  'CAN_CREATE_KUDOS'
+);
+
 export const selectHasDeleteMembersPermission = hasPermission(
   'CAN_DELETE_ORGANIZATION_MEMBERS'
 );
@@ -188,6 +192,10 @@ export const selectHasSendEmailPermission = hasPermission(
 
 export const selectCanViewCheckinsPermission = hasPermission(
   'CAN_VIEW_CHECKINS'
+);
+
+export const selectCanUpdateCheckinsPermission = hasPermission(
+  'CAN_UPDATE_CHECKINS'
 );
 
 export const selectIsPDL = createSelector(

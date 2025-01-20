@@ -14,6 +14,7 @@ import {
   selectProfile,
   selectCheckinsForMember,
   selectCanViewCheckinsPermission,
+  selectCanUpdateCheckinsPermission,
 } from '../context/selectors';
 import { getCheckins, createNewCheckin } from '../context/thunks';
 import { UPDATE_CHECKIN, UPDATE_TOAST } from '../context/actions';
@@ -99,7 +100,7 @@ const CheckinsPage = () => {
   const handleClose = () => setOpen(false);
 
   const completeCheckin = async () => {
-    if (csrf) {
+    if (csrf && selectCanUpdateCheckinsPermission(state)) {
       const res = await updateCheckin(
         { ...currentCheckin, pdlId: selectedProfile.pdlId, completed: true },
         csrf
