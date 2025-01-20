@@ -19,6 +19,7 @@ public enum Permission {
   CAN_IMPERSONATE_MEMBERS("Impersonate organization members", "Security"),
   CAN_VIEW_ROLE_PERMISSIONS("View role permissions", "Security"),
   CAN_ASSIGN_ROLE_PERMISSIONS("Assign role permissions", "Security"),
+  CAN_EDIT_MEMBER_ROLES("Edit member roles", "Security"),
   CAN_VIEW_PERMISSIONS("View all permissions", "Security"),
   CAN_VIEW_SKILLS_REPORT("View skills report", "Reporting"),
   CAN_VIEW_RETENTION_REPORT("View retention report", "Reporting"),

@@ -160,7 +160,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
             throw new BadArgException(String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
         } else if (!userRoles.isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile)));
+            throw new BadArgException(String.format("User %s cannot be deleted since user has one or more roles", MemberProfileUtils.getFullName(memberProfile)));
         }
 
         // Update PDL ID for all associated members before termination

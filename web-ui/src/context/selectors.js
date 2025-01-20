@@ -52,6 +52,10 @@ export const selectHasPermissionAssignmentPermission = hasPermission(
   'CAN_ASSIGN_ROLE_PERMISSIONS'
 );
 
+export const selectHasViewPermissionPermission = hasPermission(
+  'CAN_VIEW_ROLE_PERMISSIONS'
+);
+
 export const selectHasReportPermission = hasPermission('REPORT');
 
 export const selectCanViewFeedbackAnswerPermission = hasPermission(
@@ -154,8 +158,8 @@ export const selectHasVolunteeringRelationshipsPermission = hasPermission(
   'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS'
 );
 
-export const selectHasRoleAssignmentPermission = hasPermission(
-  'CAN_ASSIGN_ROLE_PERMISSIONS'
+export const selectCanEditMemberRolesPermission = hasPermission(
+  'CAN_EDIT_MEMBER_ROLES'
 );
 
 export const selectHasCreateFeedbackPermission = hasPermission(

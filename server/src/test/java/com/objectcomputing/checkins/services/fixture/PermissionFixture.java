@@ -47,6 +47,7 @@ public interface PermissionFixture extends RolePermissionFixture {
 
     // Add ADMIN Permissions here
     List<Permission> adminPermissions = List.of(
+        Permission.CAN_EDIT_MEMBER_ROLES,
         Permission.CAN_VIEW_FEEDBACK_REQUEST,
         Permission.CAN_CREATE_FEEDBACK_REQUEST,
         Permission.CAN_DELETE_FEEDBACK_REQUEST,

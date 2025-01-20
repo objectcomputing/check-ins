@@ -19,7 +19,7 @@ import {
   selectHasVolunteeringEventsPermission,
   selectHasVolunteeringRelationshipsPermission,
   selectHasAdministerKudosPermission,
-  selectHasRoleAssignmentPermission,
+  selectCanEditMemberRolesPermission,
   selectHasSendEmailPermission,
   selectHasViewSettingsPermission,
   selectCanEditSkills,
@@ -27,6 +27,7 @@ import {
   selectHasDeleteMembersPermission,
   selectHasImpersonateMembersPermission,
   selectHasUploadHoursPermission,
+  selectHasPermissionAssignmentPermission,
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 
@@ -139,8 +140,8 @@ function Menu({ children }) {
 
   const adminLinks = [
     ['/admin/manage-kudos', 'Manage Kudos', () => selectHasAdministerKudosPermission(state)],
-    ['/admin/permissions', 'Permissions', () => isAdmin],
-    ['/admin/roles', 'Roles', () => selectHasRoleAssignmentPermission(state)],
+    ['/admin/permissions', 'Permissions', () => selectHasPermissionAssignmentPermission(state)],
+    ['/admin/roles', 'Roles', () => selectCanEditMemberRolesPermission(state)],
     ['/admin/users', 'Users', () => selectHasCreateMembersPermission(state) ||
                                     selectHasDeleteMembersPermission(state) ||
                                     selectHasImpersonateMembersPermission(state)
