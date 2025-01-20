@@ -154,7 +154,7 @@ class MemberProfileControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals(
-            String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(pdl)),
+            String.format("User %s cannot be deleted since user has one or more roles", MemberProfileUtils.getFullName(pdl)),
             responseException.getMessage()
         );
     }
