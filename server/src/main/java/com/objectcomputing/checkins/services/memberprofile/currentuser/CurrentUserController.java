@@ -64,7 +64,7 @@ public class CurrentUserController {
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
 
         user.setLastSeen(LocalDate.now());
-        memberProfileServices.updateCurrentUserProfile(user);
+        memberProfileServices.unsecureUpdateProfile(user);
         List<Permission> permissions = rolePermissionServices.findUserPermissions(user.getId());
 
         Set<Role> roles = roleServices.findUserRoles(user.getId());

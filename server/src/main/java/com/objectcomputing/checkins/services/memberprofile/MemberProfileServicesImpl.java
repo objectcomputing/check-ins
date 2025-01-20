@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
@@ -222,8 +223,8 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         }
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-        if (!isAdmin && (currentUser == null || !currentUser.getId().equals(memberProfile.getId()))) {
+        if (!currentUserServices.hasPermission(Permission.CAN_EDIT_ALL_ORGANIZATION_MEMBERS) &&
+            (currentUser == null || !currentUser.getId().equals(memberProfile.getId()))) {
              throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -257,7 +258,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     @CacheInvalidate(cacheNames = {"member-cache"})
-    public MemberProfile updateCurrentUserProfile(MemberProfile memberProfile) {
+    public MemberProfile unsecureUpdateProfile(MemberProfile memberProfile) {
         return memberProfileRepository.update(memberProfile);
     }
 }

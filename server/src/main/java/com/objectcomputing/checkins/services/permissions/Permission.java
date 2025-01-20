@@ -14,6 +14,7 @@ public enum Permission {
   CAN_ADMINISTER_KUDOS("Administer kudos", "Feedback"),
   CAN_VIEW_FEEDBACK_ANSWER("View feedback answers", "Feedback"),
   CAN_SEND_EMAIL("Send email", "Feedback"),
+  CAN_EDIT_ALL_ORGANIZATION_MEMBERS("Edit all member profiles", "User Management"),
   CAN_DELETE_ORGANIZATION_MEMBERS("Delete organization members", "User Management"),
   CAN_CREATE_ORGANIZATION_MEMBERS("Create organization members", "User Management"),
   CAN_IMPERSONATE_MEMBERS("Impersonate organization members", "Security"),

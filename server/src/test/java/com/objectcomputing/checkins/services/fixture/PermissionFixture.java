@@ -52,6 +52,7 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_CREATE_FEEDBACK_REQUEST,
         Permission.CAN_DELETE_FEEDBACK_REQUEST,
         Permission.CAN_VIEW_FEEDBACK_ANSWER,
+        Permission.CAN_EDIT_ALL_ORGANIZATION_MEMBERS,
         Permission.CAN_DELETE_ORGANIZATION_MEMBERS,
         Permission.CAN_CREATE_ORGANIZATION_MEMBERS,
         Permission.CAN_VIEW_ROLE_PERMISSIONS,

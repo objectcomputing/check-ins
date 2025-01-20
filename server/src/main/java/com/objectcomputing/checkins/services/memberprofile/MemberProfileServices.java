@@ -28,5 +28,5 @@ public interface MemberProfileServices {
 
     MemberProfile updateProfile(MemberProfile memberProfile);
 
-    MemberProfile updateCurrentUserProfile(MemberProfile memberProfile);
+    MemberProfile unsecureUpdateProfile(MemberProfile memberProfile);
 }
