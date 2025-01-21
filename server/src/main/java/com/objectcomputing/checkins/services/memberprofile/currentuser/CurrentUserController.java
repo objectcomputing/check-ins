@@ -19,7 +19,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -63,8 +62,7 @@ public class CurrentUserController {
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
 
-        user.setLastSeen(LocalDate.now());
-        memberProfileServices.unsecureUpdateProfile(user);
+        memberProfileServices.updateLastSeen(user.getId());
         List<Permission> permissions = rolePermissionServices.findUserPermissions(user.getId());
 
         Set<Role> roles = roleServices.findUserRoles(user.getId());

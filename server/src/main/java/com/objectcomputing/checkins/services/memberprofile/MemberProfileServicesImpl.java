@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.time.LocalDate;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
@@ -258,7 +259,12 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     @CacheInvalidate(cacheNames = {"member-cache"})
-    public MemberProfile unsecureUpdateProfile(MemberProfile memberProfile) {
-        return memberProfileRepository.update(memberProfile);
+    public void updateLastSeen(UUID id) {
+        Optional<MemberProfile> profile = memberProfileRepository.findById(id);
+        if (profile.isPresent()) {
+          MemberProfile memberProfile = profile.get();
+          memberProfile.setLastSeen(LocalDate.now());
+          memberProfileRepository.update(memberProfile);
+        }
     }
 }
