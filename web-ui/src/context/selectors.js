@@ -198,6 +198,18 @@ export const selectCanUpdateCheckinsPermission = hasPermission(
   'CAN_UPDATE_CHECKINS'
 );
 
+export const selectCanViewPrivateNotesPermission = hasPermission(
+  'CAN_VIEW_PRIVATE_NOTE'
+);
+
+export const selectCanCreatePrivateNotesPermission = hasPermission(
+  'CAN_CREATE_PRIVATE_NOTE'
+);
+
+export const selectCanUpdatePrivateNotesPermission = hasPermission(
+  'CAN_UPDATE_PRIVATE_NOTE'
+);
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   userProfile =>

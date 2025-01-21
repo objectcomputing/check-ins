@@ -15,6 +15,7 @@ import {
   selectCheckinsForMember,
   selectCanViewCheckinsPermission,
   selectCanUpdateCheckinsPermission,
+  selectCanViewPrivateNotesPermission,
 } from '../context/selectors';
 import { getCheckins, createNewCheckin } from '../context/thunks';
 import { UPDATE_CHECKIN, UPDATE_TOAST } from '../context/actions';
@@ -92,6 +93,7 @@ const CheckinsPage = () => {
   const isPdl = selectIsPDL(state);
 
   const canViewPrivateNote =
+    selectCanViewPrivateNotesPermission(state) &&
     (isAdmin || selectedProfile?.pdlId === currentUserId) &&
     currentUserId !== memberId;
 
