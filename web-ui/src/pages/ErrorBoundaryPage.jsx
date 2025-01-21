@@ -40,15 +40,21 @@ const ErrorFallback = ({ error }) => {
     //before upload to server
     let sanitizeBody = sanitizeQuillElements(body);
     let res = await newGitHubIssue(sanitizeBody, title, csrf);
-    if (res && res.payload) {
+    if (res?.error) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: res.error.message,
+        }
+      });
+    } else if (res?.payload?.data) {
       setLink(res.payload.data[0].html_url);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: !res.error ? 'success' : 'error',
-          toast: !res.error
-            ? `New issue ${title} created! Gratzie &#128512`
-            : res.error.message
+          severity: 'success',
+          toast: `New issue ${title} created! Gratzie &#128512`,
         }
       });
     }
