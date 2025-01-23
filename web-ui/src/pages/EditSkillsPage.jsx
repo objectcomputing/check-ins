@@ -5,7 +5,7 @@ import { AppContext } from '../context/AppContext';
 import {
   selectOrderedSkills,
   selectPendingSkills,
-  selectHasSkillsReportPermission,
+  selectCanEditSkills,
   noPermission,
 } from '../context/selectors';
 import EditSkillsCard from '../components/edit_skills/EditSkillsCard';
@@ -47,7 +47,7 @@ const EditSkillsPage = () => {
     }
   ]);
 
-  return selectHasSkillsReportPermission(state) ? (
+  return selectCanEditSkills(state) ? (
     <div className="pending-skills-page">
       <div className="search">
         <div>

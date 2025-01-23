@@ -22,7 +22,7 @@ const initialState = {
       firstName: 'Current',
       lastName: 'User',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }],
+      permissions: [{ permission: 'CAN_EDIT_SKILLS' }],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
       memberProfile: currentUserProfile
