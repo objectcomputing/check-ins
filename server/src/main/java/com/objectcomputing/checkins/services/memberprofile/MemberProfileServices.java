@@ -27,4 +27,6 @@ public interface MemberProfileServices {
     List<MemberProfile> getSubordinatesForId(UUID id);
 
     MemberProfile updateProfile(MemberProfile memberProfile);
+
+    void updateLastSeen(UUID id);
 }

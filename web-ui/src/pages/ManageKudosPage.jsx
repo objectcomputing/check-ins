@@ -79,20 +79,24 @@ const ManageKudosPage = () => {
   };
 
   const loadPendingKudos = useCallback(async () => {
-    setPendingKudosLoading(true);
-    const res = await getAllKudos(csrf, true);
-    if (res?.payload?.data && !res.error) {
-      setPendingKudosLoading(false);
-      return res.payload.data;
+    if (selectHasAdministerKudosPermission(state)) {
+      setPendingKudosLoading(true);
+      const res = await getAllKudos(csrf, true);
+      if (res?.payload?.data && !res.error) {
+        setPendingKudosLoading(false);
+        return res.payload.data;
+      }
     }
   }, [csrf, dispatch]);
 
   const loadApprovedKudos = useCallback(async () => {
-    setApprovedKudosLoading(true);
-    const res = await getAllKudos(csrf, false);
-    if (res?.payload?.data && !res.error) {
-      setApprovedKudosLoading(false);
-      return res.payload.data;
+    if (selectHasAdministerKudosPermission(state)) {
+      setApprovedKudosLoading(true);
+      const res = await getAllKudos(csrf, false);
+      if (res?.payload?.data && !res.error) {
+        setApprovedKudosLoading(false);
+        return res.payload.data;
+      }
     }
   }, [csrf, dispatch]);
 
