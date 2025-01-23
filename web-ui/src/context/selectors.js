@@ -204,6 +204,7 @@ export const selectCanViewCheckinsPermission = hasPermission(
 
 export const selectCanUpdateCheckinsPermission = hasPermission(
   'CAN_UPDATE_CHECKINS'
+);
 
 export const selectCanEditSkills = hasPermission(
   'CAN_EDIT_SKILLS'
