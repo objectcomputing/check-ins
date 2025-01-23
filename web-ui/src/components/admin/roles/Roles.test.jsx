@@ -16,7 +16,7 @@ const initialState = {
     userProfile: {
       name: 'Current User',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_ASSIGN_ROLE_PERMISSIONS' }],
+      permissions: [{ permission: 'CAN_EDIT_MEMBER_ROLES' }],
     },
   }
 };

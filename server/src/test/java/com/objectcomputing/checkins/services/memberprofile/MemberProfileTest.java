@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class MemberProfileTest extends TestContainersSuite
                         implements MemberProfileFixture {
 
@@ -41,6 +43,9 @@ class MemberProfileTest extends TestContainersSuite
     @Inject
     @Named(MailJetFactory.HTML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
+
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
 
     @Inject
     private MemberProfileServicesImpl memberProfileServices;
@@ -222,9 +227,12 @@ class MemberProfileTest extends TestContainersSuite
         MemberProfile pdlProfile = createASecondDefaultMemberProfile();
         UUID id = existingProfile.getId();
         UUID pdlId = pdlProfile.getId();
+
+        currentUserServices.currentUser = existingProfile;
+
         MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, pdlId, null, existingProfile.getWorkEmail(), null, null, null, null, null, null, null, null, null);
 
-        MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
+        MemberProfile result = memberProfileServices.updateProfile(updatedProfile);
 
         assertEquals(updatedProfile, result);
 
@@ -244,9 +252,12 @@ class MemberProfileTest extends TestContainersSuite
         MemberProfile supervisorProfile = createASecondDefaultMemberProfile();
         UUID id = existingProfile.getId();
         UUID supervisorId = supervisorProfile.getId();
+
+        currentUserServices.currentUser = existingProfile;
+
         MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, null, null, existingProfile.getWorkEmail(), null, null, null, supervisorId, null, null, null, null, null);
 
-        MemberProfile result = memberProfileServices.saveProfile(updatedProfile);
+        MemberProfile result = memberProfileServices.updateProfile(updatedProfile);
 
         assertEquals(updatedProfile, result);
         assertEquals(1, emailSender.events.size());
@@ -263,7 +274,9 @@ class MemberProfileTest extends TestContainersSuite
     void testUpdateProfileWithNoChange() {
         MemberProfile existingProfile = createADefaultMemberProfile();
 
-        MemberProfile result = memberProfileServices.saveProfile(existingProfile);
+        currentUserServices.currentUser = existingProfile;
+
+        MemberProfile result = memberProfileServices.updateProfile(existingProfile);
 
         assertEquals(existingProfile, result);
         assertEquals(0, emailSender.events.size());
