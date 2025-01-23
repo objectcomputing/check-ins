@@ -3,7 +3,11 @@ import { styled } from "@mui/material/styles";
 import { Button, Tab, Typography } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { AppContext } from "../context/AppContext";
-import { selectCsrfToken, selectCurrentUser } from "../context/selectors";
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectHasCreateKudosPermission,
+} from "../context/selectors";
 import { getReceivedKudos, getSentKudos } from "../api/kudos";
 import { UPDATE_TOAST } from "../context/actions";
 import KudosCard from "../components/kudos_card/KudosCard";
@@ -116,14 +120,14 @@ const KudosPage = () => {
           open={kudosDialogOpen}
           onClose={() => setKudosDialogOpen(false)}
         />
-        <Button
+        {selectHasCreateKudosPermission(state) && <Button
           className="kudos-dialog-open"
           variant="outlined"
           startIcon={<StarIcon />}
           onClick={() => setKudosDialogOpen(true)}
         >
           Give Kudos
-        </Button>
+        </Button>}
       </div>
       <TabContext value={kudosTab}>
         <div className="kudos-tab-container">
