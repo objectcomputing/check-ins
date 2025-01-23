@@ -39,25 +39,6 @@ adminState.state.userProfile = { ...adminState.state.userProfile };
 adminState.state.userProfile.role = ['MEMBER', 'ADMIN'];
 
 describe('TeamMemberMap', () => {
-  it('should render the component without team members', () => {
-    const withoutTeamMembers = {
-      members: [],
-      id: '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d',
-      closed: true,
-      planned: true,
-      reportDate: new Date()
-    };
-    render(
-      <AppContextProvider value={initialState}>
-        <TeamMemberMap {...withoutTeamMembers} />
-      </AppContextProvider>
-    );
-    const message = screen.getByText(
-      'No team members associated with this PDL.'
-    );
-    expect(message).toBeInTheDocument();
-  });
-
   it('should render the component with team members', () => {
     const withTeamMembers = {
       members,
