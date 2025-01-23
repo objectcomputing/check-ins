@@ -52,6 +52,10 @@ export const selectHasPermissionAssignmentPermission = hasPermission(
   'CAN_ASSIGN_ROLE_PERMISSIONS'
 );
 
+export const selectHasViewPermissionPermission = hasPermission(
+  'CAN_VIEW_ROLE_PERMISSIONS'
+);
+
 export const selectHasReportPermission = hasPermission('REPORT');
 
 export const selectCanViewFeedbackAnswerPermission = hasPermission(
@@ -134,6 +138,10 @@ export const selectHasMeritReportPermission = hasPermission(
   'CAN_CREATE_MERIT_REPORT'
 );
 
+export const selectHasUploadHoursPermission = hasPermission(
+  'CAN_UPLOAD_HOURS'
+);
+
 export const selectHasEarnedCertificationsPermission = hasPermission(
   'CAN_MANAGE_EARNED_CERTIFICATIONS'
 );
@@ -150,8 +158,8 @@ export const selectHasVolunteeringRelationshipsPermission = hasPermission(
   'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS'
 );
 
-export const selectHasRoleAssignmentPermission = hasPermission(
-  'CAN_ASSIGN_ROLE_PERMISSIONS'
+export const selectCanEditMemberRolesPermission = hasPermission(
+  'CAN_EDIT_MEMBER_ROLES'
 );
 
 export const selectHasCreateFeedbackPermission = hasPermission(
@@ -196,6 +204,9 @@ export const selectCanViewCheckinsPermission = hasPermission(
 
 export const selectCanUpdateCheckinsPermission = hasPermission(
   'CAN_UPDATE_CHECKINS'
+
+export const selectCanEditSkills = hasPermission(
+  'CAN_EDIT_SKILLS'
 );
 
 export const selectCanViewPrivateNotesPermission = hasPermission(
