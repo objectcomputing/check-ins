@@ -83,10 +83,10 @@ public class PulseResponseController {
      * @return
      */
     @Get("/{id}")
-    public PulseResponse readRole(@NotNull UUID id) {
+    public PulseResponse readPulse(@NotNull UUID id) {
         PulseResponse result = pulseResponseServices.read(id);
         if (result == null) {
-            throw new NotFoundException("No role item for UUID");
+            throw new NotFoundException("No pulse item for UUID");
         }
         return result;
     }
