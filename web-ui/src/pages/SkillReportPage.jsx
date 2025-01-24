@@ -59,12 +59,12 @@ const SkillReportPage = props => {
     let memberSkillsFound;
     if (res && res.payload) {
       memberSkillsFound =
-        res.payload.data.teamMembers && !res.error
+        !res.error && res.payload.data.teamMembers
           ? res.payload.data.teamMembers
           : undefined;
     }
     // Filter out skills of terminated members
-    memberSkillsFound = memberSkillsFound.filter(memberSkill =>
+    memberSkillsFound = memberSkillsFound?.filter(memberSkill =>
       memberIds.includes(memberSkill.id)
     );
     if (memberSkillsFound && memberIds) {
