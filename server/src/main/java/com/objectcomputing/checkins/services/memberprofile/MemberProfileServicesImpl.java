@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
@@ -100,6 +101,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     @CacheInvalidate(cacheNames = {"member-cache"})
+    @RequiredPermission(Permission.CAN_CREATE_ORGANIZATION_MEMBERS)
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
@@ -149,6 +151,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     @CacheInvalidate(cacheNames = {"member-cache"})
+    @RequiredPermission(Permission.CAN_DELETE_ORGANIZATION_MEMBERS)
     public boolean deleteProfile(@NotNull UUID id) {
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
         Set<Role> userRoles = (memberProfile != null) ? roleServices.findUserRoles(memberProfile.getId()) : Collections.emptySet();

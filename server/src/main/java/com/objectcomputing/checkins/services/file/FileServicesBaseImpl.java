@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.file;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -149,13 +150,13 @@ abstract public class FileServicesBaseImpl implements FileServices {
     @Override
     public boolean deleteFile(@NotNull String uploadDocId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canDelete = currentUserServices.hasPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT);
 
         CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
         validate(cd == null, String.format("Unable to find record with id %s", uploadDocId));
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
-        if(!isAdmin) {
+        if(!canDelete) {
             validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), NOT_AUTHORIZED_MSG);
         }
 

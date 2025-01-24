@@ -11,6 +11,7 @@ import com.objectcomputing.checkins.services.settings.SettingsServices;
 import com.objectcomputing.checkins.services.settings.Setting;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.EmailHelper;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.context.annotation.Property;
@@ -34,7 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class PulseServicesTest extends TestContainersSuite implements TeamFixture, RoleFixture {
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
+
     @Inject
     @Named(MailJetFactory.MJML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
@@ -74,6 +79,7 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
 
         admin = createAThirdDefaultMemberProfile();
         assignAdminRole(admin);
+        currentUserServices.currentUser = admin;
 
         List<String> recipientsEmail = List.of(member.getWorkEmail(),
                                                other.getWorkEmail(),

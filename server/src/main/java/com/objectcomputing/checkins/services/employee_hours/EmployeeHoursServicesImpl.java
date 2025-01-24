@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -34,6 +36,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
 
     @Override
+    @RequiredPermission(Permission.CAN_UPLOAD_HOURS)
     public EmployeeHoursResponseDTO save(CompletedFileUpload file) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
