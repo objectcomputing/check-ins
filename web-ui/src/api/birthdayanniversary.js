@@ -11,7 +11,11 @@ export const getAnniversaries = async (months, cookie) => {
       url: `${anniversaryReportUrl}?month=${month}`,
       headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
     });
-    results.push(...res.payload.data);
+    if (res.error) {
+      console.error(res.error);
+    } else {
+      results.push(...res.payload.data);
+    }
   }
   return results;
 };

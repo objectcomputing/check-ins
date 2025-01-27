@@ -77,7 +77,7 @@ const TeamSkillReportPage = () => {
     let memberSkillsFound;
     if (res && res.payload) {
       memberSkillsFound =
-        res.payload.data.teamMembers && !res.error
+        !res.error && res.payload.data.teamMembers
           ? res.payload.data.teamMembers
           : undefined;
     }
