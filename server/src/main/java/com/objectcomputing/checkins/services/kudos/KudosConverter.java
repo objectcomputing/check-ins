@@ -53,7 +53,6 @@ public class KudosConverter {
         content.add(
             RichTextSectionElement.Text.builder()
                 .text("\n" + kudos.getMessage() + "\n")
-                .style(boldItalic())
                 .build()
         );
 

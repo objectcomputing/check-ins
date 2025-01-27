@@ -534,24 +534,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     <span
                       class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
                     >
-                      ADMIN
-                    </span>
-                  </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
-                </div>
-                <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                  role="button"
-                  tabindex="0"
-                >
-                  <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                  >
-                    <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                    >
                       CHECK-IN
                     </span>
                   </div>
@@ -732,24 +714,6 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
                     />
                   </a>
                 </span>
-                <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
-                  role="button"
-                  tabindex="0"
-                >
-                  <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
-                  >
-                    <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
-                    >
-                      ADMIN
-                    </span>
-                  </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
-                </div>
                 <div
                   class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"

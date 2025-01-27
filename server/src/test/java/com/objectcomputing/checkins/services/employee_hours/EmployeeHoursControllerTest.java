@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Collections;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -92,7 +93,7 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
     }
 
     @Test
@@ -142,20 +143,13 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
-    void testGetByIdNotFound() {
+    void testFindEmployeeHoursNotFound() {
 
-        final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
-
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
+        final HttpRequest<Object> request = HttpRequest.GET("/?employeeId=invalid_id").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpResponse<Set<EmployeeHours>> response = client.toBlocking().exchange(request, Argument.setOf(EmployeeHours.class));
+        Set<EmployeeHours> emptySet = Collections.emptySet();
+        assertEquals(emptySet,response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
 
     }
-
-
-
-
 }

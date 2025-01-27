@@ -51,6 +51,10 @@ export const selectHasPermissionAssignmentPermission = hasPermission(
   'CAN_ASSIGN_ROLE_PERMISSIONS'
 );
 
+export const selectHasViewPermissionPermission = hasPermission(
+  'CAN_VIEW_ROLE_PERMISSIONS'
+);
+
 export const selectHasReportPermission = hasPermission('REPORT');
 
 export const selectCanViewFeedbackAnswerPermission = hasPermission(
@@ -133,6 +137,10 @@ export const selectHasMeritReportPermission = hasPermission(
   'CAN_CREATE_MERIT_REPORT'
 );
 
+export const selectHasUploadHoursPermission = hasPermission(
+  'CAN_UPLOAD_HOURS'
+);
+
 export const selectHasEarnedCertificationsPermission = hasPermission(
   'CAN_MANAGE_EARNED_CERTIFICATIONS'
 );
@@ -149,8 +157,8 @@ export const selectHasVolunteeringRelationshipsPermission = hasPermission(
   'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS'
 );
 
-export const selectHasRoleAssignmentPermission = hasPermission(
-  'CAN_ASSIGN_ROLE_PERMISSIONS'
+export const selectCanEditMemberRolesPermission = hasPermission(
+  'CAN_EDIT_MEMBER_ROLES'
 );
 
 export const selectHasCreateFeedbackPermission = hasPermission(
@@ -159,6 +167,10 @@ export const selectHasCreateFeedbackPermission = hasPermission(
 
 export const selectHasAdministerKudosPermission = hasPermission(
   'CAN_ADMINISTER_KUDOS'
+);
+
+export const selectHasCreateKudosPermission = hasPermission(
+  'CAN_CREATE_KUDOS'
 );
 
 export const selectHasDeleteMembersPermission = hasPermission(
@@ -187,6 +199,26 @@ export const selectHasSendEmailPermission = hasPermission(
 
 export const selectCanViewCheckinsPermission = hasPermission(
   'CAN_VIEW_CHECKINS'
+);
+
+export const selectCanUpdateCheckinsPermission = hasPermission(
+  'CAN_UPDATE_CHECKINS'
+);
+
+export const selectCanEditSkills = hasPermission(
+  'CAN_EDIT_SKILLS'
+);
+
+export const selectCanViewPrivateNotesPermission = hasPermission(
+  'CAN_VIEW_PRIVATE_NOTE'
+);
+
+export const selectCanCreatePrivateNotesPermission = hasPermission(
+  'CAN_CREATE_PRIVATE_NOTE'
+);
+
+export const selectCanUpdatePrivateNotesPermission = hasPermission(
+  'CAN_UPDATE_PRIVATE_NOTE'
 );
 
 export const selectIsPDL = createSelector(

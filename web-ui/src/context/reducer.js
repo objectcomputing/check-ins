@@ -70,7 +70,11 @@ export const reducer = (state, action) => {
       state.userProfile.memberProfile.bioText = action.payload;
       break;
     case ADD_CHECKIN:
-      state.checkins = [...state.checkins, action.payload];
+      if (state?.checkins?.length > 0) {
+        state.checkins = [...state.checkins, action.payload];
+      } else {
+        state.checkins = [action.payload];
+      }
       break;
     case UPDATE_CHECKINS:
       if (state?.checkins?.length > 0) {
