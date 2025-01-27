@@ -105,7 +105,7 @@ const FeedbackRequestConfirmation = () => {
                 fromArray.forEach(id => {
                     let recipient = externalRecipients.find(recipient => recipient.id === id);
                     if (recipient) {
-                        recipientProfiles.push(recipient.firstName + ' ' + recipient.lastName + ' (' + recipient.companyName + ')');
+                        recipientProfiles.push(recipient.firstName + ' ' + recipient.lastName + (recipient.companyName ? ' (' + recipient.companyName + ')' : ''));
                     }
                 });
             }
