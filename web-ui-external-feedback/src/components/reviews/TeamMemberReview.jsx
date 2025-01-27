@@ -94,9 +94,9 @@ const TeamMemberReview = ({
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
   const theme = useTheme();
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState(0);
 
-  const review = reviews && reviews[value - 1];
+  const review = reviews && reviews[value];
   const recipient = selectProfile(state, review?.recipientId);
 
   const handleChange = (event, newValue) => {
@@ -106,11 +106,6 @@ const TeamMemberReview = ({
   const handleChangeIndex = index => {
     setValue(index);
   };
-
-  let selfReviewIcon = <HourglassEmptyIcon />;
-  if (selfReview && selfReview.status?.toUpperCase() === 'SUBMITTED') {
-    selfReviewIcon = <CheckCircleIcon />;
-  }
 
   return (
     <Root>
@@ -123,15 +118,6 @@ const TeamMemberReview = ({
             textColor="inherit"
             variant="fullWidth"
           >
-            <Tab
-              icon={selfReviewIcon}
-              label={
-                memberProfile?.firstName
-                  ? memberProfile?.firstName + "'s Self-Review"
-                  : 'Self-Review'
-              }
-              {...a11yProps(0)}
-            />
             {reviews &&
               reviews.filter(r => !!r).map((review, index) => {
                 const reviewer = review.recipientId == memberProfile?.id ?
@@ -148,7 +134,10 @@ const TeamMemberReview = ({
                 }
 
                 return (
-                  <Tab icon={icon} label={label} {...a11yProps(index + 1)} />
+                  <Tab key={index}
+                       icon={icon}
+                       label={label}
+                       {...a11yProps(index)} />
                 );
               })}
           </Tabs>
@@ -158,18 +147,6 @@ const TeamMemberReview = ({
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          <TabPanel value={value} index={0} dir={theme.direction}>
-            {selfReview?.id ? (
-              <FeedbackSubmitForm
-                requesteeName={
-                  memberProfile?.firstName + ' ' + memberProfile?.lastName
-                }
-                requestId={selfReview?.id}
-                request={selfReview}
-                reviewOnly={true}
-              />
-            ) : (<Typography variant="h4">Not Available</Typography>)}
-          </TabPanel>
           {reviews &&
             reviews.filter(r => !!r).map((review, index) => {
               const reviewer = selectProfile(state, review.recipientId);
@@ -179,7 +156,10 @@ const TeamMemberReview = ({
                                 review.status?.toUpperCase() === 'SUBMITTED');
 
               return (
-                <TabPanel value={value} index={index + 1} dir={theme.direction}>
+                <TabPanel key={index}
+                          value={value}
+                          index={index}
+                          dir={theme.direction}>
                   <FeedbackSubmitForm
                     requesteeName={requesteeName}
                     requestId={review.id}
