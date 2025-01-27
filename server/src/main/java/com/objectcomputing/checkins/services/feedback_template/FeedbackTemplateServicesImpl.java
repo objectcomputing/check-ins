@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -93,12 +94,12 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     @Override
     public List<FeedbackTemplate> findByFields(@Nullable UUID creatorId, @Nullable String title) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
         List <FeedbackTemplate> allTemplates =  feedbackTemplateRepository.searchByValues(Util.nullSafeUUIDToString(creatorId), title);
         return allTemplates
                 .stream()
-                .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
-                .filter(template -> !template.getIsReview() || isAdmin)
+                .filter(template -> template.getIsPublic() || canAdminister || template.getCreatorId().equals(currentUserId))
+                .filter(template -> !template.getIsReview() || canAdminister)
                 .toList();
     }
 
@@ -113,12 +114,14 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
     public boolean updateIsPermitted(UUID creatorId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        boolean isAdmin = currentUserServices.isAdmin();
-        return isAdmin || currentUserId.equals(creatorId);
+        return hasAdministerPermission() || currentUserId.equals(creatorId);
     }
 
     public boolean deleteIsPermitted(UUID creatorId) {
         return updateIsPermitted(creatorId);
     }
 
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_TEMPLATES);
+    }
 }

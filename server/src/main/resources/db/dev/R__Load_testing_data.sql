@@ -921,7 +921,32 @@ values
 insert into role_permissions
     (roleid, permission)
 values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_VIEW_ALL_UPLOADED_HOURS');
+
+insert into role_permissions
+    (roleid, permission)
+values
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_SEND_EMAIL');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_FEEDBACK_TEMPLATES');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_CHECKIN_DOCUMENTS');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_GUILDS');
+
+insert into role_permissions
+    (roleid, permission)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'CAN_ADMINISTER_TEAMS');
 
 -- PDL Permissions
 insert into role_permissions

@@ -56,8 +56,6 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
     @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
     public synchronized void store(DataType dataType, CompletedFileUpload file) throws IOException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-        validate(!isAdmin, NOT_AUTHORIZED_MSG);
 
         // Get the map for the current user.
         Stored perUser;
@@ -78,10 +76,9 @@ public class ReportDataServicesImpl extends TimerTask implements ReportDataServi
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
     public ByteBuffer get(DataType dataType) throws NotFoundException {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-        validate(!isAdmin, NOT_AUTHORIZED_MSG);
 
         UUID id = currentUser.getId();
         if (storedUploads.containsKey(id)) {

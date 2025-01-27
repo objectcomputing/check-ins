@@ -104,7 +104,12 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_IMPERSONATE_MEMBERS,
         Permission.CAN_SEND_EMAIL,
         Permission.CAN_CREATE_MERIT_REPORT,
-        Permission.CAN_UPLOAD_HOURS
+        Permission.CAN_UPLOAD_HOURS,
+        Permission.CAN_VIEW_ALL_UPLOADED_HOURS,
+        Permission.CAN_ADMINISTER_FEEDBACK_TEMPLATES,
+        Permission.CAN_ADMINISTER_GUILDS,
+        Permission.CAN_ADMINISTER_TEAMS,
+        Permission.CAN_ADMINISTER_CHECKIN_DOCUMENTS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {

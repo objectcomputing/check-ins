@@ -67,7 +67,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
             throw new NotFoundException("No member profile for id " + id);
         }
         MemberProfile memberProfile = optional.get();
-        if (!currentUserServices.isAdmin()) {
+        if (!hasAdministerPermission()) {
             memberProfile.clearBirthYear();
         }
         return memberProfile;
@@ -91,7 +91,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable Boolean terminated) {
         Set<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
                 nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
-        if (!currentUserServices.isAdmin()) {
+        if (!hasAdministerPermission()) {
             for (MemberProfile memberProfile : memberProfiles) {
                 memberProfile.clearBirthYear();
             }
@@ -199,7 +199,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Cacheable
     public List<MemberProfile> getSupervisorsForId(UUID id) {
         List<MemberProfile> supervisorsForId = memberProfileRepository.findSupervisorsForId(id);
-        if (!currentUserServices.isAdmin()) {
+        if (!hasAdministerPermission()) {
             for (MemberProfile memberProfile : supervisorsForId) {
                 memberProfile.clearBirthYear();
             }
@@ -211,7 +211,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Cacheable
     public List<MemberProfile> getSubordinatesForId(UUID id) {
         List<MemberProfile> subordinatesForId = memberProfileRepository.findSubordinatesForId(id);
-        if (!currentUserServices.isAdmin()) {
+        if (!hasAdministerPermission()) {
             for (MemberProfile memberProfile : subordinatesForId) {
                 memberProfile.clearBirthYear();
             }
@@ -269,5 +269,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
           memberProfile.setLastSeen(LocalDate.now());
           memberProfileRepository.update(memberProfile);
         }
+    }
+
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_EDIT_ALL_ORGANIZATION_MEMBERS);
     }
 }

@@ -15,6 +15,7 @@ public enum Permission {
   CAN_ADMINISTER_KUDOS("Administer kudos", "Feedback"),
   CAN_VIEW_FEEDBACK_ANSWER("View feedback answers", "Feedback"),
   CAN_ADMINISTER_FEEDBACK_ANSWER("Administer feedback answers", "Feedback"),
+  CAN_ADMINISTER_FEEDBACK_TEMPLATES("Administer feedback templates", "Feedback"),
   CAN_SEND_EMAIL("Send email", "Feedback"),
   CAN_EDIT_ALL_ORGANIZATION_MEMBERS("Edit all member profiles", "User Management"),
   CAN_DELETE_ORGANIZATION_MEMBERS("Delete organization members", "User Management"),
@@ -32,6 +33,7 @@ public enum Permission {
   CAN_VIEW_CHECKINS_REPORT("View checkins report", "Reporting"),
   CAN_CREATE_MERIT_REPORT("Create Merit Reports", "Reporting"),
   CAN_UPLOAD_HOURS("Upload Hours", "Reporting"),
+  CAN_VIEW_ALL_UPLOADED_HOURS("View all uploaded hours", "Reporting"),
   CAN_CREATE_CHECKINS("Create check-ins", "Check-ins"),
   CAN_VIEW_CHECKINS("View check-ins", "Check-ins"),
   CAN_UPDATE_CHECKINS("Update check-ins", "Check-ins"),
@@ -40,6 +42,7 @@ public enum Permission {
   CAN_UPDATE_PRIVATE_NOTE("Update check-ins private notes", "Check-ins"),
   CAN_CREATE_PRIVATE_NOTE("Create check-ins private notes", "Check-ins"),
   CAN_VIEW_CHECKIN_DOCUMENT("View check-ins document", "Check-ins"),
+  CAN_ADMINISTER_CHECKIN_DOCUMENTS("Administer check-ins documents", "Check-ins"),
   CAN_UPDATE_CHECKIN_DOCUMENT("Update check-ins document", "Check-ins"),
   CAN_CREATE_CHECKIN_DOCUMENT("Create check-ins document", "Check-ins"),
   CAN_DELETE_CHECKIN_DOCUMENT("Delete check-ins document", "Check-ins"),
@@ -62,9 +65,11 @@ public enum Permission {
   CAN_VIEW_ALL_PULSE_RESPONSES("View pulse responses", "Reporting"),
   CAN_MANAGE_CERTIFICATIONS("Manage certifications", "Certifications"),
   CAN_MANAGE_EARNED_CERTIFICATIONS("Manage earned certifications", "Certifications"),
-  CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS("Update volunteering organizations", "Volunteering"),
-  CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS("Update volunteering relationships", "Volunteering"),
-  CAN_ADMINISTER_VOLUNTEERING_EVENTS("Update volunteering events", "Volunteering"),
+  CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS("Administer volunteering organizations", "Volunteering"),
+  CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS("Administer volunteering relationships", "Volunteering"),
+  CAN_ADMINISTER_VOLUNTEERING_EVENTS("Administer volunteering events", "Volunteering"),
+  CAN_ADMINISTER_GUILDS("Administer guilds", "Guilds"),
+  CAN_ADMINISTER_TEAMS("Administer teams", "Teams"),
   CAN_ADMINISTER_DOCUMENTATION("Administer documentation and role documentation", "Documentation");
 
   private final String description;
