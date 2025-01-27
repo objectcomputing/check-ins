@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.role.member_roles;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
@@ -29,6 +32,7 @@ public class MemberRoleController {
     }
 
     @Delete("/{roleId}/{memberId}")
+    @RequiredPermission(Permission.CAN_EDIT_MEMBER_ROLES)
     HttpResponse<?> deleteMemberRole(@NotNull UUID roleId, @NotNull UUID memberId){
         memberRoleServices.delete(new MemberRoleId(memberId, roleId));
         return HttpResponse.ok();
@@ -36,6 +40,7 @@ public class MemberRoleController {
 
     @Post
     @CacheInvalidate(cacheNames = {"role-permission-cache"})
+    @RequiredPermission(Permission.CAN_EDIT_MEMBER_ROLES)
     HttpResponse<MemberRole> saveMemberRole(@NotNull @Body MemberRoleId id){
         MemberRole memberRole = memberRoleServices.saveByIds(id.getMemberId(), id.getRoleId());
         return HttpResponse.ok(memberRole);

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -18,6 +19,7 @@ import io.micronaut.context.annotation.Requires;
 public class CurrentUserServicesReplacement implements CurrentUserServices {
     public MemberProfile currentUser;
     public List<RoleType> roles;
+    public List<Permission> permissions;
 
     @Override
     public MemberProfile findOrSaveUser(String firstName,
@@ -29,6 +31,11 @@ public class CurrentUserServicesReplacement implements CurrentUserServices {
     @Override
     public boolean hasRole(RoleType role) {
         return roles == null ? false : roles.contains(role);
+    }
+
+    @Override
+    public boolean hasPermission(Permission permission) {
+        return permissions == null ? false : permissions.contains(permission);
     }
 
     @Override

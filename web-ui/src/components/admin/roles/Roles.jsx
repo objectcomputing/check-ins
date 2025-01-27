@@ -13,7 +13,7 @@ import {
   updateRole
 } from '../../../api/roles';
 import {
-  selectHasRoleAssignmentPermission,
+  selectCanEditMemberRolesPermission,
   noPermission,
 } from '../../../context/selectors';
 import RoleUserCards from './RoleUserCards';
@@ -215,7 +215,7 @@ const Roles = () => {
     setEditedRole({ ...editedRole, description: event?.target?.value });
   };
 
-  return selectHasRoleAssignmentPermission(state) ? (
+  return selectCanEditMemberRolesPermission(state) ? (
     <div className="roles-content">
       <div className="roles">
         <div className="roles-top">
