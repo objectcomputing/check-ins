@@ -278,7 +278,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
                 fromName,
                 pdlMemberProfile.getWorkEmail(),
                 checkInsConfiguration.getApplication().getFeedback().getRequestSubject(),
-                "You have received a feedback request",
+                "We would love to hear from you!",
                 externalRecipient.getEmail(),
                 emailSender.events.getFirst()
         );
