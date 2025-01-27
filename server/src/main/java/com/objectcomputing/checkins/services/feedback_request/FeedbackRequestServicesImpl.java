@@ -154,7 +154,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         String senderName = MemberProfileUtils.getFullName(creator);
         UUID recipientOrExternalRecipientId;
-        String reviewerFirstName, reviewerEmail, urlFeedbackSubmit, template;
+        String reviewerFirstName, reviewerEmail, urlFeedbackSubmit;
+        Readable template;
 
         if (storedRequest.getExternalRecipientId() != null) {
             recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
