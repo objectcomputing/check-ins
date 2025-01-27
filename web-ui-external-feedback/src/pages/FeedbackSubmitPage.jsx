@@ -65,15 +65,12 @@ const FeedbackSubmitPage = () => {
     }
 
     async function getFeedbackRequest(query, cookie) {
-      console.log("FeedbackSubmitExternalRecipientPage, getFeedbackRequest, requestId: ", requestId);
       if (!cookie || feedbackRequestFetched.current) {
         return null;
       }
-      console.log("FeedbackSubmitExternalRecipientPage, getFeedbackRequest, past if");
 
       // make call to the API
       let res = await getFeedbackRequestByIdForExternalRecipient(requestId, cookie);
-      console.log("FeedbackSubmitExternalRecipientPage, getFeedbackRequest, res: ", res);
       return res.payload &&
       res.payload.data &&
       res.payload.status === 200 &&
@@ -130,7 +127,6 @@ const FeedbackSubmitPage = () => {
             ? res.payload.data
             : null
         ;
-        console.log("FeedbackSubmitPage, useEffect[feedbackRequest, selfReviewRequest, state], requesteeData: ", requesteeData);
         setRequestee(requesteeData)
       }
     };
