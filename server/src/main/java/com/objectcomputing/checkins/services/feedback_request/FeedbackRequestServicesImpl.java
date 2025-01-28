@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
@@ -52,8 +55,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final String notificationSubject;
     private final String webURL;
 
+    private final Map<UUID, LocalDateTime> externalSent = new HashMap<>();
+    private final int minutesBetweenVerifiedEmail = 5;
+
     private enum CompletionEmailType { REVIEWERS, SUPERVISOR }
     private record ReviewPeriodInfo(String subject, LocalDate closeDate) {}
+
     @Value("classpath:mjml/feedback_request.mjml")
     private Readable feedbackRequestTemplate;
     @Value("classpath:mjml/external_feedback_request.mjml")
@@ -156,6 +163,18 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             return false;
         }
 
+        // Aside from persisting the send time, we can, at the very least,
+        // ensure that we do not spam the requestee with email in the event
+        // that someone wanted to do so.
+        UUID requestId = feedbackRequest.getId();
+        LocalDateTime now = LocalDateTime.now();
+        if (externalSent.containsKey(requestId)) {
+           LocalDateTime sent = externalSent.get(requestId);
+           if (sent.plusMinutes(minutesBetweenVerifiedEmail).isAfter(now)) {
+             return false;
+           }
+        }
+
         MemberProfile creator = memberProfileServices.getById(feedbackRequest.getCreatorId());
         MemberProfile requestee = memberProfileServices.getById(feedbackRequest.getRequesteeId());
         UUID recipientOrExternalRecipientId = feedbackRequest.getExternalRecipientId();
@@ -172,6 +191,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             notificationSubject, newContent,
             reviewerExternalRecipient.getEmail()
         );
+        externalSent.put(requestId, now);
         return true;
     }
 
