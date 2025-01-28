@@ -15,6 +15,7 @@ public class MemberProfileTestUtil {
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
         dto.setEmployeeId("TestEmployeeId");
+        dto.setWorkEmail("testemployee@example.com");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
         dto.setLastSeen(LocalDate.now());
@@ -30,6 +31,7 @@ public class MemberProfileTestUtil {
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
         dto.setEmployeeId("TestEmployeeId");
+        dto.setWorkEmail("testemployee@example.com");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
         dto.setLastSeen(LocalDate.now());

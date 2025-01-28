@@ -130,7 +130,7 @@ export default function Routes() {
         <SkillCategoriesPage />
       </Route>
       <Route path="/checkins-reports">
-        <Header title="Check-in Report" />
+        <Header title="Check-ins Report" />
         <CheckinsReportPage />
       </Route>
       <Route path="/skills-reports">

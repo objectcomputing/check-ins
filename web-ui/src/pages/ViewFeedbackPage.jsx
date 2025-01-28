@@ -234,10 +234,12 @@ const ViewFeedbackPage = () => {
       //and associated template info together
       const templateReqs = [];
       const templateIds = [];
-      for (let i = 0; i < feedbackRequests.length; i++) {
-        if (!templateIds.includes(feedbackRequests[i].templateId)) {
-          templateIds.push(feedbackRequests[i].templateId);
-          templateReqs.push(getTemplateInfo(feedbackRequests[i].templateId));
+      if (feedbackRequests) {
+        for (let i = 0; i < feedbackRequests.length; i++) {
+          if (!templateIds.includes(feedbackRequests[i].templateId)) {
+            templateIds.push(feedbackRequests[i].templateId);
+            templateReqs.push(getTemplateInfo(feedbackRequests[i].templateId));
+          }
         }
       }
       let templates = await Promise.all(templateReqs);
@@ -245,7 +247,7 @@ const ViewFeedbackPage = () => {
         map[template.id] = template;
         return map;
       }, {});
-      feedbackRequests.forEach(request => {
+      feedbackRequests?.forEach(request => {
         request.templateInfo = templates[request.templateId];
       });
       return feedbackRequests;

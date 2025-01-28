@@ -14,6 +14,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
@@ -70,6 +71,18 @@ class MemberRoleControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
+    void testDeleteMemberRoleNoPermission() {
+        MemberProfile member = createADefaultMemberProfile();
+
+        Role memberRole = createAndAssignRole(RoleType.MEMBER, member);
+
+        final HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s/%s", memberRole.getId(), member.getId()))
+                .basicAuth(member.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, MemberRole.class));
+        assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
+    }
+
+    @Test
     void testSaveMemberRole() {
         MemberProfile member = createADefaultMemberProfile();
         MemberProfile admin = createAnUnrelatedUser();
@@ -89,4 +102,17 @@ class MemberRoleControllerTest extends TestContainersSuite implements MemberProf
         assertEquals(adminRole.getId(), response.getBody().get().getMemberRoleId().getRoleId());
     }
 
+    @Test
+    void testSaveMemberRoleNoPermission() {
+        MemberProfile member = createADefaultMemberProfile();
+        Role memberRole = createAndAssignRole(RoleType.MEMBER, member);
+
+        MemberRoleId memberRoleId = new MemberRoleId(member.getId(), memberRole.getId());
+
+        final HttpRequest<?> request = HttpRequest.POST("", memberRoleId)
+                .basicAuth(member.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+
+        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, MemberRole.class));
+        assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
+    }
 }

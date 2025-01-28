@@ -9,8 +9,6 @@ public interface EmployeeHoursServices {
 
     EmployeeHoursResponseDTO save(CompletedFileUpload file);
 
-    EmployeeHours read(UUID id);
-
     Set<EmployeeHours> findByFields(String employeeId);
 
 }
