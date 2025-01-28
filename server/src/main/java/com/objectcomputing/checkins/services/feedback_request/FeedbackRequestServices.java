@@ -16,4 +16,6 @@ public interface FeedbackRequestServices {
     List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, UUID externalRecipientId, List<UUID> requesteeIds);
 
     boolean selfRevieweeIsCurrentUserReviewee(FeedbackRequest request, UUID currentUserId);
+
+    boolean verifyExternal(FeedbackRequest feedbackRequest);
 }

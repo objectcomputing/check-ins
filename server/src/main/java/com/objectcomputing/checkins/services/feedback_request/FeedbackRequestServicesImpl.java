@@ -58,6 +58,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private Readable feedbackRequestTemplate;
     @Value("classpath:mjml/external_feedback_request.mjml")
     private Readable externalFeedbackRequestTemplate;
+    @Value("classpath:mjml/external_request_verify.mjml")
+    private Readable externalRequestVerifyTemplate;
     @Value("classpath:mjml/update_request.mjml")
     private Readable updateRequestTemplate;
     @Value("classpath:mjml/reviewer_email.mjml")
@@ -138,13 +140,39 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())) {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
-        String status = feedbackRequest.getSendDate().isAfter(LocalDate.now()) ? "pending" : "sent";
-        feedbackRequest.setStatus(status);
+        FeedbackRequestStatus status = feedbackRequest.getSendDate().isAfter(LocalDate.now()) ? FeedbackRequestStatus.PENDING : FeedbackRequestStatus.SENT;
+        feedbackRequest.setStatus(status.toString());
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
         if (feedbackRequest.getSendDate().equals(LocalDate.now())) {
             sendNewRequestEmail(storedRequest);
         }
         return storedRequest;
+    }
+
+    @Override
+    public boolean verifyExternal(FeedbackRequest feedbackRequest) {
+        if (feedbackRequest.getExternalRecipientId() == null ||
+            !feedbackRequest.getStatus().equals(FeedbackRequestStatus.SENT.toString())) {
+            return false;
+        }
+
+        MemberProfile creator = memberProfileServices.getById(feedbackRequest.getCreatorId());
+        MemberProfile requestee = memberProfileServices.getById(feedbackRequest.getRequesteeId());
+        UUID recipientOrExternalRecipientId = feedbackRequest.getExternalRecipientId();
+        FeedbackExternalRecipient reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
+        String newContent = String.format(
+                templateToString(externalRequestVerifyTemplate),
+                reviewerExternalRecipient.getFirstName(),
+                String.format("%s/externalFeedback/submit?request=%s",
+                              webURL, feedbackRequest.getId().toString())
+        );
+        emailSender.sendEmail(
+            MemberProfileUtils.getFullName(creator),
+            creator.getWorkEmail(),
+            notificationSubject, newContent,
+            reviewerExternalRecipient.getEmail()
+        );
+        return true;
     }
 
     public void sendNewRequestEmail(FeedbackRequest storedRequest) {
@@ -162,7 +190,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
             reviewerFirstName = reviewerExternalRecipient.getFirstName();
             reviewerEmail = reviewerExternalRecipient.getEmail();
-            urlFeedbackSubmit = "/externalFeedback/submit?request=";
+            urlFeedbackSubmit = "/externalFeedback/verify?request=";
             template = externalFeedbackRequestTemplate;
         } else {
             recipientOrExternalRecipientId = storedRequest.getRecipientId();
@@ -184,8 +212,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                                                   storedRequest.getDueDate().getMonth(),
                                                   storedRequest.getDueDate().getDayOfMonth(),
                                                   storedRequest.getDueDate().getYear()),
-                                String.format("%s" + urlFeedbackSubmit + "%s",
-                                              webURL, storedRequest.getId().toString())
+                                String.format("%s%s%s",
+                                              webURL, urlFeedbackSubmit,
+                                              storedRequest.getId().toString())
         );
         emailSender.sendEmail(
             senderName, creator.getWorkEmail(),
@@ -243,7 +272,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
         // If a status update is made to anything other than submitted by the requestee, throw an error.
-        if (!"submitted".equals(feedbackRequest.getStatus())
+        if (!feedbackRequest.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString())
                 && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())
                 &&  currentUserEqualsRequestee) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
@@ -253,10 +282,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             if (!reassignIsPermitted(originalFeedback)) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
-            feedbackRequest.setStatus("sent");
+            feedbackRequest.setStatus(FeedbackRequestStatus.SENT.toString());
         }
 
-        if (feedbackRequest.getStatus().equals("canceled") && originalFeedback.getStatus().equals("submitted")) {
+        if (feedbackRequest.getStatus().equals(FeedbackRequestStatus.CANCELED.toString()) &&
+            originalFeedback.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString())) {
             throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
         }
 
@@ -292,7 +322,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         // Send email if the feedback request has been reopened for edits
-        if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
+        if (originalFeedback.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString()) && feedbackRequest.getStatus().equals(FeedbackRequestStatus.SENT.toString())) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
             String senderName = MemberProfileUtils.getFullName(creator);
             String newContent = String.format(
@@ -480,7 +510,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean reassignIsPermitted(FeedbackRequest feedbackRequest) {
-        return isCurrentUserAdminOrOwner(feedbackRequest) && !feedbackRequest.getStatus().equals("submitted");
+        return isCurrentUserAdminOrOwner(feedbackRequest) && !feedbackRequest.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString());
     }
 
     private boolean isCurrentUserAdminOrOwner(FeedbackRequest feedbackRequest) {

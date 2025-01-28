@@ -11,6 +11,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DarkMode, LightMode } from '@mui/icons-material';
 
+import { AppBar } from '@mui/material';
 import {
   useColorScheme,
   experimental_extendTheme as extendTheme,
@@ -95,6 +96,15 @@ function App() {
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <div>
                 <div className="App">
+                  <AppBar position="fixed">
+                    <div style={{ display: 'flex', justifyContent: 'left' }}>
+                      <img
+                        alt="Object Computing, Inc."
+                        src="/externalFeedback/img/ocicube-color.png"
+                        style={{ width: '4%' }}
+                      />
+                    </div>
+                  </AppBar>
                   <Routes />
                 </div>
               </div>

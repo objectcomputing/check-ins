@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.feedback_external_recipient.Feedbac
 import com.objectcomputing.checkins.services.memberprofile.*;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -66,39 +67,16 @@ public class FeedbackRequestExternalRecipientController {
      */
     @Get("/{id}")
     public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
-        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
-        if (feedbackRequest.getExternalRecipientId() == null) {
-            throw new BadArgException("This feedback request is not for an external recipient");
-        }
+        FeedbackRequest feedbackRequest = getExternal(id);
         return feedbackRequest == null ? HttpResponse.notFound() : HttpResponse.ok(feedbackRequestFromEntity(feedbackRequest))
                 .headers(headers -> headers.location(URI.create("/feedback_request" + feedbackRequest.getId())));
     }
 
-    /**
-     * Find feedback requests by values
-     * @param creatorId {@link UUID} ID of the creator
-     * @param requesteeId {@link UUID} ID of the requestee
-     * @param recipientId {@link UUID} ID of the recipient
-     * @param oldestDate {@link LocalDate} The oldest date to search for
-     * @param reviewPeriodId {@link UUID} ID of the review period
-     * @param templateId {@link UUID} ID of the template
-     * @param externalRecipientId {@link UUID} ID of the external recipient
-     * @return {@link FeedbackRequestResponseDTO}
-     */
-    /*
-    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,externalRecipientId,requesteeIds}")
-    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, UUID externalRecipientId, @Nullable List<UUID> requesteeIds) {
-        return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, externalRecipientId, requesteeIds)
-                .stream()
-                .map(this::feedbackRequestFromEntity)
-                .toList();
-    }
-    */
-
-    @Get("/hello")
-    @Produces(MediaType.TEXT_HTML)
-    public String hello() {
-        return "<html><body><h1>Hello, World!</h1></body></html>";
+    @Get("/verify/{id}")
+    public HttpStatus verifyRequest(UUID id) {
+        FeedbackRequest feedbackRequest = getExternal(id);
+        return feedbackReqServices.verifyExternal(feedbackRequest)
+                   ? HttpStatus.OK : HttpStatus.UNPROCESSABLE_ENTITY;
     }
 
     @Get("/submitForExternalRecipient/{id}")
@@ -121,6 +99,14 @@ public class FeedbackRequestExternalRecipientController {
         FeedbackRequest savedFeedback = feedbackReqServices.update(requestBody);
         return HttpResponse.ok(feedbackRequestFromEntity(savedFeedback))
                 .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId())));
+    }
+
+    private FeedbackRequest getExternal(UUID id) {
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(id);
+        if (feedbackRequest.getExternalRecipientId() == null) {
+            throw new BadArgException("This feedback request is not for an external recipient");
+        }
+        return feedbackRequest;
     }
 
     private FeedbackRequestResponseDTO feedbackRequestFromEntity(FeedbackRequest feedbackRequest) {

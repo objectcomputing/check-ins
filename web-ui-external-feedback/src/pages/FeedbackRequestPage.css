@@ -4,6 +4,12 @@
   max-width: 100%;
 }
 
+.feedback-verify-page {
+  margin: 4em 2em 0 2em;
+  height: 100%;
+  max-width: 70%;
+}
+
 .header-container {
   display: flex;
   flex-direction: row;
@@ -34,6 +40,15 @@
     align-items: center;
     overflow-x: hidden;
     margin: 2rem 5% 0 5%;
+  }
+
+  .feedback-verify-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    margin: 2rem 5% 0 5%;
+    width: 70%;
   }
 
   .header-container {
