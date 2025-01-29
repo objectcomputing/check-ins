@@ -43,6 +43,7 @@ import KudosPage from '../../pages/KudosPage';
 import ManageKudosPage from '../../pages/ManageKudosPage';
 import SkillCategoriesPage from '../../pages/SkillCategoriesPage';
 import SkillCategoryEditPage from '../../pages/SkillCategoryEditPage';
+import CloseWindow from '../../pages/CloseWindow';
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -204,7 +205,7 @@ export default function Routes() {
         <ManageKudosPage />
       </Route>
       <Route path="/login?close=true">
-        {window.close()}
+        <CloseWindow />
       </Route>
     </Switch>
   );
