@@ -203,6 +203,9 @@ export default function Routes() {
         <Header title="Manage Kudos"></Header>
         <ManageKudosPage />
       </Route>
+      <Route path="/login?close=true">
+        {window.close()}
+      </Route>
     </Switch>
   );
 }
