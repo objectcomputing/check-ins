@@ -111,7 +111,7 @@ public class MemberProfileController {
      */
     @Put
     public HttpResponse<MemberProfileResponseDTO> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
-        MemberProfile savedProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
+        MemberProfile savedProfile = memberProfileServices.updateProfile(fromDTO(memberProfile));
         return HttpResponse.ok(fromEntity(savedProfile))
                 .headers(headers -> headers.location(location(savedProfile.getId())));
     }

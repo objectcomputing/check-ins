@@ -34,7 +34,6 @@ const TeamsActions = ({ isOpen, onOpen }) => {
             if (data) {
               dispatch({ type: ADD_TEAM, payload: data });
             }
-            handleClose();
           }
         }}
         headerText="Add A New Team"
