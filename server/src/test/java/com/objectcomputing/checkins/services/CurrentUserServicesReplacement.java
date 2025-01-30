@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.role.RoleType;
 
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.inject.Singleton;
 import io.micronaut.core.util.StringUtils;
@@ -41,6 +42,11 @@ public class CurrentUserServicesReplacement implements CurrentUserServices {
     @Override
     public boolean isAdmin() {
         return hasRole(RoleType.ADMIN);
+    }
+
+    @Override
+    public UUID getCurrentUserId() {
+        return currentUser == null ? null : currentUser.getId();
     }
 
     @Override

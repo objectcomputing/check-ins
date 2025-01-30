@@ -18,6 +18,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.List;
+import java.util.UUID;
 
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
@@ -68,13 +69,24 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         return hasRole(RoleType.ADMIN);
     }
 
-    public MemberProfile getCurrentUser() {
+    @Override
+    public UUID getCurrentUserId() {
         if (securityService != null) {
             Optional<Authentication> auth = securityService.getAuthentication();
             if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
                 String workEmail = auth.get().getAttributes().get("email").toString();
-                return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+                MemberProfile profile = memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+                return profile == null ? null : profile.getId();
             }
+        }
+        return null;
+    }
+
+    @Override
+    public MemberProfile getCurrentUser() {
+        UUID currentUserId = getCurrentUserId();
+        if (currentUserId != null) {
+            return memberProfileRepo.findById(currentUserId).orElse(null);
         }
 
         throw new NotFoundException("No active members in the system");

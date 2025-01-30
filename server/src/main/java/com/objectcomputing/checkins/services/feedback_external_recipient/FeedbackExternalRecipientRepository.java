@@ -24,8 +24,6 @@ public interface FeedbackExternalRecipientRepository extends CrudRepository<Feed
     @Override
     <S extends FeedbackExternalRecipient> S update(@NotNull @NonNull S entity);
 
-    // , PGP_SYM_DECRYPT(cast(FER. as bytea), '${aes.key}') as
-
     @Query("" +
             "SELECT id" +
             ", PGP_SYM_DECRYPT(cast(FER.email as bytea), '${aes.key}') as email" +

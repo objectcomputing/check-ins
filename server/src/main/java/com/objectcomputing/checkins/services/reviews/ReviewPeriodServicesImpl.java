@@ -180,11 +180,13 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         if (period.getReviewStatus() == ReviewStatus.OPEN) {
             // If the review period has been updated and is now open, we need
             // to create feedback requests for all involved in the review period
-            Set<ReviewAssignment> assignments = reviewAssignmentRepository.findByReviewPeriodId(period.getId());
+            Set<ReviewAssignment> assignments =
+                reviewAssignmentRepository.findByReviewPeriodId(period.getId());
             UUID reviewTemplateId = period.getReviewTemplateId();
             UUID selfReviewTemplateId = period.getSelfReviewTemplateId();
             LocalDate closeDate = period.getCloseDate().toLocalDate();
-            LocalDate selfReviewCloseDate = period.getSelfReviewCloseDate().toLocalDate();
+            LocalDate selfReviewCloseDate =
+                period.getSelfReviewCloseDate().toLocalDate();
 
             // Log template id's that were not provided to the review period.
             // This is the reason a feedback request will not be created.
@@ -344,14 +346,13 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         return profile.isEmpty() ? memberId : profile.get(0).getId();
     }
 
-    private void createReviewRequest(
-            ReviewPeriod period,
-            UUID creatorId,
-            UUID revieweeId,
-            UUID reviewerId,
-            UUID templateId,
-            LocalDate dueDate, UUID externalRecipientId
-    ) {
+    private void createReviewRequest(ReviewPeriod period,
+                                     UUID creatorId,
+                                     UUID revieweeId,
+                                     UUID reviewerId,
+                                     UUID templateId,
+                                     LocalDate dueDate,
+                                     UUID externalRecipientId) {
         try {
             LocalDate sendDate = LocalDate.now();
             FeedbackRequest request = new FeedbackRequest(
@@ -437,7 +438,9 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             Set<MemberProfile> recipients = new HashSet<>();
             String templateId = null;
             List<FeedbackRequest> requests =
-                feedbackRequestRepository.findByValues(null, null, null, null, reviewPeriodId.toString(), templateId, null);
+                feedbackRequestRepository.findByValues(null, null, null, null,
+                                                       reviewPeriodId.toString(),
+                                                       templateId, null);
             for (FeedbackRequest request : requests) {
                 if (request.getRecipientId().equals(request.getRequesteeId())) {
                     Optional<MemberProfile> requesteeProfile =

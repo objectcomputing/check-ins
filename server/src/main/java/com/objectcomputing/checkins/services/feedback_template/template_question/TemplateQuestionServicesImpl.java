@@ -147,7 +147,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     // only admins or the creator of the template can add questions to it
     public boolean createIsPermitted(UUID templateCreatorId) {
         boolean isAdmin = currentUserServices.isAdmin();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        UUID currentUserId = currentUserServices.getCurrentUserId();
         return currentUserId != null && (isAdmin || currentUserId.equals(templateCreatorId));
     }
 
@@ -160,22 +160,8 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     }
 
     public boolean getIsPermitted(FeedbackTemplate feedbackTemplate) {
-        UUID currentUserId;
-        MemberProfile currentUser;
-
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-            currentUserId = currentUser.getId();
-        } catch (NotFoundException e) {
-            currentUser = null;
-            currentUserId = null;
-        }
-        if (currentUserId != null) return true;
-
-        boolean templateForExternalRecipient = (feedbackTemplate != null && feedbackTemplate.getIsForExternalRecipient() == true);
-        if (templateForExternalRecipient) return true;
-
-        return false;
+        return (currentUserServices.getCurrentUserId() != null) ||
+               (feedbackTemplate != null && feedbackTemplate.getIsForExternalRecipient());
     }
 
 }

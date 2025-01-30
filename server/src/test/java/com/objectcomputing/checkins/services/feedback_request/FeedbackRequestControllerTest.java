@@ -613,7 +613,7 @@ class FeedbackRequestControllerTest extends TestContainersSuite implements Membe
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("Cannot save feedback request without both recipient and external-recipient ID", error);
+        assertEquals("Cannot save feedback request without recipient or external-recipient ID", error);
     }
 
     @Test

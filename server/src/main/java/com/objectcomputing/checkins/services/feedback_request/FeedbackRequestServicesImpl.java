@@ -25,6 +25,7 @@ import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
@@ -76,12 +77,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public FeedbackRequestServicesImpl(
             FeedbackRequestRepository feedbackReqRepository,
-           CurrentUserServices currentUserServices,
-           MemberProfileServices memberProfileServices,
-           ReviewPeriodRepository reviewPeriodRepository,
-           ReviewAssignmentRepository reviewAssignmentRepository,
-           @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
-           CheckInsConfiguration checkInsConfiguration,
+            CurrentUserServices currentUserServices,
+            MemberProfileServices memberProfileServices,
+            ReviewPeriodRepository reviewPeriodRepository,
+            ReviewAssignmentRepository reviewAssignmentRepository,
+            @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
+            CheckInsConfiguration checkInsConfiguration,
             FeedbackExternalRecipientServices feedbackExternalRecipientServices
     ) {
         this.feedbackReqRepository = feedbackReqRepository;
@@ -106,7 +107,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot save feedback request with both recipient and external-recipient ID");
         }
         if (feedbackRequest.getExternalRecipientId() == null && feedbackRequest.getRecipientId() == null) {
-            throw new BadArgException("Cannot save feedback request without both recipient and external-recipient ID");
+            throw new BadArgException("Cannot save feedback request without recipient or external-recipient ID");
         }
 
         try {
@@ -130,7 +131,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid requestee ID");
         }
-
     }
 
     @Override
@@ -254,15 +254,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         MemberProfile reviewerMemberProfile;
         FeedbackExternalRecipient reviewerExternalRecipient;
         String reviewerFirstName, reviewerEmail;
-        MemberProfile currentUser;
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
         boolean currentUserEqualsRequestee = false;
-
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-        } catch (NotFoundException notFoundException) {
-            currentUser = null;
-        }
-
 
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
         FeedbackRequest originalFeedback = null;
@@ -275,7 +268,9 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
 
-        if (currentUser != null) currentUserEqualsRequestee = currentUser.getId().equals(originalFeedback.getRequesteeId());
+        if (currentUserId != null) {
+          currentUserEqualsRequestee = currentUserId.equals(originalFeedback.getRequesteeId());
+        }
 
         validateMembers(originalFeedback);
 
@@ -360,7 +355,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             sendNewRequestEmail(storedRequest);
         }
 
-        boolean currentUserSameAsRequestee = currentUser != null && currentUser.getId().equals(requestee.getId());
+        boolean currentUserSameAsRequestee = currentUserId != null && currentUserId.equals(requestee.getId());
         // Send self-review completion email to supervisor and pdl if appropriate
         if (currentUserSameAsRequestee) {
             sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
@@ -411,15 +406,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, UUID externalRecipientId, List<UUID> requesteeIds) {
-        MemberProfile currentUser;
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
 
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-        } catch (NotFoundException notFoundException) {
-            currentUser = null;
-        }
-        if (currentUser == null && externalRecipientId == null) {
+        if (currentUserId == null && externalRecipientId == null) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
         if (requesteeIds != null && !requesteeIds.isEmpty()) {
@@ -434,21 +424,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             if (currentUserServices.isAdmin()) {
                 visible = true;
             } else if (request != null) {
-                MemberProfile currentUserLambda;
-                UUID currentUserIdLambda;
-
-                try {
-                    currentUserLambda = currentUserServices.getCurrentUser();
-                    currentUserIdLambda = currentUserLambda.getId();
-                } catch (NotFoundException notFoundException) {
-                    currentUserLambda = null;
-                    currentUserIdLambda = null;
-                }
-                if (currentUserIdLambda != null) {
-                    if (currentUserIdLambda.equals(request.getCreatorId())) visible = true;
-                    if (isSupervisor(request.getRequesteeId(), currentUserIdLambda)) visible = true;
-                    if (currentUserIdLambda.equals(request.getRecipientId())) visible = true;
-                    if (selfRevieweeIsCurrentUserReviewee(request, currentUserIdLambda)) visible = true;
+                if (currentUserId != null) {
+                    if (currentUserId.equals(request.getCreatorId())) visible = true;
+                    if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
+                    if (currentUserId.equals(request.getRecipientId())) visible = true;
+                    if (selfRevieweeIsCurrentUserReviewee(request, currentUserId)) visible = true;
                 } else {
                     if (request.getExternalRecipientId() != null) visible = true;
                 }
@@ -510,16 +490,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private boolean getIsPermittedForExternalRecipient(FeedbackRequest feedbackReq) {
         final LocalDate sendDate = feedbackReq.getSendDate();
         final LocalDate today = LocalDate.now();
-        MemberProfile currentUser;
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-        } catch (NotFoundException notFoundException) {
-            currentUser = null;
-        }
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
 
         // The recipient can only access the feedback request after it has been sent
         // Since request is for an external recipient, any logged in user can access it as long as they have feedback-reques-id
-        if (sendDate.isAfter(today) && currentUser == null) {
+        if (sendDate.isAfter(today) && currentUserId == null) {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
         return true;
@@ -534,34 +509,19 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean isCurrentUserAdminOrOwner(FeedbackRequest feedbackRequest) {
-        boolean isAdmin = currentUserServices.isAdmin();
-        boolean currentUserIsSameAsCreator = false;
-        UUID currentUserId;
-        MemberProfile currentUser;
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-        } catch (NotFoundException notFoundException) {
-            currentUser = null;
-        }
-        if (currentUser != null) {
-            currentUserId = currentUserServices.getCurrentUser().getId();
-            currentUserIsSameAsCreator = currentUserId.equals(feedbackRequest.getCreatorId());
-        }
-        return isAdmin || currentUserIsSameAsCreator;
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
+        return currentUserServices.isAdmin() || (currentUserId != null && currentUserId.equals(feedbackRequest.getCreatorId()));
     }
 
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
-        MemberProfile currentUser;
-        boolean isAdmin = false;
         try {
-            currentUser = currentUserServices.getCurrentUser();
-            isAdmin = currentUserServices.isAdmin();
+            if (currentUserServices.isAdmin()) {
+                return true;
+            }
         } catch (NotFoundException notFoundException) {
-            currentUser = null;
-
         }
-        if (isAdmin) return true;
-        UUID currentUserId = currentUser != null ? currentUser.getId() : null;
+
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
         if (((currentUserId != null && currentUserId.equals(feedbackRequest.getCreatorId())) && feedbackRequest.getSubmitDate() != null)) return true;
         if (currentUserId != null && currentUserId.equals(feedbackRequest.getRecipientId()))  return true;
         if (feedbackRequest.getExternalRecipientId() != null) return true;

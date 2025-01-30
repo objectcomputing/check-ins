@@ -103,14 +103,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         List<FeedbackAnswer> response = new ArrayList<>();
         FeedbackRequest feedbackRequest;
-        MemberProfile currentUser;
-
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-        } catch (NotFoundException e) {
-            currentUser = null;
-        }
-        final UUID currentUserId = (currentUser != null) ? currentUser.getId() : null;
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
 
         try {
             feedbackRequest = feedbackRequestServices.getById(requestId);
@@ -148,17 +141,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
     public boolean createIsPermitted(FeedbackRequest feedbackRequest) {
         final UUID recipientId = feedbackRequest.getRecipientId();
-        MemberProfile currentUser;
-        UUID currentUserId;
-
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-            currentUserId = currentUser.getId();
-        } catch (NotFoundException e) {
-            currentUser = null;
-            currentUserId = null;
-        }
-        return (recipientId != null && recipientId.equals(currentUserId)) || (feedbackRequest.getExternalRecipientId() != null);
+        return (recipientId != null && recipientId.equals(currentUserServices.getCurrentUserId())) || (feedbackRequest.getExternalRecipientId() != null);
     }
 
     public boolean updateIsPermitted(FeedbackRequest feedbackRequest) {
@@ -166,17 +149,10 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     public boolean getIsPermitted(FeedbackRequest feedbackRequest) {
-        MemberProfile currentUser;
-
-        try {
-            currentUser = currentUserServices.getCurrentUser();
-        } catch (NotFoundException e) {
-            currentUser = null;
-        }
-        final UUID currentUserId = (currentUser != null) ? currentUser.getId() : null;
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
 
         // Admins can always get questions and answers.
-        if (currentUser != null && currentUserServices.isAdmin()) {
+        if (currentUserId != null && currentUserServices.isAdmin()) {
             return true;
         }
 
