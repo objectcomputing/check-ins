@@ -90,10 +90,6 @@ export const createFeedbackRequest = async (feedbackRequest, cookie) => {
 };
 
 export const updateFeedbackRequest = async (feedbackRequest, cookie) => {
-
-  console.log("feedback.js, updateFeedbackRequest, feedbackRequestURL: ", feedbackRequestURL);
-  console.log("feedback.js, updateFeedbackRequest, feedbackRequest: ", feedbackRequest);
-
   return resolve({
     method: 'PUT',
     url: feedbackRequestURL,
