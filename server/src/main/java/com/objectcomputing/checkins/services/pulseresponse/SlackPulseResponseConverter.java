@@ -4,6 +4,9 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +16,8 @@ import java.util.UUID;
 import java.time.LocalDate;
 
 public class SlackPulseResponseConverter {
+    private static final Logger LOG = LoggerFactory.getLogger(SlackPulseResponseConverter.class);
+
     public static PulseResponseCreateDTO get(
                     MemberProfileServices memberProfileServices, String body) {
         final String key = "payload=";
@@ -50,11 +55,14 @@ public class SlackPulseResponseConverter {
 
                 return response;
             } catch(JsonProcessingException ex) {
+                LOG.error(ex.getMessage());
                 throw new BadArgException(ex.getMessage());
             } catch(NumberFormatException ex) {
+                LOG.error(ex.getMessage());
                 throw new BadArgException("Pulse scores must be integers");
             }
         } else {
+            LOG.error(body);
             throw new BadArgException("Invalid pulse response body");
         }
     }
@@ -70,6 +78,7 @@ public class SlackPulseResponseConverter {
         }
 
         if (required) {
+            LOG.error("Expected {}.{} was not found", key, valueKey);
             throw new BadArgException(
                 String.format("Expected %s.%s was not found", key, valueKey));
         } else {
