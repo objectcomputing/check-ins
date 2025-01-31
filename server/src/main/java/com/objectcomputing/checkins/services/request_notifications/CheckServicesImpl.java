@@ -41,7 +41,7 @@ public class CheckServicesImpl implements CheckServices {
             req.setStatus("sent");
             feedbackRequestRepository.update(req);
         }
-        pulseServices.sendPendingEmail(today);
+        pulseServices.notifyUsers(today);
         reviewPeriodServices.sendNotifications(today);
         return true;
     }
