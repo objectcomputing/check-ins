@@ -33,7 +33,7 @@ micronaut:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:public" 
+          - "classpath:public"
 
   executors:
     io:
@@ -106,6 +106,10 @@ check-ins:
       slack:
         webhook-url: ${ SLACK_WEBHOOK_URL }
         bot-token: ${ SLACK_BOT_TOKEN }
+    pulse-response:
+      slack:
+        signing-secret: ${ SLACK_PULSE_SIGNING_SECRET }
+        bot-token: ${ SLACK_PULSE_BOT_TOKEN }
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:
