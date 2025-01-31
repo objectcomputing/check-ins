@@ -25,6 +25,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Set;
@@ -36,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Tag(name = "pulse-responses")
 public class PulseResponseController {
+    private static final Logger LOG = LoggerFactory.getLogger(PulseResponseController.class);
 
     private final PulseResponseService pulseResponseServices;
     private final MemberProfileServices memberProfileServices;
@@ -146,12 +150,21 @@ public class PulseResponseController {
                @Header("X-Slack-Request-Timestamp") String timestamp,
                @Body String requestBody,
                HttpRequest<?> request) {
+        // DEBUG Only
+        LOG.info(requestBody);
+
         // Validate the request
         if (slackSignatureVerifier.verifyRequest(signature,
                                                  timestamp, requestBody)) {
+            // DEBUG Only
+            LOG.info("Request has been verified");
+
             PulseResponseCreateDTO pulseResponseDTO =
                 SlackPulseResponseConverter.get(memberProfileServices,
                                                 requestBody);
+
+            // DEBUG Only
+            LOG.info("Request has been converted");
 
             // Create the pulse response
             PulseResponse pulseResponse = pulseResponseServices.unsecureSave(
