@@ -61,7 +61,8 @@ export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
         return {
           answer: {
             ...obj.answer,
-            responder: obj.request.recipientId
+            responder: obj.request.recipientId ?? obj.request.externalRecipientId,
+            external: !!!obj.request.recipientId
           },
           ...obj.question
         };
@@ -85,7 +86,8 @@ export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
             answer: val.answer.answer,
             requestId: val.answer.requestId,
             sentiment: val.answer.sentiment,
-            responder: val.answer.responder
+            responder: val.answer.responder,
+            external: val.answer.external,
           };
         });
 

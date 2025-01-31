@@ -5,13 +5,13 @@ import CardContent from '@mui/material/CardContent';
 import { Typography } from '@mui/material';
 import './FeedbackResponseCard.css';
 import { AppContext } from '../../../context/AppContext';
-import { selectProfile } from '../../../context/selectors';
 import Avatar from '@mui/material/Avatar';
 import { getAvatarURL } from '../../../api/api.js';
 import FeedbackAnswerInput from '../../feedback_answer_input/FeedbackAnswerInput';
 
 const propTypes = {
-  responderId: PropTypes.string.isRequired,
+  responderName: PropTypes.string.isRequired,
+  responderEmail: PropTypes.string.isRequired,
   answer: PropTypes.string, // Allow answer to be null or undefined
   inputType: PropTypes.string.isRequired,
   sentiment: PropTypes.number
@@ -19,7 +19,6 @@ const propTypes = {
 
 const FeedbackResponseCard = props => {
   const { state } = useContext(AppContext);
-  const userInfo = selectProfile(state, props.responderId);
 
   const getFormattedAnswer = () => {
     if (props.inputType === 'NONE') {
@@ -40,9 +39,9 @@ const FeedbackResponseCard = props => {
         <div className="response-card-recipient-info">
           <Avatar
             className="avatar-photo"
-            src={getAvatarURL(userInfo?.workEmail)}
+            src={getAvatarURL(props.responderEmail)}
           />
-          <Typography className="responder-name">{userInfo?.name}</Typography>
+          <Typography className="responder-name">{props.responderName}</Typography>
         </div>
         {props.inputType !== 'NONE' && (
           <FeedbackAnswerInput

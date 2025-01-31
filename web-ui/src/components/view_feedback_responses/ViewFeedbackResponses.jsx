@@ -3,7 +3,10 @@ import { styled } from '@mui/material/styles';
 import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography, Box } from '@mui/material';
 import FeedbackResponseCard from './feedback_response_card/FeedbackResponseCard';
 import { getQuestionsAndAnswers } from '../../api/feedbackanswer';
-import { getFeedbackRequestById } from '../../api/feedback';
+import {
+  getFeedbackRequestById,
+  getExternalRecipients
+} from '../../api/feedback';
 import queryString from 'query-string';
 import { useLocation } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
@@ -74,10 +77,23 @@ const ViewFeedbackResponses = () => {
   const [selectedResponders, setSelectedResponders] = useState([]);
   const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [externalRecipients, setExternalRecipients] = useState([]);
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
   }, [location.search]);
+
+  useEffect(() => {
+    async function fetchExternalRecipients() {
+      const res = await getExternalRecipients();
+      setExternalRecipients(
+          res.payload && res.payload.data &&
+          res.payload.status === 200 && !res.error
+              ? res.payload.data
+              : null);
+    }
+    fetchExternalRecipients();
+  }, []);
 
   useEffect(() => {
     async function retrieveQuestionsAndAnswers(requests, cookie) {
@@ -196,6 +212,24 @@ const ViewFeedbackResponses = () => {
   };
 
 
+  const getResponder = (responder, external) => {
+    let name = "";
+    let workEmail = "";
+    const info = selectProfile(state, responder);
+    if (external || !info) {
+      const current = externalRecipients.filter((e) => e.id === responder);
+      if (current.length > 0) {
+        const first = current[0];
+        name = `${first.firstName} ${first.lastName}`;
+        workEmail = first.email;
+      }     
+    } else if (info) {
+      name = info.name;
+      workEmail = info.workEmail;
+    }
+    return {name, workEmail};
+  };
+
   return selectCanViewFeedbackAnswerPermission(state) ? (
 
     <Root className="view-feedback-responses-page">
@@ -230,7 +264,7 @@ const ViewFeedbackResponses = () => {
           disableCloseOnSelect
           options={responderOptions}
           getOptionLabel={option => {
-            return selectProfile(state, option)?.name;
+            return getResponder(option)?.name;
           }}
           value={selectedResponders}
           onChange={(event, value) => setSelectedResponders(value)}
@@ -242,7 +276,7 @@ const ViewFeedbackResponses = () => {
                 style={{ marginRight: 8 }}
                 checked={selected}
               />
-              {selectProfile(state, option)?.name}
+              {getResponder(option)?.name}
             </li>
           )}
           renderInput={params => (
@@ -259,7 +293,7 @@ const ViewFeedbackResponses = () => {
           )}
           renderTags={(values, getTagProps) =>
             values.map((responderId, index) => {
-              const profile = selectProfile(state, responderId);
+              const profile = getResponder(responderId);
               return (
                 <Chip
                   key={`${responderId}-chip`}
@@ -313,15 +347,17 @@ const ViewFeedbackResponses = () => {
 
               {/* If the question has no answers or inputType is "NONE" */}
               {!hasResponses || question.inputType === 'NONE' ? null : (
-                question.answers.map(answer => (
-                  <FeedbackResponseCard
+                question.answers.map(answer => {
+                  const { workEmail, name } = getResponder(answer.responder, answer.external);
+                  return <FeedbackResponseCard
                     key={answer.id || answer.responder}
-                    responderId={answer.responder}
-                    answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
+                    responderName={name}
+                    responderEmail={workEmail}
+                    answer={String(answer.answer)}
                     inputType={question.inputType}
                     sentiment={answer.sentiment}
-                  />
-                ))
+                  />;
+                })
               )}
             </div>
           );
