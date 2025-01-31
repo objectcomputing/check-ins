@@ -259,11 +259,8 @@ const FeedbackExternalRecipientSelector = ({ changeQuery, fromQuery, forQuery, a
             });
         } else if (feedbackExternalRecipientRes.payload && feedbackExternalRecipientRes.payload.data) {
             newRecipient.id = feedbackExternalRecipientRes.payload.data.id;
-            console.log("FeedbackExternalRecipientSelector.jsx, handleNewRecipientSubmit, newRecipient: ", newRecipient);
-            //setExternalRecipients([...externalRecipients, newRecipient]);
             addExternalRecipientId(newRecipient.id);
             const updatedRecipients = await getExternalRecipients(csrf);
-            console.log("FeedbackExternalRecipientSelector.jsx, handleNewRecipientSubmit, updatedRecipients: ", updatedRecipients);
             if (updatedRecipients && updatedRecipients.payload) {
                 setExternalRecipients(updatedRecipients.payload.data);
             }
