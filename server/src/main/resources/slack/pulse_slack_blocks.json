@@ -71,6 +71,7 @@
     },
     {
       "type": "input",
+      "optional": true,
       "element": {
         "type": "plain_text_input",
         "action_id": "internalFeelings",
@@ -140,6 +141,7 @@
     },
     {
       "type": "input",
+      "optional": true,
       "element": {
         "type": "plain_text_input",
         "action_id": "externalFeelings",

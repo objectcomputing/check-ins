@@ -140,7 +140,7 @@ public class PulseResponseController {
     }
 
     @Secured(SecurityRule.IS_ANONYMOUS)
-    @Post("/external")
+    @Post(uri = "/external", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public HttpResponse<PulseResponse> externalPulseResponse(
                @Header("X-Slack-Signature") String signature,
                @Header("X-Slack-Request-Timestamp") String timestamp,
