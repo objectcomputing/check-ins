@@ -159,34 +159,47 @@ public class PulseResponseController {
             // DEBUG Only
             LOG.info("Request has been verified");
 
-            PulseResponseCreateDTO pulseResponseDTO =
-                SlackPulseResponseConverter.get(memberProfileServices,
-                                                requestBody);
+            // Convert the request body to a map of values.
+            FormUrlEncodedDecoder formUrlEncodedDecoder =
+                new FormUrlEncodedDecoder();
+            Map<String, Object> body =
+                formUrlEncodedDecoder.decode(requestBody,
+                                             StandardCharsets.UTF_8);
 
-            // DEBUG Only
-            LOG.info("Request has been converted");
+            final String key = "payload";
+            if (body.containsKey(key)) {
+                PulseResponseCreateDTO pulseResponseDTO =
+                    SlackPulseResponseConverter.get(memberProfileServices,
+                                                    (String)body.get(key));
 
-            // Create the pulse response
-            PulseResponse pulseResponse = pulseResponseServices.unsecureSave(
-                new PulseResponse(
-                    pulseResponseDTO.getInternalScore(),
-                    pulseResponseDTO.getExternalScore(),
-                    pulseResponseDTO.getSubmissionDate(),
-                    pulseResponseDTO.getTeamMemberId(),
-                    pulseResponseDTO.getInternalFeelings(),
-                    pulseResponseDTO.getExternalFeelings()
-                )
-            );
+                // DEBUG Only
+                LOG.info("Request has been converted");
 
-            if (pulseResponse == null) {
-                return HttpResponse.status(HttpStatus.CONFLICT,
-                                           "Already submitted today");
+                // Create the pulse response
+                PulseResponse pulseResponse =
+                    pulseResponseServices.unsecureSave(
+                        new PulseResponse(
+                            pulseResponseDTO.getInternalScore(),
+                            pulseResponseDTO.getExternalScore(),
+                            pulseResponseDTO.getSubmissionDate(),
+                            pulseResponseDTO.getTeamMemberId(),
+                            pulseResponseDTO.getInternalFeelings(),
+                            pulseResponseDTO.getExternalFeelings()
+                        )
+                );
+
+                if (pulseResponse == null) {
+                    return HttpResponse.status(HttpStatus.CONFLICT,
+                                               "Already submitted today");
+                } else {
+                    return HttpResponse.created(pulseResponse)
+                                       .headers(headers -> headers.location(
+                                           URI.create(String.format("%s/%s",
+                                                      request.getPath(),
+                                                      pulseResponse.getId()))));
+                }
             } else {
-                return HttpResponse.created(pulseResponse)
-                                   .headers(headers -> headers.location(
-                                       URI.create(String.format("%s/%s",
-                                                  request.getPath(),
-                                                  pulseResponse.getId()))));
+                return HttpResponse.unprocessableEntity();
             }
         } else {
             return HttpResponse.unauthorized();

@@ -20,50 +20,42 @@ public class SlackPulseResponseConverter {
 
     public static PulseResponseCreateDTO get(
                     MemberProfileServices memberProfileServices, String body) {
-        final String key = "payload=";
-        final int start = body.indexOf(key);
-        if (start >= 0) {
-            try {
-                // Get the map of values from the string body
-                final ObjectMapper mapper = new ObjectMapper();
-                final Map<String, Object> map =
-                        mapper.readValue(body.substring(start + key.length()),
-                                         new TypeReference<>() {});
-                final Map<String, Object> view =
-                        (Map<String, Object>)map.get("view");
-                final Map<String, Object> state =
-                        (Map<String, Object>)view.get("state");
-                final Map<String, Object> values =
-                        (Map<String, Object>)state.get("values");
+        try {
+            // Get the map of values from the string body
+            final ObjectMapper mapper = new ObjectMapper();
+            final Map<String, Object> map =
+                    mapper.readValue(body, new TypeReference<>() {});
+            final Map<String, Object> view =
+                    (Map<String, Object>)map.get("view");
+            final Map<String, Object> state =
+                    (Map<String, Object>)view.get("state");
+            final Map<String, Object> values =
+                    (Map<String, Object>)state.get("values");
 
-                // Create the pulse DTO and fill in the values.
-                PulseResponseCreateDTO response = new PulseResponseCreateDTO();
-                response.setTeamMemberId(lookupUser(memberProfileServices, map));
-                response.setSubmissionDate(LocalDate.now());
+            // Create the pulse DTO and fill in the values.
+            PulseResponseCreateDTO response = new PulseResponseCreateDTO();
+            response.setTeamMemberId(lookupUser(memberProfileServices, map));
+            response.setSubmissionDate(LocalDate.now());
 
-                response.setInternalScore(Integer.parseInt(
-                    getMappedValue(values, "internalScore", true)));
-                response.setInternalFeelings(
-                    getMappedValue(values, "internalFeelings", false));
+            response.setInternalScore(Integer.parseInt(
+                getMappedValue(values, "internalScore", true)));
+            response.setInternalFeelings(
+                getMappedValue(values, "internalFeelings", false));
 
-                String score = getMappedValue(values, "externalScore", false);
-                if (!score.isEmpty()) {
-                    response.setExternalScore(Integer.parseInt(score));
-                }
-                response.setExternalFeelings(
-                    getMappedValue(values, "externalFeelings", false));
-
-                return response;
-            } catch(JsonProcessingException ex) {
-                LOG.error(ex.getMessage());
-                throw new BadArgException(ex.getMessage());
-            } catch(NumberFormatException ex) {
-                LOG.error(ex.getMessage());
-                throw new BadArgException("Pulse scores must be integers");
+            String score = getMappedValue(values, "externalScore", false);
+            if (!score.isEmpty()) {
+                response.setExternalScore(Integer.parseInt(score));
             }
-        } else {
-            LOG.error(body);
-            throw new BadArgException("Invalid pulse response body");
+            response.setExternalFeelings(
+                getMappedValue(values, "externalFeelings", false));
+
+            return response;
+        } catch(JsonProcessingException ex) {
+            LOG.error(ex.getMessage());
+            throw new BadArgException(ex.getMessage());
+        } catch(NumberFormatException ex) {
+            LOG.error(ex.getMessage());
+            throw new BadArgException("Pulse scores must be integers");
         }
     }
 
