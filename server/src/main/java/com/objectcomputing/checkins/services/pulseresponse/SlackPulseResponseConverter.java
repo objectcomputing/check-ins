@@ -42,22 +42,25 @@ public class SlackPulseResponseConverter {
             final Map<String, Object> values =
                     (Map<String, Object>)state.get("values");
 
+            dumpMap(values, "");
+
             // Create the pulse DTO and fill in the values.
             PulseResponseCreateDTO response = new PulseResponseCreateDTO();
             response.setTeamMemberId(lookupUser(memberProfileServices, map));
             response.setSubmissionDate(LocalDate.now());
 
-            response.setInternalScore(Integer.parseInt(
-                getMappedValue(values, "internalScore", true)));
-            response.setInternalFeelings(
-                getMappedValue(values, "internalFeelings", false));
+            response.setInternalScore(Integer.parseInt(getMappedValue(
+                values, "internalNumber", "internalScore", true)));
+            response.setInternalFeelings(getMappedValue(
+                values, "internaltext", "internalFeelings", false));
 
-            String score = getMappedValue(values, "externalScore", false);
+            String score = getMappedValue(values, "externalScore",
+                                          "externalScore", false);
             if (!score.isEmpty()) {
                 response.setExternalScore(Integer.parseInt(score));
             }
-            response.setExternalFeelings(
-                getMappedValue(values, "externalFeelings", false));
+            response.setExternalFeelings(getMappedValue(
+                values, "externalText", "externalFeelings", false));
 
             return response;
         } catch(JsonProcessingException ex) {
@@ -69,20 +72,32 @@ public class SlackPulseResponseConverter {
         }
     }
 
-    private String getMappedValue(Map<String, Object> map,
+    private String getMappedValue(Map<String, Object> map, String blockId,
                                   String key, boolean required) {
+        if (!map.containsKey(blockId)) {
+            if (required) {
+                throw new BadArgException(
+                    String.format("Block ID - %s was not found", blockId));
+            } else {
+                return "";
+            }
+        }
+        Map<String, Object> blockMap = (Map<String, Object>)map.get(blockId);
+
         final String valueKey = "value";
-        if (map.containsKey(key)) {
-            final Map<String, Object> other = (Map<String, Object>)map.get(key);
+        if (blockMap.containsKey(key)) {
+            final Map<String, Object> other =
+                (Map<String, Object>)blockMap.get(key);
             if (other.containsKey(valueKey)) {
                 return (String)other.get(valueKey);
             }
         }
 
         if (required) {
-            LOG.error("Expected {}.{} was not found", key, valueKey);
+            LOG.error("Expected {}.{}.{} was not found", blockId, key, valueKey);
             throw new BadArgException(
-                String.format("Expected %s.%s was not found", key, valueKey));
+                String.format("Expected %s.%s.%s was not found",
+                              blockId, key, valueKey));
         } else {
             return "";
         }
@@ -100,5 +115,16 @@ public class SlackPulseResponseConverter {
         }
         MemberProfile member = memberProfileServices.findByWorkEmail(email);
         return member.getId();
+    }
+
+    // DEBUG Only
+    private void dumpMap(Map<?, ?> map, String indent) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            LOG.info(indent + entry.getKey() + " : " + entry.getValue());
+
+            if (entry.getValue() instanceof Map) {
+                dumpMap((Map<?, ?>) entry.getValue(), indent + "  ");
+            }
+        }
     }
 }
