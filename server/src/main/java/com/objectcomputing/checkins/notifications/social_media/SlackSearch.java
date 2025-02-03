@@ -92,9 +92,9 @@ public class SlackSearch {
                     return response.getUser().getProfile().getEmail();
                 }
             } catch(IOException e) {
-                LOG.error("SlackSearch.findUserId: " + e.toString());
+                LOG.error("SlackSearch.findUserEmail: " + e.toString());
             } catch(SlackApiException e) {
-                LOG.error("SlackSearch.findUserId: " + e.toString());
+                LOG.error("SlackSearch.findUserEmail: " + e.toString());
             }
         }
         return null;
