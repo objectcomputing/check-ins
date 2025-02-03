@@ -49,16 +49,24 @@ public class SlackPulseResponseConverter {
             response.setTeamMemberId(lookupUser(memberProfileServices, map));
             response.setSubmissionDate(LocalDate.now());
 
+            // Internal Score
+            Map<String, Object> internalBlock =
+                (Map<String, Object>)values.get("internalNumber");
             response.setInternalScore(Integer.parseInt(getMappedValue(
-                values, "internalNumber", "internalScore", true)));
+                internalBlock, "internalScore", "selected_option", true)));
+            // Internal Feelings
             response.setInternalFeelings(getMappedValue(
                 values, "internaltext", "internalFeelings", false));
 
-            String score = getMappedValue(values, "externalScore",
-                                          "externalScore", false);
-            if (!score.isEmpty()) {
+            // External Score
+            Map<String, Object> externalBlock =
+                (Map<String, Object>)values.get("externalNumber");
+            String score = getMappedValue(externalBlock, "externalScore",
+                                          "selected_option", false);
+            if (score != null && !score.isEmpty()) {
                 response.setExternalScore(Integer.parseInt(score));
             }
+            // External Feelings
             response.setExternalFeelings(getMappedValue(
                 values, "externalText", "externalFeelings", false));
 
@@ -72,32 +80,25 @@ public class SlackPulseResponseConverter {
         }
     }
 
-    private String getMappedValue(Map<String, Object> map, String blockId,
-                                  String key, boolean required) {
-        if (!map.containsKey(blockId)) {
-            if (required) {
-                throw new BadArgException(
-                    String.format("Block ID - %s was not found", blockId));
-            } else {
-                return "";
-            }
-        }
-        Map<String, Object> blockMap = (Map<String, Object>)map.get(blockId);
-
+    private String getMappedValue(Map<String, Object> map, String key1,
+                                  String key2, boolean required) {
         final String valueKey = "value";
-        if (blockMap.containsKey(key)) {
-            final Map<String, Object> other =
-                (Map<String, Object>)blockMap.get(key);
-            if (other.containsKey(valueKey)) {
-                return (String)other.get(valueKey);
+        if (map.containsKey(key1)) {
+            Map<String, Object> firstMap = (Map<String, Object>)map.get(key1);
+            if (firstMap.containsKey(key2)) {
+                final Map<String, Object> secondMap =
+                    (Map<String, Object>)firstMap.get(key2);
+                if (secondMap.containsKey(valueKey)) {
+                    return (String)secondMap.get(valueKey);
+                }
             }
         }
 
         if (required) {
-            LOG.error("Expected {}.{}.{} was not found", blockId, key, valueKey);
+            LOG.error("Expected {}.{}.{} was not found", key1, key2, valueKey);
             throw new BadArgException(
                 String.format("Expected %s.%s.%s was not found",
-                              blockId, key, valueKey));
+                              key1, key2, valueKey));
         } else {
             return "";
         }
