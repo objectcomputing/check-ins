@@ -3,6 +3,9 @@ package com.objectcomputing.checkins.services.pulseresponse;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.notifications.social_media.SlackSearch;
+
+import jakarta.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +18,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.time.LocalDate;
 
+@Singleton
 public class SlackPulseResponseConverter {
     private static final Logger LOG = LoggerFactory.getLogger(SlackPulseResponseConverter.class);
 
-    public static PulseResponseCreateDTO get(
+    private final SlackSearch slackSearch;
+
+    public SlackPulseResponseConverter(SlackSearch slackSearch) {
+        this.slackSearch = slackSearch;
+    }
+
+    public PulseResponseCreateDTO get(
                     MemberProfileServices memberProfileServices, String body) {
         try {
             // Get the map of values from the string body
@@ -59,8 +69,8 @@ public class SlackPulseResponseConverter {
         }
     }
 
-    private static String getMappedValue(Map<String, Object> map,
-                                         String key, boolean required) {
+    private String getMappedValue(Map<String, Object> map,
+                                  String key, boolean required) {
         final String valueKey = "value";
         if (map.containsKey(key)) {
             final Map<String, Object> other = (Map<String, Object>)map.get(key);
@@ -78,14 +88,16 @@ public class SlackPulseResponseConverter {
         }
     }
 
-    private static UUID lookupUser(MemberProfileServices memberProfileServices,
-                                   Map<String, Object> map) {
+    private UUID lookupUser(MemberProfileServices memberProfileServices,
+                            Map<String, Object> map) {
         // Get the user's profile map.
         Map<String, Object> user = (Map<String, Object>)map.get("user");
-        Map<String, Object> profile = (Map<String, Object>)user.get("profile");
 
         // Lookup the user based on the email address.
-        String email = (String)profile.get("email");
+        String email = slackSearch.findUserEmail((String)user.get("id"));
+        if (email == null) {
+            throw new BadArgException("Unable to find the user email address");
+        }
         MemberProfile member = memberProfileServices.findByWorkEmail(email);
         return member.getId();
     }
