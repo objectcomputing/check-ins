@@ -32,7 +32,7 @@ public class SlackSearch {
     }
 
     public String findChannelId(String channelName) {
-        String token = configuration.getApplication().getNotifications().getSlack().getBotToken();
+        String token = configuration.getApplication().getSlack().getBotToken();
         if (token != null) {
             try {
                 MethodsClient client = Slack.getInstance().methods(token);
@@ -57,7 +57,7 @@ public class SlackSearch {
     }
 
     public String findUserId(String userEmail) {
-        String token = configuration.getApplication().getNotifications().getSlack().getBotToken();
+        String token = configuration.getApplication().getSlack().getBotToken();
         if (token != null) {
             try {
                 MethodsClient client = Slack.getInstance().methods(token);
