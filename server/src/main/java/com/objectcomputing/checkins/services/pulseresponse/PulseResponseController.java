@@ -45,15 +45,18 @@ public class PulseResponseController {
     private final MemberProfileServices memberProfileServices;
     private final SlackSignatureVerifier slackSignatureVerifier;
     private final PulseSlackCommand pulseSlackCommand;
+    private final SlackPulseResponseConverter slackPulseResponseConverter;
 
     public PulseResponseController(PulseResponseService pulseResponseServices,
                                    MemberProfileServices memberProfileServices,
                                    SlackSignatureVerifier slackSignatureVerifier,
-                                   PulseSlackCommand pulseSlackCommand) {
+                                   PulseSlackCommand pulseSlackCommand,
+                                   SlackPulseResponseConverter slackPulseResponseConverter) {
         this.pulseResponseServices = pulseResponseServices;
         this.memberProfileServices = memberProfileServices;
         this.slackSignatureVerifier = slackSignatureVerifier;
         this.pulseSlackCommand = pulseSlackCommand;
+        this.slackPulseResponseConverter = slackPulseResponseConverter;
     }
 
     /**
@@ -169,7 +172,7 @@ public class PulseResponseController {
             final String key = "payload";
             if (body.containsKey(key)) {
                 PulseResponseCreateDTO pulseResponseDTO =
-                    SlackPulseResponseConverter.get(memberProfileServices,
+                    slackPulseResponseConverter.get(memberProfileServices,
                                                     (String)body.get(key));
 
                 // DEBUG Only
