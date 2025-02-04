@@ -45,8 +45,6 @@ public class SlackPulseResponseConverter {
                 final Map<String, Object> values =
                         (Map<String, Object>)state.get("values");
 
-                dumpMap(values, "");
-
                 // Create the pulse DTO and fill in the values.
                 PulseResponseCreateDTO response = new PulseResponseCreateDTO();
                 response.setTeamMemberId(lookupUser(memberProfileServices, map));
@@ -59,7 +57,7 @@ public class SlackPulseResponseConverter {
                     internalBlock, "internalScore", "selected_option", true)));
                 // Internal Feelings
                 response.setInternalFeelings(getMappedValue(
-                    values, "internaltext", "internalFeelings", false));
+                    values, "internalText", "internalFeelings", false));
 
                 // External Score
                 Map<String, Object> externalBlock =
@@ -125,16 +123,5 @@ public class SlackPulseResponseConverter {
         }
         MemberProfile member = memberProfileServices.findByWorkEmail(email);
         return member.getId();
-    }
-
-    // DEBUG Only
-    private void dumpMap(Map<?, ?> map, String indent) {
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            LOG.info(indent + entry.getKey() + " : " + entry.getValue());
-
-            if (entry.getValue() instanceof Map) {
-                dumpMap((Map<?, ?>) entry.getValue(), indent + "  ");
-            }
-        }
     }
 }
