@@ -228,7 +228,9 @@ const PulseReportPage = () => {
             internalScores: []
           };
         }
-        averages.externalScores.push(externalScore);
+        if (externalScore != null) {
+          averages.externalScores.push(externalScore);
+        }
         averages.internalScores.push(internalScore);
       }
     }

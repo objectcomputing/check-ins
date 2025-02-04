@@ -41,7 +41,7 @@ const CheckinsReportPage = () => {
 
   // Set the report date to today less one month on first load
   useEffect(() => {
-    setReportDate(new Date(new Date().setMonth(new Date().getMonth() - 1)));
+    setReportDate(new Date(2024, 9, 1));
   }, []);
 
   const handleQuarterClick = evt => {
