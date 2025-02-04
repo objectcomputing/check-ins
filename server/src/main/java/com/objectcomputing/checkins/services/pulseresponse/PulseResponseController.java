@@ -148,7 +148,7 @@ public class PulseResponseController {
 
     @Secured(SecurityRule.IS_ANONYMOUS)
     @Post(uri = "/external", consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    public HttpResponse<PulseResponse> externalPulseResponse(
+    public HttpResponse externalPulseResponse(
                @Header("X-Slack-Signature") String signature,
                @Header("X-Slack-Request-Timestamp") String timestamp,
                @Body String requestBody,
@@ -174,6 +174,12 @@ public class PulseResponseController {
                 PulseResponseCreateDTO pulseResponseDTO =
                     slackPulseResponseConverter.get(memberProfileServices,
                                                     (String)body.get(key));
+                // If we receive a null DTO, that means that this is not the
+                // actual submission of the form.  We can just return 200 so
+                // that Slack knows to continue without error.
+                if (pulseResponseDTO == null) {
+                    return HttpResponse.ok();
+                }
 
                 // DEBUG Only
                 LOG.info("Request has been converted");
@@ -195,11 +201,7 @@ public class PulseResponseController {
                     return HttpResponse.status(HttpStatus.CONFLICT,
                                                "Already submitted today");
                 } else {
-                    return HttpResponse.created(pulseResponse)
-                                       .headers(headers -> headers.location(
-                                           URI.create(String.format("%s/%s",
-                                                      request.getPath(),
-                                                      pulseResponse.getId()))));
+                    return HttpResponse.ok();
                 }
             } else {
                 return HttpResponse.unprocessableEntity();
