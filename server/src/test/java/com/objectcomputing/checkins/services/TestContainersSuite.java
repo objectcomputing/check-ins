@@ -35,8 +35,6 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
         getVolunteeringOrganizationRepository().deleteAll();
         getEarnedCertificationRepository().deleteAll();
         getCertificationRepository().deleteAll();
-        getEntityTagRepository().deleteAll();
-        getTagRepository().deleteAll();
         getPulseResponseRepository().deleteAll();
         getCheckInNoteRepository().deleteAll();
         getPrivateNoteRepository().deleteAll();
@@ -49,13 +47,10 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
         getSkillCategorySkillRepository().deleteAll();
         getSkillCategoryRepository().deleteAll();
         getSkillRepository().deleteAll();
-        getQuestionCategoryRepository().deleteAll();
-        getSurveyRepository().deleteAll();
         getEmployeeHoursRepository().deleteAll();
         getFeedbackAnswerRepository().deleteAll();
         getTemplateQuestionRepository().deleteAll();
         getSettingsRepository().deleteAll();
-        getOpportunitiesRepository().deleteAll();
         getDemographicsRepository().deleteAll();
         getRolePermissionRepository().deleteAll();
         getEmailRepository().deleteAll();
