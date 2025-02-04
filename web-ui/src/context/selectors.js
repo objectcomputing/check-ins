@@ -206,6 +206,10 @@ export const selectCanUpdateCheckinsPermission = hasPermission(
   'CAN_UPDATE_CHECKINS'
 );
 
+export const selectCanCreateCheckinsPermission = hasPermission(
+  'CAN_CREATE_CHECKINS'
+);
+
 export const selectCanUpdateAllCheckinsPermission = hasPermission(
   'CAN_UPDATE_ALL_CHECKINS'
 );

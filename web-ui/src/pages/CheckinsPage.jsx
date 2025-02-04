@@ -13,6 +13,7 @@ import {
   selectProfile,
   selectCheckinsForMember,
   selectCanViewCheckinsPermission,
+  selectCanCreateCheckinsPermission,
   selectCanUpdateCheckinsPermission,
   selectCanViewPrivateNotesPermission,
   selectCanUpdateAllCheckinsPermission,
@@ -159,7 +160,8 @@ const CheckinsPage = () => {
                 aria-describedby="checkin-tooltip-wrapper"
                 className="create-checkin-tooltip-wrapper"
               >
-                {(updateAll || isPdl || currentUserId === memberId) && (
+                {(updateAll || isPdl || currentUserId === memberId) &&
+                 selectCanCreateCheckinsPermission(state) && (
                   <Button
                     disabled={hasOpenCheckins}
                     className={classes.addButton}
