@@ -59,6 +59,8 @@ export const initialState = {
   reviewPeriods: []
 };
 
+// 2024-11-12 - Added then removed for feedback_external_recipients
+
 export const reducer = (state, action) => {
   switch (action.type) {
     case MY_PROFILE_UPDATE:

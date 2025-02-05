@@ -60,6 +60,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setIsPublic(originalTemplate.get().getIsPublic());
         feedbackTemplate.setIsAdHoc(originalTemplate.get().getIsAdHoc());
         feedbackTemplate.setIsReview(originalTemplate.get().getIsReview());
+        feedbackTemplate.setIsForExternalRecipient(originalTemplate.get().getIsForExternalRecipient());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);

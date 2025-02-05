@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import jakarta.inject.Singleton;
@@ -115,12 +116,14 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     @Override
     public TemplateQuestion getById(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
-        if (!getIsPermitted()) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
-        }
-
-        if (templateQuestion.isEmpty()) {
+        if (templateQuestion == null || templateQuestion.isEmpty()) {
             throw new NotFoundException("No feedback question with ID " + id);
+        }
+        final Optional<FeedbackTemplate> feedbackTemplateOptional = feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId());
+        FeedbackTemplate feedbackTemplate = feedbackTemplateOptional != null && feedbackTemplateOptional.isPresent() ? feedbackTemplateOptional.get() : null;
+
+        if (!getIsPermitted(feedbackTemplate)) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         return templateQuestion.get();
@@ -130,17 +133,21 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     public List<TemplateQuestion> findByFields(UUID templateId) {
         if (templateId == null) {
             throw new BadArgException("Cannot find template questions for null template ID");
-        } else if (!getIsPermitted()) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
+        final Optional<FeedbackTemplate> feedbackTemplateOptional = feedbackTemplateRepo.findById(templateId);
+        FeedbackTemplate feedbackTemplate = feedbackTemplateOptional != null && feedbackTemplateOptional.isPresent() ? feedbackTemplateOptional.get() : null;
+
+        if (!getIsPermitted(feedbackTemplate)) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
         return new ArrayList<>(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));
     }
 
     // only admins or the creator of the template can add questions to it
     public boolean createIsPermitted(UUID templateCreatorId) {
         boolean isAdmin = currentUserServices.isAdmin();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        UUID currentUserId = currentUserServices.getCurrentUserId();
         return currentUserId != null && (isAdmin || currentUserId.equals(templateCreatorId));
     }
 
@@ -152,8 +159,9 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         return createIsPermitted(templateCreatorId);
     }
 
-    public boolean getIsPermitted() {
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return currentUserId != null;
+    public boolean getIsPermitted(FeedbackTemplate feedbackTemplate) {
+        return (currentUserServices.getCurrentUserId() != null) ||
+               (feedbackTemplate != null && feedbackTemplate.getIsForExternalRecipient());
     }
+
 }

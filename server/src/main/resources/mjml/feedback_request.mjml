@@ -23,7 +23,7 @@
         </mj-text>
           <mj-text font-size="16px">Hello, %s!</mj-text>
         <mj-text font-size="16px"><strong>%s</strong> is requesting feedback %sfrom you.</mj-text>
-        <mj-text font-size="16px">%s</mj-text>
+        <mj-text font-size="16px">This request is due %s.</mj-text>
         <mj-text font-size="16px">Please go to <a href="%s">your unique link</a> to complete this request.</mj-text>
       </mj-column>
     </mj-section>

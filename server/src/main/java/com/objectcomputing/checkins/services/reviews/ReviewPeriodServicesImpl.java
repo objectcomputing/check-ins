@@ -126,7 +126,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
     }
 
     public void delete(@NotNull UUID id) {
-        if (!feedbackRequestServices.findByValues(null, null, null, null, id, null, null).isEmpty()) {
+        if (!feedbackRequestServices.findByValues(null, null, null, null, id, null, null, null).isEmpty()) {
             throw new BadArgException(String.format("Review Period %s has associated feedback requests and cannot be deleted", id));
         }
         reviewPeriodRepository.deleteById(id);
@@ -222,7 +222,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                     createReviewRequest(
                         period, findCreatorId(assignment.getReviewerId()),
                         assignment.getRevieweeId(), assignment.getReviewerId(),
-                        reviewTemplateId, closeDate);
+                        reviewTemplateId, closeDate, null);
                 }
             }
 
@@ -232,7 +232,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                     createReviewRequest(period, findCreatorId(memberId),
                                         memberId, memberId,
                                         selfReviewTemplateId,
-                                        selfReviewCloseDate);
+                                        selfReviewCloseDate, null);
                 }
             }
 
@@ -351,12 +351,13 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
                                      UUID revieweeId,
                                      UUID reviewerId,
                                      UUID templateId,
-                                     LocalDate dueDate) {
+                                     LocalDate dueDate,
+                                     UUID externalRecipientId) {
         try {
             LocalDate sendDate = LocalDate.now();
             FeedbackRequest request = new FeedbackRequest(
                 creatorId, revieweeId, reviewerId, templateId, sendDate,
-                dueDate, "sent", null, period.getId());
+                dueDate, "sent", null, period.getId(), externalRecipientId);
             feedbackRequestServices.save(request);
         } catch(Exception ex) {
             LOG.error(ex.toString());
@@ -439,7 +440,7 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
             List<FeedbackRequest> requests =
                 feedbackRequestRepository.findByValues(null, null, null, null,
                                                        reviewPeriodId.toString(),
-                                                       templateId);
+                                                       templateId, null);
             for (FeedbackRequest request : requests) {
                 if (request.getRecipientId().equals(request.getRequesteeId())) {
                     Optional<MemberProfile> requesteeProfile =

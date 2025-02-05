@@ -15,7 +15,6 @@ export const selectGuilds = state => state.guilds || [];
 export const selectLoading = state => state.loading;
 export const selectReviewPeriods = state => state.reviewPeriods;
 export const selectPermissions = state => state.permissions;
-
 export const noPermission = 'You do not have permission to view this page.';
 
 const hasPermission = permissionName =>

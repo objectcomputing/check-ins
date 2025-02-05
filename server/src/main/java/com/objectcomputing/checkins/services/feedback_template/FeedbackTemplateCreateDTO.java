@@ -43,4 +43,8 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "whether the template is used for performance reviews")
     private Boolean isReview;
 
+    @Nullable
+    @Schema(description = "whether the template is used for external recipients")
+    private Boolean isForExternalRecipient;
+
 }

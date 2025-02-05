@@ -5,6 +5,7 @@ const feedbackSuggestionURL = '/services/feedback/suggestions';
 const feedbackRequestURL = '/services/feedback/requests';
 const answerURL = '/services/feedback/answers';
 const questionAndAnswerURL = '/services/feedback/questions-and-answers';
+const feedbackExternalRecipientsURL = '/services/feedback/external/recipients';
 
 export const findReviewRequestsByPeriodAndTeamMembers = async (
   period,
@@ -289,5 +290,37 @@ export const getFeedbackRequestsByRequestees = async (
       oldestDate
     },
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
+export const getExternalRecipients = async (cookie) => {
+  return resolve({
+    url: `${feedbackExternalRecipientsURL}`,
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
+export const putExternalRecipientInactivate = async (externalRecipientId, cookie) => {
+  return resolve({
+    method: 'PUT',
+    url: `${feedbackExternalRecipientsURL}/inactivate/${externalRecipientId}`,
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  });
+};
+
+export const putExternalRecipient = async (externalRecipient, cookie) => {
+  return resolve({
+    method: 'PUT',
+    url: `${feedbackExternalRecipientsURL}`,
+    data: externalRecipient,
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };

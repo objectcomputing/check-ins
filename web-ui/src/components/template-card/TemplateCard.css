@@ -1,7 +1,7 @@
 .feedback-template-card {
   cursor: pointer;
   width: 300px;
-  max-height: 300px;
+  max-height: 350px;
   padding: 15px;
   margin: 20px;
   box-shadow: #282c34;
@@ -24,7 +24,7 @@
   text-align: center;
   padding-bottom: 0;
   margin-bottom: 0;
-  max-height: 200px;
+  max-height: 250px;
 }
 
 .feedback-template-card .template-name {
@@ -40,6 +40,11 @@
 }
 
 .feedback-template-card .creator {
+  text-align: left;
+  margin: 0;
+}
+
+.feedback-template-card .externalRecipient {
   text-align: left;
   margin: 0;
 }

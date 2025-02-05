@@ -7,6 +7,8 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.email.Email;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +37,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
@@ -41,8 +46,8 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImpl.class);
-
     private final FeedbackRequestRepository feedbackReqRepository;
+    private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final ReviewPeriodRepository reviewPeriodRepository;
@@ -51,10 +56,18 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final String notificationSubject;
     private final String webURL;
 
+    private final Map<UUID, LocalDateTime> externalSent = new HashMap<>();
+    private final int minutesBetweenVerifiedEmail = 5;
+
     private enum CompletionEmailType { REVIEWERS, SUPERVISOR }
     private record ReviewPeriodInfo(String subject, LocalDate closeDate) {}
+
     @Value("classpath:mjml/feedback_request.mjml")
     private Readable feedbackRequestTemplate;
+    @Value("classpath:mjml/external_feedback_request.mjml")
+    private Readable externalFeedbackRequestTemplate;
+    @Value("classpath:mjml/external_request_verify.mjml")
+    private Readable externalRequestVerifyTemplate;
     @Value("classpath:mjml/update_request.mjml")
     private Readable updateRequestTemplate;
     @Value("classpath:mjml/reviewer_email.mjml")
@@ -62,13 +75,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     @Value("classpath:mjml/supervisor_email.mjml")
     private Readable supervisorTemplate;
 
-    public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
-                                       CurrentUserServices currentUserServices,
-                                       MemberProfileServices memberProfileServices,
-                                       ReviewPeriodRepository reviewPeriodRepository,
-                                       ReviewAssignmentRepository reviewAssignmentRepository,
-                                       @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
-                                       CheckInsConfiguration checkInsConfiguration
+    public FeedbackRequestServicesImpl(
+            FeedbackRequestRepository feedbackReqRepository,
+            CurrentUserServices currentUserServices,
+            MemberProfileServices memberProfileServices,
+            ReviewPeriodRepository reviewPeriodRepository,
+            ReviewAssignmentRepository reviewAssignmentRepository,
+            @Named(MailJetFactory.MJML_FORMAT) EmailSender emailSender,
+            CheckInsConfiguration checkInsConfiguration,
+            FeedbackExternalRecipientServices feedbackExternalRecipientServices
     ) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
@@ -78,6 +93,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         this.emailSender = emailSender;
         this.notificationSubject = checkInsConfiguration.getApplication().getFeedback().getRequestSubject();
         this.webURL = checkInsConfiguration.getWebAddress();
+        this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
     }
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
@@ -87,10 +103,27 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot save feedback request with invalid creator ID");
         }
 
+        if (feedbackRequest.getExternalRecipientId() != null && feedbackRequest.getRecipientId() != null) {
+            throw new BadArgException("Cannot save feedback request with both recipient and external-recipient ID");
+        }
+        if (feedbackRequest.getExternalRecipientId() == null && feedbackRequest.getRecipientId() == null) {
+            throw new BadArgException("Cannot save feedback request without recipient or external-recipient ID");
+        }
+
         try {
-            memberProfileServices.getById(feedbackRequest.getRecipientId());
+            if (feedbackRequest.getRecipientId() != null) {
+                memberProfileServices.getById(feedbackRequest.getRecipientId());
+            }
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid recipient ID");
+        }
+
+        try {
+            if (feedbackRequest.getExternalRecipientId() != null) {
+                feedbackExternalRecipientServices.getById(feedbackRequest.getExternalRecipientId());
+            }
+        } catch (NotFoundException e) {
+            throw new BadArgException("Cannot save feedback request with invalid external-recipient ID");
         }
 
         try {
@@ -111,12 +144,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Attempted to save feedback request with non-auto-populated ID");
         }
 
-
         if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())) {
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
-        String status = feedbackRequest.getSendDate().isAfter(LocalDate.now()) ? "pending" : "sent";
-        feedbackRequest.setStatus(status);
+        FeedbackRequestStatus status = feedbackRequest.getSendDate().isAfter(LocalDate.now()) ? FeedbackRequestStatus.PENDING : FeedbackRequestStatus.SENT;
+        feedbackRequest.setStatus(status.toString());
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
         if (feedbackRequest.getSendDate().equals(LocalDate.now())) {
             sendNewRequestEmail(storedRequest);
@@ -124,31 +156,91 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return storedRequest;
     }
 
+    @Override
+    public boolean verifyExternal(FeedbackRequest feedbackRequest) {
+        if (feedbackRequest.getExternalRecipientId() == null ||
+            !feedbackRequest.getStatus().equals(FeedbackRequestStatus.SENT.toString())) {
+            return false;
+        }
+
+        // Aside from persisting the send time, we can, at the very least,
+        // ensure that we do not spam the requestee with email in the event
+        // that someone wanted to do so.
+        UUID requestId = feedbackRequest.getId();
+        LocalDateTime now = LocalDateTime.now();
+        if (externalSent.containsKey(requestId)) {
+           LocalDateTime sent = externalSent.get(requestId);
+           if (sent.plusMinutes(minutesBetweenVerifiedEmail).isAfter(now)) {
+             return false;
+           }
+        }
+
+        MemberProfile creator = memberProfileServices.getById(feedbackRequest.getCreatorId());
+        MemberProfile requestee = memberProfileServices.getById(feedbackRequest.getRequesteeId());
+        UUID recipientOrExternalRecipientId = feedbackRequest.getExternalRecipientId();
+        FeedbackExternalRecipient reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
+        String newContent = String.format(
+                templateToString(externalRequestVerifyTemplate),
+                reviewerExternalRecipient.getFirstName(),
+                String.format("%s/externalFeedback/submit?request=%s",
+                              webURL, feedbackRequest.getId().toString())
+        );
+        emailSender.sendEmail(
+            MemberProfileUtils.getFullName(creator),
+            creator.getWorkEmail(),
+            notificationSubject, newContent,
+            reviewerExternalRecipient.getEmail()
+        );
+        externalSent.put(requestId, now);
+        return true;
+    }
+
     public void sendNewRequestEmail(FeedbackRequest storedRequest) {
         MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
-        MemberProfile reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
+        MemberProfile reviewerMemberProfile;
+        FeedbackExternalRecipient reviewerExternalRecipient;
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         String senderName = MemberProfileUtils.getFullName(creator);
+        UUID recipientOrExternalRecipientId;
+        String reviewerFirstName, reviewerEmail, urlFeedbackSubmit;
+        Readable template;
+
+        if (storedRequest.getExternalRecipientId() != null) {
+            recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
+            reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
+            reviewerFirstName = reviewerExternalRecipient.getFirstName();
+            reviewerEmail = reviewerExternalRecipient.getEmail();
+            urlFeedbackSubmit = "/externalFeedback/verify?request=";
+            template = externalFeedbackRequestTemplate;
+        } else {
+            recipientOrExternalRecipientId = storedRequest.getRecipientId();
+            reviewerMemberProfile = memberProfileServices.getById(recipientOrExternalRecipientId);
+            recipientOrExternalRecipientId = storedRequest.getRecipientId();
+            reviewerFirstName = reviewerMemberProfile.getFirstName();
+            reviewerEmail = reviewerMemberProfile.getWorkEmail();
+            urlFeedbackSubmit = "/feedback/submit?request=";
+            template = feedbackRequestTemplate;
+        }
 
         String newContent = String.format(
-                                templateToString(feedbackRequestTemplate),
-                                reviewer.getFirstName(), senderName,
-                                storedRequest.getRecipientId().equals(storedRequest.getRequesteeId()) ?
-                                  "" :
-                                  String.format("on <strong>%s</strong> ",
-                                                MemberProfileUtils.getFullName(requestee)),
-                                storedRequest.getDueDate() == null ?
-                                    "This request does not have a due date." :
-                                    String.format("This request is due on %s %d, %d.",
+                templateToString(template),
+                reviewerFirstName, senderName,
+                recipientOrExternalRecipientId.equals(storedRequest.getRequesteeId()) ? "" : String.format("on <strong>%s</strong> ", MemberProfileUtils.getFullName(requestee)),
+                storedRequest.getDueDate() == null ?
+                                    "soon" :
+                                    String.format("before %s %d, %d",
                                                   storedRequest.getDueDate().getMonth(),
                                                   storedRequest.getDueDate().getDayOfMonth(),
                                                   storedRequest.getDueDate().getYear()),
-                                String.format("%s/feedback/submit?request=%s",
-                                              webURL, storedRequest.getId().toString()));
-
-        emailSender.sendEmail(senderName, creator.getWorkEmail(),
-                              notificationSubject, newContent,
-                              reviewer.getWorkEmail());
+                                String.format("%s%s%s",
+                                              webURL, urlFeedbackSubmit,
+                                              storedRequest.getId().toString())
+        );
+        emailSender.sendEmail(
+            senderName, creator.getWorkEmail(),
+            notificationSubject, newContent,
+            reviewerEmail
+        );
     }
 
     @Override
@@ -158,6 +250,12 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
          * status has to be updated with any permissions--fired on submission from any recipient
          * submit date can be updated only when the recipient is logged in--fired on submission from any recipient
          */
+        UUID recipientOrExternalRecipientId;
+        MemberProfile reviewerMemberProfile;
+        FeedbackExternalRecipient reviewerExternalRecipient;
+        String reviewerFirstName, reviewerEmail;
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
+        boolean currentUserEqualsRequestee = false;
 
         final FeedbackRequest feedbackRequest = this.getFromDTO(feedbackRequestUpdateDTO);
         FeedbackRequest originalFeedback = null;
@@ -170,6 +268,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
 
+        if (currentUserId != null) {
+          currentUserEqualsRequestee = currentUserId.equals(originalFeedback.getRequesteeId());
+        }
+
         validateMembers(originalFeedback);
 
         Set<ReviewAssignment> reviewAssignmentsSet = Set.of();
@@ -177,14 +279,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             reviewAssignmentsSet = reviewAssignmentRepository.findByReviewPeriodIdAndRevieweeId(feedbackRequest.getReviewPeriodId(), feedbackRequest.getRequesteeId());
         }        
 
-        boolean reassignAttempted = !Objects.equals(originalFeedback.getRecipientId(), feedbackRequest.getRecipientId());
+        boolean reassignAttempted = false;
+        if ((!Objects.equals(originalFeedback.getRecipientId(), feedbackRequest.getRecipientId())) || (!Objects.equals(originalFeedback.getExternalRecipientId(), feedbackRequest.getExternalRecipientId()))) {
+            reassignAttempted = true;
+        }
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
         // If a status update is made to anything other than submitted by the requestee, throw an error.
-        if (!"submitted".equals(feedbackRequest.getStatus())
+        if (!feedbackRequest.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString())
                 && !Objects.equals(originalFeedback.getStatus(), feedbackRequest.getStatus())
-                && currentUserServices.getCurrentUser().getId().equals(originalFeedback.getRequesteeId())) {
+                &&  currentUserEqualsRequestee) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -192,10 +297,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             if (!reassignIsPermitted(originalFeedback)) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             }
-            feedbackRequest.setStatus("sent");
+            feedbackRequest.setStatus(FeedbackRequestStatus.SENT.toString());
         }
 
-        if (feedbackRequest.getStatus().equals("canceled") && originalFeedback.getStatus().equals("submitted")) {
+        if (feedbackRequest.getStatus().equals(FeedbackRequestStatus.CANCELED.toString()) &&
+            originalFeedback.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString())) {
             throw new BadArgException("Attempted to cancel a feedback request that was already submitted");
         }
 
@@ -216,20 +322,32 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.update(feedbackRequest);
-        MemberProfile reviewer = memberProfileServices.getById(storedRequest.getRecipientId());
+
+        if (storedRequest.getExternalRecipientId() != null) {
+            recipientOrExternalRecipientId = storedRequest.getExternalRecipientId();
+            reviewerExternalRecipient = feedbackExternalRecipientServices.getById(recipientOrExternalRecipientId);
+            reviewerFirstName = reviewerExternalRecipient.getFirstName();
+            reviewerEmail = reviewerExternalRecipient.getEmail();
+        } else {
+            recipientOrExternalRecipientId = storedRequest.getRecipientId();
+            reviewerMemberProfile = memberProfileServices.getById(recipientOrExternalRecipientId);
+            reviewerFirstName = reviewerMemberProfile.getFirstName();
+            reviewerEmail = reviewerMemberProfile.getWorkEmail();
+        }
+
         MemberProfile requestee = memberProfileServices.getById(storedRequest.getRequesteeId());
         // Send email if the feedback request has been reopened for edits
-        if (originalFeedback.getStatus().equals("submitted") && feedbackRequest.getStatus().equals("sent")) {
+        if (originalFeedback.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString()) && feedbackRequest.getStatus().equals(FeedbackRequestStatus.SENT.toString())) {
             MemberProfile creator = memberProfileServices.getById(storedRequest.getCreatorId());
             String senderName = MemberProfileUtils.getFullName(creator);
             String newContent = String.format(
                                   templateToString(updateRequestTemplate),
-                                  reviewer.getFirstName(), senderName,
+                                    reviewerFirstName, senderName,
                                   MemberProfileUtils.getFullName(requestee),
                                   String.format("%s/feedback/submit?request=%s",
                                                 webURL, storedRequest.getId().toString()));
 
-            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewer.getWorkEmail());
+            emailSender.sendEmail(senderName, creator.getWorkEmail(), notificationSubject, newContent, reviewerEmail);
         }
 
         // Send email if the feedback request has been reassigned
@@ -237,13 +355,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             sendNewRequestEmail(storedRequest);
         }
 
+        boolean currentUserSameAsRequestee = currentUserId != null && currentUserId.equals(requestee.getId());
         // Send self-review completion email to supervisor and pdl if appropriate
-        if (currentUserServices.getCurrentUser().getId().equals(requestee.getId())) {
+        if (currentUserSameAsRequestee) {
             sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
         }
 
         // Send email to reviewers.  But, only when the requestee is the
-        // recipient (i.e., a self-review).
+        // recipient (i.e., a self-review)
+        // 2024-10-22 - This should not involve the external-recipient ID, only the recipient-id, since self-review should always only use recipient-id
         if (reviewAssignmentsSet != null && reviewAssignmentsSet.size() > 0 &&
             feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
             sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);    
@@ -272,41 +392,47 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
-
-        if (!getIsPermitted(feedbackReq.get())) {
-            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        if (feedbackReq.get().getExternalRecipientId() != null) {
+            if (!getIsPermittedForExternalRecipient(feedbackReq.get())) {
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
+            }
+        } else {
+            if (!getIsPermitted(feedbackReq.get())) {
+                throw new PermissionException(NOT_AUTHORIZED_MSG);
+            }
         }
-
         return feedbackReq.get();
     }
 
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, List<UUID> requesteeIds) {
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (currentUserId == null) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, UUID externalRecipientId, List<UUID> requesteeIds) {
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
+        List<FeedbackRequest> feedbackReqList = new ArrayList<>();
+
+        if (currentUserId == null && externalRecipientId == null) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
-
-        List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (requesteeIds != null && !requesteeIds.isEmpty()) {
             LOG.debug("Finding feedback requests for {} requesteeIds.", requesteeIds.size());
-            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDListToStringList(requesteeIds)));
+            feedbackReqList.addAll(feedbackReqRepository.findByValuesWithRequesteeIds(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDToString(externalRecipientId), Util.nullSafeUUIDListToStringList(requesteeIds)));
         } else {
             LOG.debug("Finding feedback requests one or fewer requesteeIds: {}", requesteeId);
-            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId)));
+            feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate, Util.nullSafeUUIDToString(reviewPeriodId), Util.nullSafeUUIDToString(templateId), Util.nullSafeUUIDToString(externalRecipientId)));
         }
-
         feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
             boolean visible = false;
             if (currentUserServices.isAdmin()) {
                 visible = true;
             } else if (request != null) {
-                if (currentUserId.equals(request.getCreatorId()) ||
-                    isSupervisor(request.getRequesteeId(), currentUserId) ||
-                    currentUserId.equals(request.getRecipientId()) ||
-                    selfRevieweeIsCurrentUserReviewee(request, currentUserId)) {
-                    visible = true;
+                if (currentUserId != null) {
+                    if (currentUserId.equals(request.getCreatorId())) visible = true;
+                    if (isSupervisor(request.getRequesteeId(), currentUserId)) visible = true;
+                    if (currentUserId.equals(request.getRecipientId())) visible = true;
+                    if (selfRevieweeIsCurrentUserReviewee(request, currentUserId)) visible = true;
+                } else {
+                    if (request.getExternalRecipientId() != null) visible = true;
                 }
+
             }
             return visible;
         }).toList();
@@ -319,18 +445,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
                 && memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()));
     }
 
-    public boolean selfRevieweeIsCurrentUserReviewee(FeedbackRequest request,
-                                                     UUID currentUserId) {
+    public boolean selfRevieweeIsCurrentUserReviewee(FeedbackRequest request, UUID currentUserId) {
         // If we are looking at a self-review request, see if there is a review
         // request in the same review period that is assigned to the current
         // user and the requestee is the same as the self-review request.  If
         // so, this user is allowed to see the self-review request.
-        if (request.getRecipientId().equals(request.getRequesteeId())) {
+        if (request.getRecipientId() != null && request.getRecipientId().equals(request.getRequesteeId())) {
             List<FeedbackRequest> other = feedbackReqRepository.findByValues(
                 null, request.getRecipientId().toString(),
                 currentUserId.toString(), null,
                 Util.nullSafeUUIDToString(request.getReviewPeriodId()),
-                null);
+                null, null);
             return (other.size() == 1);
         }
         return false;
@@ -359,9 +484,20 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
 
-        return createIsPermitted(requesteeId) ||
-               currentUserId.equals(recipientId) ||
-               selfRevieweeIsCurrentUserReviewee(feedbackReq, currentUserId);
+        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId) || selfRevieweeIsCurrentUserReviewee(feedbackReq, currentUserId);
+    }
+
+    private boolean getIsPermittedForExternalRecipient(FeedbackRequest feedbackReq) {
+        final LocalDate sendDate = feedbackReq.getSendDate();
+        final LocalDate today = LocalDate.now();
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
+
+        // The recipient can only access the feedback request after it has been sent
+        // Since request is for an external recipient, any logged in user can access it as long as they have feedback-reques-id
+        if (sendDate.isAfter(today) && currentUserId == null) {
+            throw new PermissionException("You are not permitted to access this request before the send date.");
+        }
+        return true;
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {
@@ -369,23 +505,28 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean reassignIsPermitted(FeedbackRequest feedbackRequest) {
-        return isCurrentUserAdminOrOwner(feedbackRequest) && !feedbackRequest.getStatus().equals("submitted");
+        return isCurrentUserAdminOrOwner(feedbackRequest) && !feedbackRequest.getStatus().equals(FeedbackRequestStatus.SUBMITTED.toString());
     }
 
     private boolean isCurrentUserAdminOrOwner(FeedbackRequest feedbackRequest) {
-        boolean isAdmin = currentUserServices.isAdmin();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return isAdmin || currentUserId.equals(feedbackRequest.getCreatorId());
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
+        return currentUserServices.isAdmin() || (currentUserId != null && currentUserId.equals(feedbackRequest.getCreatorId()));
     }
 
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
-        boolean isAdmin = currentUserServices.isAdmin();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (isAdmin || (currentUserId.equals(feedbackRequest.getCreatorId()) && feedbackRequest.getSubmitDate() != null)) {
-            return true;
+        try {
+            if (currentUserServices.isAdmin()) {
+                return true;
+            }
+        } catch (NotFoundException notFoundException) {
         }
 
-        return currentUserId.equals(feedbackRequest.getRecipientId());
+        final UUID currentUserId = currentUserServices.getCurrentUserId();
+        if (((currentUserId != null && currentUserId.equals(feedbackRequest.getCreatorId())) && feedbackRequest.getSubmitDate() != null)) return true;
+        if (currentUserId != null && currentUserId.equals(feedbackRequest.getRecipientId()))  return true;
+        if (feedbackRequest.getExternalRecipientId() != null) return true;
+
+        return false;
     }
 
     private FeedbackRequest getFromDTO(FeedbackRequestUpdateDTO dto) {
@@ -394,6 +535,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setStatus(dto.getStatus());
         feedbackRequest.setSubmitDate(dto.getSubmitDate());
         feedbackRequest.setRecipientId(dto.getRecipientId());
+        feedbackRequest.setExternalRecipientId(dto.getExternalRecipientId());
 
         return feedbackRequest;
     }

@@ -98,6 +98,7 @@ const FeedbackTemplateSelector = ({ query, changeQuery }) => {
         isAdHoc: true,
         isPublic: false,
         isReview: false,
+        isForExternalRecipient: submittedTemplate.isForExternalRecipient,
       };
 
       const newTemplateQuestion = {
@@ -189,6 +190,7 @@ const FeedbackTemplateSelector = ({ query, changeQuery }) => {
         isAdHoc={template.isAdHoc}
         isPublic={template.isPublic}
         isReview={template.isReview}
+        isForExternalRecipient={template.isForExternalRecipient}
         isSelected={query === template.id}
         questions={template.questions}
         expanded={preview.open}

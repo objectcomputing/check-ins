@@ -18,7 +18,7 @@ import FeedbackTemplateSelector from '../components/feedback_template_selector/F
 import FeedbackRecipientSelector from '../components/feedback_recipient_selector/FeedbackRecipientSelector';
 import SelectDate from '../components/feedback_date_selector/SelectDate';
 import { AppContext } from '../context/AppContext';
-import { createFeedbackRequest } from '../api/feedback';
+import {createFeedbackRequest, getExternalRecipients} from '../api/feedback';
 import {
   selectProfile,
   selectCsrfToken,
@@ -31,6 +31,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
 
 import './FeedbackRequestPage.css';
+import FeedbackExternalRecipientSelector from "../components/feedback_external_recipient_selector/FeedbackExternalRecipientSelector.jsx";
 
 const dateUtils = new DateFnsUtils();
 const PREFIX = 'FeedbackRequestPage';
@@ -120,8 +121,10 @@ const FeedbackRequestPage = () => {
   const queryLoaded = useRef(false);
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();
+  const [templateIsForExternalRecipient, setTemplateIsForExternalRecipient] = useState();
   const [requestee, setRequestee] = useState({});
   const [memberIds, setMemberIds] = useState([]);
+  const [externalRecipientIds, setExternalRecipientIds] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
 
   const handleQueryChange = useCallback(
@@ -146,27 +149,55 @@ const FeedbackRequestPage = () => {
   }, [query.for, memberIds]);
 
   const hasFrom = useCallback(() => {
-    if (!memberIds.length) return true;
-    let from = query.from;
-    if (from) {
-      from = Array.isArray(from) ? from : [from];
-      for (let recipientId of from) {
-        if (!memberIds.includes(recipientId)) {
-          dispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: 'error',
-              toast: 'Member ID in URL is invalid'
-            }
-          });
-          handleQueryChange('from', undefined);
-          return false;
+    if (templateIsForExternalRecipient) {
+      if (!externalRecipientIds.length) return true;
+      let from = query.from;
+      if (from) {
+        from = Array.isArray(from) ? from : [from];
+        for (let externalRecipientId of from) {
+          if (!externalRecipientIds.includes(externalRecipientId)) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'External Recipient ID in URL is invalid'
+              }
+            });
+            handleQueryChange('from', undefined);
+            return false;
+          }
         }
+        return true;
       }
-      return true;
+      return false;
+    } else {
+      if (!memberIds.length) return true;
+      let from = query.from;
+      if (from) {
+        from = Array.isArray(from) ? from : [from];
+        for (let recipientId of from) {
+          if (!memberIds.includes(recipientId)) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: 'error',
+                toast: 'Member ID in URL is invalid'
+              }
+            });
+            handleQueryChange('from', undefined);
+            return false;
+          }
+        }
+        return true;
+      }
+      return false;
     }
-    return false;
-  }, [memberIds, query, dispatch, handleQueryChange]);
+  }, [memberIds, query, dispatch, handleQueryChange, externalRecipientIds])
+  ;
+
+  const addExternalRecipientId = (id) => {
+    setExternalRecipientIds((prevIds) => [...prevIds, id]);
+  };
 
   const isValidDate = useCallback(dateString => {
     const today = new Date().setHours(0, 0, 0, 0);
@@ -219,7 +250,7 @@ const FeedbackRequestPage = () => {
         await softDeleteAdHoc(currentUserId);
         const newLocation = {
           pathname: '/feedback/request/confirmation',
-          search: queryString.stringify(query)
+          search: queryString.stringify(query),
         };
         history.push(newLocation);
       } else if (res.error || data === null) {
@@ -257,7 +288,8 @@ const FeedbackRequestPage = () => {
         id: null,
         creatorId: currentUserId,
         requesteeId: query.for,
-        recipientId: recipient,
+        recipientId: (templateIsForExternalRecipient) ? null : recipient,
+        externalRecipientId: (templateIsForExternalRecipient) ? recipient : null,
         templateId: query.template,
         sendDate,
         dueDate,
@@ -275,8 +307,12 @@ const FeedbackRequestPage = () => {
       return;
     }
     query.step = `${activeStep + 1}`;
+    if (query.step == 2) {
+      query.from = null;
+    }
     history.push({ ...location, search: queryString.stringify(query) });
-  }, [canProceed, steps.length, query, location, history]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [canProceed, steps.length, query, location, history])
+  ; // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
     if (activeStep === 1) return;
@@ -320,6 +356,21 @@ const FeedbackRequestPage = () => {
   }, [state]);
 
   useEffect(() => {
+    async function fetchExternalRecipients() {
+      let res = await getExternalRecipients();
+      let externalRecipientsResponse =
+          res.payload && res.payload.data && res.payload.status === 200 && !res.error
+              ? res.payload.data
+              : null
+      ;
+      if (externalRecipientsResponse) {
+        setExternalRecipientIds(externalRecipientsResponse.map(recipient => recipient.id));
+      }
+    }
+    fetchExternalRecipients();
+  }, [state]);
+
+  useEffect(() => {
     const params = queryString.parse(location?.search);
     setQuery(params);
   }, [location.search]);
@@ -327,16 +378,18 @@ const FeedbackRequestPage = () => {
   useEffect(() => {
     async function isTemplateValid() {
       if (!query.template || !csrf) {
-        return false;
+        return { isValid: false, additionalData: null };
       }
+
       let res = await getFeedbackTemplate(query.template, csrf);
       let templateResponse =
-        res.payload &&
-        res.payload.data &&
-        res.payload.status === 200 &&
-        !res.error
-          ? res.payload.data
-          : null;
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+              ? res.payload.data
+              : null
+      ;
       if (templateResponse === null) {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -345,20 +398,22 @@ const FeedbackRequestPage = () => {
             toast: 'The ID for the template you selected does not exist.'
           }
         });
-        return false;
+        return { isValid: false, templateIsForExternalRecipientParam: false };
       } else {
-        return true;
+        return { isValid: true, templateIsForExternalRecipientParam: templateResponse.isForExternalRecipient };
       }
     }
 
     if (queryLoaded.current && csrf) {
-      isTemplateValid().then(isValid => {
+      isTemplateValid().then(({ isValid, templateIsForExternalRecipientParam: templateIsForExternalRecipientParam }) => {
         setTemplateIsValid(isValid);
+        setTemplateIsForExternalRecipient(templateIsForExternalRecipientParam);
       });
     } else {
       queryLoaded.current = true;
     }
-  }, [csrf, query, queryLoaded]);
+  }, [csrf, query, queryLoaded])
+  ;
 
   useEffect(() => {
     if (!queryLoaded.current || templateIsValid === undefined) return;
@@ -394,79 +449,88 @@ const FeedbackRequestPage = () => {
   }, [canProceed]);
 
   return selectHasCreateFeedbackPermission(state) ? (
-    <Root className="feedback-request-page">
-      <div className="header-container">
-        <Typography className={classes.requestHeader} variant="h4">
-          Feedback Request for <b>{requestee?.name}</b>
-        </Typography>
-        <div>
-          <Button
-            className={`${classes.backButton} ${classes.actionButtons}`}
-            onClick={onBackClick}
-            disabled={activeStep <= 1}
-            variant="contained"
-          >
-            Back
-          </Button>
-          <Button
-            className={classes.actionButtons}
-            onClick={onNextClick}
-            variant="contained"
-            disabled={!readyToProceed}
-            color="primary"
-          >
-            {activeStep === steps.length ? 'Submit' : 'Next'}
-          </Button>
+      <Root className="feedback-request-page">
+        <div className="header-container">
+          <Typography className={classes.requestHeader} variant="h4">
+            Feedback Request for <b>{requestee?.name}</b>
+          </Typography>
+          <div>
+            <Button
+                className={`${classes.backButton} ${classes.actionButtons}`}
+                onClick={onBackClick}
+                disabled={activeStep <= 1}
+                variant="contained"
+            >
+              Back
+            </Button>
+            <Button
+                className={classes.actionButtons}
+                onClick={onNextClick}
+                variant="contained"
+                disabled={!readyToProceed}
+                color="primary"
+            >
+              {activeStep === steps.length ? 'Submit' : 'Next'}
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className={classes.stepContainer}>
-        <Stepper
-          activeStep={activeStep - 1}
-          className={classes.root}
-          style={{ padding: 24 }}
-        >
-          {steps.map(label => {
-            const stepProps = {};
-            const labelProps = {};
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps} key={label}>
-                  {label}
-                </StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
-      </div>
-      <div className="current-step-content">
-        {activeStep === 1 && (
-          <FeedbackTemplateSelector
-            changeQuery={(key, value) => handleQueryChange(key, value)}
-            query={query.template}
-          />
-        )}
-        {activeStep === 2 && (
-          <FeedbackRecipientSelector
-            forQuery={query.for}
-            changeQuery={(key, value) => handleQueryChange(key, value)}
-            fromQuery={
-              query.from
-                ? Array.isArray(query.from)
-                  ? query.from
-                  : [query.from]
-                : []
-            }
-          />
-        )}
-        {activeStep === 3 && (
-          <SelectDate
-            changeQuery={(key, value) => handleQueryChange(key, value)}
-            sendDateQuery={query.send}
-            dueDateQuery={query.due}
-          />
-        )}
-      </div>
-    </Root>
+        <div className={classes.stepContainer}>
+          <Stepper
+              activeStep={activeStep - 1}
+              className={classes.root}
+              style={{ padding: 24 }}
+          >
+            {steps.map(label => (
+                <Step key={label}>
+                  <StepLabel key={label}>{label}</StepLabel>
+                </Step>
+            ))}
+          </Stepper>
+        </div>
+        <div className="current-step-content">
+          {activeStep === 1 && (
+              <FeedbackTemplateSelector
+                  changeQuery={(key, value) => handleQueryChange(key, value)}
+                  query={query.template}
+              />
+          )}
+          {activeStep === 2 && (
+              templateIsForExternalRecipient ? (
+                  <FeedbackExternalRecipientSelector
+                      forQuery={query.for}
+                      changeQuery={(key, value) => handleQueryChange(key, value)}
+                      fromQuery={
+                        query.from
+                            ? Array.isArray(query.from)
+                                ? query.from
+                                : [query.from]
+                            : []
+                      }
+                      addExternalRecipientId={addExternalRecipientId}
+                  />
+              ) : (
+                  <FeedbackRecipientSelector
+                      forQuery={query.for}
+                      changeQuery={(key, value) => handleQueryChange(key, value)}
+                      fromQuery={
+                        query.from
+                            ? Array.isArray(query.from)
+                                ? query.from
+                                : [query.from]
+                            : []
+                      }
+                  />
+              )
+          )}
+          {activeStep === 3 && (
+              <SelectDate
+                  changeQuery={(key, value) => handleQueryChange(key, value)}
+                  sendDateQuery={query.send}
+                  dueDateQuery={query.due}
+              />
+          )}
+        </div>
+      </Root>
   ) : (
     <h3>{noPermission}</h3>
   );

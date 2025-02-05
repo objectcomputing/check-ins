@@ -48,4 +48,8 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "whether the template is an ad-hoc template")
     private Boolean isAdHoc;
 
+    @Nullable
+    @Schema(description = "whether the template is for external recipients")
+    private Boolean isForExternalRecipient;
+
 }

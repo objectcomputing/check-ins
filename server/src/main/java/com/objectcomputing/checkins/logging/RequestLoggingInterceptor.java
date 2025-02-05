@@ -39,15 +39,14 @@ public class RequestLoggingInterceptor implements Ordered {
     void intercept(HttpRequest<?> request, @Body @Nullable String body) {
         Optional<Authentication> auth = request.getAttribute(SecurityFilter.AUTHENTICATION, Authentication.class);
         request.getAttribute(HttpAttributes.ROUTE_INFO, MethodBasedRouteInfo.class).ifPresent(routeBuilder -> {
-            String username = auth.map(Principal::getName).map(n -> n.isBlank() ? null : n).orElse("not authenticated");
+            String username = auth.map(Principal::getName).map(n -> n.isBlank() ? null : n).orElse("(Un-authenticated user)");
             String requestVerb = request.getMethodName();
             ExecutableMethod<?, ?> targetMethod = routeBuilder.getTargetMethod().getExecutableMethod();
             String params = request.getParameters().asMap().entrySet().stream()
                     .map(e -> e.getKey() + ":" + e.getValue())
                     .collect(Collectors.joining(","));
             String requestBody = body == null ? "empty" : body;
-            LOG.info(
-                    "User {} {} request to {} with body {} and parameters {} being handled by {}.{}",
+            LOG.info("User: {} - {} request to {} with body {} and parameters {} being handled by {}.{}",
                     username,
                     requestVerb,
                     request.getUri().getPath(),

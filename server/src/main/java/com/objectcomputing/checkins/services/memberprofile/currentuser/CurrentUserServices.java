@@ -4,6 +4,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.role.RoleType;
 
+import java.util.UUID;
+
 public interface CurrentUserServices {
 
     MemberProfile findOrSaveUser(String firstName, String lastName, String workEmail);
@@ -13,6 +15,8 @@ public interface CurrentUserServices {
     boolean hasPermission(Permission permission);
 
     boolean isAdmin();
+
+    UUID getCurrentUserId();
 
     MemberProfile getCurrentUser();
 

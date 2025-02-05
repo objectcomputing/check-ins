@@ -114,6 +114,7 @@ const TemplatePreviewModal = ({
       submittedTemplate.title = newAdHocData.title;
       submittedTemplate.description = newAdHocData.description;
       submittedQuestion = newAdHocData.question;
+      submittedTemplate.isForExternalRecipient = newAdHocData.isForExternalRecipient;
     }
     onSubmit(submittedTemplate, submittedQuestion);
   };

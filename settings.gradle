@@ -11,4 +11,5 @@ pluginManagement {
 }
 rootProject.name="check-ins"
 include "web-ui"
+include "web-ui-external-feedback"
 include "server"

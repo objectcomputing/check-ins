@@ -1,0 +1,28 @@
+<mjml>
+  <mj-head>
+    <mj-title>Feedback Request</mj-title>
+    <mj-preview>Feedback Request</mj-preview>
+    <mj-attributes>
+      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding="0px"></mj-class>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#e0f2ff">
+    <mj-section background-color="#2559a7">
+      <mj-column>
+        <mj-image src="https://objectcomputing.com/files/6416/4277/8012/ObjectComputingLogo_version2_white.png" alt="logo" width="150px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff">
+      <mj-column>
+        <mj-text font-size="16px">Hello, %s!</mj-text>
+        <mj-text font-size="16px">Thank you for taking the time to give us feedback.</mj-text>
+        <mj-text font-size="16px">Please click <a href="%s">here</a> to begin.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#feb672" padding="10px">
+      <mj-column vertical-align="top" width="100%%">
+        <mj-text align="center" color="#FFF" font-size="16px">We appreciate your time!</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

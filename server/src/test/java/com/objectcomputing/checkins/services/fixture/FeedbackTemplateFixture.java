@@ -29,4 +29,8 @@ public interface FeedbackTemplateFixture extends RepositoryFixture{
     default FeedbackTemplate saveReviewFeedbackTemplate(UUID creatorId) {
         return getFeedbackTemplateRepository().save(new FeedbackTemplate("Sample Review Template", "A saved review feedback template", creatorId, true, false, true));
     }
+
+    default FeedbackTemplate createFeedbackTemplateForExternalRecipient01(UUID creatorId) {
+        return new FeedbackTemplate("Title - For Ext Recip 01", "Description amazing external recipient feedback template", creatorId, true, true, false, true);
+    }
 }

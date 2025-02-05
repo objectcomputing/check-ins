@@ -41,17 +41,17 @@ def yarnBuildTask = tasks.register("yarnBuild", YarnTask) {
 }
 
 configurations {
-    yarnBuildElements {
+    webUi {
         canBeResolved = false
         canBeConsumed = true
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "yarnBuild-elements"))
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "web-ui"))
         }
     }
 }
 
 artifacts {
-    yarnBuildElements(distDir) {
+    webUi(distDir) {
         builtBy(yarnBuildTask)
     }
 }

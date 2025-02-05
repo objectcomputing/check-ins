@@ -25,6 +25,7 @@ delete from team_member;
 delete from team;
 delete from feedback_answers;
 delete from feedback_requests;
+delete from feedback_external_recipient;
 delete from template_questions;
 delete from review_periods;
 delete from feedback_templates;
@@ -1265,6 +1266,54 @@ INSERT INTO template_questions
 VALUES
 ('174e5851-cb24-4a0f-890c-e6f041db4127', PGP_SYM_ENCRYPT('Please provide any additional context or reasoning relevant to your assessment of this team member.', '${aeskey}'), 'd1e94b60-47c4-4945-87d1-4dc88f088e57', 15, 'TEXT');
 
+---- Generic Survey 1 but for external recipients
+INSERT INTO feedback_templates
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc, is_for_external_recipient) -- created by: Big Boss
+VALUES
+    ('265c4d57-7cd9-4c14-9878-bd05d3bb59f1', 'Survey For External Recips', 'Make a survey with a few questions for external recipients'
+    , '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '2021-05-05', true, true, false, true)
+;
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+    ('437c152c-b002-4dce-beb8-d7ae99d13497', PGP_SYM_ENCRYPT('What can this team member improve on that would help them increase their effectiveness (include examples where possible)?','${aeskey}')
+    , '265c4d57-7cd9-4c14-9878-bd05d3bb59f1', 1, 'TEXT')
+;
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+    ('2068a791-04c5-4def-833e-53fff73fd9eb', PGP_SYM_ENCRYPT('Try to recall a time when this team member helped you out with something. What was the problem and how did you work together to solve it?','${aeskey}')
+    , '265c4d57-7cd9-4c14-9878-bd05d3bb59f1', 3, 'TEXT')
+;
+INSERT INTO template_questions
+(id, question, template_id, question_number, input_type)
+VALUES
+    ('d8fd106b-a7f7-4ed6-8f67-6ec979adc780', PGP_SYM_ENCRYPT('In what ways does this team member represent OCI values?','${aeskey}')
+    , '265c4d57-7cd9-4c14-9878-bd05d3bb59f1', 2, 'TEXT')
+;
+
+-- External Recipients used for Feedback Requests
+INSERT INTO feedback_external_recipient
+(id, email, firstname, lastname, company_name)
+VALUES('ca0e2cbc-56dd-4e97-aa65-d2f2d5f47ff5', PGP_SYM_ENCRYPT('john.smith@fakeacme.com', '${aeskey}'), PGP_SYM_ENCRYPT('John', '${aeskey}'), PGP_SYM_ENCRYPT('Smith', '${aeskey}'), PGP_SYM_ENCRYPT('Fake Acme, Inc', '${aeskey}'))
+;
+INSERT INTO feedback_external_recipient
+(id, email, firstname, lastname, company_name)
+VALUES('60069963-8a11-4c40-843d-5ffafbcbeb1c', PGP_SYM_ENCRYPT('jane.doe@fakeacme.com', '${aeskey}'), PGP_SYM_ENCRYPT('Jane', '${aeskey}'), PGP_SYM_ENCRYPT('Doe', '${aeskey}'), PGP_SYM_ENCRYPT('Fake Acme, Inc', '${aeskey}'))
+;
+INSERT INTO feedback_external_recipient
+(id, email, firstname, lastname, company_name)
+VALUES('70eef321-e4cb-43c2-b50e-c666949978b5', PGP_SYM_ENCRYPT('bill.gates@microsoft.com', '${aeskey}'), PGP_SYM_ENCRYPT('Bill', '${aeskey}'), PGP_SYM_ENCRYPT('Gates', '${aeskey}'), PGP_SYM_ENCRYPT('Microsoft', '${aeskey}'))
+;
+INSERT INTO feedback_external_recipient
+(id, email, firstname, lastname, company_name)
+VALUES('9aefc565-b9b0-4efa-bf9e-c721441d2747', PGP_SYM_ENCRYPT('tim.cook@apple.com', '${aeskey}'), PGP_SYM_ENCRYPT('Tim', '${aeskey}'), PGP_SYM_ENCRYPT('Cook', '${aeskey}'), PGP_SYM_ENCRYPT('Apple', '${aeskey}'))
+;
+INSERT INTO feedback_external_recipient
+(id, email, firstname, lastname, company_name, inactive)
+VALUES('dc2921c1-cfff-4e91-a518-d60da098a53e', PGP_SYM_ENCRYPT('inn.unactive@inactive.com', '${aeskey}'), PGP_SYM_ENCRYPT('Inn', '${aeskey}'), PGP_SYM_ENCRYPT('Unactive', '${aeskey}'), PGP_SYM_ENCRYPT('Inactive, Inc.', '${aeskey}'), true)
+;
+
 -- Feedback Requests without responses
 ---- Creator: Huey Emmerich
 INSERT INTO feedback_requests
@@ -1408,6 +1457,14 @@ INSERT INTO feedback_requests
 VALUES
 ('7ca4d402-0bb9-4989-9087-8a52a63ee5d0', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', 'dfe2f986-fac0-11eb-9a03-0242ac130003','18ef2032-c264-411e-a8e1-ddda9a714bae', '2022-03-01', '2023-08-05', '2022-04-01', 'submitted');
 
+-- Feedback request to external-recipient
+INSERT INTO feedback_requests -- External-recipient: John Smith, Creator: Big Boss, Requestee: Crazy Elephant, Template: Switch to a external-only template!
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id, external_recipient_id)
+VALUES
+('e5f5fab5-ae57-4412-b98a-0f02bffec347', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727'
+, null, '265c4d57-7cd9-4c14-9878-bd05d3bb59f1', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted'
+, '12345678-e29c-4cf4-9ea4-6baa09405c57', 'ca0e2cbc-56dd-4e97-aa65-d2f2d5f47ff5')
+;
 
 -- Feedback Requests with responses
 ---- Creator: Terrific Yak
@@ -1665,6 +1722,21 @@ INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
 ('8c13ffa2-fad0-11eb-9a03-0242ac121137', PGP_SYM_ENCRYPT('Different feedback answer.', '${aeskey}'), 'bf328e35-e486-4ec8-b3e8-acc2c09419fa', '98390c09-7121-110a-bfee-9380a470a7f2', 0);
+
+-- Feedback request to external-recipient
+INSERT INTO feedback_requests -- External-recipient: Jane Doe, Creator: Big Boss, Requestee: Crazy Elephant, Template: Switch to a external-only template!
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status, review_period_id, external_recipient_id)
+VALUES
+    ('36fe5aa6-d049-44a9-a8f1-2820f67dd44c', '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', 'c7406157-a38f-4d48-aaed-04018d846727', null
+    , '265c4d57-7cd9-4c14-9878-bd05d3bb59f1', '2024-09-04', '2024-09-30', '2024-09-05', 'submitted', '12345678-e29c-4cf4-9ea4-6baa09405c57', '60069963-8a11-4c40-843d-5ffafbcbeb1c')
+;
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('376fd797-1df3-408e-8bc5-f37914e1e1e5', PGP_SYM_ENCRYPT('Different feedback answer.', '${aeskey}'), 'bf328e35-e486-4ec8-b3e8-acc2c09419fa'
+, '36fe5aa6-d049-44a9-a8f1-2820f67dd44c', 0)
+;
+
 
 -- Skills
 INSERT INTO skills -- React

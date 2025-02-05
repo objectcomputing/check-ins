@@ -30,9 +30,10 @@ public interface FeedbackRequestRepository extends CrudRepository<FeedbackReques
             "AND (CAST(:oldestDate as date) IS NULL OR send_date >= :oldestDate) " +
             "AND (:reviewPeriodId IS NULL OR review_period_id = :reviewPeriodId) " +
             "AND (:templateId IS NULL OR template_id = :templateId) " +
-            "AND (requestee_id = ANY(:requesteeIds)) "
+            "AND (requestee_id = ANY(:requesteeIds)) " +
+            "AND (:externalRecipientId IS NULL OR external_recipient_id = :externalRecipientId) "
             , nativeQuery = true)
-    List<FeedbackRequest> findByValues(@Nullable String creatorId, @Nullable String recipientId, @Nullable LocalDate oldestDate, @Nullable String reviewPeriodId, @Nullable String templateId, @TypeDef(type = DataType.STRING_ARRAY) List<String> requesteeIds);
+    List<FeedbackRequest> findByValuesWithRequesteeIds(@Nullable String creatorId, @Nullable String recipientId, @Nullable LocalDate oldestDate, @Nullable String reviewPeriodId, @Nullable String templateId, @Nullable String externalRecipientId, @TypeDef(type = DataType.STRING_ARRAY) List<String> requesteeIds);
 
     @Query(value = "SELECT * " +
             "FROM feedback_requests " +
@@ -41,9 +42,10 @@ public interface FeedbackRequestRepository extends CrudRepository<FeedbackReques
             "AND (:recipientId IS NULL OR recipient_id = :recipientId) " +
             "AND (CAST(:oldestDate as date) IS NULL OR send_date >= :oldestDate) " +
             "AND (:reviewPeriodId IS NULL OR review_period_id = :reviewPeriodId) " +
-            "AND (:templateId IS NULL OR template_id = :templateId) "
+            "AND (:templateId IS NULL OR template_id = :templateId) " +
+            "AND (:externalRecipientId IS NULL OR external_recipient_id = :externalRecipientId) "
             , nativeQuery = true)
-    List<FeedbackRequest> findByValues(@Nullable String creatorId, @Nullable String requesteeId, @Nullable String recipientId, @Nullable LocalDate oldestDate, @Nullable String reviewPeriodId, @Nullable String templateId);
+    List<FeedbackRequest> findByValues(@Nullable String creatorId, @Nullable String requesteeId, @Nullable String recipientId, @Nullable LocalDate oldestDate, @Nullable String reviewPeriodId, @Nullable String templateId, @Nullable String externalRecipientId);
 
     List<FeedbackRequest> findBySendDateNotAfterAndStatusEqual(LocalDate sendDate, String status);
 }

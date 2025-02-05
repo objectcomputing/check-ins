@@ -1,5 +1,9 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipient;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientCreateDTO;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientResponseDTO;
+import com.objectcomputing.checkins.services.feedback_external_recipient.FeedbackExternalRecipientServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
@@ -35,9 +39,11 @@ import java.util.UUID;
 public class FeedbackRequestController {
 
     private final FeedbackRequestServices feedbackReqServices;
+    private final FeedbackExternalRecipientServices feedbackExternalRecipientServices;
 
-    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices) {
+    public FeedbackRequestController(FeedbackRequestServices feedbackReqServices, FeedbackExternalRecipientServices feedbackExternalRecipientServices) {
         this.feedbackReqServices = feedbackReqServices;
+        this.feedbackExternalRecipientServices = feedbackExternalRecipientServices;
     }
 
     /**
@@ -105,9 +111,9 @@ public class FeedbackRequestController {
      * @return list of {@link FeedbackRequestResponseDTO}
      */
     @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
-    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,requesteeIds}")
-    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds) {
-        return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds)
+    @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,externalRecipientId,requesteeIds}")
+    public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable UUID externalRecipientId, @Nullable List<UUID> requesteeIds) {
+        return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, externalRecipientId, requesteeIds)
                 .stream()
                 .map(this::fromEntity)
                 .toList();
@@ -125,7 +131,7 @@ public class FeedbackRequestController {
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
         dto.setReviewPeriodId(feedbackRequest.getReviewPeriodId());
-
+        dto.setExternalRecipientId(feedbackRequest.getExternalRecipientId());
         return dto;
     }
 
@@ -139,6 +145,8 @@ public class FeedbackRequestController {
                 dto.getDueDate(),
                 dto.getStatus(),
                 dto.getSubmitDate(),
-                dto.getReviewPeriodId());
+                dto.getReviewPeriodId(),
+                dto.getExternalRecipientId()
+        );
     }
 }

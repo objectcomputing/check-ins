@@ -1,0 +1,116 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders the feedback tips component. 1`] = `
+<div>
+  <div
+    class="sbi-tips-page css-y8zz4t"
+  >
+    <div
+      class="submission-tips-header"
+    >
+      <h2
+        class="MuiTypography-root MuiTypography-h2 FeedbackSubmissionTips-title css-1sra7t5-MuiTypography-root"
+      >
+        <b>
+          Feedback Tips
+        </b>
+      </h2>
+      <div
+        class="FeedbackSubmissionTips-button"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+          tabindex="0"
+          type="button"
+        >
+          Next
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+    </div>
+    <h5
+      class="MuiTypography-root MuiTypography-h5 FeedbackSubmissionTips-announcement css-ag7rrr-MuiTypography-root"
+    >
+      <b>
+        SBI is a common approach to providing constructive and fair feedback
+         
+      </b>
+    </h5>
+    <div
+      class="submission-tips"
+    >
+      <div
+        class="sbi-info"
+      >
+        <div
+          class="sbi-circle"
+        >
+          S
+        </div>
+        <div
+          class="sbi-title-and-description"
+        >
+          <h3
+            class="MuiTypography-root MuiTypography-h3 sbi-info-title css-gepadz-MuiTypography-root"
+          >
+            Situation
+          </h3>
+          <p
+            class="MuiTypography-root MuiTypography-body1 sbi-info-description css-ahj2mt-MuiTypography-root"
+          >
+            Describe the situation; be specific about when and where it occurred.
+          </p>
+        </div>
+      </div>
+      <div
+        class="sbi-info"
+      >
+        <div
+          class="sbi-circle"
+        >
+          B
+        </div>
+        <div
+          class="sbi-title-and-description"
+        >
+          <h3
+            class="MuiTypography-root MuiTypography-h3 sbi-info-title css-gepadz-MuiTypography-root"
+          >
+            Behavior
+          </h3>
+          <p
+            class="MuiTypography-root MuiTypography-body1 sbi-info-description css-ahj2mt-MuiTypography-root"
+          >
+            Describe the observable behavior; don't assume you know what the other person was thinking.
+          </p>
+        </div>
+      </div>
+      <div
+        class="sbi-info"
+      >
+        <div
+          class="sbi-circle"
+        >
+          I
+        </div>
+        <div
+          class="sbi-title-and-description"
+        >
+          <h3
+            class="MuiTypography-root MuiTypography-h3 sbi-info-title css-gepadz-MuiTypography-root"
+          >
+            Impact
+          </h3>
+          <p
+            class="MuiTypography-root MuiTypography-body1 sbi-info-description css-ahj2mt-MuiTypography-root"
+          >
+            Describe what you thought and felt as a result of that behavior.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
