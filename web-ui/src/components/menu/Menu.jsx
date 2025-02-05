@@ -13,7 +13,6 @@ import {
   selectHasSkillsReportPermission,
   selectHasTeamSkillsReportPermission,
   selectHasViewPulseReportPermission,
-  selectIsAdmin,
   selectHasEarnedCertificationsPermission,
   selectHasMeritReportPermission,
   selectHasVolunteeringEventsPermission,
@@ -26,6 +25,7 @@ import {
   selectHasCreateMembersPermission,
   selectHasDeleteMembersPermission,
   selectHasImpersonateMembersPermission,
+  selectCanEditAllOrganizationMembers,
   selectHasUploadHoursPermission,
   selectHasPermissionAssignmentPermission,
 } from '../../context/selectors';
@@ -110,7 +110,6 @@ function Menu({ children }) {
   const csrf = selectCsrfToken(state);
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
-  const isAdmin = selectIsAdmin(state);
   const hasReportPermission = selectHasReportPermission(state);
   const canViewFeedbackAnswer = selectCanViewFeedbackAnswerPermission(state);
   const canViewFeedbackRequest = selectCanViewFeedbackRequestPermission(state);
@@ -144,6 +143,7 @@ function Menu({ children }) {
     ['/admin/roles', 'Roles', () => selectCanEditMemberRolesPermission(state)],
     ['/admin/users', 'Users', () => selectHasCreateMembersPermission(state) ||
                                     selectHasDeleteMembersPermission(state) ||
+                                    selectCanEditAllOrganizationMembers(state) ||
                                     selectHasImpersonateMembersPermission(state)
     ],
     ['/admin/email', 'Send Email', () => selectHasSendEmailPermission(state)],

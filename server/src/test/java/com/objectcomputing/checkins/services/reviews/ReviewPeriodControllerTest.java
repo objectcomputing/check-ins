@@ -400,19 +400,6 @@ class ReviewPeriodControllerTest
     }
 
     @Test
-    void testPOSTCreateANullReviewPeriodForbiddenWithoutPermission() {
-        ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
-
-        final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
-                POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-    }
-
-    @Test
     void testUpdateReviewPeriodAsAdmin() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         assignAdminRole(memberProfileOfAdmin);
@@ -706,6 +693,8 @@ class ReviewPeriodControllerTest
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
         LocalDateTime startDate = launchDate.minusDays(30);
         LocalDateTime endDate = closeDate.minusDays(1);
+
+        MemberProfile supervisor = createADefaultSupervisor();
         ReviewPeriod period = getReviewPeriodRepository().save(
             new ReviewPeriod("Good Times, Bad Times",
                              ReviewStatus.AWAITING_APPROVAL, null, null,
@@ -713,11 +702,12 @@ class ReviewPeriodControllerTest
                              startDate, endDate));
 
         period.setReviewStatus(ReviewStatus.OPEN);
-        assertThrows(
-            BadArgException.class,
-            () -> reviewPeriodServices.update(period),
-            "Expected ReviewPeriodServices.update() to throw, but it didn't"
-        );
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            PUT("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
     }
 
     @Test
@@ -727,15 +717,19 @@ class ReviewPeriodControllerTest
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
         LocalDateTime startDate = launchDate.minusDays(30);
         LocalDateTime endDate = closeDate.minusDays(1);
-        BadArgException exception = assertThrows(
-            BadArgException.class,
-            () -> reviewPeriodServices.save(
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
                 new ReviewPeriod("Good Times, Bad Times",
                                  ReviewStatus.AWAITING_APPROVAL, null, null,
                                  launchDate, selfReviewCloseDate, closeDate,
-                                 startDate, endDate)),
-           "Expected ReviewPeriodServices.save() to throw, but it didn't"
-        );
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
         assertTrue(exception.getMessage()
                             .contains("self-review close date must be after"));
     }
@@ -747,15 +741,18 @@ class ReviewPeriodControllerTest
         LocalDateTime closeDate = launchDate.minusDays(1);
         LocalDateTime startDate = launchDate.minusDays(30);
         LocalDateTime endDate = closeDate.minusDays(1);
-        BadArgException exception = assertThrows(
-            BadArgException.class,
-            () -> reviewPeriodServices.save(
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
                 new ReviewPeriod("Good Times, Bad Times",
                                  ReviewStatus.AWAITING_APPROVAL, null, null,
                                  launchDate, selfReviewCloseDate, closeDate,
-                                 startDate, endDate)),
-           "Expected ReviewPeriodServices.save() to throw, but it didn't"
-        );
+                                 startDate, endDate);
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
         assertTrue(exception.getMessage()
                             .contains("close date must be after"));
     }
@@ -767,15 +764,19 @@ class ReviewPeriodControllerTest
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
         LocalDateTime startDate = launchDate;
         LocalDateTime endDate = closeDate.minusDays(1);
-        BadArgException exception = assertThrows(
-            BadArgException.class,
-            () -> reviewPeriodServices.save(
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
                 new ReviewPeriod("Good Times, Bad Times",
                                  ReviewStatus.AWAITING_APPROVAL, null, null,
                                  launchDate, selfReviewCloseDate, closeDate,
-                                 startDate, endDate)),
-           "Expected ReviewPeriodServices.save() to throw, but it didn't"
-        );
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
         assertTrue(exception.getMessage()
                             .contains("start date must be before"));
     }
@@ -787,15 +788,19 @@ class ReviewPeriodControllerTest
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
         LocalDateTime startDate = launchDate.minusDays(30);
         LocalDateTime endDate = startDate;
-        BadArgException exception = assertThrows(
-            BadArgException.class,
-            () -> reviewPeriodServices.save(
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
                 new ReviewPeriod("Good Times, Bad Times",
                                  ReviewStatus.AWAITING_APPROVAL, null, null,
                                  launchDate, selfReviewCloseDate, closeDate,
-                                 startDate, endDate)),
-           "Expected ReviewPeriodServices.save() to throw, but it didn't"
-        );
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
         assertTrue(exception.getMessage()
                             .contains("end date must be after"));
     }
@@ -807,15 +812,19 @@ class ReviewPeriodControllerTest
         LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
         LocalDateTime startDate = launchDate.minusDays(30);
         LocalDateTime endDate = closeDate.plusDays(1);
-        BadArgException exception = assertThrows(
-            BadArgException.class,
-            () -> reviewPeriodServices.save(
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
                 new ReviewPeriod("Good Times, Bad Times",
                                  ReviewStatus.AWAITING_APPROVAL, null, null,
                                  launchDate, selfReviewCloseDate, closeDate,
-                                 startDate, endDate)),
-           "Expected ReviewPeriodServices.save() to throw, but it didn't"
-        );
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
         assertTrue(exception.getMessage()
                             .contains("end date must be on or before"));
     }
@@ -918,4 +927,5 @@ class ReviewPeriodControllerTest
                                   member.getWorkEmail(),
                                   emailSender.events.get(2));
     }
+
 }

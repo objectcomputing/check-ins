@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.email;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
@@ -44,6 +46,7 @@ public class EmailServicesImpl implements EmailServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_SEND_EMAIL)
     public List<Email> sendAndSaveEmail(String subject, String content, boolean html, String... recipients) {
 
         List<Email> sentEmails = new ArrayList<>();

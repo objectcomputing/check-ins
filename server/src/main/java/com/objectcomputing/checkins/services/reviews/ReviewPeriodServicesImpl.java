@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.reviews;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
@@ -84,10 +86,12 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         this.automatedEmailRepository = automatedEmailRepository;
     }
 
-   void setEmailSender(EmailSender emailSender) {
+    void setEmailSender(EmailSender emailSender) {
         this.emailSender = emailSender;
     }
 
+    @Override
+    @RequiredPermission(Permission.CAN_CREATE_REVIEW_PERIOD)
     public ReviewPeriod save(ReviewPeriod reviewPeriod) {
         ReviewPeriod newPeriod = null;
         if (reviewPeriod != null) {
@@ -105,10 +109,14 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         return newPeriod;
     }
 
+    @Override
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public ReviewPeriod findById(@NotNull UUID id) {
         return reviewPeriodRepository.findById(id).orElse(null);
     }
 
+    @Override
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public Set<ReviewPeriod> findByValue(String name, ReviewStatus reviewStatus) {
         Set<ReviewPeriod> reviewPeriods = new HashSet<>();
 
@@ -125,6 +133,8 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         return reviewPeriods;
     }
 
+    @Override
+    @RequiredPermission(Permission.CAN_DELETE_REVIEW_PERIOD)
     public void delete(@NotNull UUID id) {
         if (!feedbackRequestServices.findByValues(null, null, null, null, id, null, null).isEmpty()) {
             throw new BadArgException(String.format("Review Period %s has associated feedback requests and cannot be deleted", id));
@@ -137,6 +147,8 @@ class ReviewPeriodServicesImpl implements ReviewPeriodServices {
         return reviewPeriodRepository.findByNameIlike(wildcard);
     }
 
+    @Override
+    @RequiredPermission(Permission.CAN_UPDATE_REVIEW_PERIOD)
     public ReviewPeriod update(@NotNull ReviewPeriod reviewPeriod) {
         LOG.info("Updating entity {}", reviewPeriod);
 

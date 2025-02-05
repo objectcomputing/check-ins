@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.file;
 
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
@@ -135,10 +136,12 @@ class FileServicesImplTest extends TestContainersSuite
         createAndAssignRoles();
 
         pdl = createADefaultMemberProfile();
+        assignPdlRole(pdl);
         member = createADefaultMemberProfileForPdl(pdl);
+        assignMemberRole(member);
 
         currentUserServices.currentUser = createASecondDefaultMemberProfile();
-        currentUserServices.roles = null;
+        assignMemberRole(currentUserServices.currentUser);
 
         checkIn = createADefaultCheckIn(member, pdl);
     }
@@ -148,8 +151,7 @@ class FileServicesImplTest extends TestContainersSuite
         String fileId = "some.id";
         services.addFile(fileId, new byte[0]);
 
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(currentUserServices.currentUser);
 
         final Set<FileInfoDTO> result = services.findFiles(null);
 
@@ -171,7 +173,8 @@ class FileServicesImplTest extends TestContainersSuite
         services.addFile(fileId, new byte[0]);
         CheckinDocument cd = createACustomCheckInDocument(checkIn, fileId);
 
-        currentUserServices.currentUser = member;
+        // Must be a PDL to even ask for the files from a check-in.
+        currentUserServices.currentUser = pdl;
         final Set<FileInfoDTO> result = services.findFiles(checkIn.getId());
 
         assertNotNull(result);
@@ -180,7 +183,8 @@ class FileServicesImplTest extends TestContainersSuite
 
     @Test
     void testFindByCheckinIdWhenNoDocsAreUploadedForCheckinId() {
-        currentUserServices.currentUser = member;
+        // Must be a PDL to even ask for the files from a check-in.
+        currentUserServices.currentUser = pdl;
         final Set<FileInfoDTO> result = services.findFiles(checkIn.getId());
 
         assertNotNull(result);
@@ -200,8 +204,7 @@ class FileServicesImplTest extends TestContainersSuite
         String fileId = "some.id";
         services.addFile(fileId, new byte[0]);
 
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(currentUserServices.currentUser);
 
         services.shouldThrow = true;
 
@@ -227,7 +230,7 @@ class FileServicesImplTest extends TestContainersSuite
         long byteCount = 50;
         services.addFile(uploadDocId, new byte[(int)byteCount]);
 
-        currentUserServices.currentUser = member;
+        currentUserServices.currentUser = pdl;
         CheckinDocument cd = createACustomCheckInDocument(checkIn, uploadDocId);
 
         final java.io.File resultFile = services.downloadFiles(uploadDocId);
@@ -240,8 +243,6 @@ class FileServicesImplTest extends TestContainersSuite
         long byteCount = 50;
         services.addFile(uploadDocId, new byte[(int)byteCount]);
 
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
         // The CheckInsServicesImpl checks with the rolePermissionServices.
         assignAdminRole(currentUserServices.currentUser);
 
@@ -269,7 +270,7 @@ class FileServicesImplTest extends TestContainersSuite
         CheckinDocument cd = createACustomCheckInDocument(checkIn, uploadDocId);
 
         // This exception actually comes from the CheckinDocumentServices.
-        final BadArgException responseException = assertThrows(BadArgException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.downloadFiles(uploadDocId));
 
         assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
@@ -280,7 +281,7 @@ class FileServicesImplTest extends TestContainersSuite
         String uploadDocId = "some.test.id";
         services.addFile(uploadDocId, new byte[0]);
 
-        currentUserServices.currentUser = member;
+        currentUserServices.currentUser = pdl;
         CheckinDocument cd = createACustomCheckInDocument(checkIn, uploadDocId);
 
         services.shouldThrow = true;
@@ -295,7 +296,7 @@ class FileServicesImplTest extends TestContainersSuite
         services.addFile(uploadDocId, new byte[0]);
         CheckinDocument cd = createACustomCheckInDocument(checkIn, uploadDocId);
 
-        currentUserServices.currentUser = member;
+        currentUserServices.currentUser = pdl;
         Boolean result = services.deleteFile(uploadDocId);
         assertTrue(result);
     }
@@ -306,8 +307,6 @@ class FileServicesImplTest extends TestContainersSuite
         services.addFile(uploadDocId, new byte[0]);
         CheckinDocument cd = createACustomCheckInDocument(checkIn, uploadDocId);
 
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
         // The CheckInsServicesImpl checks with the rolePermissionServices.
         assignAdminRole(currentUserServices.currentUser);
 
@@ -332,7 +331,7 @@ class FileServicesImplTest extends TestContainersSuite
         services.addFile(uploadDocId, new byte[0]);
         CheckinDocument cd = createACustomCheckInDocument(checkIn, uploadDocId);
 
-        final BadArgException responseException = assertThrows(BadArgException.class, () ->
+        final PermissionException responseException = assertThrows(PermissionException.class, () ->
                 services.deleteFile(uploadDocId));
 
         assertEquals(NOT_AUTHORIZED_MSG, responseException.getMessage());
@@ -348,7 +347,7 @@ class FileServicesImplTest extends TestContainersSuite
 
         //act
         currentUserServices.currentUser = member;
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
+        final PermissionException responseException = assertThrows(PermissionException.class,
                 () -> services.deleteFile(uploadDocId));
     }
 
@@ -357,7 +356,8 @@ class FileServicesImplTest extends TestContainersSuite
         CompletedFileUpload fileToUpload = new SimpleUploadFile("file.name");
 
         //act
-        currentUserServices.currentUser = member;
+        // Must be a PDL to upload files for a check-in.
+        currentUserServices.currentUser = pdl;
         FileInfoDTO result = services.uploadFile(checkIn.getId(), fileToUpload);
 
         //assert
@@ -369,8 +369,6 @@ class FileServicesImplTest extends TestContainersSuite
     void testFileUploadForAdminByUploadingFileToExistingDirectory() {
         CompletedFileUpload fileToUpload = new SimpleUploadFile("file.name");
 
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
         // The CheckInsServicesImpl checks with the rolePermissionServices.
         assignAdminRole(currentUserServices.currentUser);
 

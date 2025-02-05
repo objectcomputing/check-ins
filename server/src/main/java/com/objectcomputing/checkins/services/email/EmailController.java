@@ -1,8 +1,5 @@
 package com.objectcomputing.checkins.services.email;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
-
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
@@ -27,7 +24,6 @@ public class EmailController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    @RequiredPermission(Permission.CAN_SEND_EMAIL)
     public List<Email> sendEmail(String subject, String content, boolean html, String... recipients) {
         return emailServices.sendAndSaveEmail(subject, content, html, recipients);
     }

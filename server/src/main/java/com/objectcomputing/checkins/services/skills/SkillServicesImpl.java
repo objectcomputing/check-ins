@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -65,6 +67,7 @@ public class SkillServicesImpl implements SkillServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_EDIT_SKILLS)
     public void delete(@NotNull UUID id) {
         skillRepository.deleteById(id);
     }
@@ -75,6 +78,7 @@ public class SkillServicesImpl implements SkillServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_EDIT_SKILLS)
     public Skill update(@NotNull Skill skill) {
         if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
             return skillRepository.update(skill);
