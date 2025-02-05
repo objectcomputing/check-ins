@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.birthday;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -20,6 +22,7 @@ public class BirthDayServicesImpl implements BirthDayServices{
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_BIRTHDAY_REPORT)
     public List<BirthDayResponseDTO> findByValue(String[] months, Integer[] daysOfMonth) {
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null, false);
         List<MemberProfile> memberProfileAll = new ArrayList<>(memberProfiles);

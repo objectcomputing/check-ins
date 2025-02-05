@@ -61,9 +61,6 @@ const SettingsPage = () => {
     }
   }, [state, csrf]);
 
-  // For specific settings, add a handleFunction to the settings object.
-  // Format should be handleSetting and then add it to the handlers object
-  // with the setting name as the key.
   const handleLogoUrl = file => {
     if (csrf) {
       // TODO: Need to upload the file to a storage bucket...
@@ -200,17 +197,20 @@ const SettingsPage = () => {
         } else {
           categories[info.category] = true;
           return (
-            <>
-            <Typography data-testid={info.category}
-                        variant="h4"
-                        sx={{textDecoration: 'underline'}}
-                        display="inline">{titleCase(info.category)}</Typography>
-            <Component key={index} {...info} />
-            </>
+            <div key={index}>
+              <Typography data-testid={info.category}
+                          variant="h4"
+                          sx={{textDecoration: 'underline'}}
+                          display="inline">{titleCase(info.category)}
+              </Typography>
+              <Component {...info} />
+            </div>
           );
         }
       })}
-      {settingsControls && settingsControls.length &&
+      {// Check length against an explicit value.  If length is zero, it will
+       // be displayed instead of evaluated to false.
+       settingsControls && settingsControls.length > 0 &&
        selectHasAdministerSettingsPermission(state) &&
       <div className="buttons">
         <Button

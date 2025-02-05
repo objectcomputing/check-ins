@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.private_notes;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -40,7 +38,6 @@ class PrivateNoteController {
      * @return
      */
     @Post
-    @RequiredPermission(Permission.CAN_CREATE_PRIVATE_NOTE)
     HttpResponse<PrivateNote> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<?> request) {
         PrivateNote createPrivateNote = privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(), privateNote.getCreatedbyid(), privateNote.getDescription()));
         URI location = UriBuilder.of(PATH).path(createPrivateNote.getId().toString()).build();
@@ -56,7 +53,6 @@ class PrivateNoteController {
      * @return
      */
     @Put
-    @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
     HttpResponse<PrivateNote> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<?> request) {
         if (privateNote == null) {
             return HttpResponse.ok();
@@ -75,7 +71,6 @@ class PrivateNoteController {
      * @return
      */
     @Get("/{?checkinid,createdbyid}")
-    @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
     public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
                                             @Nullable UUID createdbyid) {
         return privateNoteServices.findByFields(checkinid, createdbyid);
@@ -88,7 +83,6 @@ class PrivateNoteController {
      * @return
      */
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
     public PrivateNote readPrivateNote(UUID id) {
         PrivateNote result = privateNoteServices.read(id);
         if (result == null) {

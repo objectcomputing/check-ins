@@ -11,6 +11,7 @@ import com.objectcomputing.checkins.services.settings.SettingsServices;
 import com.objectcomputing.checkins.services.settings.Setting;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.EmailHelper;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.context.annotation.Property;
@@ -34,7 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class PulseServicesTest extends TestContainersSuite implements TeamFixture, RoleFixture {
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
+
     @Inject
     @Named(MailJetFactory.MJML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
@@ -74,6 +79,7 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
 
         admin = createAThirdDefaultMemberProfile();
         assignAdminRole(admin);
+        currentUserServices.currentUser = admin;
 
         List<String> recipientsEmail = List.of(member.getWorkEmail(),
                                                other.getWorkEmail(),
@@ -97,7 +103,7 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         final Setting setting = new Setting(pulseSettingName, pulseBiWeekly);
         settingsServices.save(setting);
 
-        pulseServices.sendPendingEmail(biWeeklyDate);
+        pulseServices.notifyUsers(biWeeklyDate);
         assertEquals(1, emailSender.events.size());
 
         EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
@@ -112,7 +118,7 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         final Setting setting = new Setting(pulseSettingName, pulseWeekly);
         settingsServices.save(setting);
 
-        pulseServices.sendPendingEmail(weeklyDate);
+        pulseServices.notifyUsers(weeklyDate);
         assertEquals(1, emailSender.events.size());
 
         EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
@@ -127,7 +133,7 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         final Setting setting = new Setting(pulseSettingName, pulseMonthly);
         settingsServices.save(setting);
 
-        pulseServices.sendPendingEmail(monthlyDate);
+        pulseServices.notifyUsers(monthlyDate);
         assertEquals(1, emailSender.events.size());
 
         EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
@@ -142,7 +148,7 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         final Setting setting = new Setting(pulseSettingName, pulseMonthly);
         settingsServices.save(setting);
 
-        pulseServices.sendPendingEmail(monthlyDate);
+        pulseServices.notifyUsers(monthlyDate);
         // This should be zero because email was already sent on this date.
         assertEquals(0, emailSender.events.size());
     }
@@ -152,13 +158,13 @@ class PulseServicesTest extends TestContainersSuite implements TeamFixture, Role
         final Setting setting = new Setting(pulseSettingName, pulseBiWeekly);
         settingsServices.save(setting);
 
-        pulseServices.sendPendingEmail(weeklyDate);
+        pulseServices.notifyUsers(weeklyDate);
         // This should be zero because, when set to bi-weekly, email is sent on
         // the first, third, and fifth Monday of the month.
         assertEquals(0, emailSender.events.size());
 
         final LocalDate nonMonday = weeklyDate.plus(1, ChronoUnit.DAYS);
-        pulseServices.sendPendingEmail(nonMonday);
+        pulseServices.notifyUsers(nonMonday);
         // This should be zero because the date is not a Monday.
         assertEquals(0, emailSender.events.size());
     }

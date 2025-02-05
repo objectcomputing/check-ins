@@ -228,7 +228,9 @@ const PulseReportPage = () => {
             internalScores: []
           };
         }
-        averages.externalScores.push(externalScore);
+        if (externalScore != null) {
+          averages.externalScores.push(externalScore);
+        }
         averages.internalScores.push(internalScore);
       }
     }
@@ -328,7 +330,13 @@ const PulseReportPage = () => {
     });
     if (res.error) return;
 
-    const pulses = res.payload.data;
+    // Get the pulses and filter out invalid data.
+    const pulses = res.payload.data.filter((pulse) => {
+      return pulse.internalScore > 0 && pulse.internalScore <= 5 &&
+             (pulse.externalScore == null ||
+              (pulse.externalScore > 0 && pulse.externalScore <= 5));
+    });
+
     // Sort the pulses on their submission date.
     pulses.sort((p1, p2) => {
       const [year1, month1, day1] = p1.submissionDate;

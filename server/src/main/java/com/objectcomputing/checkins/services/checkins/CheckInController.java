@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -42,7 +40,6 @@ public class CheckInController {
      * @return
      */
     @Get("/{?teamMemberId,pdlId,completed}")
-    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Set<CheckIn> findCheckIns(@Nullable UUID teamMemberId, @Nullable UUID pdlId, @Nullable Boolean completed) {
         return checkInServices.findByFields(teamMemberId, pdlId, completed);
     }
@@ -54,7 +51,6 @@ public class CheckInController {
      * @return {@link HttpResponse<CheckIn>}
      */
     @Post
-    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public HttpResponse<CheckIn> createCheckIn(@Body @Valid CheckInCreateDTO checkIn, HttpRequest<?> request) {
         CheckIn createdCheckIn = checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted()));
         return HttpResponse.created(createdCheckIn)
@@ -68,7 +64,6 @@ public class CheckInController {
      * @return {@link HttpResponse<CheckIn>}
      */
     @Put
-    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public HttpResponse<CheckIn> update(@Body @Valid @NotNull CheckIn checkIn, HttpRequest<?> request) {
         CheckIn updatedCheckIn = checkInServices.update(checkIn);
         return HttpResponse.ok(updatedCheckIn)
@@ -80,7 +75,6 @@ public class CheckInController {
      * @return {@link CheckIn} the check-in
      */
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public CheckIn readCheckIn(@NotNull UUID id) {
         return checkInServices.read(id);
     }

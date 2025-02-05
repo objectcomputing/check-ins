@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 @Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class FeedbackRequestTest extends TestContainersSuite
-                          implements FeedbackRequestFixture, MemberProfileFixture, ReviewPeriodFixture, ReviewAssignmentFixture {
+                          implements FeedbackRequestFixture, MemberProfileFixture, ReviewPeriodFixture, ReviewAssignmentFixture, RoleFixture {
     @Inject
     private CurrentUserServicesReplacement currentUserServices;
 
@@ -56,6 +57,7 @@ class FeedbackRequestTest extends TestContainersSuite
 
     @BeforeEach
     void setUp() {
+        createAndAssignRoles();
         emailSender.reset();
     }
 
@@ -74,8 +76,7 @@ class FeedbackRequestTest extends TestContainersSuite
 
         // We need the current user to be logged in and admin.
         currentUserServices.currentUser = creator;
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(creator);
 
         FeedbackRequestUpdateDTO updateDTO = new FeedbackRequestUpdateDTO();
         updateDTO.setId(feedbackRequest.getId());
@@ -92,8 +93,9 @@ class FeedbackRequestTest extends TestContainersSuite
 
     @Test
     void testUpdateFeedbackRequest_NotFound() {
+        MemberProfile creator = createADefaultMemberProfile();
         UUID feedbackRequestId = UUID.randomUUID();
-        UUID creatorId = UUID.randomUUID();
+        UUID creatorId = creator.getId();
         UUID recipientId = UUID.randomUUID();
         UUID requesteeId = UUID.randomUUID();
 
@@ -107,6 +109,10 @@ class FeedbackRequestTest extends TestContainersSuite
 
         FeedbackRequestUpdateDTO updateDTO = new FeedbackRequestUpdateDTO();
         updateDTO.setId(feedbackRequest.getId());
+
+        // We need the creator to be logged in.
+        currentUserServices.currentUser = creator;
+        assignMemberRole(creator);
 
         assertThrows(NotFoundException.class, () -> feedbackRequestServices.update(updateDTO));
         assertEquals(0, emailSender.events.size());
