@@ -41,10 +41,10 @@ check-ins:
   application:
     google-api:
       delegated-user: test@objectcomputing.com
-    notifications:
-      slack:
-        webhook-url: https://bogus.objectcomputing.com/slack
-        bot-token: BOGUS_TOKEN
+    slack:
+      webhook-url: https://bogus.objectcomputing.com/slack
+      bot-token: BOGUS_TOKEN
+      signing-secret: BOGUS_SIGNING_SECRET
 ---
 aes:
   key: BOGUS_TEST_KEY

@@ -57,8 +57,12 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     @Override
     public boolean hasPermission(Permission permission) {
+        MemberProfile currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return false;
+        }
         List<Permission> userPermissions =
-            rolePermissionServices.findUserPermissions(getCurrentUser().getId());
+            rolePermissionServices.findUserPermissions(currentUser.getId());
         return userPermissions.stream().map(Permission::name)
                               .anyMatch(str -> str.equals(permission.name()));
     }

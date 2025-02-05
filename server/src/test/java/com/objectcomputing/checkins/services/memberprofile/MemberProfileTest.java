@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 @Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class MemberProfileTest extends TestContainersSuite
-                        implements MemberProfileFixture {
+                        implements MemberProfileFixture, RoleFixture {
 
     @Inject
     protected Validator validator;
@@ -52,6 +53,7 @@ class MemberProfileTest extends TestContainersSuite
 
     @BeforeEach
     void setUp() {
+        createAndAssignRoles();
         emailSender.reset();
     }
 
@@ -184,6 +186,9 @@ class MemberProfileTest extends TestContainersSuite
         String workEmail = existingProfile.getWorkEmail();
         MemberProfile newProfile = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, workEmail, null, null, null, null, null, null, null, null, null);
 
+        // The current user must have permission to create new members.
+        currentUserServices.currentUser = existingProfile;
+        assignAdminRole(existingProfile);
         assertThrows(AlreadyExistsException.class, () -> memberProfileServices.saveProfile(newProfile));
     }
 
@@ -199,6 +204,10 @@ class MemberProfileTest extends TestContainersSuite
                 "Needs supervision due to building being ultra flammable",
                 supervisorProfile.getId(), null, null, null, null,
                 LocalDate.now());
+
+        // Need permission to create new profiles.
+        currentUserServices.currentUser = supervisorProfile;
+        assignAdminRole(supervisorProfile);
 
         MemberProfile savedProfile = memberProfileServices.saveProfile(newProfile);
 

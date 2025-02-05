@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
@@ -46,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 @Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class GuildTest extends TestContainersSuite
-                implements MemberProfileFixture {
+                implements MemberProfileFixture, RoleFixture {
 
     @Inject
     private Validator validator;
@@ -66,6 +67,11 @@ class GuildTest extends TestContainersSuite
 
     @BeforeEach
     void setUp() {
+        createAndAssignRoles();
+
+        currentUserServices.currentUser = createADefaultMemberProfile();
+        assignMemberRole(currentUserServices.currentUser);
+
         emailSender.reset();
     }
 
@@ -218,7 +224,7 @@ class GuildTest extends TestContainersSuite
         guildDTO.setLink(link);
         guildDTO.setCommunity(true);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfile = createASecondDefaultMemberProfile();
         GuildCreateDTO.GuildMemberCreateDTO guildMemberCreateDTO = new GuildCreateDTO.GuildMemberCreateDTO();
         guildMemberCreateDTO.setMemberId(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
@@ -252,7 +258,7 @@ class GuildTest extends TestContainersSuite
 
     @Test
     void testSaveGuildWithExistingName() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfile = createASecondDefaultMemberProfile();
         createGuild("Existing Guild", memberProfile);
         emailSender.reset();
 
@@ -292,7 +298,6 @@ class GuildTest extends TestContainersSuite
     @Test
     void testUpdateGuildWithNewGuildLeaders() {
         // Create members involved.
-        MemberProfile currentUser = createADefaultMemberProfile();
         MemberProfile memberProfile1 = createASecondDefaultMemberProfile();
         MemberProfile memberProfile2 = createAThirdDefaultMemberProfile();
 
@@ -321,9 +326,7 @@ class GuildTest extends TestContainersSuite
         guildDTO.setGuildMembers(Arrays.asList(guildMember1, guildMember2));
 
         // We need the current user to be logged in and admin.
-        currentUserServices.currentUser = currentUser;
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(currentUserServices.currentUser);
 
         GuildResponseDTO response = guildServices.update(guildDTO);
         assertEquals(2, emailSender.events.size());
@@ -343,7 +346,6 @@ class GuildTest extends TestContainersSuite
     @Test
     void testUpdateGuildWithNoNewGuildLeaders() {
         // Create members involved.
-        MemberProfile currentUser = createADefaultMemberProfile();
         MemberProfile memberProfile1 = createASecondDefaultMemberProfile();
         MemberProfile memberProfile2 = createAThirdDefaultMemberProfile();
 
@@ -372,9 +374,7 @@ class GuildTest extends TestContainersSuite
         guildDTO.setGuildMembers(Arrays.asList(guildMember1, guildMember2));
 
         // We need the current user to be logged in and admin.
-        currentUserServices.currentUser = currentUser;
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(currentUserServices.currentUser);
 
         GuildResponseDTO response = guildServices.update(guildDTO);
         assertEquals(1, emailSender.events.size());
@@ -393,10 +393,7 @@ class GuildTest extends TestContainersSuite
         guildDTO.setId(UUID.randomUUID());  // Non-existent Guild ID
 
         // We need the current user to be logged in and admin.
-        MemberProfile currentUser = createADefaultMemberProfile();
-        currentUserServices.currentUser = currentUser;
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(currentUserServices.currentUser);
 
         assertThrows(BadArgException.class, () -> guildServices.update(guildDTO));
 
@@ -415,10 +412,7 @@ class GuildTest extends TestContainersSuite
         guildDTO.setGuildMembers(Collections.emptyList());  // No guild members
 
         // We need the current user to be logged in and admin.
-        MemberProfile currentUser = createADefaultMemberProfile();
-        currentUserServices.currentUser = currentUser;
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(currentUserServices.currentUser);
 
         assertThrows(BadArgException.class, () -> guildServices.update(guildDTO));
 
@@ -435,10 +429,6 @@ class GuildTest extends TestContainersSuite
         GuildUpdateDTO guildDTO = new GuildUpdateDTO();
         guildDTO.setId(existing.getId());
         guildDTO.setGuildMembers(Collections.emptyList());  // No guild members
-
-        // We need the current user to be logged in and *not* admin.
-        MemberProfile currentUser = createADefaultMemberProfile();
-        currentUserServices.currentUser = currentUser;
 
         assertThrows(PermissionException.class, () -> {
             guildServices.update(guildDTO);
@@ -459,10 +449,7 @@ class GuildTest extends TestContainersSuite
         guildDTO.setLink("invalid-link");  // Invalid link
 
         // We need the current user to be logged in and admin.
-        MemberProfile currentUser = createADefaultMemberProfile();
-        currentUserServices.currentUser = currentUser;
-        currentUserServices.roles = new ArrayList<RoleType>();
-        currentUserServices.roles.add(RoleType.ADMIN);
+        assignAdminRole(currentUserServices.currentUser);
 
         assertThrows(BadArgException.class, () -> guildServices.update(guildDTO));
 

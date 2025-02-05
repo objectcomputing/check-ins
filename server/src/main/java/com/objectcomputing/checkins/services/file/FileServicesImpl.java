@@ -147,8 +147,7 @@ public class FileServicesImpl extends FileServicesBaseImpl {
     public FileInfoDTO uploadDocument(String directoryName, String name, String text) {
         final String GOOGLE_DOC_TYPE = "application/vnd.google-apps.document";
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-        validate(!isAdmin, "You are not authorized to perform this operation");
+        validate(!hasAdministerPermission(), "You are not authorized to perform this operation");
 
         try {
             Drive drive = googleApiAccess.getDrive();
