@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.skills.Skill;
 import jakarta.inject.Singleton;
 import jakarta.validation.Valid;
@@ -30,12 +32,14 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public SkillCategorySkill save(@Valid SkillCategorySkillId dto) {
         SkillCategorySkill skillCategorySkill = new SkillCategorySkill(dto);
         return skillCategorySkillRepository.save(skillCategorySkill);
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public void delete(SkillCategorySkillId dto) {
         skillCategorySkillRepository.deleteByIds(
                 dto.getSkillCategoryId().toString(),
@@ -44,6 +48,7 @@ public class SkillCategorySkillServicesImpl implements SkillCategorySkillService
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public void deleteAllByCategoryId(UUID categoryId) {
         skillCategorySkillRepository.deleteBySkillCategoryId(categoryId);
     }

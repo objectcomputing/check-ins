@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.guild.member;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
@@ -76,11 +77,11 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
         }
         // only allow admins to create guild leads
-        else if (!currentUserServices.isAdmin() && Boolean.TRUE.equals(guildMember.getLead())) {
+        else if (!hasAdministerPermission() && Boolean.TRUE.equals(guildMember.getLead())) {
             throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
         // only admins and leads can add members to guilds unless a user adds themself
-        else if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
+        else if (!hasAdministerPermission() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -103,7 +104,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     public GuildMember update(@NotNull @Valid GuildMember guildMember) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
         final UUID id = guildMember.getId();
         final UUID guildId = guildMember.getGuildId();
@@ -122,7 +123,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));
-        } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+        } else if (!canAdminister && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
         GuildMember guildMemberUpdate = guildMemberRepo.update(guildMember);
@@ -161,7 +162,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException("At least one guild lead must be present in the guild at all times");
         }
         // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
-        if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
+        if (!hasAdministerPermission() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
@@ -210,5 +211,9 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     private static GuildMemberHistory buildGuildMemberHistory(UUID guildId, UUID memberId, String change, LocalDateTime date) {
         return new GuildMemberHistory(guildId,memberId,change,date);
+    }
+
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_GUILDS);
     }
 }

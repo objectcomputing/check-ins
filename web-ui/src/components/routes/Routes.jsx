@@ -28,7 +28,6 @@ import MeritReportPage from '../../pages/MeritReportPage';
 import Users from '../admin/users/Users';
 import VolunteerReportPage from '../../pages/VolunteerReportPage';
 
-import { selectIsAdmin } from '../../context/selectors';
 import FeedbackRequestConfirmation from '../feedback_request_confirmation/FeedbackRequestConfirmation';
 import FeedbackRequestPage from '../../pages/FeedbackRequestPage';
 import ViewFeedbackPage from '../../pages/ViewFeedbackPage';
@@ -43,6 +42,7 @@ import KudosPage from '../../pages/KudosPage';
 import ManageKudosPage from '../../pages/ManageKudosPage';
 import SkillCategoriesPage from '../../pages/SkillCategoriesPage';
 import SkillCategoryEditPage from '../../pages/SkillCategoryEditPage';
+import CloseWindow from '../../pages/CloseWindow';
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -202,6 +202,9 @@ export default function Routes() {
       <Route exact path="/admin/manage-kudos">
         <Header title="Manage Kudos"></Header>
         <ManageKudosPage />
+      </Route>
+      <Route path="/login?close=true">
+        <CloseWindow />
       </Route>
     </Switch>
   );
