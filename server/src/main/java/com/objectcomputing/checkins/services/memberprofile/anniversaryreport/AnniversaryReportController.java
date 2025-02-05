@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -32,7 +30,6 @@ public class AnniversaryReportController {
      * @return list of anniversaries
      */
     @Get("/{?month}")
-    @RequiredPermission(Permission.CAN_VIEW_ANNIVERSARY_REPORT)
     public List<AnniversaryReportResponseDTO> findByValue(@Nullable String[] month) {
         return anniversaryServices.findByValue(month);
     }

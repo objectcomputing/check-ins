@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,9 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent") // Will throw an exception, which is fine for testing
 class DocumentationControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, DocumentationFixture {
-
-    @Inject
-    DocumentService documentService;
 
     @Inject
     DocumentationClient client;
@@ -84,19 +80,22 @@ class DocumentationControllerTest extends TestContainersSuite implements MemberP
         testDocument = createDocument("Test Document", "https://test.com", "This is a test document");
         howToDealWithPdlsDocument = createDocument("How to deal with PDLs", "/how-to-deal-with-pdls.pdf", "just for members");
 
+        http = rawClient.toBlocking();
+
         // Assign the member documents so members start with 3 documents
-        documentService.saveDocumentsToRoles(
-                memberRole.getId(),
-                new LinkedHashSet<>(List.of(testDocument.getId(), twoRolesDocument.getId(), howToDealWithPdlsDocument.getId()))
-        );
+        HttpRequest<?> request = HttpRequest.POST(
+            String.format("/%s", memberRole.getId()),
+            List.of(testDocument.getId(), twoRolesDocument.getId(),
+                    howToDealWithPdlsDocument.getId())
+        ).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        http.exchange(request);
 
         // Assign the pdl documents so pdls start with 2 documents
-        documentService.saveDocumentsToRoles(
-                pdlRole.getId(),
-                new LinkedHashSet<>(List.of(twoRolesDocument.getId(), pdlDocument.getId()))
-        );
-
-        http = rawClient.toBlocking();
+        request = HttpRequest.POST(
+            String.format("/%s", pdlRole.getId()),
+            List.of(twoRolesDocument.getId(), pdlDocument.getId())
+        ).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        http.exchange(request);
     }
 
     @Test

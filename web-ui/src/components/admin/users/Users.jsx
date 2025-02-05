@@ -19,6 +19,7 @@ import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
   selectHasCreateMembersPermission,
+  selectCanEditAllOrganizationMembers,
 } from '../../../context/selectors';
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
@@ -67,7 +68,7 @@ const Users = () => {
   };
 
   const normalizedMembers =
-    includeTerminated && selectHasCreateMembersPermission(state)
+    includeTerminated && selectCanEditAllOrganizationMembers(state)
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
 

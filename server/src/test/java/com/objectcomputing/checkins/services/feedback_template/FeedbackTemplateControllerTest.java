@@ -380,6 +380,7 @@ class FeedbackTemplateControllerTest extends TestContainersSuite implements Memb
     @Test
     void testFindReviewsForAdmin() {
         final MemberProfile memberOne = createADefaultMemberProfile();
+        createAndAssignAdminRole(memberOne);
         final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
         final FeedbackTemplate templateTwo = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final FeedbackTemplate templateThree = saveReviewFeedbackTemplate(memberOne.getId());
