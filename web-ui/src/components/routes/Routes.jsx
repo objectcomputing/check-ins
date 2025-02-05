@@ -28,7 +28,6 @@ import MeritReportPage from '../../pages/MeritReportPage';
 import Users from '../admin/users/Users';
 import VolunteerReportPage from '../../pages/VolunteerReportPage';
 
-import { selectIsAdmin } from '../../context/selectors';
 import FeedbackRequestConfirmation from '../feedback_request_confirmation/FeedbackRequestConfirmation';
 import FeedbackRequestPage from '../../pages/FeedbackRequestPage';
 import ViewFeedbackPage from '../../pages/ViewFeedbackPage';

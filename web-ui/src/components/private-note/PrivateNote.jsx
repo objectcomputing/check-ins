@@ -10,12 +10,12 @@ import {
   selectCsrfToken,
   selectCurrentUser,
   selectIsPDL,
-  selectIsAdmin,
   selectCheckin,
   selectProfile,
   selectCanViewPrivateNotesPermission,
   selectCanCreatePrivateNotesPermission,
   selectCanUpdatePrivateNotesPermission,
+  selectCanAdministerCheckinDocuments,
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import { debounce } from 'lodash/function';
@@ -42,7 +42,7 @@ const PrivateNote = () => {
   const currentCheckin = selectCheckin(state, checkinId);
   const currentMember = selectProfile(state, memberId);
   const pdlId = currentMember?.pdlId;
-  const isAdmin = selectIsAdmin(state);
+  const isAdmin = selectCanAdministerCheckinDocuments(state);
 
   const noteRef = useRef([]);
   const [note, setNote] = useState();

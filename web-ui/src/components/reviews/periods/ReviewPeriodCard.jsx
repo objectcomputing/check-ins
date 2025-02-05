@@ -26,7 +26,8 @@ import {
   selectCurrentMembers,
   selectHasUpdateReviewAssignmentsPermission,
   selectReviewPeriod,
-  selectReviewPeriods
+  selectReviewPeriods,
+  selectHasViewReviewAssignmentsPermission,
 } from '../../../context/selectors';
 import { titleCase } from '../../../helpers/strings.js';
 
@@ -77,6 +78,10 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
   const handleExpandClick = () => setExpanded(!expanded);
 
   const loadApprovalStats = async () => {
+    if (!selectHasViewReviewAssignmentsPermission(state)) {
+      return;
+    }
+
     // Get all the review assignments for this period.
     const res = await resolve({
       method: 'GET',

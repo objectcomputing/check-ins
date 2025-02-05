@@ -10,6 +10,7 @@ import {
   selectHasCreateMembersPermission,
   selectHasDeleteMembersPermission,
   selectHasImpersonateMembersPermission,
+  selectCanEditAllOrganizationMembers,
 } from '../../context/selectors';
 import { getAvatarURL, resolve } from '../../api/api.js';
 
@@ -86,7 +87,8 @@ const AdminMemberCard = ({ member, index }) => {
     // is due to the fact that users can edit their own profiles.  But, only
     // certain users can create new profiles.  So, we associate the edit feature
     // with profile creation.
-    if (selectHasCreateMembersPermission(state)) {
+    if (selectHasCreateMembersPermission(state) ||
+        selectCanEditAllOrganizationMembers(state)) {
       entries.push('Edit');
       actionFunctions.push(handleOpen);
     }
@@ -228,6 +230,7 @@ const AdminMemberCard = ({ member, index }) => {
         </CardContent>
         {(selectHasCreateMembersPermission(state) ||
           selectHasDeleteMembersPermission(state) ||
+          selectCanEditAllOrganizationMembers(state) ||
           selectHasImpersonateMembersPermission(state)) && (
           <CardActions>
             {options().length > 0 &&

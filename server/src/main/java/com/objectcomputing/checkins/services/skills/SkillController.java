@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
@@ -86,7 +84,6 @@ public class SkillController {
      * @return {@link HttpResponse<Skill>}
      */
     @Put
-    @RequiredPermission(Permission.CAN_EDIT_SKILLS)
     public HttpResponse<Skill> update(@Body @Valid Skill skill, HttpRequest<?> request) {
         Skill updatedSkill = skillServices.update(skill);
         return HttpResponse.ok(updatedSkill)
@@ -100,7 +97,6 @@ public class SkillController {
      */
     @Delete("/{id}")
     @Status(HttpStatus.OK)
-    @RequiredPermission(Permission.CAN_EDIT_SKILLS)
     public void deleteSkill(@NotNull UUID id) {
         skillServices.delete(id);
     }

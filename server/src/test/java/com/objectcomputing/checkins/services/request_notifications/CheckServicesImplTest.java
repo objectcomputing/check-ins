@@ -5,12 +5,14 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.pulse.PulseServices;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class CheckServicesImplTest extends TestContainersSuite
-                            implements FeedbackTemplateFixture, FeedbackRequestFixture, MemberProfileFixture {
+                            implements FeedbackTemplateFixture, FeedbackRequestFixture, MemberProfileFixture, RoleFixture {
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
 
     @Inject
     @Named(MailJetFactory.MJML_FORMAT)
@@ -39,6 +44,8 @@ class CheckServicesImplTest extends TestContainersSuite
 
     @BeforeEach
     void resetTest() {
+        currentUserServices.currentUser = createAThirdDefaultMemberProfile();
+        createAndAssignAdminRole(currentUserServices.currentUser);
         emailSender.reset();
     }
 

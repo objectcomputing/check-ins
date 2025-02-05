@@ -2,8 +2,14 @@ package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
+
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -26,13 +32,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class MemberProfileReportServicesImplTest extends TestContainersSuite
-                                          implements MemberProfileFixture {
+                                          implements MemberProfileFixture, RoleFixture {
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
+
     @Inject
     private MemberProfileServices memberProfileServices;
 
     @Inject
     private MemberProfileReportServicesImpl memberProfileReportServices;
+
+    @BeforeEach
+    void setUp() {
+        createAndAssignRoles();
+    }
 
     @Test
     void testGenerateFileWithAllMemberProfiles() throws IOException {
@@ -128,13 +143,16 @@ class MemberProfileReportServicesImplTest extends TestContainersSuite
     }
 
     private List<MemberProfileRecord> createSampleRecords() {
+        // A user must have the CAN_VIEW_PROFILE_REPORT to create this report.
+        currentUserServices.currentUser = createAThirdDefaultMemberProfile();
+        assignAdminRole(currentUserServices.currentUser);
+
         // The createADefaultMemberProfileForPdl() method actually sets both
         // the PDL and Supervisor to the id of the member profile passed in.
+        MemberProfileRecord record1 = from(currentUserServices.currentUser);
         MemberProfile pdl = createADefaultMemberProfile();
-        MemberProfileRecord record1 = from(pdl);
-        MemberProfileRecord record2 = from(createADefaultMemberProfileForPdl(pdl));
-        MemberProfileRecord record3 = from(createAThirdDefaultMemberProfile());
-
+        MemberProfileRecord record2 = from(pdl);
+        MemberProfileRecord record3 = from(createADefaultMemberProfileForPdl(pdl));
         return List.of(record1, record2, record3);
     }
 }
