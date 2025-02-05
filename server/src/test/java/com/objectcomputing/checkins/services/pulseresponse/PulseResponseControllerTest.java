@@ -556,7 +556,6 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     private String slackSignature(String timestamp, String rawBody) {
         String baseString = "v0:" + timestamp + ":" + rawBody;
         String secret = configuration.getApplication()
-                                     .getPulseResponse()
                                      .getSlack().getSigningSecret();
 
         try {

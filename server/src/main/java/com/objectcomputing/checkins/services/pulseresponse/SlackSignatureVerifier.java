@@ -30,7 +30,6 @@ public class SlackSignatureVerifier {
 
             // Generate HMAC-SHA256 signature
             String secret = configuration.getApplication()
-                                         .getPulseResponse()
                                          .getSlack().getSigningSecret();
             String computedSignature = "v0=" + hmacSha256(secret, baseString);
 

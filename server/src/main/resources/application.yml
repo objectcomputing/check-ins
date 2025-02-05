@@ -97,14 +97,10 @@ check-ins:
     feedback:
       max-suggestions: 6
       request-subject: "Feedback request"
-    notifications:
-      slack:
-        webhook-url: ${ SLACK_WEBHOOK_URL }
-        bot-token: ${ SLACK_BOT_TOKEN }
-    pulse-response:
-      slack:
-        signing-secret: ${ SLACK_PULSE_SIGNING_SECRET }
-        bot-token: ${ SLACK_PULSE_BOT_TOKEN }
+    slack:
+      webhook-url: ${ SLACK_WEBHOOK_URL }
+      bot-token: ${ SLACK_BOT_TOKEN }
+      signing-secret: ${ SLACK_SIGNING_SECRET }
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:
