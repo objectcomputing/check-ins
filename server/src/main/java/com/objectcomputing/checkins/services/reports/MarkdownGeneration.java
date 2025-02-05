@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.reports;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
@@ -120,7 +122,8 @@ class MarkdownGeneration {
         this.fileServices = fileServices;
     }
 
-    void upload(List<UUID> memberIds, UUID reviewPeriodId) {
+    @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
+    public void upload(List<UUID> memberIds, UUID reviewPeriodId) {
         for (UUID memberId : memberIds) {
             ReportDataCollation data = new ReportDataCollation(
                                            memberId, reviewPeriodId,
@@ -138,12 +141,12 @@ class MarkdownGeneration {
         }
     }
 
-    void generateAndStore(ReportDataCollation data) {
+    private void generateAndStore(ReportDataCollation data) {
         final String markdown = generate(data);
         store(data, markdown);
     }
 
-    String generate(ReportDataCollation data) {
+    private String generate(ReportDataCollation data) {
         StringBuilder sb = new StringBuilder();
         title(data, sb);
         currentInfo(data, sb);
@@ -159,7 +162,7 @@ class MarkdownGeneration {
         return sb.toString();
     }
 
-    void store(ReportDataCollation data, String markdown) {
+    private void store(ReportDataCollation data, String markdown) {
         // Send this text over to be uploaded to the google drive.
         fileServices.uploadDocument(directory,
                                     data.getMemberProfile().getWorkEmail(),

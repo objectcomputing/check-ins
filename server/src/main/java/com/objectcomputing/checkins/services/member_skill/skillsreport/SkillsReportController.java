@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
@@ -35,7 +33,6 @@ public class SkillsReportController {
      * @return {@link SkillsReportResponseDTO} Returned skills report
      */
     @Post
-    @RequiredPermission(Permission.CAN_VIEW_SKILLS_REPORT)
     public HttpResponse<SkillsReportResponseDTO> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
                                                               HttpRequest<?> request) {
         SkillsReportResponseDTO responseBody = skillsReportServices.report(requestBody);

@@ -15,8 +15,4 @@ public class QuestionCreateDTO {
     @NotBlank
     @Schema(description = "text of the question being asked")
     private String text;
-
-    @Schema(description = "category id of the question being asked")
-    private UUID categoryId;
-
 }

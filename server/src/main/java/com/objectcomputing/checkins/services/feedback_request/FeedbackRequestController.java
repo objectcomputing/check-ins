@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
@@ -46,7 +44,6 @@ public class FeedbackRequestController {
      * @param requestBody {@link FeedbackRequestCreateDTO} New feedback request to create
      * @return {@link FeedbackRequestResponseDTO}
      */
-    @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
     @Post
     public HttpResponse<FeedbackRequestResponseDTO> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
         FeedbackRequest savedFeedbackRequest = feedbackReqServices.save(fromDTO(requestBody));
@@ -74,7 +71,6 @@ public class FeedbackRequestController {
      * @return {@link HttpResponse}
      */
     @Delete("/{id}")
-    @RequiredPermission(Permission.CAN_DELETE_FEEDBACK_REQUEST)
     @Status(HttpStatus.OK)
     public void delete(@NotNull UUID id) {
         feedbackReqServices.delete(id);
@@ -87,7 +83,6 @@ public class FeedbackRequestController {
      * @return {@link FeedbackRequestResponseDTO}
      */
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     public HttpResponse<FeedbackRequestResponseDTO> getById(UUID id) {
         FeedbackRequest savedFeedbackRequest = feedbackReqServices.getById(id);
         return savedFeedbackRequest == null ? HttpResponse.notFound() : HttpResponse.ok(fromEntity(savedFeedbackRequest))
@@ -104,7 +99,6 @@ public class FeedbackRequestController {
      * @param oldestDate  The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_REQUEST)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate,reviewPeriodId,templateId,requesteeIds}")
     public List<FeedbackRequestResponseDTO> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate, @Nullable UUID reviewPeriodId, @Nullable UUID templateId, @Nullable List<UUID> requesteeIds) {
         return feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate, reviewPeriodId, templateId, requesteeIds)

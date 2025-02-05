@@ -23,6 +23,7 @@ import {
 } from '../api/member';
 import {
   selectCanViewCheckinsPermission,
+  selectCanEditAllOrganizationMembers,
 } from './selectors';
 import { getAllRoles, getAllUserRoles } from '../api/roles';
 import { getMemberSkills } from '../api/memberskill';
@@ -190,7 +191,7 @@ const AppContextProvider = props => {
     if (csrf && userProfile && !memberProfiles) {
       dispatch({ type: UPDATE_PEOPLE_LOADING, payload: true });
       getMemberProfiles();
-      if (userProfile.role?.includes('ADMIN')) {
+      if (selectCanEditAllOrganizationMembers(state)) {
         getTerminatedMembers();
       }
     }

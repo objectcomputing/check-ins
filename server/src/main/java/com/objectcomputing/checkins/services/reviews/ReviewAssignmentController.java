@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -47,7 +45,6 @@ public class ReviewAssignmentController {
      * @return a streamable response containing the stored {@link ReviewAssignment}
      */
     @Post
-    @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
     public HttpResponse<ReviewAssignment> createReviewAssignment(@Body @Valid ReviewAssignmentDTO assignment, HttpRequest<?> request) {
         ReviewAssignment reviewAssignment = reviewAssignmentServices.save(assignment.convertToEntity());
         return HttpResponse.created(reviewAssignment)
@@ -63,7 +60,6 @@ public class ReviewAssignmentController {
      * @return a streamable response containing the list of stored {@link ReviewAssignment}
      */
     @Post("/{reviewPeriodId}")
-    @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
     @Status(HttpStatus.CREATED)
     public List<ReviewAssignment> createReviewAssignment(@NotNull UUID reviewPeriodId,
                                                          @Body List<@Valid ReviewAssignmentDTO> assignments) {
@@ -77,7 +73,6 @@ public class ReviewAssignmentController {
      * @param id {@link UUID} of the review assignment
      * @return a streamable response containing the found {@link ReviewAssignment} with the given ID
      */
-    @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
     @Get("/{id}")
     public ReviewAssignment getById(@NotNull UUID id) {
         ReviewAssignment result = reviewAssignmentServices.findById(id);
@@ -87,7 +82,6 @@ public class ReviewAssignmentController {
         return result;
     }
 
-    @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
     @Get("/period/{reviewPeriodId}{?reviewerId}")
     public Set<ReviewAssignment> findAssignmentsByPeriodId(@NotNull UUID reviewPeriodId, @Nullable @QueryValue UUID reviewerId) {
         return reviewAssignmentServices.findAllByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId);
@@ -99,7 +93,6 @@ public class ReviewAssignmentController {
      * @param reviewAssignment the updated {@link ReviewAssignment}
      * @return a streamable response containing the stored {@link ReviewAssignment}
      */
-    @RequiredPermission(Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS)
     @Put
     public HttpResponse<ReviewAssignment> update(@Body @Valid ReviewAssignment reviewAssignment, HttpRequest<?> request) {
         ReviewAssignment updatedReviewAssignment = reviewAssignmentServices.update(reviewAssignment);
@@ -112,7 +105,6 @@ public class ReviewAssignmentController {
      *
      * @param id the id of the review assignment to be deleted to delete
      */
-    @RequiredPermission(Permission.CAN_DELETE_REVIEW_ASSIGNMENTS)
     @Delete("/{id}")
     @Status(HttpStatus.OK)
     public void deleteReviewAssignment(@NotNull UUID id) {

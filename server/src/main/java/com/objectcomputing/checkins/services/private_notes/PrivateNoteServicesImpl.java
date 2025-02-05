@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.private_notes;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -36,6 +38,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_PRIVATE_NOTE)
     public PrivateNote save(@NotNull PrivateNote privateNote) {
         validate(privateNote.getId() != null, "Found unexpected id %s for private note", privateNote.getId());
 
@@ -69,6 +72,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
     public PrivateNote read(@NotNull UUID id) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
@@ -97,6 +101,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
     public PrivateNote update(@NotNull PrivateNote privateNote) {
         validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
 
@@ -130,6 +135,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
     public Set<PrivateNote> findByFields(@Nullable UUID checkinId, @Nullable UUID createById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if(!checkinServices.doesUserHaveViewAccess(currentUserId, checkinId, createById)){
