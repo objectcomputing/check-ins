@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -23,6 +25,7 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_ANNIVERSARY_REPORT)
     public List<AnniversaryReportResponseDTO> findByValue(@Nullable String[] months) {
         List<MemberProfile> memberProfileAll = new ArrayList<>();
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null,

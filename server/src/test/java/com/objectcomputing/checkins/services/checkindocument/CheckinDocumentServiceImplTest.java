@@ -2,9 +2,11 @@ package com.objectcomputing.checkins.services.checkindocument;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -25,8 +27,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class CheckinDocumentServiceImplTest extends TestContainersSuite
-                                     implements MemberProfileFixture, CheckInFixture, CheckInDocumentFixture {
+                                     implements MemberProfileFixture, CheckInFixture, CheckInDocumentFixture, RoleFixture {
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
+
     @Inject
     private CheckinDocumentServicesImpl services;
 
@@ -39,6 +45,9 @@ class CheckinDocumentServiceImplTest extends TestContainersSuite
         pdl = createADefaultMemberProfile();
         member = createADefaultMemberProfileForPdl(pdl);
         checkIn = createADefaultCheckIn(member, pdl);
+        currentUserServices.currentUser = member;
+        createAndAssignRoles();
+        assignAdminRole(member);
     }
 
     @Test

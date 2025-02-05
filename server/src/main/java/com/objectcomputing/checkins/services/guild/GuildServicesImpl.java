@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
@@ -135,8 +136,8 @@ public class GuildServicesImpl implements GuildServices {
 
     public GuildResponseDTO update(GuildUpdateDTO guildDTO) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-        if (isAdmin || (currentUser != null &&
+        boolean canAdminister = hasAdministerPermission();
+        if (canAdminister || (currentUser != null &&
                 !guildMemberServices.findByFields(guildDTO.getId(), currentUser.getId(), true).isEmpty())) {
             // Guild newGuildEntity = null;
             GuildResponseDTO updated= null;
@@ -236,9 +237,9 @@ public class GuildServicesImpl implements GuildServices {
 
     public boolean delete(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
-        if (isAdmin || (currentUser != null && !guildMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
+        if (canAdminister || (currentUser != null && !guildMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
             guildMemberHistoryRepository.deleteByGuildId(id);
             guildMemberRepo.deleteByGuildId(id.toString());
             guildsRepo.deleteById(id);
@@ -340,5 +341,9 @@ public class GuildServicesImpl implements GuildServices {
        String subject = "You have been assigned as a guild leader of " + guild.getName();
        String body = "Congratulations, you have been assigned as a guild leader of " + guild.getName();
        emailSender.sendEmail(null, null, subject, body, guildLeadersEmails.toArray(new String[0]));
+    }
+
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_GUILDS);
     }
 }

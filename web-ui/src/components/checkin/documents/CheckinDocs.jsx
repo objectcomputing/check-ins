@@ -8,8 +8,8 @@ import {
   selectCsrfToken,
   selectCurrentUser,
   selectIsPDL,
-  selectIsAdmin,
-  selectCheckin
+  selectCheckin,
+  selectCanAdministerCheckinDocuments,
 } from '../../../context/selectors';
 import DescriptionIcon from '@mui/icons-material/Description';
 import IconButton from '@mui/material/IconButton';
@@ -34,7 +34,7 @@ const UploadDocs = () => {
   const [files, setFiles] = useState([]);
   const [fileColors, setFileColors] = useState({});
 
-  const pdlorAdmin = selectIsPDL(state) || selectIsAdmin(state);
+  const pdlorAdmin = selectIsPDL(state) || selectCanAdministerCheckinDocuments(state);
   const canView = pdlorAdmin && currentUserId !== memberId;
 
   useEffect(() => {

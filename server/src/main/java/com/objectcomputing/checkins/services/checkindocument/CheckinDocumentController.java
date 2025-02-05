@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -38,7 +36,6 @@ class CheckinDocumentController {
      */
 
     @Get("/{?checkinsId}")
-    @RequiredPermission(Permission.CAN_VIEW_CHECKIN_DOCUMENT)
     Set<CheckinDocument> findCheckinDocument(@Nullable UUID checkinsId) {
         return checkinDocumentService.read(checkinsId);
     }
@@ -51,7 +48,6 @@ class CheckinDocumentController {
      */
 
     @Post
-    @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
     HttpResponse<CheckinDocument> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument) {
         CheckinDocument createdCheckinDocument = checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(), checkinDocument.getUploadDocId()));
         URI location = UriBuilder.of(PATH).path(createdCheckinDocument.getId().toString()).build();
@@ -65,7 +61,6 @@ class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
     @Put
-    @RequiredPermission(Permission.CAN_UPDATE_CHECKIN_DOCUMENT)
     HttpResponse<?> update(@Body @Valid CheckinDocument checkinDocument) {
         if (checkinDocument == null) {
             return HttpResponse.ok();
@@ -83,7 +78,6 @@ class CheckinDocumentController {
      * @param checkinsId, id of the checkins record you wish to delete
      */
     @Delete("/{checkinsId}")
-    @RequiredPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT)
     @Status(HttpStatus.NO_CONTENT)
     void delete(UUID checkinsId) {
         checkinDocumentService.deleteByCheckinId(checkinsId);

@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.checkins;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -90,6 +92,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public CheckIn save(@NotNull CheckIn checkIn) {
         validate(checkIn.getId() != null, "Found unexpected id for checkin %s", checkIn.getId());
 
@@ -116,6 +119,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public CheckIn read(@NotNull UUID checkinId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
@@ -125,6 +129,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public CheckIn update(@NotNull CheckIn checkIn) {
         final UUID id = checkIn.getId();
         validate(id == null, "Unable to find checkin record with id %s", checkIn.getId());
@@ -157,6 +162,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         final UUID currentUserId = currentUser.getId();

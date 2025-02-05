@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -34,9 +36,9 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
 
     @Override
+    @RequiredPermission(Permission.CAN_UPLOAD_HOURS)
     public EmployeeHoursResponseDTO save(CompletedFileUpload file) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
         List<EmployeeHours> employeeHoursList = new ArrayList<>();
         Set<EmployeeHours> employeeHours = new HashSet<>();
         EmployeeHoursResponseDTO responseDTO = new EmployeeHoursResponseDTO();
@@ -60,17 +62,17 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
     @Override
     public Set<EmployeeHours> findByFields(String employeeId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canViewAll = currentUserServices.hasPermission(Permission.CAN_VIEW_ALL_UPLOADED_HOURS);
 
         Set<EmployeeHours> employeeHours = new HashSet<>();
         employeehourRepo.findAll().forEach(employeeHours::add);
 
         if(employeeId !=null) {
-            validate((!isAdmin && currentUser!=null&& !currentUser.getEmployeeId().equals(employeeId)),
+            validate((!canViewAll && currentUser!=null && !currentUser.getEmployeeId().equals(employeeId)),
                        NOT_AUTHORIZED_MSG);
             employeeHours.retainAll(employeehourRepo.findByEmployeeId(employeeId));
         } else {
-            validate(!isAdmin, NOT_AUTHORIZED_MSG);
+            validate(!canViewAll, NOT_AUTHORIZED_MSG);
         }
 
 

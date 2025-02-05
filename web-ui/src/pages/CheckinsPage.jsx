@@ -7,15 +7,16 @@ import { AppContext } from '../context/AppContext';
 import {
   selectMostRecentCheckin,
   selectCurrentUser,
-  selectIsAdmin,
   selectIsPDL,
   selectCsrfToken,
   selectCheckin,
   selectProfile,
   selectCheckinsForMember,
   selectCanViewCheckinsPermission,
+  selectCanCreateCheckinsPermission,
   selectCanUpdateCheckinsPermission,
   selectCanViewPrivateNotesPermission,
+  selectCanUpdateAllCheckinsPermission,
 } from '../context/selectors';
 import { getCheckins, createNewCheckin } from '../context/thunks';
 import { UPDATE_CHECKIN, UPDATE_TOAST } from '../context/actions';
@@ -89,12 +90,12 @@ const CheckinsPage = () => {
   }, [currentUserId, memberId, checkinId, mostRecent, history]);
 
   const currentCheckin = selectCheckin(state, checkinId);
-  const isAdmin = selectIsAdmin(state);
+  const updateAll = selectCanUpdateAllCheckinsPermission(state);
   const isPdl = selectIsPDL(state);
 
   const canViewPrivateNote =
     selectCanViewPrivateNotesPermission(state) &&
-    (isAdmin || selectedProfile?.pdlId === currentUserId) &&
+    (updateAll || selectedProfile?.pdlId === currentUserId) &&
     currentUserId !== memberId;
 
   const handleOpen = () => setOpen(true);
@@ -159,7 +160,8 @@ const CheckinsPage = () => {
                 aria-describedby="checkin-tooltip-wrapper"
                 className="create-checkin-tooltip-wrapper"
               >
-                {(isAdmin || isPdl || currentUserId === memberId) && (
+                {(updateAll || isPdl || currentUserId === memberId) &&
+                 selectCanCreateCheckinsPermission(state) && (
                   <Button
                     disabled={hasOpenCheckins}
                     className={classes.addButton}

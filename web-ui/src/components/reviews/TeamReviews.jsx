@@ -55,7 +55,6 @@ import {
 } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import {
-  selectIsAdmin,
   selectCsrfToken,
   selectCurrentMembers,
   selectCurrentUser,
@@ -70,6 +69,7 @@ import {
   selectHasCreateReviewAssignmentsPermission,
   selectHasDeleteReviewAssignmentsPermission,
   selectHasUpdateReviewAssignmentsPermission,
+  selectCanAdministerFeedbackRequests,
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
@@ -126,7 +126,7 @@ const ReviewStatus = {
 const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const location = useLocation();
-  const isAdmin = selectIsAdmin(state);
+  const isAdmin = selectCanAdministerFeedbackRequests(state);
   const [openMode, setOpenMode] = useState(false);
   const [approvalState, setApprovalState] = useState(false);
   const [assignments, setAssignments] = useState([]);
