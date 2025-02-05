@@ -2,9 +2,7 @@ package com.objectcomputing.checkins.services.questions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.fixture.QuestionCategoryFixture;
 import com.objectcomputing.checkins.services.fixture.QuestionFixture;
-import com.objectcomputing.checkins.services.question_category.QuestionCategory;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -29,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class QuestionControllerTest extends TestContainersSuite implements QuestionFixture, QuestionCategoryFixture {
+class QuestionControllerTest extends TestContainersSuite implements QuestionFixture {
 
     @Inject
     @Client("/services/questions")
@@ -78,15 +76,13 @@ class QuestionControllerTest extends TestContainersSuite implements QuestionFixt
 
     @Test
     void testGETGetByIdHappyPath() {
-        QuestionCategory questionCategory = createADefaultQuestionCategory();
-        Question question = createADefaultQuestionWithCategory(questionCategory.getId());
+        Question question = createADefaultQuestion();
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", question.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
         final HttpResponse<Question> response = client.toBlocking().exchange(request, Question.class);
 
-        assertEquals(question.getCategoryId(), response.body().getCategoryId());
         assertEquals(question.getText(), response.body().getText());
         assertEquals(HttpStatus.OK,response.getStatus());
     }
@@ -190,33 +186,5 @@ class QuestionControllerTest extends TestContainersSuite implements QuestionFixt
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
-    }
-
-    @Test
-    void testGETFindQuestionWithCategory() {
-        QuestionCategory questionCategory = createADefaultQuestionCategory();
-        Question question = createADefaultQuestionWithCategory(questionCategory.getId());
-
-        UUID categoryId = question.getCategoryId();
-        final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?categoryId=%s", encodeValue(String.valueOf(categoryId)))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-
-        final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(Set.of(question), response.body());
-        assertTrue(response.getContentLength() > 0, "response.getContentLength() > 0");
-    }
-
-    @Test
-    void testGETFindQuestionWithCategoryNotFound() {
-
-        final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?categoryId=%s", encodeValue(String.valueOf(UUID.randomUUID())))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-
-        final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assert(response.body().isEmpty());
     }
 }

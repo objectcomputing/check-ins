@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.kudos;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
@@ -36,13 +34,11 @@ public class KudosController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    @RequiredPermission(Permission.CAN_CREATE_KUDOS)
     public Kudos create(@Body @Valid KudosCreateDTO kudos) {
         return kudosServices.save(kudos);
     }
 
     @Put
-    @RequiredPermission(Permission.CAN_ADMINISTER_KUDOS)
     public Kudos approve(@Body @Valid Kudos kudos) {
         return kudosServices.approve(kudos);
     }
@@ -64,7 +60,6 @@ public class KudosController {
 
     @Delete("/{id}")
     @Status(HttpStatus.NO_CONTENT)
-    @RequiredPermission(Permission.CAN_ADMINISTER_KUDOS)
     public void delete(@NotNull UUID id) {
         kudosServices.delete(id);
     }

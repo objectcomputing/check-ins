@@ -32,10 +32,7 @@ public class CheckInsConfiguration {
         private GoogleApiConfig googleApi;
 
         @NotNull
-        private NotificationsConfig notifications;
-
-        @NotNull
-        private PulseResponseConfig pulseResponse;
+        private SlackConfig slack;
 
         @Getter
         @Setter
@@ -75,42 +72,16 @@ public class CheckInsConfiguration {
 
         @Getter
         @Setter
-        @ConfigurationProperties("notifications")
-        public static class NotificationsConfig {
+        @ConfigurationProperties("slack")
+        public static class SlackConfig {
+            @NotBlank
+            private String webhookUrl;
 
-            @NotNull
-            private SlackConfig slack;
+            @NotBlank
+            private String botToken;
 
-            @Getter
-            @Setter
-            @ConfigurationProperties("slack")
-            public static class SlackConfig {
-                @NotBlank
-                private String webhookUrl;
-
-                @NotBlank
-                private String botToken;
-            }
-        }
-
-        @Getter
-        @Setter
-        @ConfigurationProperties("pulse-response")
-        public static class PulseResponseConfig {
-
-            @NotNull
-            private SlackConfig slack;
-
-            @Getter
-            @Setter
-            @ConfigurationProperties("slack")
-            public static class SlackConfig {
-                @NotBlank
-                private String signingSecret;
-
-                @NotBlank
-                private String botToken;
-            }
+            @NotBlank
+            private String signingSecret;
         }
     }
 }

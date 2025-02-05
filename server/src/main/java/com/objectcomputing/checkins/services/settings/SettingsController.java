@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.settings;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
@@ -47,7 +45,6 @@ public class SettingsController {
      */
     @ExecuteOn(TaskExecutors.BLOCKING)
     @Get
-    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingsResponseDTO> findAllSettings() {
         return settingsServices.findAllSettings().stream()
                 .map(this::fromEntity).toList();
@@ -61,7 +58,6 @@ public class SettingsController {
      */
     @ExecuteOn(TaskExecutors.BLOCKING)
     @Get("/{name}")
-    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public SettingsResponseDTO findByName(@PathVariable @NotNull String name) {
         return fromEntity(settingsServices.findByName(name));
     }
@@ -72,7 +68,6 @@ public class SettingsController {
      * @return {@link <SettingOption>} Returned setting options
      */
     @Get("/options")
-    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingsResponseDTO> getOptions() {
         List<SettingOption> options = SettingOption.getOptions();
         return options.stream().map(option -> {
@@ -100,7 +95,6 @@ public class SettingsController {
      */
     @ExecuteOn(TaskExecutors.BLOCKING)
     @Post
-    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public HttpResponse<SettingsResponseDTO> save(@Body @Valid SettingsDTO settingDTO) {
         Setting savedSetting = settingsServices.save(fromDTO(settingDTO));
         URI location = UriBuilder.of(PATH).path(savedSetting.getId().toString()).build();
@@ -115,7 +109,6 @@ public class SettingsController {
      */
     @Put
     @ExecuteOn(TaskExecutors.BLOCKING)
-    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public HttpResponse<SettingsResponseDTO> update(@Body @Valid SettingsDTO settingsDTO) {
         Setting savedSetting = settingsServices.update(settingsDTO.getName(), settingsDTO.getValue());
         SettingsResponseDTO settingsResponseDTO = fromEntity(savedSetting);
@@ -132,7 +125,6 @@ public class SettingsController {
      */
     @Delete("/{id}")
     @ExecuteOn(TaskExecutors.BLOCKING)
-    @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public HttpStatus delete(UUID id) {
         return settingsServices.delete(id) ? HttpStatus.OK : HttpStatus.UNPROCESSABLE_ENTITY;
     }

@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.volunteering;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -94,14 +96,12 @@ class VolunteeringServiceImpl implements VolunteeringService {
 
     @Override
     public VolunteeringEvent create(VolunteeringEvent event) {
-        if (event.getId() != null) {
-            return update(event);
-        }
         validateEvent(event, "create");
         return eventRepo.save(event);
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS)
     public VolunteeringOrganization update(VolunteeringOrganization organization) {
         // Fail if an organization with the same name already exists (but it's not this one)
         validate(organizationRepo.getByName(organization.getName())

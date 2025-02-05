@@ -324,7 +324,10 @@ const EarnedCertificationsTable = ({
             }}
           />
           <DatePickerField
-            date={new Date(selectedEarned?.earnedDate)}
+            date={selectedEarned?.expirationDate
+                  ? new Date(selectedEarned?.expirationDate)
+                  : null
+                 }
             label="Expiration"
             setDate={date => {
               setSelectedEarned({

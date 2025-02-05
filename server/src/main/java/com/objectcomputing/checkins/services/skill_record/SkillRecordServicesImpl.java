@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.skill_record;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import jakarta.inject.Singleton;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -22,6 +25,7 @@ class SkillRecordServicesImpl implements SkillRecordServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     public File generateFile() throws IOException {
         List<SkillRecord> skillRecords = skillRecordRepository.findAll();
 

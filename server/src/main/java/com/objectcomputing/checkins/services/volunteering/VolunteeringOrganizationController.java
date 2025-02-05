@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.volunteering;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -70,7 +68,6 @@ class VolunteeringOrganizationController {
      * @return the updated {@link VolunteeringOrganization}
      */
     @Put("/{id}")
-    @RequiredPermission(Permission.CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS)
     VolunteeringOrganization update(@NotNull UUID id, @Valid @Body VolunteeringOrganizationDTO organization) {
         return volunteeringService.update(new VolunteeringOrganization(
                 id,

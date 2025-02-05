@@ -35,7 +35,6 @@ public class PulseSlackCommand {
 
         // See if we have a token.
         String token = configuration.getApplication()
-                                    .getPulseResponse()
                                     .getSlack().getBotToken();
         if (token != null && !slackBlocks.isEmpty()) {
             MethodsClient client = Slack.getInstance().methods(token);

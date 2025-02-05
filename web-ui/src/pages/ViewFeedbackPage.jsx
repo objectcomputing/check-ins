@@ -25,13 +25,13 @@ import {
   selectCsrfToken,
   selectCurrentUserId,
   selectProfile,
-  selectIsAdmin,
   selectIsSupervisor,
   selectMyTeam,
   selectCurrentMembers,
   selectSubordinates,
   selectCanViewFeedbackRequestPermission,
   noPermission,
+  selectCanAdministerFeedbackRequests,
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
@@ -98,7 +98,7 @@ const ViewFeedbackPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUserId = selectCurrentUserId(state);
-  const isAdmin = selectIsAdmin(state);
+  const isAdmin = selectCanAdministerFeedbackRequests(state);
   const isSupervisor = selectIsSupervisor(state);
   const currentMembers = selectCurrentMembers(state);
   const subordinates = selectSubordinates(state, currentUserId);

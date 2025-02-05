@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -44,6 +46,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     }
     // todo remove manual validations throughout class in favor of jakarta validations at api level.
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public AgendaItem save(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
         if (agendaItem != null) {
@@ -82,6 +85,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public AgendaItem read(@NotNull UUID id) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean canViewAllCheckins = checkInServices.canViewAllCheckins(currentUserId);
@@ -102,6 +106,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
 
     @Override
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public AgendaItem update(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
 
@@ -138,6 +143,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Set<AgendaItem> findByFields(@Nullable UUID checkinId, @Nullable UUID createdById) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         if(!checkInServices.doesUserHaveViewAccess(currentUser.getId(), checkinId, createdById)){

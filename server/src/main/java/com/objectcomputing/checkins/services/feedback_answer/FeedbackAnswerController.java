@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
@@ -64,7 +62,6 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     public HttpResponse<FeedbackAnswerResponseDTO> getById(UUID id) {
         FeedbackAnswer savedAnswer = feedbackAnswerServices.getById(id);
         return HttpResponse.ok(fromEntity(savedAnswer))
@@ -80,7 +77,6 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Get("/{?questionId,requestId}")
-    @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER)
     public List<FeedbackAnswerResponseDTO> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         return feedbackAnswerServices.findByValues(questionId, requestId)
                 .stream()
