@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.skillcategory;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -38,7 +36,6 @@ public class SkillCategoryController {
     }
 
     @Post
-    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public HttpResponse<SkillCategory> create(@Body @Valid SkillCategoryCreateDTO dto, HttpRequest<?> request) {
         SkillCategory skillCategory = new SkillCategory(dto.getName(), dto.getDescription());
         SkillCategory createdSkillCategory = skillCategoryServices.save(skillCategory);
@@ -47,7 +44,6 @@ public class SkillCategoryController {
     }
 
     @Put
-    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public HttpResponse<SkillCategory> update(@Body @Valid SkillCategoryUpdateDTO dto, HttpRequest<?> request) {
         SkillCategory skillCategory = new SkillCategory(dto.getId(), dto.getName(), dto.getDescription());
         SkillCategory update = skillCategoryServices.update(skillCategory);
@@ -56,7 +52,6 @@ public class SkillCategoryController {
     }
 
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     public SkillCategoryResponseDTO getById(@NotNull UUID id) {
         SkillCategoryResponseDTO result = skillCategoryServices.read(id);
         if (result == null) {
@@ -66,13 +61,11 @@ public class SkillCategoryController {
     }
 
     @Get("/with-skills")
-    @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     public List<SkillCategoryResponseDTO> findAllWithSkills() {
         return skillCategoryServices.findAllWithSkills();
     }
 
     @Delete("/{id}")
-    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     @Status(HttpStatus.OK)
     public void delete(@NotNull UUID id) {
         skillCategoryServices.delete(id);

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.kudos.kudos_recipient;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.exceptions.BadArgException;
@@ -54,8 +55,7 @@ public class KudosRecipientServicesImpl implements KudosRecipientServices {
                 new NotFoundException("No kudos with id %s"));
 
         boolean isKudosCreator = currentUserServices.getCurrentUser().getId().equals(kudos.getSenderId());
-        boolean isAdmin = currentUserServices.isAdmin();
-        if (!isAdmin && !isKudosCreator) {
+        if (!currentUserServices.hasPermission(Permission.CAN_ADMINISTER_KUDOS) && !isKudosCreator) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 

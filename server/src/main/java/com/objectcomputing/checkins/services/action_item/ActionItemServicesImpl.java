@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -24,6 +26,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         this.crudValidator = crudValidator;
     }
 
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public ActionItem save(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet;
 
@@ -45,6 +48,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     }
 
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public ActionItem read(@NotNull UUID id) {
 
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
@@ -56,6 +60,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     }
 
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public ActionItem update(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
@@ -68,6 +73,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     }
 
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
 
         crudValidator.validatePermissionsFindByFields(checkinid, createdbyid);
@@ -79,6 +85,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     }
 
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public void delete(@NotNull UUID id) {
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 

@@ -51,7 +51,9 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_VIEW_FEEDBACK_REQUEST,
         Permission.CAN_CREATE_FEEDBACK_REQUEST,
         Permission.CAN_DELETE_FEEDBACK_REQUEST,
+        Permission.CAN_ADMINISTER_FEEDBACK_REQUEST,
         Permission.CAN_VIEW_FEEDBACK_ANSWER,
+        Permission.CAN_ADMINISTER_FEEDBACK_ANSWER,
         Permission.CAN_EDIT_ALL_ORGANIZATION_MEMBERS,
         Permission.CAN_DELETE_ORGANIZATION_MEMBERS,
         Permission.CAN_CREATE_ORGANIZATION_MEMBERS,
@@ -102,7 +104,12 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_IMPERSONATE_MEMBERS,
         Permission.CAN_SEND_EMAIL,
         Permission.CAN_CREATE_MERIT_REPORT,
-        Permission.CAN_UPLOAD_HOURS
+        Permission.CAN_UPLOAD_HOURS,
+        Permission.CAN_VIEW_ALL_UPLOADED_HOURS,
+        Permission.CAN_ADMINISTER_FEEDBACK_TEMPLATES,
+        Permission.CAN_ADMINISTER_GUILDS,
+        Permission.CAN_ADMINISTER_TEAMS,
+        Permission.CAN_ADMINISTER_CHECKIN_DOCUMENTS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {
