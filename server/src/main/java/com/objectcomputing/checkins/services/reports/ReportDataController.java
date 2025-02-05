@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.reports;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.kudos.KudosRepository;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
@@ -83,7 +81,6 @@ public class ReportDataController {
     }
 
     @Post(uri="/upload", consumes = MediaType.MULTIPART_FORM_DATA)
-    @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
     public Mono<List<List<String>>> uploadDataFiles(
                           @Part("comp") Publisher<CompletedFileUpload> comp,
                           @Part("curr") Publisher<CompletedFileUpload> curr,
@@ -124,7 +121,6 @@ public class ReportDataController {
     }
 
     @Post(uri="/generate")
-    @RequiredPermission(Permission.CAN_CREATE_MERIT_REPORT)
     public HttpStatus generate(@Body @Valid ReportDataDTO dto) {
         MarkdownGeneration markdown =
                 new MarkdownGeneration(reportDataServices,

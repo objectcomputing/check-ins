@@ -21,8 +21,9 @@ public class SlackPoster {
     private CheckInsConfiguration configuration;
 
     public HttpResponse post(String slackBlock) {
-        // See if we can have a webhook URL.
-        String slackWebHook = configuration.getApplication().getNotifications().getSlack().getWebhookUrl();
+        // See if we have a webhook URL.
+        String slackWebHook = configuration.getApplication()
+                                           .getSlack().getWebhookUrl();
         if (slackWebHook != null) {
             // POST it to Slack.
             BlockingHttpClient client = slackClient.toBlocking();

@@ -30,6 +30,7 @@ const initialState = {
     userProfile: {
       name: 'holmes',
       role: ['MEMBER'],
+      permissions: [{ permission: 'CAN_CREATE_CHECKINS' }],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },

@@ -3,12 +3,12 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import {
   selectCurrentUserId,
-  selectIsAdmin,
   selectOrderedMemberFirstName,
   selectOrderedPdls,
   selectProfile,
   selectSupervisorHierarchyIds,
-  selectTerminatedMembers
+  selectTerminatedMembers,
+  selectCanAdministerFeedbackRequests,
 } from '../context/selectors';
 import { AppContext } from '../context/AppContext';
 import { getSelectedMemberSkills } from '../api/memberskill';
@@ -47,7 +47,7 @@ const MemberProfilePage = () => {
   const [lastSeen, setLastSeen] = useState('');
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
-  const isAdmin = selectIsAdmin(state);
+  const isAdmin = selectCanAdministerFeedbackRequests(state);
   const currentUserId = selectCurrentUserId(state);
   const pdlInfo =
     sortedPdls && sortedPdls.find(pdl => pdl?.id === selectedMember?.pdlId);

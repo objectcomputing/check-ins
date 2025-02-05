@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.kudos;
 
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
@@ -90,6 +91,7 @@ class KudosServicesImpl implements KudosServices {
 
     @Override
     @Transactional
+    @RequiredPermission(Permission.CAN_CREATE_KUDOS)
     public Kudos save(KudosCreateDTO kudosDTO) {
         UUID senderId = kudosDTO.getSenderId();
         if (memberProfileRetrievalServices.getById(senderId).isEmpty()) {
@@ -121,6 +123,7 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_ADMINISTER_KUDOS)
     public Kudos approve(Kudos kudos) {
         UUID kudosId = kudos.getId();
         Kudos existingKudos = kudosRepository.findById(kudosId).orElseThrow(() ->
@@ -169,6 +172,7 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_ADMINISTER_KUDOS)
     public void delete(UUID id) {
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(id)));

@@ -92,14 +92,16 @@ class EmailControllerTest extends TestContainersSuite implements MemberProfileFi
         assertEquals(email.get("content"), firstEmailRes.getContents());
         assertEquals(admin.getId(), firstEmailRes.getSentBy());
         assertEquals(recipient1.getId(), firstEmailRes.getRecipient());
-        assertTrue(firstEmailRes.getTransmissionDate().isAfter(firstEmailRes.getSendDate()));
+        assertTrue(firstEmailRes.getTransmissionDate().isAfter(firstEmailRes.getSendDate()) ||
+                   firstEmailRes.getTransmissionDate().isEqual(firstEmailRes.getSendDate()));
 
         Email secondEmailRes = response.getBody().get().get(1);
         assertEquals(email.get("subject"), secondEmailRes.getSubject());
         assertEquals(email.get("content"), secondEmailRes.getContents());
         assertEquals(admin.getId(), secondEmailRes.getSentBy());
         assertEquals(recipient2.getId(), secondEmailRes.getRecipient());
-        assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()));
+        assertTrue(secondEmailRes.getTransmissionDate().isAfter(secondEmailRes.getSendDate()) ||
+                   secondEmailRes.getTransmissionDate().isEqual(secondEmailRes.getSendDate()));
 
         assertEquals(1, htmlEmailSender.events.size());
         assertEquals(

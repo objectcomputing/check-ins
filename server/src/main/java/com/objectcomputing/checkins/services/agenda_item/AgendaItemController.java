@@ -2,8 +2,6 @@ package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -46,7 +44,6 @@ class AgendaItemController {
      * @return {@link HttpResponse <AgendaItem>}
      */
     @Post("/")
-    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     HttpResponse<AgendaItem> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem) {
         AgendaItem createAgendaItem = agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid(), agendaItem.getDescription()));
         URI location = UriBuilder.of(PATH).path(createAgendaItem.getId().toString()).build();
@@ -61,7 +58,6 @@ class AgendaItemController {
      * @return {@link HttpResponse<AgendaItem>}
      */
     @Put("/")
-    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     HttpResponse<?> updateAgendaItem(@Body @Valid AgendaItem agendaItem) {
         if (agendaItem == null) {
             return HttpResponse.ok();
@@ -81,7 +77,6 @@ class AgendaItemController {
      * @return a Set of {@link CheckIn}
      */
     @Get("/{?checkinid,createdbyid}")
-    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     Set<AgendaItem> findAgendaItems(@Nullable UUID checkinid, @Nullable UUID createdbyid) {
         return agendaItemServices.findByFields(checkinid, createdbyid);
     }
@@ -93,7 +88,6 @@ class AgendaItemController {
      * @return {@link AgendaItem}
      */
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     AgendaItem readAgendaItem(UUID id) {
         AgendaItem read = agendaItemServices.read(id);
         if (read == null) {
