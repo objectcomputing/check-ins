@@ -10,6 +10,8 @@ import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.methods.request.users.UsersLookupByEmailRequest;
 import com.slack.api.methods.response.users.UsersLookupByEmailResponse;
+import com.slack.api.methods.request.users.UsersInfoRequest;
+import com.slack.api.methods.response.users.UsersInfoResponse;
 
 import jakarta.inject.Singleton;
 import jakarta.inject.Inject;
@@ -72,6 +74,27 @@ public class SlackSearch {
                 LOG.error("SlackSearch.findUserId: " + e.toString());
             } catch(SlackApiException e) {
                 LOG.error("SlackSearch.findUserId: " + e.toString());
+            }
+        }
+        return null;
+    }
+
+    public String findUserEmail(String userId) {
+        String token = configuration.getApplication().getNotifications().getSlack().getBotToken();
+        if (token != null) {
+            try {
+                MethodsClient client = Slack.getInstance().methods(token);
+                UsersInfoResponse response = client.usersInfo(
+                    UsersInfoRequest.builder().user(userId).build()
+                );
+
+                if (response.isOk()) {
+                    return response.getUser().getProfile().getEmail();
+                }
+            } catch(IOException e) {
+                LOG.error("SlackSearch.findUserEmail: " + e.toString());
+            } catch(SlackApiException e) {
+                LOG.error("SlackSearch.findUserEmail: " + e.toString());
             }
         }
         return null;
