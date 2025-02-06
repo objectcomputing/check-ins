@@ -1,9 +1,10 @@
-package com.objectcomputing.checkins.services.pulseresponse;
+package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.notifications.social_media.SlackSearch;
+import com.objectcomputing.checkins.services.pulseresponse.PulseResponseCreateDTO;
 
 import jakarta.inject.Singleton;
 
@@ -23,13 +24,15 @@ public class SlackPulseResponseConverter {
     private static final Logger LOG = LoggerFactory.getLogger(SlackPulseResponseConverter.class);
 
     private final SlackSearch slackSearch;
+    private final MemberProfileServices memberProfileServices;
 
-    public SlackPulseResponseConverter(SlackSearch slackSearch) {
+    public SlackPulseResponseConverter(SlackSearch slackSearch,
+                                       MemberProfileServices memberProfileServices) {
         this.slackSearch = slackSearch;
+        this.memberProfileServices = memberProfileServices;
     }
 
-    public PulseResponseCreateDTO get(
-                    MemberProfileServices memberProfileServices, String body) {
+    public PulseResponseCreateDTO get(String body) {
         try {
             // Get the map of values from the string body
             final ObjectMapper mapper = new ObjectMapper();
@@ -47,7 +50,7 @@ public class SlackPulseResponseConverter {
 
                 // Create the pulse DTO and fill in the values.
                 PulseResponseCreateDTO response = new PulseResponseCreateDTO();
-                response.setTeamMemberId(lookupUser(memberProfileServices, map));
+                response.setTeamMemberId(lookupUser(map));
                 response.setSubmissionDate(LocalDate.now());
 
                 // Internal Score
@@ -111,8 +114,7 @@ public class SlackPulseResponseConverter {
         }
     }
 
-    private UUID lookupUser(MemberProfileServices memberProfileServices,
-                            Map<String, Object> map) {
+    private UUID lookupUser(Map<String, Object> map) {
         // Get the user's profile map.
         Map<String, Object> user = (Map<String, Object>)map.get("user");
 

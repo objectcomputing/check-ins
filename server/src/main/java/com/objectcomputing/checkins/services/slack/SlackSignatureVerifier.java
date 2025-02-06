@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.pulseresponse;
+package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 
