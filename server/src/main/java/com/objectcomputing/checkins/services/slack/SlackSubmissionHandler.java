@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.services.slack.pulseresponse.PulseSlackCommand;
 import com.objectcomputing.checkins.services.slack.pulseresponse.SlackPulseResponseConverter;
+import com.objectcomputing.checkins.services.slack.kudos.SlackKudosResponseHandler;
 
 import com.objectcomputing.checkins.util.form.FormUrlEncodedDecoder;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponse;
@@ -23,19 +24,24 @@ import java.nio.charset.StandardCharsets;
 
 @Singleton
 public class SlackSubmissionHandler {
+    private final String typeKey = "type";
+
     private final PulseResponseService pulseResponseServices;
     private final SlackSignatureVerifier slackSignatureVerifier;
     private final PulseSlackCommand pulseSlackCommand;
     private final SlackPulseResponseConverter slackPulseResponseConverter;
+    private final SlackKudosResponseHandler slackKudosResponseHandler;
 
     public SlackSubmissionHandler(PulseResponseService pulseResponseServices,
                                   SlackSignatureVerifier slackSignatureVerifier,
                                   PulseSlackCommand pulseSlackCommand,
-                                  SlackPulseResponseConverter slackPulseResponseConverter) {
+                                  SlackPulseResponseConverter slackPulseResponseConverter,
+                                  SlackKudosResponseHandler slackKudosResponseHandler) {
         this.pulseResponseServices = pulseResponseServices;
         this.slackSignatureVerifier = slackSignatureVerifier;
         this.pulseSlackCommand = pulseSlackCommand;
         this.slackPulseResponseConverter = slackPulseResponseConverter;
+        this.slackKudosResponseHandler = slackKudosResponseHandler;
     }
 
     public HttpResponse commandResponse(String signature,
@@ -85,6 +91,8 @@ public class SlackSubmissionHandler {
                                              new TypeReference<>() {});
                     if (isPulseSubmission(map)) {
                         return completePulse(map);
+                    } else if (isKudosSubmission(map)) {
+                        return completeKudos(map);
                     }
                 } catch(JsonProcessingException ex) {
                     // Fall through to the bottom...
@@ -98,7 +106,6 @@ public class SlackSubmissionHandler {
     }
 
     private boolean isPulseSubmission(Map<String, Object> map) {
-        final String typeKey = "type";
         if (map.containsKey(typeKey)) {
             final String type = (String)map.get(typeKey);
             if (type.equals("view_submission")) {
@@ -146,5 +153,25 @@ public class SlackSubmissionHandler {
             }
         }
         return HttpResponse.ok();
+    }
+
+    private boolean isKudosSubmission(Map<String, Object> map) {
+        if (map.containsKey(typeKey)) {
+            final String type = (String)map.get(typeKey);
+            if (type.equals("block_actions")) {
+                final String actionKey = "actions";
+                return map.containsKey(actionKey);
+            }
+        }
+        return false;
+    }
+
+    private HttpResponse completeKudos(Map<String, Object> map) {
+        if (slackKudosResponseHandler.handle(map)) {
+            return HttpResponse.ok();
+        } else {
+            // Something was wrong and we were not able to handle this.
+            return HttpResponse.unprocessableEntity();
+        }
     }
 }

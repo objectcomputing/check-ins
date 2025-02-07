@@ -31,7 +31,7 @@ public class KudosChannelReader {
     @Inject
     private SlackKudosCreator slackKudosCreator;
 
-    @Scheduled(fixedDelay = "1m")
+    @Scheduled(fixedDelay = "10m")
     public void readChannel() {
         if (lastImport == null) {
             lastImport = LocalDateTime.now();
