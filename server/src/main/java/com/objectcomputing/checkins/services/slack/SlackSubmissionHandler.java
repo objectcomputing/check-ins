@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.slack;
 
+import com.objectcomputing.checkins.services.slack.pulseresponse.PulseSlackCommand;
+import com.objectcomputing.checkins.services.slack.pulseresponse.SlackPulseResponseConverter;
+
 import com.objectcomputing.checkins.util.form.FormUrlEncodedDecoder;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponse;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseService;
@@ -10,6 +13,10 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 
 import jakarta.inject.Singleton;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Map;
 import java.nio.charset.StandardCharsets;
@@ -71,40 +78,73 @@ public class SlackSubmissionHandler {
 
             final String key = "payload";
             if (body.containsKey(key)) {
-                PulseResponseCreateDTO pulseResponseDTO =
-                    slackPulseResponseConverter.get((String)body.get(key));
-
-                // If we receive a null DTO, that means that this is not the
-                // actual submission of the form.  We can just return 200 so
-                // that Slack knows to continue without error.
-                if (pulseResponseDTO == null) {
-                    return HttpResponse.ok();
+                try {
+                    final ObjectMapper mapper = new ObjectMapper();
+                    final Map<String, Object> map =
+                            mapper.readValue((String)body.get(key),
+                                             new TypeReference<>() {});
+                    if (isPulseSubmission(map)) {
+                        return completePulse(map);
+                    }
+                } catch(JsonProcessingException ex) {
+                    // Fall through to the bottom...
                 }
-
-                // Create the pulse response
-                PulseResponse pulseResponse =
-                    pulseResponseServices.unsecureSave(
-                        new PulseResponse(
-                            pulseResponseDTO.getInternalScore(),
-                            pulseResponseDTO.getExternalScore(),
-                            pulseResponseDTO.getSubmissionDate(),
-                            pulseResponseDTO.getTeamMemberId(),
-                            pulseResponseDTO.getInternalFeelings(),
-                            pulseResponseDTO.getExternalFeelings()
-                        )
-                );
-
-                if (pulseResponse == null) {
-                    return HttpResponse.status(HttpStatus.CONFLICT,
-                                               "Already submitted today");
-                } else {
-                    return HttpResponse.ok();
-                }
-            } else {
-                return HttpResponse.unprocessableEntity();
             }
         } else {
             return HttpResponse.unauthorized();
         }
+
+        return HttpResponse.unprocessableEntity();
+    }
+
+    private boolean isPulseSubmission(Map<String, Object> map) {
+        final String typeKey = "type";
+        if (map.containsKey(typeKey)) {
+            final String type = (String)map.get(typeKey);
+            if (type.equals("view_submission")) {
+                final String viewKey = "view";
+                if (map.containsKey(viewKey)) {
+                    final Map<String, Object> view =
+                            (Map<String, Object>)map.get(viewKey);
+                    final String callbackKey = "callback_id";
+                    if (view.containsKey(callbackKey)) {
+                        return "pulseSubmission".equals(view.get(callbackKey));
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private HttpResponse completePulse(Map<String, Object> map) {
+        PulseResponseCreateDTO pulseResponseDTO =
+                            slackPulseResponseConverter.get(map);
+
+        // If we receive a null DTO, that means that this is not the actual
+        // submission of the form.  We can just return 200 so that Slack knows
+        // to continue without error.  Realy, this should not happen.  But, just
+        // in case...
+        if (pulseResponseDTO != null) {
+            // Create the pulse response
+            PulseResponse pulseResponse =
+                          pulseResponseServices.unsecureSave(
+                              new PulseResponse(
+                                  pulseResponseDTO.getInternalScore(),
+                                  pulseResponseDTO.getExternalScore(),
+                                  pulseResponseDTO.getSubmissionDate(),
+                                  pulseResponseDTO.getTeamMemberId(),
+                                  pulseResponseDTO.getInternalFeelings(),
+                                  pulseResponseDTO.getExternalFeelings()
+                              )
+                          );
+
+            if (pulseResponse == null) {
+                // If pulse response is null, that means that this user has
+                // already submitted a response today.
+                return HttpResponse.status(HttpStatus.CONFLICT,
+                                           "Already submitted today");
+            }
+        }
+        return HttpResponse.ok();
     }
 }

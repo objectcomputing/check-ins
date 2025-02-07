@@ -98,7 +98,13 @@ const KudosCard = ({ kudos }) => {
           subheaderTypographyProps={{variant:"subtitle1"}}
         />
         <CardContent>
-          <Typography variant="body1"><em>{kudos.message}</em></Typography>
+          <div>
+          {kudos.message.split('\n').map((line, index) => (
+            <Typography key={index} variant="body1">
+              <em>{line}</em>
+            </Typography>
+          ))}
+          </div>
           {kudos.recipientTeam && (
       <AvatarGroup max={12}>
         {kudos.recipientMembers.map((member) => (

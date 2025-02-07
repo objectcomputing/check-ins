@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.slack;
+package com.objectcomputing.checkins.services.slack.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -10,10 +10,6 @@ import jakarta.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Map;
 import java.util.UUID;
@@ -32,14 +28,9 @@ public class SlackPulseResponseConverter {
         this.memberProfileServices = memberProfileServices;
     }
 
-    public PulseResponseCreateDTO get(String body) {
+    public PulseResponseCreateDTO get(Map<String, Object> map) {
         try {
-            // Get the map of values from the string body
-            final ObjectMapper mapper = new ObjectMapper();
-            final Map<String, Object> map =
-                    mapper.readValue(body, new TypeReference<>() {});
             final String type = (String)map.get("type");
-
             if (type.equals("view_submission")) {
                 final Map<String, Object> view =
                         (Map<String, Object>)map.get("view");
@@ -81,11 +72,8 @@ public class SlackPulseResponseConverter {
                 // response.
                 return null;
             }
-        } catch(JsonProcessingException ex) {
-            LOG.error(ex.getMessage());
-            throw new BadArgException(ex.getMessage());
         } catch(NumberFormatException ex) {
-            LOG.error(ex.getMessage());
+            LOG.error("SlackPulseResponseConverter.get: " + ex.getMessage());
             throw new BadArgException("Pulse scores must be integers");
         }
     }
