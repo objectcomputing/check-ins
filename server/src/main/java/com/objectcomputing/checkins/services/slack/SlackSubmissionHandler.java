@@ -19,12 +19,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.nio.charset.StandardCharsets;
 
 @Singleton
 public class SlackSubmissionHandler {
-    private final String typeKey = "type";
+    private static final Logger LOG = LoggerFactory.getLogger(SlackSubmissionHandler.class);
+    private static final String typeKey = "type";
 
     private final PulseResponseService pulseResponseServices;
     private final SlackSignatureVerifier slackSignatureVerifier;
@@ -96,6 +100,7 @@ public class SlackSubmissionHandler {
                     }
                 } catch(JsonProcessingException ex) {
                     // Fall through to the bottom...
+                    LOG.error("externalResponse: " + ex.toString());
                 }
             }
         } else {

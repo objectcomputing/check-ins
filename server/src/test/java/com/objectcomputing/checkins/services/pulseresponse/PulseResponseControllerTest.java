@@ -37,6 +37,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.time.Instant;
+import java.net.URLEncoder;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -536,9 +537,10 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testCreateAPulseResponseFromSlack() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        slackSearch.users.put("SLACK_ID_HI", memberProfile.getWorkEmail());
+        String slackId = "SLACK_ID_HI";
+        slackSearch.users.put(slackId, memberProfile.getWorkEmail());
 
-        final String rawBody = "payload=%7B%22type%22%3A+%22view_submission%22%2C+%22user%22%3A+%7B%22id%22%3A+%22SLACK_ID_HI%22%7D%2C+%22view%22%3A+%7B%22id%22%3A+%22VNHU13V36%22%2C+%22type%22%3A+%22modal%22%2C+%22state%22%3A+%7B%22values%22%3A+%7B%22internalNumber%22%3A+%7B%22internalScore%22%3A+%7B%22selected_option%22%3A+%7B%22type%22%3A+%22radio_buttons%22%2C+%22value%22%3A+%224%22%7D%7D%7D%2C+%22internalText%22%3A+%7B%22internalFeelings%22%3A+%7B%22type%22%3A+%22plain_text_input%22%2C+%22value%22%3A+%22I+am+a+robot.%22%7D%7D%2C+%22externalNumber%22%3A+%7B%22externalScore%22%3A+%7B%22selected_option%22%3A+%7B%22type%22%3A+%22radio_buttons%22%2C+%22value%22%3A+%225%22%7D%7D%7D%2C+%22externalText%22%3A+%7B%22externalFeelings%22%3A+%7B%22type%22%3A+%22plain_text_input%22%2C+%22value%22%3A+%22You+are+a+robot.%22%7D%7D%7D%7D%7D%7D";
+        final String rawBody = getSlackPulsePayload(slackId);
 
         long currentTime = Instant.now().getEpochSecond();
         String timestamp = String.valueOf(currentTime);
@@ -602,5 +604,54 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
     private UUID id(String key) {
         return profile(key).getId();
+    }
+
+    private String getSlackPulsePayload(String slackId) {
+        return "payload=" +
+               URLEncoder.encode(String.format("""
+{
+  "type": "view_submission",
+  "user": {
+    "id": "%s"
+  },
+  "view": {
+    "id": "VNHU13V36",
+    "type": "modal",
+    "callback_id": "pulseSubmission",
+    "state": {
+      "values": {
+        "internalNumber": {
+          "internalScore": {
+            "selected_option": {
+              "type": "radio_buttons",
+              "value": "4"
+            }
+          }
+        },
+        "internalText": {
+          "internalFeelings": {
+            "type": "plain_text_input",
+            "value": "I am a robot."
+          }
+        },
+        "externalNumber": {
+          "externalScore": {
+            "selected_option": {
+              "type": "radio_buttons",
+              "value": "5"
+            }
+          }
+        },
+        "externalText": {
+          "externalFeelings": {
+            "type": "plain_text_input",
+            "value": "You are a robot."
+          }
+        }
+      }
+    }
+  }
+}
+""", slackId));
     }
 }

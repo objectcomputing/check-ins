@@ -26,9 +26,19 @@ public class SlackSearchReplacement extends SlackSearch {
     }
 
     @Override
+    public String findChannelName(String channelId) {
+        return channels.containsKey(channelId) ?
+                   channels.get(channelId) : null;
+    }
+
+    @Override
     public String findChannelId(String channelName) {
-        return channels.containsKey(channelName) ?
-                   channels.get(channelName) : null;
+        for (Map.Entry<String, String> entry : channels.entrySet()) {
+            if (entry.getValue().equals(channelName)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     @Override
