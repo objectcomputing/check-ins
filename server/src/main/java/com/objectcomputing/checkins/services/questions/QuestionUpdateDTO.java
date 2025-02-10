@@ -20,8 +20,4 @@ public class QuestionUpdateDTO {
     @NotBlank
     @Schema(description = "text of the question being asked")
     private String text;
-
-    @Schema(description = "id of the category of the question being asked")
-    private UUID categoryId;
-
 }

@@ -2,7 +2,10 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { UPDATE_TOAST } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectHasCreateKudosPermission,
+} from '../../context/selectors';
 import { sortKudos } from '../../context/util';
 
 import { getRecentKudos } from '../../api/kudos';
@@ -45,13 +48,13 @@ const PublicKudos = () => {
     <div className="public-kudos">
       <div className="kudos-title">
         <h1>Kudos</h1>
-        <Button
+        {selectHasCreateKudosPermission(state) && <Button
           className="kudos-dialog-open"
           startIcon={<StarIcon />}
           onClick={() => setKudosDialogOpen(true)}
         >
           Give Kudos
-        </Button>
+        </Button>}
       </div>
       <KudosDialog
         open={kudosDialogOpen}

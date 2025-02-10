@@ -83,6 +83,11 @@ export default function HomePage() {
   const kudosStyle = birthdays.length == 0 &&
                      anniversaries.length == 0 ? {} : { width: '450px' };
 
+  // Determine the X position of the birthday confetti.  If there aren't any
+  // anniversaries, it will be the left side.  If there are anniversaries, we
+  // need it in the middle.  Confetti X position ranges from 0 to 1.
+  const xPos = anniversaries.length > 0 ? .5 : .25;
+
   return (
     <div className="home-page">
       <div className="celebrations">
@@ -95,13 +100,13 @@ export default function HomePage() {
           />
         ) : (
           <Grid container spacing={2} style={{ padding: '0 20px 0 20px' }}>
-            { anniversaries.length > 0  && (
+            { anniversaries.length > 0 && (
               <Grid item>
                 <Anniversaries anniversaries={anniversaries} />
               </Grid>) }
             { birthdays.length > 0 && (
               <Grid item>
-                <Birthdays birthdays={birthdays} />
+                <Birthdays birthdays={birthdays} xPos={xPos} />
               </Grid>) }
             <Grid item style={kudosStyle}>
               <PublicKudos />

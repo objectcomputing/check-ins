@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.certification;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -68,7 +66,6 @@ class CertificationController {
      * @return the updated {@link Certification}
      */
     @Put("/{id}")
-    @RequiredPermission(Permission.CAN_MANAGE_CERTIFICATIONS)
     Certification update(@NotNull UUID id, @Body @Valid CertificationDTO certification) {
         return certificationService.updateCertification(new Certification(
                 id,
@@ -86,7 +83,6 @@ class CertificationController {
      * @return the merged {@link Certification}
      */
     @Post("/merge")
-    @RequiredPermission(Permission.CAN_MANAGE_CERTIFICATIONS)
     Certification mergeCertifications(@Valid @Body CertificationMergeDTO certificationMergeDTO) {
         return certificationService.mergeCertifications(certificationMergeDTO.getSourceId(), certificationMergeDTO.getTargetId());
     }

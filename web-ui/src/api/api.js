@@ -58,6 +58,24 @@ export const getMyFetch = async () => {
   return myFetch;
 };
 
+function windowLogin() {
+  return new Promise((resolve, reject) => {
+    const authUrl = `${BASE_API_URL}/login?close=true`;
+    const loginWindow = window.open(authUrl, "Login", "width=500,height=600");
+
+    const interval = setInterval(() => {
+      try {
+        if (loginWindow.closed) {
+          clearInterval(interval);
+          resolve();
+        }
+      } catch (err) {
+        reject(err);
+      }
+    }, 1000);
+  });
+}
+
 export const resolve = async payload => {
   let { url } = payload;
   const { params = null, data = null, ...rest } = payload;
@@ -76,6 +94,11 @@ export const resolve = async payload => {
   };
 
   resolved.payload = await promise;
+
+  if (resolved.payload.status == 401) {
+    await windowLogin();
+    resolved.payload = await myFetch(url, rest);
+  }
 
   if (!resolved.payload.ok) {
     try {

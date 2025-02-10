@@ -10,7 +10,12 @@ import {
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import { resolve } from '../../api/api.js';
+import {
+  getCertifications,
+  createCertification,
+  updateCertification,
+  mergeCertification,
+} from '../../api/certification';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken } from '../../context/selectors';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
@@ -33,6 +38,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [selectedCertification, setSelectedCertification] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
 
@@ -48,20 +54,13 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
     setAdding(true);
     setBadgeUrl('');
     setName('');
+    setDescription('');
     setSelectedCertification(null);
     setSelectedTarget(null);
   };
 
   const loadCertifications = useCallback(async () => {
-    const res = await resolve({
-      method: 'GET',
-      url: certificationBaseUrl,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    const res = await getCertifications(csrf);
     if (res.error) return;
 
     const certs = await res.payload.data;
@@ -78,8 +77,11 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
     if (csrf) loadCertifications();
   }, [csrf]);
 
+  // `exclude` is optional.  If supplied, the certification name that matches
+  // will be removed from the list of options.  This is useful when merging
+  // certifications.
   const certificationSelect = useCallback(
-    (label, setSelected) => (
+    (label, setSelected, exclude) => (
       <Autocomplete
         blurOnSelect
         clearOnBlur
@@ -97,10 +99,11 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
           }
           setAdding(!Boolean(foundCert));
           setName(foundCert.name);
+          setDescription(foundCert.description);
           setBadgeUrl(foundCert.badgeUrl);
           setSelected(foundCert);
         }}
-        options={certifications.map(cert => cert.name)}
+        options={certifications.map(cert => cert.name).filter(name => name !== exclude)}
         renderInput={params => {
           return (
             <TextField
@@ -120,16 +123,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   const deleteCertification = useCallback(async () => {
     selectedCertification.active = false;
     const { id } = selectedCertification;
-    const res = await resolve({
-      method: 'PUT',
-      url: certificationBaseUrl + '/' + id,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: selectedCertification
-    });
+    const res = await updateCertification(id, selectedCertification, csrf);
     if (res.error) return;
 
     setCertificationMap(map => {
@@ -141,19 +135,10 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
     close();
   }, [certificationMap, certifications, selectedCertification]);
 
-  const mergeCertification = useCallback(async () => {
+  const mergeSelectedCertification = useCallback(async () => {
     const sourceId = selectedCertification.id;
     const targetId = selectedTarget.id;
-    const res = await resolve({
-      method: 'POST',
-      url: certificationBaseUrl + '/merge',
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: { sourceId, targetId }
-    });
+    const res = await mergeCertification(sourceId, targetId, csrf);
     if (res.error) return;
 
     setCertifications(certs => certs.filter(cert => cert.id !== sourceId));
@@ -166,19 +151,13 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
   }, [selectedCertification, selectedTarget]);
 
   const saveCertification = useCallback(async () => {
-    const url = adding
-      ? certificationBaseUrl
-      : certificationBaseUrl + '/' + selectedCertification.id;
-    const res = await resolve({
-      method: adding ? 'POST' : 'PUT',
-      url,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: { name, badgeUrl }
-    });
+    let res;
+    const data = { name, description, badgeUrl };
+    if (adding) {
+      res = await createCertification(data, csrf);
+    } else {
+      res = await updateCertification(selectedCertification.id, data, csrf);
+    }
     if (res.error) return;
 
     const newCert = res.payload.data;
@@ -191,7 +170,7 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
     );
     close();
     forceUpdate();
-  }, [badgeUrl, certificationMap, name, selectedCertification]);
+  }, [badgeUrl, certificationMap, name, description, selectedCertification]);
 
   return (
     <>
@@ -208,6 +187,12 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
             required
             onChange={e => setName(e.target.value)}
             value={name}
+          />
+          <TextField
+            label="Description"
+            required
+            onChange={e => setDescription(e.target.value)}
+            value={description}
           />
           <TextField
             label="Badge URL"
@@ -253,9 +238,10 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
           Merge {selectedCertification?.name} Certification Into
         </DialogTitle>
         <DialogContent>
-          {certificationSelect('Target Certification', setSelectedTarget)}
+          {certificationSelect('Target Certification',
+                               setSelectedTarget, selectedCertification?.name)}
           <div className="row">
-            <Button disabled={!selectedTarget} onClick={mergeCertification}>
+            <Button disabled={!selectedTarget} onClick={mergeSelectedCertification}>
               Merge
             </Button>
             <Button

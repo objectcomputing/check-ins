@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.SkillFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.MemberSkillFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.member_skill.skillsreport.SkillLevel;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
@@ -13,6 +14,11 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
+
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,10 +38,19 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class SkillsReportServicesImplTest extends TestContainersSuite
-                                   implements MemberProfileFixture, MemberSkillFixture, SkillFixture {
+                                   implements MemberProfileFixture, MemberSkillFixture, SkillFixture, RoleFixture {
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
+
     @Inject
     private SkillsReportServicesImpl skillsReportServices;
+
+    @BeforeEach
+    void setUp() {
+        createAndAssignRoles();
+    }
 
     @Test
     void testReportSkillNotExist() {
@@ -48,6 +63,8 @@ class SkillsReportServicesImplTest extends TestContainersSuite
 
         final SkillsReportRequestDTO request = new SkillsReportRequestDTO();
         request.setSkills(skills);
+        currentUserServices.currentUser = createADefaultMemberProfile();
+        assignAdminRole(currentUserServices.currentUser);
         assertThrows(BadArgException.class, () -> skillsReportServices.report(request));
     }
 
@@ -63,6 +80,9 @@ class SkillsReportServicesImplTest extends TestContainersSuite
         final Set<UUID> members = new HashSet<>();
         members.add(UUID.randomUUID());
         request.setMembers(members);
+
+        currentUserServices.currentUser = createADefaultMemberProfile();
+        assignAdminRole(currentUserServices.currentUser);
         assertThrows(BadArgException.class, () -> skillsReportServices.report(request));
     }
 
@@ -70,6 +90,8 @@ class SkillsReportServicesImplTest extends TestContainersSuite
     void testReportEmptyRequestedSkillsList() {
         final SkillsReportRequestDTO request =  new SkillsReportRequestDTO();
         request.setSkills(new ArrayList<>());
+        currentUserServices.currentUser = createADefaultMemberProfile();
+        assignAdminRole(currentUserServices.currentUser);
         final SkillsReportResponseDTO response = skillsReportServices.report(request);
         assertNotNull(response);
         assertEquals(0, response.getTeamMembers().size());
@@ -120,6 +142,9 @@ class SkillsReportServicesImplTest extends TestContainersSuite
         requestedSkills1.add(dto1);
         requestedSkills1.add(dto2);
         requestedSkills1.add(dto3);
+
+        currentUserServices.currentUser = member1;
+        assignAdminRole(currentUserServices.currentUser);
 
         // Any member with at least 1 satisfying skill is returned
         final SkillsReportRequestDTO request1 = new SkillsReportRequestDTO();
