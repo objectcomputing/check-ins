@@ -14,13 +14,15 @@ import jakarta.inject.Singleton;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDateTime;
 
 @Singleton
 public class KudosChannelReader {
     private static final Logger LOG = LoggerFactory.getLogger(KudosChannelReader.class);
 
-    private static LocalDateTime lastImport = null;
+    @Inject
+    private KudosChannelReadTimeStore kudosChannelReadTimeStore;
 
     @Inject
     private CheckInsConfiguration configuration;
@@ -33,23 +35,23 @@ public class KudosChannelReader {
 
     @Scheduled(fixedDelay = "10m")
     public void readChannel() {
-        if (lastImport == null) {
-            lastImport = LocalDateTime.now();
-        }
+        Optional<KudosChannelReadTime> readTime =
+            kudosChannelReadTimeStore.findById(KudosChannelReadTime.key);
+        boolean present = readTime.isPresent();
+        LocalDateTime lastImport = present ? readTime.get().getReadTime()
+                                           : LocalDateTime.now();
 
         String channelId = configuration.getApplication()
                                         .getSlack().getKudosChannel();
+        LOG.info("Reading messages from " + channelId +
+                 " as of " + lastImport.toString());
         List<Message> messages = slackReader.read(channelId, lastImport);
-        updateLastImportTime();
+        if (present) {
+            kudosChannelReadTimeStore.update(new KudosChannelReadTime());
+        } else {
+            kudosChannelReadTimeStore.save(new KudosChannelReadTime());
+        }
 
         slackKudosCreator.store(messages);
-    }
-
-    private LocalDateTime getLastImportTime() {
-        return lastImport;
-    }
-
-    private void updateLastImportTime() {
-        lastImport = LocalDateTime.now();
     }
 }

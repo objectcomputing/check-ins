@@ -9,3 +9,11 @@ CREATE TABLE automated_kudos
     senderid        varchar REFERENCES member_profile (id),
     recipientids    varchar[]
 );
+
+DROP TABLE IF EXISTS automated_kudos_read_time;
+
+CREATE TABLE automated_kudos_read_time
+(
+    id              varchar PRIMARY KEY,
+    readtime        timestamp
+);

@@ -50,8 +50,7 @@ public class SlackKudosCreator {
 
     public void store(List<Message> messages) {
         for (Message message : messages) {
-            if (message.getSubtype() == null &&
-                message.getText().toLowerCase().contains("kudos")) {
+            if (message.getSubtype() == null) {
                 try {
                     AutomatedKudosDTO kudosDTO = createFromMessage(message);
                     if (kudosDTO.getRecipientIds().size() == 0) {
@@ -64,6 +63,8 @@ public class SlackKudosCreator {
                 } catch (Exception ex) {
                     LOG.error("store: " + ex.toString());
                 }
+            } else {
+                LOG.info("Skipping message: " + message.getText());
             }
         }
 
