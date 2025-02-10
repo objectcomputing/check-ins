@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.notifications.social_media;
+package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.slack.api.model.block.LayoutBlock;

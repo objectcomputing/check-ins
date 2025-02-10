@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.slack.pulseresponse;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.notifications.social_media.SlackSearch;
+import com.objectcomputing.checkins.services.slack.SlackSearch;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseCreateDTO;
 
 import jakarta.inject.Singleton;

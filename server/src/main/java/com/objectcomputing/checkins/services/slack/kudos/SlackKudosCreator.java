@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.slack.kudos;
 
-import com.objectcomputing.checkins.notifications.social_media.SlackSearch;
+import com.objectcomputing.checkins.services.slack.SlackSearch;
 import com.objectcomputing.checkins.notifications.social_media.SlackSender;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;

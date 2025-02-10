@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services;
 
-import com.objectcomputing.checkins.notifications.social_media.SlackSearch;
+import com.objectcomputing.checkins.services.slack.SlackSearch;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 
 import io.micronaut.context.annotation.Replaces;
