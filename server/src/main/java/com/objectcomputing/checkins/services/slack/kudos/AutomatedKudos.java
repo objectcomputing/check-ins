@@ -47,7 +47,7 @@ public class AutomatedKudos {
 
     @NotBlank
     @Column(name = "externalid")
-    @ColumnTransformer(read = "pgp_sym_decrypt(message::bytea, '${aes.key}')", write = "pgp_sym_encrypt(?, '${aes.key}')")
+    @ColumnTransformer(read = "pgp_sym_decrypt(externalid::bytea, '${aes.key}')", write = "pgp_sym_encrypt(?, '${aes.key}')")
     @Schema(description = "the external id of the sender")
     private String externalId;
 
