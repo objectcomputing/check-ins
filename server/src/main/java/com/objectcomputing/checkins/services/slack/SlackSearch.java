@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.notifications.social_media;
+package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.slack.api.model.block.LayoutBlock;
@@ -53,6 +53,31 @@ public class SlackSearch {
                 LOG.error("SlackSearch.findChannelId: " + e.toString());
             } catch(SlackApiException e) {
                 LOG.error("SlackSearch.findChannelId: " + e.toString());
+            }
+        }
+        return null;
+    }
+
+    public String findChannelName(String channelId) {
+        String token = configuration.getApplication().getSlack().getBotToken();
+        if (token != null) {
+            try {
+                MethodsClient client = Slack.getInstance().methods(token);
+                ConversationsListResponse response = client.conversationsList(
+                    ConversationsListRequest.builder().build()
+                );
+
+                if (response.isOk()) {
+                    for (Conversation conversation: response.getChannels()) {
+                        if (conversation.getId().equals(channelId)) {
+                            return conversation.getName();
+                        }
+                    }
+                }
+            } catch(IOException e) {
+                LOG.error("SlackSearch.findChannelName: " + e.toString());
+            } catch(SlackApiException e) {
+                LOG.error("SlackSearch.findChannelName: " + e.toString());
             }
         }
         return null;

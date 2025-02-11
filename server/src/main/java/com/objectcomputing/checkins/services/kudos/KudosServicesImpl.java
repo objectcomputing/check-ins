@@ -93,31 +93,7 @@ class KudosServicesImpl implements KudosServices {
     @Transactional
     @RequiredPermission(Permission.CAN_CREATE_KUDOS)
     public Kudos save(KudosCreateDTO kudosDTO) {
-        UUID senderId = kudosDTO.getSenderId();
-        if (memberProfileRetrievalServices.getById(senderId).isEmpty()) {
-            throw new BadArgException("Kudos sender %s does not exist".formatted(senderId));
-        }
-
-        if (kudosDTO.getTeamId() != null) {
-            UUID teamId = kudosDTO.getTeamId();
-            if (teamRepository.findById(teamId).isEmpty()) {
-                throw new BadArgException("Team %s does not exist".formatted(teamId));
-            }
-        }
-
-        if (kudosDTO.getRecipientMembers() == null || kudosDTO.getRecipientMembers().isEmpty()) {
-            throw new BadArgException("Kudos must contain at least one recipient");
-        }
-
-        Kudos kudos = new Kudos(kudosDTO);
-
-        Kudos savedKudos = kudosRepository.save(kudos);
-
-        for (MemberProfile recipient : kudosDTO.getRecipientMembers()) {
-            KudosRecipient kudosRecipient = new KudosRecipient(savedKudos.getId(), recipient.getId());
-            kudosRecipientServices.save(kudosRecipient);
-        }
-
+        Kudos savedKudos = saveCommon(kudosDTO, true);
         sendNotification(savedKudos, NotificationType.creation);
         return savedKudos;
     }
@@ -138,6 +114,13 @@ class KudosServicesImpl implements KudosServices {
         Kudos updated = kudosRepository.update(existingKudos);
         sendNotification(updated, NotificationType.approval);
         return updated;
+    }
+
+    @Override
+    public Kudos savePreapproved(KudosCreateDTO kudos) {
+        Kudos savedKudos = saveCommon(kudos, false);
+        savedKudos.setDateApproved(LocalDate.now());
+        return kudosRepository.update(savedKudos);
     }
 
     @Override
@@ -386,5 +369,39 @@ class KudosServicesImpl implements KudosServices {
 
     private boolean hasAdministerKudosPermission() {
         return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_KUDOS);
+    }
+
+    private Kudos saveCommon(KudosCreateDTO kudosDTO, boolean verifyAndNotify) {
+        UUID senderId = kudosDTO.getSenderId();
+        if (memberProfileRetrievalServices.getById(senderId).isEmpty()) {
+            throw new BadArgException("Kudos sender %s does not exist".formatted(senderId));
+        }
+
+        if (kudosDTO.getTeamId() != null) {
+            UUID teamId = kudosDTO.getTeamId();
+            if (teamRepository.findById(teamId).isEmpty()) {
+                throw new BadArgException("Team %s does not exist".formatted(teamId));
+            }
+        }
+
+        if (kudosDTO.getRecipientMembers() == null || kudosDTO.getRecipientMembers().isEmpty()) {
+            throw new BadArgException("Kudos must contain at least one recipient");
+        }
+
+        Kudos savedKudos = kudosRepository.save(new Kudos(kudosDTO));
+
+        for (MemberProfile recipient : kudosDTO.getRecipientMembers()) {
+            KudosRecipient kudosRecipient = new KudosRecipient(savedKudos.getId(), recipient.getId());
+            if (verifyAndNotify) {
+                // Going through the service verifies the sender and recipient
+                // and sends email notification after saving.
+                kudosRecipientServices.save(kudosRecipient);
+            } else {
+                // This does none of that and just stores it in the database.
+                kudosRecipientRepository.save(kudosRecipient);
+            }
+        }
+
+        return savedKudos;
     }
 }

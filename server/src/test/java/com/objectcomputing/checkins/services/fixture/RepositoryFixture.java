@@ -43,6 +43,7 @@ import com.objectcomputing.checkins.services.volunteering.VolunteeringOrganizati
 import com.objectcomputing.checkins.services.volunteering.VolunteeringRelationshipRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
+import com.objectcomputing.checkins.services.slack.kudos.AutomatedKudosRepository;
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
@@ -212,5 +213,9 @@ public interface RepositoryFixture {
 
     default RoleDocumentationRepository getRoleDocumentationRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(RoleDocumentationRepository.class);
+    }
+
+    default AutomatedKudosRepository getAutomatedKudosRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(AutomatedKudosRepository.class);
     }
 }

@@ -57,7 +57,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        MemberProfile currentUser = getCurrentUser();
+        MemberProfile currentUser = getCurrentUserImpl();
         if (currentUser == null) {
             return false;
         }
@@ -72,7 +72,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         return hasRole(RoleType.ADMIN);
     }
 
-    public MemberProfile getCurrentUser() {
+    private MemberProfile getCurrentUserImpl() {
         if (securityService != null) {
             Optional<Authentication> auth = securityService.getAuthentication();
             if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
@@ -80,8 +80,15 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
                 return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
             }
         }
+        return null;
+    }
 
-        throw new NotFoundException("No active members in the system");
+    public MemberProfile getCurrentUser() {
+        MemberProfile profile = getCurrentUserImpl();
+        if (profile == null) {
+            throw new NotFoundException("No active members in the system");
+        }
+        return profile;
     }
 
     private MemberProfile saveNewUser(String firstName, String lastName, String workEmail) {
