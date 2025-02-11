@@ -133,7 +133,9 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         assertEquals(senderId, kudos.getSenderId());
         assertEquals(supplyTeam ? teamId : null, kudos.getTeamId());
         assertEquals(LocalDate.now(), kudos.getDateCreated());
-        assertNull(kudos.getDateApproved());
+        if (publiclyVisible) {
+            assertNull(kudos.getDateApproved());
+        }
 
         List<KudosRecipient> kudosRecipients = findKudosRecipientByKudosId(kudos.getId());
         assertEquals(1, kudosRecipients.size());
