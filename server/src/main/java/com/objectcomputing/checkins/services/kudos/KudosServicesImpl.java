@@ -118,6 +118,12 @@ class KudosServicesImpl implements KudosServices {
             kudosRecipientServices.save(kudosRecipient);
         }
 
+        if (!savedKudos.getPubliclyVisible()) {
+            // Private kudos do not need to be approved by another party.
+            savedKudos.setDateApproved(LocalDate.now());
+            savedKudos = kudosRepository.update(savedKudos);
+        }
+
         sendNotification(savedKudos, NotificationType.creation);
         return savedKudos;
     }
