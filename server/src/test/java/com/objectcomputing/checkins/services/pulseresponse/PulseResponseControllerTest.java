@@ -9,6 +9,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.Util;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.services.SlackSearchReplacement;
+import com.objectcomputing.checkins.services.slack.SlackSignature;
 
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.core.type.Argument;
@@ -35,7 +36,6 @@ import java.util.stream.Stream;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.time.Instant;
 import java.net.URLEncoder;
 
@@ -57,6 +57,9 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
     @Inject
     private SlackSearchReplacement slackSearch;
+
+    @Inject
+    private SlackSignature slackSignature;
 
     private Map<String, MemberProfile> hierarchy;
 
@@ -547,35 +550,12 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         final HttpRequest request = HttpRequest.POST("/external", rawBody)
         .header("Content-Type", "application/x-www-form-urlencoded")
-        .header("X-Slack-Signature", slackSignature(timestamp, rawBody))
+        .header("X-Slack-Signature", slackSignature.generate(timestamp, rawBody))
         .header("X-Slack-Request-Timestamp", timestamp);
 
         final HttpResponse response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    private String slackSignature(String timestamp, String rawBody) {
-        String baseString = "v0:" + timestamp + ":" + rawBody;
-        String secret = configuration.getApplication()
-                                     .getSlack().getSigningSecret();
-
-        try {
-            // Generate HMAC SHA-256 signature
-            Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-            mac.init(secretKeySpec);
-            byte[] hash = mac.doFinal(baseString.getBytes(StandardCharsets.UTF_8));
-
-            // Convert hash to hex
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                hexString.append(String.format("%02x", b));
-            }
-            return "v0=" + hexString.toString();
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     private static PulseResponseCreateDTO createPulseResponseCreateDTO() {

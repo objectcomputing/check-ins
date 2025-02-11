@@ -46,7 +46,6 @@ public class SlackSender {
                     .builder()
                     .channel(openResponse.getChannel().getId())
                     .blocksAsString(slackBlocks)
-                    .text("This is a test")
                     .build();
 
                 // Send it to Slack

@@ -31,18 +31,18 @@ public class SlackSubmissionHandler {
     private static final String typeKey = "type";
 
     private final PulseResponseService pulseResponseServices;
-    private final SlackSignatureVerifier slackSignatureVerifier;
+    private final SlackSignature slackSignature;
     private final PulseSlackCommand pulseSlackCommand;
     private final SlackPulseResponseConverter slackPulseResponseConverter;
     private final SlackKudosResponseHandler slackKudosResponseHandler;
 
     public SlackSubmissionHandler(PulseResponseService pulseResponseServices,
-                                  SlackSignatureVerifier slackSignatureVerifier,
+                                  SlackSignature slackSignature,
                                   PulseSlackCommand pulseSlackCommand,
                                   SlackPulseResponseConverter slackPulseResponseConverter,
                                   SlackKudosResponseHandler slackKudosResponseHandler) {
         this.pulseResponseServices = pulseResponseServices;
-        this.slackSignatureVerifier = slackSignatureVerifier;
+        this.slackSignature = slackSignature;
         this.pulseSlackCommand = pulseSlackCommand;
         this.slackPulseResponseConverter = slackPulseResponseConverter;
         this.slackKudosResponseHandler = slackKudosResponseHandler;
@@ -52,8 +52,7 @@ public class SlackSubmissionHandler {
                                         String timestamp,
                                         String requestBody) {
         // Validate the request
-        if (slackSignatureVerifier.verifyRequest(signature,
-                                                 timestamp, requestBody)) {
+        if (slackSignature.verifyRequest(signature, timestamp, requestBody)) {
             // Convert the request body to a map of values.
             FormUrlEncodedDecoder formUrlEncodedDecoder = new FormUrlEncodedDecoder();
             Map<String, Object> body =
@@ -77,8 +76,7 @@ public class SlackSubmissionHandler {
                                          String requestBody,
                                          HttpRequest<?> request) {
         // Validate the request
-        if (slackSignatureVerifier.verifyRequest(signature,
-                                                 timestamp, requestBody)) {
+        if (slackSignature.verifyRequest(signature, timestamp, requestBody)) {
             // Convert the request body to a map of values.
             FormUrlEncodedDecoder formUrlEncodedDecoder =
                 new FormUrlEncodedDecoder();

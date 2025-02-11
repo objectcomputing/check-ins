@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.slack;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 
 import javax.crypto.Mac;
@@ -12,11 +13,11 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class SlackSignatureVerifier {
+public class SlackSignature {
     @Inject
     private CheckInsConfiguration configuration;
 
-    public SlackSignatureVerifier() {}
+    public SlackSignature() {}
 
     public boolean verifyRequest(String slackSignature, String timestamp, String requestBody) {
         try {
@@ -35,7 +36,7 @@ public class SlackSignatureVerifier {
 
             // Compare the computed signature with Slack's signature
             return computedSignature.equals(slackSignature);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -63,5 +64,31 @@ public class SlackSignatureVerifier {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    public String generate(String timestamp, String rawBody) {
+        String baseString = "v0:" + timestamp + ":" + rawBody;
+        String secret = configuration.getApplication()
+                                     .getSlack().getSigningSecret();
+
+        try {
+            // Generate HMAC SHA-256 signature
+            Mac mac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKeySpec =
+                new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
+                                  "HmacSHA256");
+            mac.init(secretKeySpec);
+            byte[] hash = mac.doFinal(
+                              baseString.getBytes(StandardCharsets.UTF_8));
+
+            // Convert hash to hex
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                hexString.append(String.format("%02x", b));
+            }
+            return "v0=" + hexString.toString();
+        } catch (Exception ex) {
+            throw new BadArgException(ex.toString());
+        }
     }
 }
