@@ -50,6 +50,7 @@ public class SlackKudosCreator {
 
     public void store(List<Message> messages) {
         for (Message message : messages) {
+            // User messages do not have a sub-type.
             if (message.getSubtype() == null) {
                 try {
                     AutomatedKudosDTO kudosDTO = createFromMessage(message);
