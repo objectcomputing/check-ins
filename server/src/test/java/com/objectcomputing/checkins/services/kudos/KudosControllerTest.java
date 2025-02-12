@@ -79,6 +79,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
     private String message;
     private MemberProfile sender;
+    private MemberProfile recipient;
     private MemberProfile admin;
     private UUID senderId;
     private String senderWorkEmail;
@@ -94,7 +95,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         senderId = sender.getId();
         senderWorkEmail = sender.getWorkEmail();
 
-        MemberProfile recipient = createASecondDefaultMemberProfile();
+        recipient = createASecondDefaultMemberProfile();
         recipientMembers = List.of(recipient);
 
         admin = createAThirdDefaultMemberProfile();
@@ -230,7 +231,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         assertNull(kudos.getDateApproved());
         KudosRecipient recipient = createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Kudos> response = client.exchange(request, Kudos.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -300,7 +301,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         UUID nonExistentKudosId = UUID.randomUUID();
         kudos.setId(nonExistentKudosId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -312,7 +313,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testApproveAlreadyApprovedKudos() {
         Kudos kudos = createApprovedKudos(senderId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -324,11 +325,10 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testApproveKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(senderWorkEmail, MEMBER_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("Forbidden", responseException.getMessage());
         assertEquals(0, emailSender.events.size());
     }
 
@@ -564,10 +564,9 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testDeleteKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s", kudos.getId())).basicAuth(senderWorkEmail, MEMBER_ROLE);
+        HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s", kudos.getId())).basicAuth(recipient.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("Forbidden", responseException.getMessage());
     }
 }
