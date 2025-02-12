@@ -25,6 +25,10 @@ import {
 } from '@mui/material';
 
 import { resolve } from '../../api/api.js';
+import {
+  getCertifications,
+  createCertification,
+} from '../../api/certification.js';
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
 import { AppContext } from '../../context/AppContext';
@@ -36,7 +40,6 @@ import {
 import { formatDate } from '../../helpers/datetime';
 import './EarnedCertificationsTable.css';
 
-const certificationBaseUrl = '/services/certification';
 const earnedCertificationBaseUrl = '/services/earned-certification';
 
 const newEarned = { earnedDate: formatDate(new Date()) };
@@ -83,15 +86,7 @@ const EarnedCertificationsTable = ({
   profiles.sort((a, b) => a.name.localeCompare(b.name));
 
   const loadCertifications = useCallback(async () => {
-    let res = await resolve({
-      method: 'GET',
-      url: certificationBaseUrl,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    let res = await getCertifications(csrf);
     if (res.error) return;
 
     const certs = res.payload.data ?? [];
@@ -329,7 +324,10 @@ const EarnedCertificationsTable = ({
             }}
           />
           <DatePickerField
-            date={new Date(selectedEarned?.earnedDate)}
+            date={selectedEarned?.expirationDate
+                  ? new Date(selectedEarned?.expirationDate)
+                  : null
+                 }
             label="Expiration"
             setDate={date => {
               setSelectedEarned({
@@ -461,20 +459,13 @@ const EarnedCertificationsTable = ({
   );
 
   const saveCertification = useCallback(async () => {
-    const res = await resolve({
-      method: 'POST',
-      url: certificationBaseUrl,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: {
+    const res = await createCertification(
+      {
         name: certificationName,
         description: certificationDescription,
-        badgeUrl
-      }
-    });
+        badgeUrl,
+      },
+      csrf);
     if (res.error) return;
 
     const newCert = res.payload.data;

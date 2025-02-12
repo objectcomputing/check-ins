@@ -206,6 +206,14 @@ export const selectCanUpdateCheckinsPermission = hasPermission(
   'CAN_UPDATE_CHECKINS'
 );
 
+export const selectCanCreateCheckinsPermission = hasPermission(
+  'CAN_CREATE_CHECKINS'
+);
+
+export const selectCanUpdateAllCheckinsPermission = hasPermission(
+  'CAN_UPDATE_ALL_CHECKINS'
+);
+
 export const selectCanEditSkills = hasPermission(
   'CAN_EDIT_SKILLS'
 );
@@ -220,6 +228,18 @@ export const selectCanCreatePrivateNotesPermission = hasPermission(
 
 export const selectCanUpdatePrivateNotesPermission = hasPermission(
   'CAN_UPDATE_PRIVATE_NOTE'
+);
+
+export const selectCanAdministerCheckinDocuments = hasPermission(
+  'CAN_ADMINISTER_CHECKIN_DOCUMENTS'
+);
+
+export const selectCanAdministerFeedbackRequests = hasPermission(
+  'CAN_ADMINISTER_FEEDBACK_REQUEST'
+);
+
+export const selectCanEditAllOrganizationMembers = hasPermission(
+  'CAN_EDIT_ALL_ORGANIZATION_MEMBERS',
 );
 
 export const selectIsPDL = createSelector(

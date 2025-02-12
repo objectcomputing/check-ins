@@ -1,0 +1,164 @@
+{
+  "type": "modal",
+  "title": {
+    "type": "plain_text",
+    "text": "Check-Ins Pulse",
+    "emoji": true
+  },
+  "submit": {
+    "type": "plain_text",
+    "text": "Submit",
+    "emoji": true
+  },
+  "close": {
+    "type": "plain_text",
+    "text": "Cancel",
+    "emoji": true
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "block_id": "internalNumber",
+      "text": {
+        "type": "plain_text",
+        "text": "How are you feeling about work today?"
+      },
+      "accessory": {
+        "type": "radio_buttons",
+        "action_id": "internalScore",
+        "options": [
+          {
+            "value": "1",
+            "text": {
+              "type": "plain_text",
+              "text": "😦",
+              "emoji": true
+            }
+          },
+          {
+            "value": "2",
+            "text": {
+              "type": "plain_text",
+              "text": "🙁",
+              "emoji": true
+            }
+          },
+          {
+            "value": "3",
+            "text": {
+              "type": "plain_text",
+              "text": "😐",
+              "emoji": true
+            }
+          },
+          {
+            "value": "4",
+            "text": {
+              "type": "plain_text",
+              "text": "🙂",
+              "emoji": true
+            }
+          },
+          {
+            "value": "5",
+            "text": {
+              "type": "plain_text",
+              "text": "😀",
+              "emoji": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "internalText",
+      "optional": true,
+      "element": {
+        "type": "plain_text_input",
+        "action_id": "internalFeelings",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "Comment"
+        }
+      },
+      "label": {
+        "type": "plain_text",
+        "text": "Comment",
+        "emoji": true
+      }
+    },
+    {
+      "type": "section",
+      "block_id": "externalNumber",
+      "text": {
+        "type": "plain_text",
+        "text": "How are you feeling about life outside of work?"
+      },
+      "accessory": {
+        "type": "radio_buttons",
+        "action_id": "externalScore",
+        "options": [
+          {
+            "value": "1",
+            "text": {
+              "type": "plain_text",
+              "text": "😦",
+              "emoji": true
+            }
+          },
+          {
+            "value": "2",
+            "text": {
+              "type": "plain_text",
+              "text": "🙁",
+              "emoji": true
+            }
+          },
+          {
+            "value": "3",
+            "text": {
+              "type": "plain_text",
+              "text": "😐",
+              "emoji": true
+            }
+          },
+          {
+            "value": "4",
+            "text": {
+              "type": "plain_text",
+              "text": "🙂",
+              "emoji": true
+            }
+          },
+          {
+            "value": "5",
+            "text": {
+              "type": "plain_text",
+              "text": "😀",
+              "emoji": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "externalText",
+      "optional": true,
+      "element": {
+        "type": "plain_text_input",
+        "action_id": "externalFeelings",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "Comment"
+        }
+      },
+      "label": {
+        "type": "plain_text",
+        "text": "Comment",
+        "emoji": true
+      }
+    }
+  ]
+}

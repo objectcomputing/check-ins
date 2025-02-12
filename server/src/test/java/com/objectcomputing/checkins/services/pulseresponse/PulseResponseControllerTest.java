@@ -7,7 +7,12 @@ import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.Util;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+import com.objectcomputing.checkins.services.SlackSearchReplacement;
+
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.core.type.Argument;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -27,6 +32,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.time.Instant;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -34,11 +44,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.slacksearch", value = StringUtils.TRUE)
 class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
 
     @Inject
     @Client("/services/pulse-responses")
     protected HttpClient client;
+
+    @Inject
+    private CheckInsConfiguration configuration;
+
+    @Inject
+    private SlackSearchReplacement slackSearch;
 
     private Map<String, MemberProfile> hierarchy;
 
@@ -514,6 +531,49 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
         assertEquals(String.format("Invalid date for pulseresponse submission date %s", pulseResponse.getTeamMemberId()), error);
         assertEquals(request.getPath(), href);
+    }
+
+    @Test
+    void testCreateAPulseResponseFromSlack() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        slackSearch.users.put("SLACK_ID_HI", memberProfile.getWorkEmail());
+
+        final String rawBody = "payload=%7B%22type%22%3A+%22view_submission%22%2C+%22user%22%3A+%7B%22id%22%3A+%22SLACK_ID_HI%22%7D%2C+%22view%22%3A+%7B%22id%22%3A+%22VNHU13V36%22%2C+%22type%22%3A+%22modal%22%2C+%22state%22%3A+%7B%22values%22%3A+%7B%22internalNumber%22%3A+%7B%22internalScore%22%3A+%7B%22selected_option%22%3A+%7B%22type%22%3A+%22radio_buttons%22%2C+%22value%22%3A+%224%22%7D%7D%7D%2C+%22internalText%22%3A+%7B%22internalFeelings%22%3A+%7B%22type%22%3A+%22plain_text_input%22%2C+%22value%22%3A+%22I+am+a+robot.%22%7D%7D%2C+%22externalNumber%22%3A+%7B%22externalScore%22%3A+%7B%22selected_option%22%3A+%7B%22type%22%3A+%22radio_buttons%22%2C+%22value%22%3A+%225%22%7D%7D%7D%2C+%22externalText%22%3A+%7B%22externalFeelings%22%3A+%7B%22type%22%3A+%22plain_text_input%22%2C+%22value%22%3A+%22You+are+a+robot.%22%7D%7D%7D%7D%7D%7D";
+
+        long currentTime = Instant.now().getEpochSecond();
+        String timestamp = String.valueOf(currentTime);
+
+        final HttpRequest request = HttpRequest.POST("/external", rawBody)
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .header("X-Slack-Signature", slackSignature(timestamp, rawBody))
+        .header("X-Slack-Request-Timestamp", timestamp);
+
+        final HttpResponse response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    private String slackSignature(String timestamp, String rawBody) {
+        String baseString = "v0:" + timestamp + ":" + rawBody;
+        String secret = configuration.getApplication()
+                                     .getSlack().getSigningSecret();
+
+        try {
+            // Generate HMAC SHA-256 signature
+            Mac mac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            mac.init(secretKeySpec);
+            byte[] hash = mac.doFinal(baseString.getBytes(StandardCharsets.UTF_8));
+
+            // Convert hash to hex
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                hexString.append(String.format("%02x", b));
+            }
+            return "v0=" + hexString.toString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static PulseResponseCreateDTO createPulseResponseCreateDTO() {

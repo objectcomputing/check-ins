@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -83,9 +84,7 @@ public class TeamServicesImpl implements TeamServices {
 
     public TeamResponseDTO update(TeamUpdateDTO teamDTO) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-
-        if (isAdmin || (currentUser != null &&
+        if (hasAdministerPermission() || (currentUser != null &&
                 !teamMemberServices.findByFields(teamDTO.getId(), currentUser.getId(), true).isEmpty())) {
 
             TeamResponseDTO updated = null;
@@ -149,9 +148,7 @@ public class TeamServicesImpl implements TeamServices {
 
     public boolean delete(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-
-        if (isAdmin || (currentUser != null && !teamMemberServices.findByFields(id, currentUser.getId(), true).isEmpty())) {
+        if (hasAdministerPermission() || (currentUser != null && !teamMemberServices.findByFields(id, currentUser.getId(), true).isEmpty())) {
             teamMemberServices.deleteByTeam(id);
             teamsRepo.deleteById(id);
         } else {
@@ -201,5 +198,9 @@ public class TeamServicesImpl implements TeamServices {
         }
         return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
                 memberProfile.getId(), teamMember.isLead());
+    }
+
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_TEAMS);
     }
 }

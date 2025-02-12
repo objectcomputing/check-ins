@@ -13,77 +13,81 @@ exports[`SettingsPage > renders correctly 1`] = `
   <div
     class="settings-page"
   >
-    <h4
-      class="MuiTypography-root MuiTypography-h4 css-13d5t77-MuiTypography-root"
-      data-testid="INTEGRATIONS"
-    >
-      Integrations
-    </h4>
-    <div
-      class="settings-type"
-    >
-      <label
-        for="another-setting"
+    <div>
+      <h4
+        class="MuiTypography-root MuiTypography-h4 css-13d5t77-MuiTypography-root"
+        data-testid="INTEGRATIONS"
       >
-        <h5
-          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
+        Integrations
+      </h4>
+      <div
+        class="settings-type"
+      >
+        <label
+          for="another-setting"
         >
-          Another Setting
-        </h5>
-      </label>
-      <p>
-        The description
-      </p>
-      <span
-        class="MuiSwitch-root MuiSwitch-sizeMedium settings-control css-julti5-MuiSwitch-root"
-      >
+          <h5
+            class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
+          >
+            Another Setting
+          </h5>
+        </label>
+        <p>
+          The description
+        </p>
         <span
-          class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-byenzh-MuiButtonBase-root-MuiSwitch-switchBase"
+          class="MuiSwitch-root MuiSwitch-sizeMedium settings-control css-julti5-MuiSwitch-root"
         >
-          <input
-            class="PrivateSwitchBase-input MuiSwitch-input css-1m9pwf3"
-            id="another-setting"
-            type="checkbox"
-          />
           <span
-            class="MuiSwitch-thumb css-jsexje-MuiSwitch-thumb"
+            class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-byenzh-MuiButtonBase-root-MuiSwitch-switchBase"
+          >
+            <input
+              class="PrivateSwitchBase-input MuiSwitch-input css-1m9pwf3"
+              id="another-setting"
+              type="checkbox"
+            />
+            <span
+              class="MuiSwitch-thumb css-jsexje-MuiSwitch-thumb"
+            />
+          </span>
+          <span
+            class="MuiSwitch-track css-1yjjitx-MuiSwitch-track"
           />
         </span>
-        <span
-          class="MuiSwitch-track css-1yjjitx-MuiSwitch-track"
-        />
-      </span>
+      </div>
     </div>
-    <h4
-      class="MuiTypography-root MuiTypography-h4 css-13d5t77-MuiTypography-root"
-      data-testid="THEME"
-    >
-      Theme
-    </h4>
-    <div
-      class="settings-type"
-    >
-      <label
-        for="other-setting"
+    <div>
+      <h4
+        class="MuiTypography-root MuiTypography-h4 css-13d5t77-MuiTypography-root"
+        data-testid="THEME"
       >
-        <h5
-          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
-        >
-          Other Setting
-        </h5>
-      </label>
-      <p>
-        The description
-      </p>
+        Theme
+      </h4>
       <div
-        class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary settings-control css-bz5ng3-MuiInputBase-root-MuiInput-root"
+        class="settings-type"
       >
-        <input
-          class="MuiInputBase-input MuiInput-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
-          id="other-setting"
-          type="number"
-          value="42"
-        />
+        <label
+          for="other-setting"
+        >
+          <h5
+            class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
+          >
+            Other Setting
+          </h5>
+        </label>
+        <p>
+          The description
+        </p>
+        <div
+          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary settings-control css-bz5ng3-MuiInputBase-root-MuiInput-root"
+        >
+          <input
+            class="MuiInputBase-input MuiInput-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+            id="other-setting"
+            type="number"
+            value="42"
+          />
+        </div>
       </div>
     </div>
     <div

@@ -28,7 +28,7 @@ micronaut:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:public" 
+          - "classpath:public"
 
   executors:
     io:
@@ -97,10 +97,10 @@ check-ins:
     feedback:
       max-suggestions: 6
       request-subject: "Feedback request"
-    notifications:
-      slack:
-        webhook-url: ${ SLACK_WEBHOOK_URL }
-        bot-token: ${ SLACK_BOT_TOKEN }
+    slack:
+      webhook-url: ${ SLACK_WEBHOOK_URL }
+      bot-token: ${ SLACK_BOT_TOKEN }
+      signing-secret: ${ SLACK_SIGNING_SECRET }
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:
