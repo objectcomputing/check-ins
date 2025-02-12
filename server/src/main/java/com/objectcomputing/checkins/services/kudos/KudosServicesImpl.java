@@ -163,6 +163,12 @@ class KudosServicesImpl implements KudosServices {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
+        if (kudos.getRecipientMembers() == null ||
+            kudos.getRecipientMembers().isEmpty()) {
+            throw new BadArgException(
+                          "Kudos must contain at least one recipient");
+        }
+
         // Begin modifying the existing kudos to reflect desired changes.
         existingKudos.setMessage(kudos.getMessage());
 

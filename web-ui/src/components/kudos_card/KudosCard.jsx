@@ -344,7 +344,9 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
             Cancel
           </Button>
           <Button onClick={updateKudosCallback}
-                  disabled={kudosMessage.trim().length == 0} autoFocus>
+                  disabled={kudosMessage.trim().length == 0 ||
+                            kudosRecipientMembers.length == 0}
+                  autoFocus>
             Save
           </Button>
         </DialogActions>

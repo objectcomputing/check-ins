@@ -634,4 +634,56 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         }
     }
 
+    @Test
+    void testUpdateKudosNoPermission() {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(false, true);
+
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(),
+                                                     kudos.getMessage(),
+                                                     false, recipientMembers);
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed).basicAuth(other.getWorkEmail(),
+                                                    MEMBER_ROLE);
+        final HttpClientResponseException responseException =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.exchange(request, Kudos.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    @Test
+    void testUpdateKudosAdminPermission() {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(false, true);
+
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(),
+                                                     kudos.getMessage(),
+                                                     false, recipientMembers);
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed).basicAuth(admin.getWorkEmail(),
+                                                    ADMIN_ROLE);
+        final HttpResponse<Kudos> response = client.exchange(request,
+                                                             Kudos.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testUpdateKudosNoMembers() {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(false, true);
+
+        final List<MemberProfile> members = new ArrayList<>();
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(),
+                                                     kudos.getMessage(),
+                                                     false, members);
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed).basicAuth(senderWorkEmail,
+                                                    MEMBER_ROLE);
+        final HttpClientResponseException responseException =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.exchange(request, Kudos.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
 }
