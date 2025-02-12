@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.kudos;
 
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
@@ -37,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
@@ -147,6 +150,67 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
+    public Kudos update(KudosResponseDTO kudos) {
+        // Find the corresponding kudos and make sure we have permission.
+        final UUID kudosId = kudos.getId();
+        final Kudos existingKudos =
+            kudosRepository.findById(kudosId).orElseThrow(() ->
+            new BadArgException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
+
+        final MemberProfile currentUser = currentUserServices.getCurrentUser();
+        if (!currentUser.getId().equals(existingKudos.getSenderId()) &&
+            !hasAdministerKudosPermission()) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
+
+        // Begin modifying the existing kudos to reflect desired changes.
+        existingKudos.setMessage(kudos.getMessage());
+
+        boolean existingPublic = existingKudos.getPubliclyVisible();
+        boolean proposedPublic = kudos.getPubliclyVisible();
+        if (existingPublic && !proposedPublic) {
+            // TODO: Somehow find and remove the Slack Kudos that the Check-Ins
+            //       Integration posted.
+        } else if (!existingPublic && proposedPublic) {
+            // Clear the date approved when going from private to public.
+            existingKudos.setDateApproved(null);
+        }
+
+        existingKudos.setPubliclyVisible(kudos.getPubliclyVisible());
+
+        List<KudosRecipient> recipients = kudosRecipientRepository
+                                              .findByKudosId(kudosId);
+        Set<UUID> proposed = kudos.getRecipientMembers()
+                                           .stream()
+                                           .map(r -> r.getId())
+                                           .collect(Collectors.toSet());
+        boolean different = (recipients.size() != proposed.size());
+        if (!different) {
+            Set<UUID> existing = recipients.stream()
+                                           .map(r -> r.getMemberId())
+                                           .collect(Collectors.toSet());
+            different = !existing.equals(proposed);
+        }
+
+        // First, update the Kudos so that we only change recipients if they
+        // are different and we were able to update the Kudos.
+        final Kudos updated = kudosRepository.update(existingKudos);
+
+        // Change recipients, if necessary.
+        if (different) {
+            updateRecipients(updated, recipients, proposed);
+        }
+
+        // The kudos has been updated.  Send notification to admin, if going
+        // from private to public.
+        if (!existingPublic && proposedPublic) {
+            sendNotification(updated, NotificationType.creation);
+        }
+
+        return updated;
+    }
+
+    @Override
     public KudosResponseDTO getById(UUID id) {
 
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
@@ -178,10 +242,15 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    @RequiredPermission(Permission.CAN_ADMINISTER_KUDOS)
     public void delete(UUID id) {
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(id)));
+
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        if (!currentUser.getId().equals(kudos.getSenderId()) &&
+            !hasAdministerKudosPermission()) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
 
         // Delete all KudosRecipients associated with this kudos
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
@@ -392,5 +461,27 @@ class KudosServicesImpl implements KudosServices {
 
     private boolean hasAdministerKudosPermission() {
         return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_KUDOS);
+    }
+
+    private void updateRecipients(Kudos updated,
+                                  List<KudosRecipient> recipients,
+                                  Set<UUID> proposed) {
+        // Add the new recipients.
+        Set<UUID> existing = recipients.stream()
+                                       .map(r -> r.getMemberId())
+                                       .collect(Collectors.toSet());
+        for (UUID id : proposed) {
+            if (!existing.contains(id)) {
+                kudosRecipientServices.save(
+                    new KudosRecipient(updated.getId(), id));
+            }
+        }
+
+        // Remove any that are no longer designated as recipients.
+        for (KudosRecipient recipient : recipients) {
+            if (!proposed.contains(recipient.getMemberId())) {
+                kudosRecipientRepository.delete(recipient);
+            }
+        }
     }
 }

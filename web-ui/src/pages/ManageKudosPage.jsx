@@ -209,6 +209,7 @@ const ManageKudosPage = () => {
                       key={k.id}
                       kudos={k}
                       includeActions
+                      includeEdit
                       onKudosAction={() => {
                         const updatedKudos = pendingKudos.filter(pk => pk.id !== k.id);
                         setPendingKudos(updatedKudos);

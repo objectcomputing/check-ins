@@ -186,7 +186,8 @@ const KudosPage = () => {
           ) : sentKudos.length > 0 ? (
             <div>
               {sentKudos.map((k) => (
-                <KudosCard key={k.id} kudos={k} />
+                <KudosCard key={k.id} kudos={k} includeEdit
+                  onKudosAction={loadSentKudos}/>
               ))}
             </div>
           ) : (

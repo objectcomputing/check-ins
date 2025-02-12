@@ -16,17 +16,22 @@ import {
   DialogContentText,
   DialogActions,
   TextField,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { selectCsrfToken, selectProfile } from "../../context/selectors";
+import MemberSelector from '../member_selector/MemberSelector';
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 import DateFnsUtils from "@date-io/date-fns";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
 import TeamIcon from "@mui/icons-material/Groups";
 
 import "./KudosCard.css";
-import { approveKudos, deleteKudos } from "../../api/kudos";
+import { approveKudos, deleteKudos, updateKudos } from "../../api/kudos";
 import { UPDATE_TOAST } from "../../context/actions";
 
 const dateUtils = new DateFnsUtils();
@@ -42,16 +47,21 @@ const propTypes = {
     recipientMembers: PropTypes.array,
   }).isRequired,
   includeActions: PropTypes.bool,
+  includeEdit: PropTypes.bool,
   onKudosAction: PropTypes.func,
 };
 
-const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
+const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
   const [expanded, setExpanded] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  // const [deleteReason, setDeleteReason] = useState(""); // TODO: setup optional reason for deleting a kudos
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [kudosPublic, setKudosPublic] = useState(kudos.publiclyVisible);
+  const [kudosMessage, setKudosMessage] = useState(kudos.message);
+  const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
+  const [kudosRecipientMembers, setKudosRecipientMembers] = useState(kudos.recipientMembers);
 
   const sender = selectProfile(state, kudos.senderId);
 
@@ -104,7 +114,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
             toast: "Kudos approved",
           },
         });
-        onKudosAction();
+        onKudosAction && onKudosAction();
       } else {
         dispatch({
           type: UPDATE_TOAST,
@@ -129,7 +139,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
           toast: "Pending kudos deleted",
         },
       });
-      onKudosAction();
+      onKudosAction && onKudosAction();
     } else {
       dispatch({
         type: UPDATE_TOAST,
@@ -141,16 +151,47 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
     }
   }, [kudos, csrf, dispatch, onKudosAction]);
 
+  const updateKudosCallback = useCallback(async () => {
+    // Close the dialog.
+    setEditDialogOpen(false);
+
+    // Update the modifiable parts.
+    kudos.message = kudosMessage;
+    kudos.publiclyVisible = kudosPublic;
+    kudos.recipientMembers = kudosRecipientMembers;
+
+    // Update on the server.
+    const res = await updateKudos(kudos, csrf);
+    if (!res.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: "Kudos Updated",
+        },
+      });
+      onKudosAction && onKudosAction();
+    } else {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to update kudos",
+        },
+      });
+    }
+  }, [kudos, kudosMessage, kudosPublic, kudosRecipientMembers, csrf, dispatch, onKudosAction]);
+
   const getStatusComponent = useCallback(() => {
     const dateApproved = kudos.dateApproved
       ? new Date(kudos.dateApproved.join("/"))
       : null;
-    const dateCreated = new Date(kudos.dateCreated.join("/"));
 
+    const info = [];
+    const actions = [];
     if (includeActions) {
-      return (
-        <div className="kudos-action-buttons">
-          <Tooltip arrow title="Approve">
+      actions.push(
+          <Tooltip key="approve" arrow title="Approve">
             <Button
               variant="outlined"
               color="success"
@@ -160,7 +201,47 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
               <CheckIcon />
             </Button>
           </Tooltip>
-          <Tooltip arrow title="Delete">
+      );
+    } else if (dateApproved) {
+      info.push(
+          <Typography key="received" color="green" variant="body2">
+            Received{" "}
+            {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
+          </Typography>
+      );
+    } else {
+      const dateCreated = new Date(kudos.dateCreated.join("/"));
+      info.push(
+          <Typography key="pending" color="orange" variant="body2">
+            Pending
+          </Typography>
+      );
+      info.push(
+          <Typography key="created" variant="body2" color="gray" fontSize="10px">
+            Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
+          </Typography>
+      );
+    }
+    if (includeEdit) {
+      actions.push(
+          <Tooltip key="edit" arrow title="Edit">
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={(event) => {
+                event.stopPropagation();
+                reloadKudosValues();
+                setEditDialogOpen(true);
+              }}
+            >
+              <EditIcon />
+            </Button>
+          </Tooltip>
+      );
+    }
+    if (includeActions || includeEdit) {
+      actions.push(
+          <Tooltip key="delete" arrow title="Delete">
             <Button
               variant="outlined"
               color="error"
@@ -173,30 +254,23 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
               <CloseIcon />
             </Button>
           </Tooltip>
-        </div>
-      );
-    } else if (dateApproved) {
-      return (
-        <>
-          <Typography color="green" variant="body2">
-            Received{" "}
-            {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
-          </Typography>
-        </>
       );
     }
+    return <>
+             {info.length > 0 && <div>
+               {info}
+             </div>}
+             {actions.length > 0 && <div className="kudos-action-buttons">
+               {actions}
+             </div>}
+           </>;
+  }, [kudos, includeActions, includeEdit, approveKudosCallback]);
 
-    return (
-      <>
-        <Typography color="orange" variant="body2">
-          Pending
-        </Typography>
-        <Typography variant="body2" color="gray" fontSize="10px">
-          Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
-        </Typography>
-      </>
-    );
-  }, [kudos, includeActions, approveKudosCallback]);
+  const reloadKudosValues = () => {
+    setKudosMessage(kudos.message);
+    setKudosPublic(kudos.publiclyVisible);
+    setKudosRecipientMembers(kudos.recipientMembers);
+  };
 
   const dateApproved = kudos.dateApproved
     ? new Date(kudos.dateApproved.join("/"))
@@ -208,7 +282,7 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
         <DialogTitle>Delete Kudos</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to deny approval for these kudos? The kudos
+            Are you sure you want to complete this action? The kudos
             will be deleted.
           </DialogContentText>
           <TextField
@@ -230,6 +304,45 @@ const KudosCard = ({ kudos, includeActions, onKudosAction }) => {
           </Button>
           <Button onClick={deleteKudosCallback} color="error" autoFocus>
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={editDialogOpen}  maxWidth="sm" fullWidth>
+        <DialogTitle>Edit Kudos</DialogTitle>
+        <DialogContent>
+          <MemberSelector
+            onChange={setKudosRecipientMembers}
+            selected={kudosRecipientMembers}
+          />
+          <FormGroup>
+            <FormControlLabel
+              control={<Checkbox checked={kudosPublic} />}
+              label="Public"
+              onChange={e => {
+                setKudosPublic(e.target.checked);
+              }}
+            />
+          </FormGroup>
+          <TextField
+            id="kudos-text"
+            fullWidth
+            multiline
+            defaultValue={kudosMessage}
+            onChange={(event) => {
+              setKudosMessage(event.target.value);
+            }}
+            rows={5}
+            style={{ marginTop: "2rem" }}
+            variant="outlined"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={updateKudosCallback}
+                  disabled={kudosMessage.trim().length == 0} autoFocus>
+            Save
           </Button>
         </DialogActions>
       </Dialog>

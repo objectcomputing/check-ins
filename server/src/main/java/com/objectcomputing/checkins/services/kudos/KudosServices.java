@@ -9,6 +9,8 @@ public interface KudosServices {
 
     Kudos save(KudosCreateDTO kudos);
 
+    Kudos update(KudosResponseDTO kudos);
+
     Kudos approve(Kudos kudos);
 
     List<KudosResponseDTO> getRecent();

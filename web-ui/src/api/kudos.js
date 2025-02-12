@@ -57,10 +57,23 @@ export const getAllKudos = async (cookie, isPending) => {
   });
 };
 
-export const approveKudos = async (kudos, cookie) => {
+export const updateKudos = async (kudos, cookie) => {
   return resolve({
     method: "put",
     url: kudosUrl,
+    data: kudos,
+    responseType: "json",
+    headers: {
+      "X-CSRF-Header": cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'}
+  });
+};
+
+export const approveKudos = async (kudos, cookie) => {
+  return resolve({
+    method: "put",
+    url: `${kudosUrl}/approve`,
     data: kudos,
     responseType: "json",
     headers: {
