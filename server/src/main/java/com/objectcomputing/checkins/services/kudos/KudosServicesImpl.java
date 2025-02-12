@@ -150,7 +150,7 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    public Kudos update(KudosResponseDTO kudos) {
+    public Kudos update(KudosUpdateDTO kudos) {
         // Find the corresponding kudos and make sure we have permission.
         final UUID kudosId = kudos.getId();
         final Kudos existingKudos =
@@ -171,6 +171,7 @@ class KudosServicesImpl implements KudosServices {
         if (existingPublic && !proposedPublic) {
             // TODO: Somehow find and remove the Slack Kudos that the Check-Ins
             //       Integration posted.
+            existingKudos.setDateApproved(LocalDate.now());
         } else if (!existingPublic && proposedPublic) {
             // Clear the date approved when going from private to public.
             existingKudos.setDateApproved(null);

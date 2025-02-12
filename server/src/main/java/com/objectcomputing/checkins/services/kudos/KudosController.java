@@ -39,7 +39,7 @@ public class KudosController {
     }
 
     @Put
-    public Kudos update(@Body @Valid KudosResponseDTO kudos) {
+    public Kudos update(@Body @Valid KudosUpdateDTO kudos) {
         return kudosServices.update(kudos);
     }
 

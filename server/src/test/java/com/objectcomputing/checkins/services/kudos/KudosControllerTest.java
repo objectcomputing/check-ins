@@ -41,6 +41,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,6 +81,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     private String message;
     private MemberProfile sender;
     private MemberProfile recipient;
+    private MemberProfile other;
     private MemberProfile admin;
     private UUID senderId;
     private String senderWorkEmail;
@@ -101,6 +103,8 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         admin = createAThirdDefaultMemberProfile();
         assignAdminRole(admin);
 
+        other = createAnotherSupervisor();
+
         Team team = createDefaultTeam();
         teamId = team.getId();
 
@@ -116,7 +120,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
             "true, false",
             "true, true"
     })
-    void testCreateKudos(boolean supplyTeam, boolean publiclyVisible) {
+    Kudos testCreateKudos(boolean supplyTeam, boolean publiclyVisible) {
         KudosCreateDTO kudosCreateDTO = new KudosCreateDTO(
                 message,
                 senderId,
@@ -128,7 +132,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         HttpRequest<KudosCreateDTO> request = HttpRequest.POST("/", kudosCreateDTO).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpResponse<Kudos> httpResponse = client.exchange(request, Kudos.class);
 
-        Kudos kudos = httpResponse.body();
+        final Kudos kudos = httpResponse.body();
         assertEquals(message, kudos.getMessage());
         assertEquals(publiclyVisible, kudos.getPubliclyVisible());
         assertEquals(senderId, kudos.getSenderId());
@@ -167,6 +171,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
                     emailSender.events.getFirst()
             );
         }
+        return kudos;
     }
 
     @Test
@@ -569,4 +574,64 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "false, false",
+            "false, true",
+            "true, false",
+            "true, true"
+    })
+    void testUpdateKudos(boolean supplyTeam, boolean publiclyVisible) {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(supplyTeam, publiclyVisible);
+
+        // Set of changes to make.
+        final String message = "New kudos message";
+        final boolean visible = !publiclyVisible;
+        final List<MemberProfile> members = new ArrayList<>();
+        members.add(other);
+        if (!supplyTeam || publiclyVisible) {
+            // On some tests, retain the original recipient.
+            members.add(recipient);
+        }
+
+        // Create the DTO
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(), message,
+                                                     visible, members);
+
+        // Make the call
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed)
+                       .basicAuth(senderWorkEmail, MEMBER_ROLE);
+        final HttpResponse<Kudos> response = client.exchange(request,
+                                                             Kudos.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        final Kudos updated = response.body();
+        assertEquals(message, updated.getMessage());
+        assertEquals(visible, updated.getPubliclyVisible());
+
+        if (visible) {
+            // Public kudos should not be approved.
+            assertNull(updated.getDateApproved());
+        } else {
+            // Private kudos should be approved.
+            assertNotNull(updated.getDateApproved());
+        }
+
+        final List<KudosRecipient> kudosRecipients =
+                    findKudosRecipientByKudosId(updated.getId());
+        assertEquals(members.size(), kudosRecipients.size());
+        for (MemberProfile member : members) {
+            boolean found = false;
+            for (KudosRecipient recipient : kudosRecipients) {
+                if (recipient.getMemberId().equals(member.getId())) {
+                    found = true;
+                }
+            }
+            assertTrue(found);
+        }
+    }
+
 }

@@ -156,13 +156,24 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
     setEditDialogOpen(false);
 
     // Update the modifiable parts.
-    kudos.message = kudosMessage;
-    kudos.publiclyVisible = kudosPublic;
-    kudos.recipientMembers = kudosRecipientMembers;
+    const proposed = {
+      id: kudos.id,
+      message: kudosMessage,
+      publiclyVisible: kudosPublic,
+      recipientMembers: kudosRecipientMembers,
+    };
 
     // Update on the server.
-    const res = await updateKudos(kudos, csrf);
-    if (!res.error) {
+    const res = await updateKudos(proposed, csrf);
+    if (res.error) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Failed to update kudos",
+        },
+      });
+    } else {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -171,14 +182,6 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
         },
       });
       onKudosAction && onKudosAction();
-    } else {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Failed to update kudos",
-        },
-      });
     }
   }, [kudos, kudosMessage, kudosPublic, kudosRecipientMembers, csrf, dispatch, onKudosAction]);
 
