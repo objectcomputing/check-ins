@@ -194,69 +194,71 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
     const actions = [];
     if (includeActions) {
       actions.push(
-          <Tooltip key="approve" arrow title="Approve">
-            <Button
-              variant="outlined"
-              color="success"
-              size="small"
-              onClick={approveKudosCallback}
-            >
-              <CheckIcon />
-            </Button>
-          </Tooltip>
+        <Tooltip key="approve" arrow title="Approve">
+          <Button
+            variant="outlined"
+            color="success"
+            size="small"
+            onClick={approveKudosCallback}
+          >
+            <CheckIcon />
+          </Button>
+        </Tooltip>
       );
     } else if (dateApproved) {
       info.push(
-          <Typography key="received" color="green" variant="body2">
-            Received{" "}
-            {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
-          </Typography>
+        <Typography key="received" color="green" variant="body2">
+          Received{" "}
+          {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
+        </Typography>
       );
     } else {
       const dateCreated = new Date(kudos.dateCreated.join("/"));
-      info.push(
+      if (kudos.publiclyVisible) {
+        info.push(
           <Typography key="pending" color="orange" variant="body2">
             Pending
           </Typography>
-      );
+        );
+      }
       info.push(
-          <Typography key="created" variant="body2" color="gray" fontSize="10px">
-            Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
-          </Typography>
+        <Typography key="created" variant="body2" color="gray" fontSize="10px">
+          Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
+        </Typography>
       );
     }
     if (includeEdit) {
       actions.push(
-          <Tooltip key="edit" arrow title="Edit">
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                reloadKudosValues();
-                setEditDialogOpen(true);
-              }}
-            >
-              <EditIcon />
-            </Button>
-          </Tooltip>
+        <Tooltip key="edit" arrow title="Edit">
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={(event) => {
+              event.stopPropagation();
+              reloadKudosValues();
+              setEditDialogOpen(true);
+            }}
+          >
+            <EditIcon />
+          </Button>
+        </Tooltip>
       );
     }
     if (includeActions || includeEdit) {
       actions.push(
-          <Tooltip key="delete" arrow title="Delete">
-            <Button
-              variant="outlined"
-              color="error"
-              size="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                setDeleteDialogOpen(true);
-              }}
-            >
-              <CloseIcon />
-            </Button>
-          </Tooltip>
+        <Tooltip key="delete" arrow title="Delete">
+          <Button
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={(event) => {
+              event.stopPropagation();
+              setDeleteDialogOpen(true);
+            }}
+          >
+            <CloseIcon />
+          </Button>
+        </Tooltip>
       );
     }
     return <>

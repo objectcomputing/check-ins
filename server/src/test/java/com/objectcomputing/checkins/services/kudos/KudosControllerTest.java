@@ -138,9 +138,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         assertEquals(senderId, kudos.getSenderId());
         assertEquals(supplyTeam ? teamId : null, kudos.getTeamId());
         assertEquals(LocalDate.now(), kudos.getDateCreated());
-        if (publiclyVisible) {
-            assertNull(kudos.getDateApproved());
-        }
+        assertNull(kudos.getDateApproved());
 
         List<KudosRecipient> kudosRecipients = findKudosRecipientByKudosId(kudos.getId());
         assertEquals(1, kudosRecipients.size());
@@ -611,14 +609,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         final Kudos updated = response.body();
         assertEquals(message, updated.getMessage());
         assertEquals(visible, updated.getPubliclyVisible());
-
-        if (visible) {
-            // Public kudos should not be approved.
-            assertNull(updated.getDateApproved());
-        } else {
-            // Private kudos should be approved.
-            assertNotNull(updated.getDateApproved());
-        }
+        assertNull(updated.getDateApproved());
 
         final List<KudosRecipient> kudosRecipients =
                     findKudosRecipientByKudosId(updated.getId());

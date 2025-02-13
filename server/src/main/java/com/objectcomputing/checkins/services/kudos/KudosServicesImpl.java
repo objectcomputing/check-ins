@@ -121,12 +121,6 @@ class KudosServicesImpl implements KudosServices {
             kudosRecipientServices.save(kudosRecipient);
         }
 
-        if (!savedKudos.getPubliclyVisible()) {
-            // Private kudos do not need to be approved by another party.
-            savedKudos.setDateApproved(LocalDate.now());
-            savedKudos = kudosRepository.update(savedKudos);
-        }
-
         sendNotification(savedKudos, NotificationType.creation);
         return savedKudos;
     }
@@ -176,16 +170,14 @@ class KudosServicesImpl implements KudosServices {
         boolean existingPublic = existingKudos.getPubliclyVisible();
         boolean proposedPublic = kudos.getPubliclyVisible();
         if (existingPublic && !proposedPublic) {
-            // TODO: Somehow find and remove the Slack Kudos that the Check-Ins
+            // TODO: Search for and remove the Slack Kudos that the Check-Ins
             //       Integration posted.
-            existingKudos.setDateApproved(LocalDate.now());
-        } else if (!existingPublic && proposedPublic) {
-            // Clear the date approved when going from private to public.
             existingKudos.setDateApproved(null);
-        }
-        if (proposedPublic &&
-            !originalMessage.equals(existingKudos.getMessage())) {
-            // If public and the text changed, require approval again.
+        } else if ((!existingPublic && proposedPublic) ||
+                   (proposedPublic &&
+                    !originalMessage.equals(existingKudos.getMessage()))) {
+            // Clear the date approved when going from private to public or
+            // if public and the text changed, require approval again.
             existingKudos.setDateApproved(null);
         }
 
@@ -336,7 +328,8 @@ class KudosServicesImpl implements KudosServices {
             Kudos relatedKudos = kudosRepository.findById(kudosId).orElseThrow(() ->
                     new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
 
-            if (relatedKudos.getDateApproved() != null) {
+            if (!relatedKudos.getPubliclyVisible() ||
+                relatedKudos.getDateApproved() != null) {
                 kudosList.add(constructKudosResponseDTO(relatedKudos));
             }
         });
