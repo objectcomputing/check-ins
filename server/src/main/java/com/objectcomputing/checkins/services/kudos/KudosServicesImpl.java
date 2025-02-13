@@ -170,6 +170,7 @@ class KudosServicesImpl implements KudosServices {
         }
 
         // Begin modifying the existing kudos to reflect desired changes.
+        final String originalMessage = existingKudos.getMessage();
         existingKudos.setMessage(kudos.getMessage());
 
         boolean existingPublic = existingKudos.getPubliclyVisible();
@@ -180,6 +181,11 @@ class KudosServicesImpl implements KudosServices {
             existingKudos.setDateApproved(LocalDate.now());
         } else if (!existingPublic && proposedPublic) {
             // Clear the date approved when going from private to public.
+            existingKudos.setDateApproved(null);
+        }
+        if (proposedPublic &&
+            !originalMessage.equals(existingKudos.getMessage())) {
+            // If public and the text changed, require approval again.
             existingKudos.setDateApproved(null);
         }
 
