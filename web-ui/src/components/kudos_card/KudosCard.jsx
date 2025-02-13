@@ -288,15 +288,6 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
             Are you sure you want to complete this action? The kudos
             will be deleted.
           </DialogContentText>
-          <TextField
-            id="reason-for-deletion"
-            fullWidth
-            multiline
-            placeholder={"Reason for deletion (optional)"}
-            rows={5}
-            style={{ marginTop: "2rem" }}
-            variant="outlined"
-          />
         </DialogContent>
         <DialogActions>
           <Button
