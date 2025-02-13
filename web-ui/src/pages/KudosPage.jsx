@@ -71,25 +71,29 @@ const KudosPage = () => {
     }
   }, [csrf, dispatch, currentUser.id]);
 
+  const loadAndSetReceivedKudos = () => {
+    loadReceivedKudos().then((data) => {
+      if (data) {
+        const filtered = data.filter((kudo) =>
+          kudo.recipientMembers.some((member) => member.id === currentUser.id)
+        );
+        setReceivedKudos(filtered);
+      }
+    });
+  };
+
+  const loadAndSetSentKudos = () => {
+    loadSentKudos().then((data) => {
+      if (data) {
+        setSentKudos(data.filter((kudo) => kudo.senderId === currentUser.id));
+      }
+    });
+  };
+
   useEffect(() => {
     if (csrf && currentUser && currentUser.id) {
-      loadReceivedKudos().then((data) => {
-        if (data) {
-          let filtered = data.filter((kudo) =>
-            kudo.recipientMembers.some((member) => member.id === currentUser.id)
-          );
-          setReceivedKudos(filtered);
-        }
-      });
-
-      loadSentKudos().then((data) => {
-        if (data) {
-          let filtered = data.filter(
-            (kudo) => kudo.senderId === currentUser.id
-          );
-          setSentKudos(filtered);
-        }
-      });
+      loadAndSetReceivedKudos();
+      loadAndSetSentKudos();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csrf, currentUser, kudosTab]);
@@ -161,12 +165,7 @@ const KudosPage = () => {
                 <KudosCard
                   key={k.id}
                   kudos={k}
-                  onKudosAction={() => {
-                    const updatedKudos = receivedKudos.filter(
-                      (pk) => pk.id !== k.id
-                    );
-                    setReceivedKudos(updatedKudos);
-                  }}
+                  onKudosAction={loadAndSetReceivedKudos}
                 />
               ))}
             </div>
@@ -186,7 +185,8 @@ const KudosPage = () => {
           ) : sentKudos.length > 0 ? (
             <div>
               {sentKudos.map((k) => (
-                <KudosCard key={k.id} kudos={k} />
+                <KudosCard key={k.id} kudos={k} includeEdit
+                  onKudosAction={loadAndSetSentKudos}/>
               ))}
             </div>
           ) : (
