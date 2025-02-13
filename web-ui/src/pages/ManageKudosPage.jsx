@@ -112,21 +112,29 @@ const ManageKudosPage = () => {
     setPendingKudos(sortPendingKudos([...pendingKudos]));
   }, [pendingSort]);
 
+  const loadAndSetPendingKudos = () => {
+    loadPendingKudos().then(data => {
+      if (data) {
+        setPendingKudos(sortPendingKudos(data));
+      }
+    });
+  };
+
+  const loadAndSetApprovedKudos = () => {
+    loadApprovedKudos().then(data => {
+      if (data) {
+        setApprovedKudos(data);
+      }
+    });
+  };
+
   const handleTabChange = useCallback((event, newTab) => {
     switch (newTab) {
       case "PENDING":
-        loadPendingKudos().then(data => {
-          if (data) {
-            setPendingKudos(sortPendingKudos(data));
-          }
-        });
+        loadAndSetPendingKudos();
         break;
       case "APPROVED":
-        loadApprovedKudos().then(data => {
-          if (data) {
-            setApprovedKudos(data);
-          }
-        });
+        loadAndSetApprovedKudos();
         break;
       default:
         console.warn(`Invalid tab: ${newTab}`);
@@ -210,10 +218,7 @@ const ManageKudosPage = () => {
                       kudos={k}
                       includeActions
                       includeEdit
-                      onKudosAction={() => {
-                        const updatedKudos = pendingKudos.filter(pk => pk.id !== k.id);
-                        setPendingKudos(updatedKudos);
-                      }}
+                      onKudosAction={loadAndSetPendingKudos}
                     />
                   )}
               </div>
