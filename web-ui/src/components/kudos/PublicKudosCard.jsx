@@ -66,8 +66,22 @@ const KudosCard = ({ kudos }) => {
       );
     }
 
+    const multiTooltip = (num, list) => {
+      let tooltip = "";
+      let prefix = "";
+      for (let member of list.slice(-num)) {
+        tooltip += prefix + `${member.firstName} ${member.lastName}`;
+        prefix = ", ";
+      }
+      return <Tooltip arrow key="multi-member-tooltip" title={tooltip}>
+               {`+${num}`}
+             </Tooltip>;
+    };
+
     return (
-      <AvatarGroup max={4}>
+      <AvatarGroup max={4}
+                   renderSurplus={(extra) => multiTooltip(
+                                               extra, kudos.recipientMembers)}>
         {kudos.recipientMembers.map((member) => (
           <Tooltip
             arrow
