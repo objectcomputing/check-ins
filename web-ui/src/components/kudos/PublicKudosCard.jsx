@@ -58,7 +58,7 @@ const KudosCard = ({ kudos }) => {
       tooltip += prefix + `${member.firstName} ${member.lastName}`;
       prefix = ", ";
     }
-    return <Tooltip arrow key="multi-member-tooltip" title={tooltip}>
+    return <Tooltip arrow title={tooltip}>
              {`+${num}`}
            </Tooltip>;
   };
