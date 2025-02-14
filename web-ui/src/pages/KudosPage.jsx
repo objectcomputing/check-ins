@@ -41,6 +41,18 @@ const Root = styled("div")({
   },
 });
 
+const validTabName = (name) => {
+  switch (name) {
+    case "received":
+    case "sent":
+      break;
+    default:
+      name && console.warn(`Invalid tab: ${name}`);
+      name = "received";
+  }
+  return name;
+};
+
 const KudosPage = () => {
   const { initialTab } = useParams();
   const { state, dispatch } = useContext(AppContext);
@@ -49,7 +61,7 @@ const KudosPage = () => {
   const currentUser = selectCurrentUser(state);
 
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
-  const [kudosTab, setKudosTab] = useState(initialTab ?? "received");
+  const [kudosTab, setKudosTab] = useState(validTabName(initialTab));
   const [receivedKudos, setReceivedKudos] = useState([]);
   const [receivedKudosLoading, setReceivedKudosLoading] = useState(true);
   const [sentKudos, setSentKudos] = useState([]);
@@ -102,18 +114,7 @@ const KudosPage = () => {
 
   const handleTabChange = useCallback(
     (event, newTab) => {
-      switch (newTab) {
-        case "received":
-          setKudosTab("received");
-          break;
-        case "sent":
-          setKudosTab("sent");
-          break;
-        default:
-          console.warn(`Invalid tab: ${newTab}`);
-      }
-
-      setKudosTab(newTab);
+      setKudosTab(validTabName(newTab));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [loadReceivedKudos, loadSentKudos]
