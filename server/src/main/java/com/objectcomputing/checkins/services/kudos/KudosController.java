@@ -39,6 +39,11 @@ public class KudosController {
     }
 
     @Put
+    public Kudos update(@Body @Valid KudosUpdateDTO kudos) {
+        return kudosServices.update(kudos);
+    }
+
+    @Put("/approve")
     public Kudos approve(@Body @Valid Kudos kudos) {
         return kudosServices.approve(kudos);
     }
