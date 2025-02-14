@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
 import { styled } from "@mui/material/styles";
 import { Button, Tab, Typography } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -41,13 +42,14 @@ const Root = styled("div")({
 });
 
 const KudosPage = () => {
+  const { initialTab } = useParams();
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
   const currentUser = selectCurrentUser(state);
 
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
-  const [kudosTab, setKudosTab] = useState("RECEIVED");
+  const [kudosTab, setKudosTab] = useState(initialTab ?? "received");
   const [receivedKudos, setReceivedKudos] = useState([]);
   const [receivedKudosLoading, setReceivedKudosLoading] = useState(true);
   const [sentKudos, setSentKudos] = useState([]);
@@ -101,11 +103,11 @@ const KudosPage = () => {
   const handleTabChange = useCallback(
     (event, newTab) => {
       switch (newTab) {
-        case "RECEIVED":
-          setKudosTab("RECEIVED");
+        case "received":
+          setKudosTab("received");
           break;
-        case "SENT":
-          setKudosTab("SENT");
+        case "sent":
+          setKudosTab("sent");
           break;
         default:
           console.warn(`Invalid tab: ${newTab}`);
@@ -138,19 +140,19 @@ const KudosPage = () => {
           <TabList onChange={handleTabChange}>
             <Tab
               label="Received"
-              value="RECEIVED"
+              value="received"
               icon={<ArchiveIcon />}
               iconPosition="start"
             />
             <Tab
               label="Sent"
-              value="SENT"
+              value="sent"
               icon={<UnarchiveIcon />}
               iconPosition="start"
             />
           </TabList>
         </div>
-        <TabPanel value="RECEIVED" style={{ padding: "1rem 0" }}>
+        <TabPanel value="received" style={{ padding: "1rem 0" }}>
           {receivedKudosLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <SkeletonLoader key={index} type="kudos" />
@@ -177,7 +179,7 @@ const KudosPage = () => {
             </div>
           )}
         </TabPanel>
-        <TabPanel value="SENT" style={{ padding: "1rem 0" }}>
+        <TabPanel value="sent" style={{ padding: "1rem 0" }}>
           {sentKudosLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <SkeletonLoader key={index} type="kudos" />
