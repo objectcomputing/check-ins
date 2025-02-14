@@ -2,6 +2,9 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import { styled } from "@mui/material/styles";
 import { Button, Tab, Typography } from "@mui/material";
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { AppContext } from "../context/AppContext";
 import {
@@ -51,6 +54,13 @@ const validTabName = (name) => {
       name = "received";
   }
   return name;
+}
+
+const DateRange = {
+  THREE_MONTHS: '3mo',
+  SIX_MONTHS: '6mo',
+  ONE_YEAR: '1yr',
+  ALL_TIME: 'all'
 };
 
 const KudosPage = () => {
@@ -66,24 +76,48 @@ const KudosPage = () => {
   const [receivedKudosLoading, setReceivedKudosLoading] = useState(true);
   const [sentKudos, setSentKudos] = useState([]);
   const [sentKudosLoading, setSentKudosLoading] = useState(true);
+  const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
+
+  const isInRange = (requestDate) => {
+    const oldestDate = new Date();
+    switch (dateRange) {
+      case DateRange.SIX_MONTHS:
+        oldestDate.setMonth(oldestDate.getMonth() - 6);
+        break;
+      case DateRange.ONE_YEAR:
+        oldestDate.setFullYear(oldestDate.getFullYear() - 1);
+        break;
+      case DateRange.ALL_TIME:
+        return true;
+      case DateRange.THREE_MONTHS:
+      default:
+        oldestDate.setMonth(oldestDate.getMonth() - 3);
+    }
+
+    if (Array.isArray(requestDate)) {
+      requestDate = new Date(requestDate.join('/'));
+      // have to do for Safari
+    }
+    return requestDate >= oldestDate;
+  };
 
   const loadReceivedKudos = useCallback(async () => {
     setReceivedKudosLoading(true);
     const res = await getReceivedKudos(currentUser.id, csrf);
     if (res?.payload?.data && !res.error) {
       setReceivedKudosLoading(false);
-      return res.payload.data;
+      return res.payload.data.filter((k) => isInRange(k.dateCreated));
     }
-  }, [csrf, dispatch, currentUser.id]);
+  }, [csrf, dispatch, currentUser.id, dateRange]);
 
   const loadSentKudos = useCallback(async () => {
     setSentKudosLoading(true);
     const res = await getSentKudos(currentUser.id, csrf);
     if (res?.payload?.data && !res.error) {
       setSentKudosLoading(false);
-      return res.payload.data;
+      return res.payload.data.filter((k) => isInRange(k.dateCreated));
     }
-  }, [csrf, dispatch, currentUser.id]);
+  }, [csrf, dispatch, currentUser.id, dateRange]);
 
   const loadAndSetReceivedKudos = () => {
     loadReceivedKudos().then((data) => {
@@ -110,7 +144,7 @@ const KudosPage = () => {
       loadAndSetSentKudos();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [csrf, currentUser, kudosTab]);
+  }, [csrf, currentUser, kudosTab, dateRange]);
 
   const handleTabChange = useCallback(
     (event, newTab) => {
@@ -127,6 +161,23 @@ const KudosPage = () => {
           open={kudosDialogOpen}
           onClose={() => setKudosDialogOpen(false)}
         />
+        <FormControl className={classes.textField}>
+          <TextField
+            id="select-time"
+            select
+            fullWidth
+            size="small"
+            label="Show kudos within"
+            onChange={e => setDateRange(e.target.value)}
+            value={dateRange}
+            variant="outlined"
+          >
+            <MenuItem value={DateRange.THREE_MONTHS}>Past 3 months</MenuItem>
+            <MenuItem value={DateRange.SIX_MONTHS}>Past 6 months</MenuItem>
+            <MenuItem value={DateRange.ONE_YEAR}>Past year</MenuItem>
+            <MenuItem value={DateRange.ALL_TIME}>All time</MenuItem>
+          </TextField>
+        </FormControl>
         {selectHasCreateKudosPermission(state) && <Button
           className="kudos-dialog-open"
           variant="outlined"
