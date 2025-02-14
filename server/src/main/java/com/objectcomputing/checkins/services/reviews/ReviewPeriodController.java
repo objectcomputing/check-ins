@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.reviews;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -47,7 +45,6 @@ public class ReviewPeriodController {
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
     @Post
-    @RequiredPermission(Permission.CAN_CREATE_REVIEW_PERIOD)
     public HttpResponse<ReviewPeriod> createReviewPeriod(@Body @Valid ReviewPeriodCreateDTO period, HttpRequest<?> request) {
         HttpResponse httpResponse;
         Set<ReviewAssignment> reviewAssignments;
@@ -69,7 +66,6 @@ public class ReviewPeriodController {
      * @return a streamable response containing the found {@link ReviewPeriod} with the given ID
      */
     @Get("/{id}")
-    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public ReviewPeriod getById(@NotNull UUID id) {
         ReviewPeriod result = reviewPeriodServices.findById(id);
         if (result == null) {
@@ -86,7 +82,6 @@ public class ReviewPeriodController {
      * @return a streamable response containing a {@link Set} of {@link ReviewPeriod}s that match the given criteria
      */
     @Get("/{?name,reviewStatus}")
-    @RequiredPermission(Permission.CAN_VIEW_REVIEW_PERIOD)
     public Set<ReviewPeriod> findByValue(@Nullable String name, @Nullable ReviewStatus reviewStatus) {
         return reviewPeriodServices.findByValue(name, reviewStatus);
     }
@@ -98,7 +93,6 @@ public class ReviewPeriodController {
      * @return a streamable response containing the stored {@link ReviewPeriod}
      */
     @Put
-    @RequiredPermission(Permission.CAN_UPDATE_REVIEW_PERIOD)
     public HttpResponse<ReviewPeriod> update(@Body @Valid ReviewPeriod reviewPeriod, HttpRequest<?> request) {
         ReviewPeriod updatedReviewPeriod = reviewPeriodServices.update(reviewPeriod);
         return HttpResponse.ok(updatedReviewPeriod)
@@ -113,7 +107,6 @@ public class ReviewPeriodController {
      * @param id  the id of the review period to be deleted to delete
      */
     @Delete("/{id}")
-    @RequiredPermission(Permission.CAN_DELETE_REVIEW_PERIOD)
     @Status(HttpStatus.OK)
     public void deleteReviewPeriod(@NotNull UUID id) {
         reviewPeriodServices.delete(id);

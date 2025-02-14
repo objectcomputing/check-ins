@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
@@ -101,6 +103,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_FEEDBACK_REQUEST)
     public FeedbackRequest save(FeedbackRequest feedbackRequest) {
         validateMembers(feedbackRequest);
         if (!createIsPermitted(feedbackRequest.getRequesteeId())) {
@@ -253,6 +256,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_DELETE_FEEDBACK_REQUEST)
     public void delete(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
         if (feedbackReq.isEmpty()) {
@@ -267,6 +271,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
+    // This method cannot have
+    // @RequiredPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUEST) because
+    // regular members need to be able to get feedback requests.  This
+    // permission is manually checked elsewhere.
     public FeedbackRequest getById(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
         if (feedbackReq.isEmpty()) {
@@ -281,6 +289,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
+    // This method cannot have
+    // @RequiredPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUEST) because
+    // regular members need to be able to get feedback requests.  This
+    // permission is manually checked elsewhere.
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate, UUID reviewPeriodId, UUID templateId, List<UUID> requesteeIds) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if (currentUserId == null) {
@@ -298,7 +310,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         feedbackReqList = feedbackReqList.stream().filter((FeedbackRequest request) -> {
             boolean visible = false;
-            if (currentUserServices.isAdmin()) {
+            if (currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUEST)) {
                 visible = true;
             } else if (request != null) {
                 if (currentUserId.equals(request.getCreatorId()) ||
@@ -337,14 +349,17 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean createIsPermitted(UUID requesteeId) {
-        final boolean isAdmin = currentUserServices.isAdmin();
+        if (currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUEST)) {
+            return true;
+        }
+
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         boolean isRequesteesSupervisor = isSupervisor(requesteeId, currentUserId);
         final UUID requesteePDL = requestee.getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
-        return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || currentUserId.equals(requesteeId);
+        return  currentUserId.equals(requesteePDL) || isRequesteesSupervisor || currentUserId.equals(requesteeId);
     }
 
     private boolean getIsPermitted(FeedbackRequest feedbackReq) {
@@ -365,23 +380,29 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {
-        return isCurrentUserAdminOrOwner(feedbackRequest);
+        return currentUserCanAdministerOrOwner(feedbackRequest);
     }
 
     private boolean reassignIsPermitted(FeedbackRequest feedbackRequest) {
-        return isCurrentUserAdminOrOwner(feedbackRequest) && !feedbackRequest.getStatus().equals("submitted");
+        return currentUserCanAdministerOrOwner(feedbackRequest) && !feedbackRequest.getStatus().equals("submitted");
     }
 
-    private boolean isCurrentUserAdminOrOwner(FeedbackRequest feedbackRequest) {
-        boolean isAdmin = currentUserServices.isAdmin();
+    private boolean currentUserCanAdministerOrOwner(FeedbackRequest feedbackRequest) {
+        if (currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUEST)) {
+            return true;
+        }
+
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return isAdmin || currentUserId.equals(feedbackRequest.getCreatorId());
+        return currentUserId.equals(feedbackRequest.getCreatorId());
     }
 
     private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
-        boolean isAdmin = currentUserServices.isAdmin();
+        if (currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_REQUEST)) {
+            return true;
+        }
+
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (isAdmin || (currentUserId.equals(feedbackRequest.getCreatorId()) && feedbackRequest.getSubmitDate() != null)) {
+        if (currentUserId.equals(feedbackRequest.getCreatorId()) && feedbackRequest.getSubmitDate() != null) {
             return true;
         }
 

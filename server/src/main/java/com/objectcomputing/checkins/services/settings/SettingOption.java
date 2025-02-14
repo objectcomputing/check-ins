@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.settings;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -38,16 +40,19 @@ public enum SettingOption {
         this.values = values;
     }
 
+    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public static List<SettingOption> getOptions(){
         return Arrays.asList(SettingOption.values());
     }
 
+    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public static boolean isValidOption(String name){
         return Stream.of(SettingOption.values())
                 .anyMatch(option -> option.name().equalsIgnoreCase(name));
     }
 
     @JsonCreator
+    @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public static SettingOption fromName(String name) {
         for (SettingOption option : values()) {
             if (option.name().equalsIgnoreCase(name)) {

@@ -111,6 +111,7 @@ jobs:
             --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
             --set-env-vars "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" \
             --set-env-vars "SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}" \
+            --set-env-vars "SLACK_SIGNING_SECRET=${{ secrets.SLACK_PULSE_SIGNING_SECRET }}" \
             --platform "managed" \
             --max-instances 2 \
             --allow-unauthenticated

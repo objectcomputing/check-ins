@@ -69,7 +69,7 @@ public class PulseServicesImpl implements PulseServices {
     this.automatedEmailRepository = automatedEmailRepository;
   }
 
-  public void sendPendingEmail(LocalDate check) {
+  public void notifyUsers(LocalDate check) {
     if (check.getDayOfWeek() == emailDay) {
       LOG.info("Checking for pending Pulse email");
       // Start from the first of the year and move forward to ensure that we

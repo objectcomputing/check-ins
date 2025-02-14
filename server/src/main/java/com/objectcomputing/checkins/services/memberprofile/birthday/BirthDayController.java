@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.birthday;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -32,7 +30,6 @@ public class BirthDayController {
      * @return list of birthdays
      */
     @Get("/{?month,dayOfMonth}")
-    @RequiredPermission(Permission.CAN_VIEW_BIRTHDAY_REPORT)
     public List<BirthDayResponseDTO> findByValue(@Nullable String[] month, @Nullable Integer[] dayOfMonth) {
         return birthDayServices.findByValue(month, dayOfMonth);
     }

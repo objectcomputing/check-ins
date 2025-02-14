@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
@@ -33,7 +35,8 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         this.skillRepo = skillRepo;
     }
 
-
+    @Override
+    @RequiredPermission(Permission.CAN_VIEW_SKILLS_REPORT)
     public @NotNull SkillsReportResponseDTO report(@NotNull SkillsReportRequestDTO request) {
         final List<SkillLevelDTO> skills = request.getSkills();
         final Set<UUID> members = request.getMembers();

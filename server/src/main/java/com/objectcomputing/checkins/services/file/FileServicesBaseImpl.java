@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.file;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -57,12 +58,12 @@ abstract public class FileServicesBaseImpl implements FileServices {
 
     @Override
     public Set<FileInfoDTO> findFiles(@Nullable UUID checkInID) {
-        boolean isAdmin = currentUserServices.isAdmin();
-        validate(checkInID == null && !isAdmin, NOT_AUTHORIZED_MSG);
+        boolean canAdminister = hasAdministerPermission();
+        validate(checkInID == null && !canAdminister, NOT_AUTHORIZED_MSG);
 
         try {
             Set<FileInfoDTO> result = new HashSet<>();
-            if (checkInID == null && isAdmin) {
+            if (checkInID == null && canAdminister) {
                 getCheckinDocuments(result, Collections.emptySet());
             } else if (checkInID != null) {
                 validate(!checkInServices.accessGranted(checkInID, currentUserServices.getCurrentUser().getId()),
@@ -88,14 +89,14 @@ abstract public class FileServicesBaseImpl implements FileServices {
     @Override
     public java.io.File downloadFiles(@NotNull String uploadDocId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
         CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
         validate(cd == null, String.format("Unable to find record with id %s", uploadDocId));
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
 
-        if(!isAdmin) {
+        if(!canAdminister) {
             validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), NOT_AUTHORIZED_MSG);
         }
         try {
@@ -119,12 +120,12 @@ abstract public class FileServicesBaseImpl implements FileServices {
     @Override
     public FileInfoDTO uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
         validate((file.getFilename() == null || file.getFilename().equals("")), "Please select a valid file before uploading.");
 
         CheckIn checkIn = checkInServices.read(checkInID);
         validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
-        if(!isAdmin) {
+        if(!canAdminister) {
             validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
             validate(checkIn.isCompleted(), NOT_AUTHORIZED_MSG);
         }
@@ -149,13 +150,13 @@ abstract public class FileServicesBaseImpl implements FileServices {
     @Override
     public boolean deleteFile(@NotNull String uploadDocId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canDelete = currentUserServices.hasPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT);
 
         CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
         validate(cd == null, String.format("Unable to find record with id %s", uploadDocId));
 
         CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
-        if(!isAdmin) {
+        if(!canDelete) {
             validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), NOT_AUTHORIZED_MSG);
         }
 
@@ -173,5 +174,9 @@ abstract public class FileServicesBaseImpl implements FileServices {
         if(isError) {
             throw new FileRetrievalException(String.format(message, args));
         }
+    }
+
+    protected boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_CHECKIN_DOCUMENTS);
     }
 }

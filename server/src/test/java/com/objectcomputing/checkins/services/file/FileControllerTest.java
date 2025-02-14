@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.FileServicesImplReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -35,6 +36,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static io.micronaut.http.MediaType.MULTIPART_FORM_DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.fileservicesimpl", value = StringUtils.TRUE)
 class FileControllerTest extends TestContainersSuite
-                         implements MemberProfileFixture, CheckInFixture, CheckInDocumentFixture {
+                         implements MemberProfileFixture, CheckInFixture, CheckInDocumentFixture, RoleFixture {
 
     @Inject
     @Client("/services/files")
@@ -62,6 +64,7 @@ class FileControllerTest extends TestContainersSuite
 
     @BeforeEach
     void reset() {
+        createAndAssignRoles();
         pdl = createADefaultMemberProfile();
         member = createADefaultMemberProfileForPdl(pdl);
         checkIn = createADefaultCheckIn(member, pdl);
@@ -110,7 +113,7 @@ class FileControllerTest extends TestContainersSuite
         String fileId = "some.id";
         FileInfoDTO testFileInfoDto = createUploadedDocument(fileId);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("?id=%s", checkIn.getId())).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("?id=%s", checkIn.getId())).basicAuth(pdl.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
 
         assertNotNull(response);
@@ -128,7 +131,7 @@ class FileControllerTest extends TestContainersSuite
         FileInfoDTO testFileInfoDto = createUploadedDocument(uploadDocId);
 
         final HttpRequest<?> request= HttpRequest.GET(String.format("/%s/download", uploadDocId))
-                                                            .basicAuth(member.getWorkEmail(), MEMBER_ROLE);
+                                                            .basicAuth(pdl.getWorkEmail(), PDL_ROLE);
         final HttpResponse<File> response = client.toBlocking().exchange(request, File.class);
 
         assertNotNull(response);
@@ -139,7 +142,7 @@ class FileControllerTest extends TestContainersSuite
     void testUploadEndpoint() {
         final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", checkIn.getId()), MultipartBody.builder()
                                         .addPart("file", testFile).build())
-                                        .basicAuth(member.getWorkEmail(), MEMBER_ROLE)
+                                        .basicAuth(pdl.getWorkEmail(), PDL_ROLE)
                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> response = client.toBlocking().exchange(request, FileInfoDTO.class);
 
@@ -173,7 +176,7 @@ class FileControllerTest extends TestContainersSuite
         FileInfoDTO testFileInfoDto = createUploadedDocument(uploadDocId);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", uploadDocId))
-                                        .basicAuth(member.getWorkEmail(), MEMBER_ROLE);
+                                        .basicAuth(pdl.getWorkEmail(), PDL_ROLE);
         final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertNotNull(response);

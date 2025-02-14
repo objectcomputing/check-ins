@@ -17,6 +17,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.client.multipart.MultipartBody;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +41,14 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
     @Client("/services/employee/hours")
     HttpClient client;
 
+    private MemberProfile user;
+
+    @BeforeEach
+    void setUp() {
+        user = createAnUnrelatedUser();
+        createAndAssignAdminRole(user);
+    }
+
     @Test
     void testCreateEmployeeHours() {
         File file = new File("src/test/java/com/objectcomputing/checkins/services/employee_hours/test.csv");
@@ -49,9 +58,6 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
                 .build();
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
-
-        MemberProfile user = createAnUnrelatedUser();
-        createAndAssignAdminRole(user);
 
         final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(user.getWorkEmail(),ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
         final HttpResponse<EmployeeHoursResponseDTO> response = client.toBlocking().exchange(request, EmployeeHoursResponseDTO.class);
@@ -70,9 +76,6 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
                 .builder()
                 .addPart("file","test.csv",new MediaType("text/csv"),file)
                 .build();
-
-        MemberProfile user = createAnUnrelatedUser();
-        createAndAssignAdminRole(user);
 
         final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(user.getWorkEmail(),ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -100,8 +103,6 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
     void testFindAllRecordsWithAdminRole() throws IOException {
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile user = createAnUnrelatedUser();
-        createAndAssignAdminRole(user);
 
         createEmployeeHours();
         final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(user.getWorkEmail(),ADMIN_ROLE);
@@ -118,7 +119,7 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
         List<EmployeeHours> employeeHoursList = createEmployeeHours();
-        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?employeeId=%s",employeeHoursList.get(0).getEmployeeId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?employeeId=%s",employeeHoursList.get(0).getEmployeeId())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<EmployeeHours>> response = client.toBlocking().exchange(request, Argument.setOf(EmployeeHours.class));
         assertEquals(Set.of(employeeHoursList.get(0)),response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -145,7 +146,7 @@ class EmployeeHoursControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testFindEmployeeHoursNotFound() {
 
-        final HttpRequest<Object> request = HttpRequest.GET("/?employeeId=invalid_id").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.GET("/?employeeId=invalid_id").basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<EmployeeHours>> response = client.toBlocking().exchange(request, Argument.setOf(EmployeeHours.class));
         Set<EmployeeHours> emptySet = Collections.emptySet();
         assertEquals(emptySet,response.body());

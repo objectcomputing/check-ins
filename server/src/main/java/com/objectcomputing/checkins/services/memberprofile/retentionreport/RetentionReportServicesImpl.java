@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -23,11 +25,8 @@ public class RetentionReportServicesImpl implements RetentionReportServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_RETENTION_REPORT)
     public RetentionReportResponseDTO report(RetentionReportDTO request) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("Requires admin privileges");
-        }
-
         RetentionReportResponseDTO response;
         List<MemberProfile> memberProfiles = memberProfileServices.findAll();
         LocalDate periodStartDate = getIntervalStartDate(request.getStartDate(), request.getFrequency());
