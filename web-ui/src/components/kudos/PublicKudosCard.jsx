@@ -17,6 +17,7 @@ import {
   DialogContentText,
   DialogActions,
   TextField,
+  Link,
 } from "@mui/material";
 import { selectCsrfToken, selectProfile } from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
@@ -50,6 +51,79 @@ const KudosCard = ({ kudos }) => {
   const csrf = selectCsrfToken(state);
 
   const sender = selectProfile(state, kudos.senderId);
+
+  const regexIndexOf = (text, regex, start) => {
+    const indexInSuffix = text.slice(start).search(regex);
+    return indexInSuffix < 0 ? indexInSuffix : indexInSuffix + start;
+  };
+
+  const linkMember = (member, name, message) => {
+    const components = [];
+    let index = 0;
+    do {
+      index = regexIndexOf(message,
+                           new RegExp('\\b' + name + '\\b', 'i'), index);
+      if (index != -1) {
+        const link = <Link key={`${member.id}-${index}`}
+                           href={`/profile/${member.id}`}>
+                       {name}
+                     </Link>;
+        if (index > 0) {
+          components.push(message.slice(0, index));
+        }
+        components.push(link);
+        message = message.slice(index + name.length);
+      }
+    } while(index != -1);
+    components.push(message);
+    return components;
+  };
+
+  const searchNames = (member, members) => {
+    const names = [];
+    if (member.middleName) {
+      names.push(`${member.firstName} ${member.middleName} ${member.lastName}`);
+    }
+    const firstAndLast = `${member.firstName} ${member.lastName}`;
+    if (!members.some((k) => k.id != member.id &&
+                             firstAndLast != `${k.firstName} ${k.lastName}`)) {
+      names.push(firstAndLast);
+    }
+    if (!members.some((k) => k.id != member.id &&
+                             (member.lastName == k.lastName ||
+                              member.lastName == k.firstName))) {
+      // If there are no other recipients with a name that contains this
+      // member's last name, we can replace based on that.
+      names.push(member.lastName);
+    }
+    if (!members.some((k) => k.id != member.id &&
+                             (member.firstName == k.lastName ||
+                              member.firstName == k.firstName))) {
+      // If there are no other recipients with a name that contains this
+      // member's first name, we can replace based on that.
+      names.push(member.firstName);
+    }
+    return names;
+  };
+
+  const linkNames = (kudos) => {
+    const components = [ kudos.message ];
+    for (let member of kudos.recipientMembers) {
+      const names = searchNames(member, kudos.recipientMembers);
+      for (let name of names) {
+        for (let i = 0; i < components.length; i++) {
+          const component = components[i];
+          if (typeof(component) === "string") {
+            const built = linkMember(member, name, component);
+            if (built.length > 1) {
+              components.splice(i, 1, ...built);
+            }
+          }
+        }
+      }
+    }
+    return components;
+  };
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
@@ -98,7 +172,9 @@ const KudosCard = ({ kudos }) => {
           subheaderTypographyProps={{variant:"subtitle1"}}
         />
         <CardContent>
-          <Typography variant="body1"><em>{kudos.message}</em></Typography>
+          <Typography variant="body1">
+            {linkNames(kudos)}
+          </Typography>
           {kudos.recipientTeam && (
       <AvatarGroup max={12}>
         {kudos.recipientMembers.map((member) => (
