@@ -59,7 +59,7 @@ const KudosCard = ({ kudos }) => {
       prefix = ", ";
     }
     return <Tooltip arrow title={tooltip}>
-             {`+${num}`}
+             <Typography>{`+${num}`}</Typography>
            </Tooltip>;
   };
 
