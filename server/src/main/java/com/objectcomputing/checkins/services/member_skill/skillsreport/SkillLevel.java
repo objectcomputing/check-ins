@@ -3,17 +3,15 @@ package com.objectcomputing.checkins.services.member_skill.skillsreport;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
 public enum SkillLevel {
-    INTERESTED(1),
-    NOVICE(2),
-    INTERMEDIATE(3),
-    ADVANCED(4),
-    EXPERT(5);
+    NONE(0),
+    NOVICE(1),
+    PRACTITIONER(2),
+    EXPERT(3);
 
-    public static final String INTERESTED_LEVEL = "1";
-    public static final String NOVICE_LEVEL = "2";
-    public static final String INTERMEDIATE_LEVEL = "3";
-    public static final String ADVANCED_LEVEL = "4";
-    public static final String EXPERT_LEVEL = "5";
+    public static final String NONE_LEVEL = "0";
+    public static final String NOVICE_LEVEL = "1";
+    public static final String PRACTITIONER_LEVEL = "2";
+    public static final String EXPERT_LEVEL = "3";
 
     private final int value;
 
@@ -26,16 +24,14 @@ public enum SkillLevel {
     }
 
     public static SkillLevel convertFromString(String level) {
-        final String levelLc = level != null ? level.toLowerCase() : "3";
+        final String levelLc = level != null ? level.toLowerCase() : PRACTITIONER_LEVEL;
         switch (levelLc) {
-            case INTERESTED_LEVEL:
-                return SkillLevel.INTERESTED;
+            case NONE_LEVEL:
+                return SkillLevel.NONE;
             case NOVICE_LEVEL:
                 return SkillLevel.NOVICE;
-            case INTERMEDIATE_LEVEL:
-                return SkillLevel.INTERMEDIATE;
-            case ADVANCED_LEVEL:
-                return SkillLevel.ADVANCED;
+            case PRACTITIONER_LEVEL:
+                return SkillLevel.PRACTITIONER;
             case EXPERT_LEVEL:
                 return SkillLevel.EXPERT;
             default:
