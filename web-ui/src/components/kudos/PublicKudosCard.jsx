@@ -51,6 +51,18 @@ const KudosCard = ({ kudos }) => {
 
   const sender = selectProfile(state, kudos.senderId);
 
+  const multiTooltip = (num, list) => {
+    let tooltip = "";
+    let prefix = "";
+    for (let member of list.slice(-num)) {
+      tooltip += prefix + `${member.firstName} ${member.lastName}`;
+      prefix = ", ";
+    }
+    return <Tooltip arrow title={tooltip}>
+             <Typography>{`+${num}`}</Typography>
+           </Tooltip>;
+  };
+
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
       return (
@@ -67,7 +79,9 @@ const KudosCard = ({ kudos }) => {
     }
 
     return (
-      <AvatarGroup max={4}>
+      <AvatarGroup max={4}
+                   renderSurplus={(extra) => multiTooltip(
+                                               extra, kudos.recipientMembers)}>
         {kudos.recipientMembers.map((member) => (
           <Tooltip
             arrow
@@ -100,7 +114,9 @@ const KudosCard = ({ kudos }) => {
         <CardContent>
           <Typography variant="body1"><em>{kudos.message}</em></Typography>
           {kudos.recipientTeam && (
-      <AvatarGroup max={12}>
+      <AvatarGroup max={12}
+                   renderSurplus={(extra) => multiTooltip(
+                                               extra, kudos.recipientMembers)}>
         {kudos.recipientMembers.map((member) => (
           <Tooltip
             arrow
