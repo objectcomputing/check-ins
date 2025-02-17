@@ -327,6 +327,16 @@ export const selectProfile = createSelector(
   (profileMap, profileId) => profileMap[profileId]
 );
 
+export const selectActiveOrInactiveProfile = (state, profileId) => {
+  // See if the profile is active, return it if so.
+  const sender = selectProfile(state, profileId);
+  if (sender) return sender;
+
+  // The profile is inactive or does not exist.  Check terminated members.
+  const terminatedMap = selectProfileMapForTerminatedMembers(state);
+  return terminatedMap[profileId];
+};
+
 export const selectSkill = createSelector(
   selectSkills,
   (state, skillId) => skillId,
