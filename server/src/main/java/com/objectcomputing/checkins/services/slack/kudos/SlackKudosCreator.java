@@ -50,8 +50,10 @@ public class SlackKudosCreator {
 
     public void store(List<Message> messages) {
         for (Message message : messages) {
-            // User messages do not have a sub-type.
-            if (message.getSubtype() == null) {
+            // User messages do not have a sub-type.  A bot user can send
+            // messages.  They will not have a subtype, but they will have a bot
+            // id.  We want to skip those too.
+            if (message.getSubtype() == null && message.getBotId() == null) {
                 try {
                     AutomatedKudosDTO kudosDTO = createFromMessage(message);
                     if (kudosDTO.getRecipientIds().size() == 0) {
@@ -74,7 +76,7 @@ public class SlackKudosCreator {
 
     private AutomatedKudosDTO createFromMessage(Message message) {
         String userId = message.getUser();
-        MemberProfile sender = lookupUser(userId);
+            MemberProfile sender = lookupUser(userId);
         List<UUID> recipients = new ArrayList<>();
         String text = processText(message.getText(), recipients);
         return new AutomatedKudosDTO(text, userId, sender.getId(), recipients);
