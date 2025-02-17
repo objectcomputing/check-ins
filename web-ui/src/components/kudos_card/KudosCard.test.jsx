@@ -69,8 +69,8 @@ const initialState = {
   }
 };
 
-const kudos = {
-  id: 'test-kudos',
+const terminated = {
+  id: 'test-terminated-kudos',
   message: "Brock and Brockman did a great job helping Clark, Jimmy Olsen, Jimmy T. Olsen, and Johnson",
   senderId: "5",
   dateCreated: [ 2025, 2, 14 ],
@@ -115,7 +115,35 @@ const kudos = {
   ],
 };
 
-it('renders correctly', () => {
+const kudos = {
+  id: 'test-kudos',
+  message: "Jimmy is awesome!",
+  senderId: "1",
+  dateCreated: [ 2025, 2, 17 ],
+  recipientMembers: [
+      {
+        id: "2",
+        firstName: 'Jimmy',
+        lastName: 'Olsen',
+        role: ['MEMBER'],
+      },
+  ],
+};
+
+it('inactive renders correctly', () => {
+  snapshot(
+    <AppContextProvider value={initialState}>
+      <KudosCard
+        kudos={terminated}
+        includeActions
+        includeEdit
+        onKudosAction={() =>{}}
+      />
+    </AppContextProvider>
+  );
+});
+
+it('active renders correctly', () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <KudosCard
