@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 export const selectMemberProfiles = state => state.memberProfiles || [];
-export const selectTerminatedMembers = state => state.terminatedMembers;
+export const selectTerminatedMembers = state => state.terminatedMembers || [];
 export const selectMemberSkills = state => state.memberSkills || [];
 export const selectSkills = state => state.skills || [];
 export const selectTeamMembers = state => state.teamMembers;
@@ -327,15 +327,12 @@ export const selectProfile = createSelector(
   (profileMap, profileId) => profileMap[profileId]
 );
 
-export const selectActiveOrInactiveProfile = (state, profileId) => {
-  // See if the profile is active, return it if so.
-  const sender = selectProfile(state, profileId);
-  if (sender) return sender;
-
-  // The profile is inactive or does not exist.  Check terminated members.
-  const terminatedMap = selectProfileMapForTerminatedMembers(state);
-  return terminatedMap[profileId];
-};
+export const selectActiveOrInactiveProfile = createSelector(
+  selectProfileMap,
+  selectProfileMapForTerminatedMembers,
+  (state, profileId) => profileId,
+  (profileMap, termedProfileMap, profileId) => profileMap[profileId] || termedProfileMap[profileId]
+);
 
 export const selectSkill = createSelector(
   selectSkills,
