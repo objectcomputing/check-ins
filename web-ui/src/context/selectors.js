@@ -242,6 +242,14 @@ export const selectCanEditAllOrganizationMembers = hasPermission(
   'CAN_EDIT_ALL_ORGANIZATION_MEMBERS',
 );
 
+export const selectCanViewTerminatedMembers = createSelector(
+    selectCanEditAllOrganizationMembers,
+    hasPermission(
+        'CAN_VIEW_TERMINATED_MEMBERS'
+    ),
+    (canEdit, canView) => canEdit || canView
+);
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   userProfile =>

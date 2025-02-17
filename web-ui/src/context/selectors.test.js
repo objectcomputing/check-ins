@@ -21,7 +21,9 @@ import {
   selectSubordinates,
   selectIsSubordinateOfCurrentUser,
   selectHasReportPermission,
-  selectActiveOrInactiveProfile
+  selectActiveOrInactiveProfile,
+  selectCanEditAllOrganizationMembers,
+  selectCanViewTerminatedMembers,
 } from './selectors';
 
 describe('Selectors', () => {
@@ -1525,6 +1527,85 @@ describe('Selectors', () => {
     };
 
     expect(selectHasReportPermission(testState)).toBe(false);
+  });
+
+  it("selectCanEditAllOrganizationMembers should return false when user does not have 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanEditAllOrganizationMembers(testState)).toBe(false);
+  });
+
+  it("selectCanEditAllOrganizationMembers should return true when user has 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanEditAllOrganizationMembers(testState)).toBe(true);
+  });
+
+  it("selectCanViewTerminatedMembers should return false when user does not have 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' or 'CAN_VIEW_TERMINATED_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanViewTerminatedMembers(testState)).toBe(false);
+  });
+
+  it("selectCanViewTerminatedMembers should return true when user has 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' or 'CAN_VIEW_TERMINATED_MEMBERS' permissions", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+    const otherTestState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_TERMINATED_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanViewTerminatedMembers(testState)).toBe(true);
+    expect(selectCanViewTerminatedMembers(otherTestState)).toBe(true);
   });
 
   it('selectActiveOrInactiveProfile should a profile if active or inactive', () => {
