@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
 import { styled } from "@mui/material/styles";
 import { Button, Tab, Typography } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
@@ -43,6 +44,18 @@ const Root = styled("div")({
   },
 });
 
+const validTabName = (name) => {
+  switch (name) {
+    case "received":
+    case "sent":
+      break;
+    default:
+      name && console.warn(`Invalid tab: ${name}`);
+      name = "received";
+  }
+  return name;
+}
+
 const DateRange = {
   THREE_MONTHS: '3mo',
   SIX_MONTHS: '6mo',
@@ -51,13 +64,14 @@ const DateRange = {
 };
 
 const KudosPage = () => {
+  const { initialTab } = useParams();
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
   const currentUser = selectCurrentUser(state);
 
   const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
-  const [kudosTab, setKudosTab] = useState("RECEIVED");
+  const [kudosTab, setKudosTab] = useState(validTabName(initialTab));
   const [receivedKudos, setReceivedKudos] = useState([]);
   const [receivedKudosLoading, setReceivedKudosLoading] = useState(true);
   const [sentKudos, setSentKudos] = useState([]);
@@ -134,18 +148,7 @@ const KudosPage = () => {
 
   const handleTabChange = useCallback(
     (event, newTab) => {
-      switch (newTab) {
-        case "RECEIVED":
-          setKudosTab("RECEIVED");
-          break;
-        case "SENT":
-          setKudosTab("SENT");
-          break;
-        default:
-          console.warn(`Invalid tab: ${newTab}`);
-      }
-
-      setKudosTab(newTab);
+      setKudosTab(validTabName(newTab));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [loadReceivedKudos, loadSentKudos]
@@ -189,19 +192,19 @@ const KudosPage = () => {
           <TabList onChange={handleTabChange}>
             <Tab
               label="Received"
-              value="RECEIVED"
+              value="received"
               icon={<ArchiveIcon />}
               iconPosition="start"
             />
             <Tab
               label="Sent"
-              value="SENT"
+              value="sent"
               icon={<UnarchiveIcon />}
               iconPosition="start"
             />
           </TabList>
         </div>
-        <TabPanel value="RECEIVED" style={{ padding: "1rem 0" }}>
+        <TabPanel value="received" style={{ padding: "1rem 0" }}>
           {receivedKudosLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <SkeletonLoader key={index} type="kudos" />
@@ -228,7 +231,7 @@ const KudosPage = () => {
             </div>
           )}
         </TabPanel>
-        <TabPanel value="SENT" style={{ padding: "1rem 0" }}>
+        <TabPanel value="sent" style={{ padding: "1rem 0" }}>
           {sentKudosLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <SkeletonLoader key={index} type="kudos" />
