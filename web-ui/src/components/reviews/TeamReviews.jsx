@@ -172,7 +172,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   useEffect(() => {
     const myId = currentUser?.id;
     const supervisors = selectSupervisors(state);
-    const isManager = supervisors.some(s => s.id === myId);
+    const isManager = supervisors.some(s => s?.id === myId);
     const period = selectReviewPeriod(state, periodId);
     if (period) {
       setApprovalState(period.reviewStatus === ReviewStatus.AWAITING_APPROVAL);
