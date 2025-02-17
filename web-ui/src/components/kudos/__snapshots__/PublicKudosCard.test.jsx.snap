@@ -17,7 +17,13 @@ exports[`renders correctly 1`] = `
           <div
             class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault MuiAvatarGroup-avatar css-17o22dy-MuiAvatar-root"
           >
-            +3
+            <p
+              aria-label="Brock Smith, Kent Brockman, Jimmy Olsen"
+              class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+              data-mui-internal-clone-element="true"
+            >
+              +3
+            </p>
           </div>
           <div
             aria-label="Clark Kent"
