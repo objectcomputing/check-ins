@@ -5,8 +5,6 @@ import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 
 import com.slack.api.model.Message;
 
-import io.micronaut.scheduling.annotation.Scheduled;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +31,6 @@ public class KudosChannelReader {
     @Inject
     private SlackKudosCreator slackKudosCreator;
 
-    @Scheduled(fixedDelay = "10m")
     public void readChannel() {
         Optional<KudosChannelReadTime> readTime =
             kudosChannelReadTimeStore.findById(KudosChannelReadTime.key);
