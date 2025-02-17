@@ -9,6 +9,8 @@ public interface KudosServices {
 
     Kudos save(KudosCreateDTO kudos);
 
+    Kudos update(KudosUpdateDTO kudos);
+
     Kudos approve(Kudos kudos);
 
     Kudos savePreapproved(KudosCreateDTO kudos);
