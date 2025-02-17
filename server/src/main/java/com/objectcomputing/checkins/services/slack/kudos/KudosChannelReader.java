@@ -52,6 +52,8 @@ public class KudosChannelReader {
             kudosChannelReadTimeStore.save(new KudosChannelReadTime());
         }
 
-        slackKudosCreator.store(messages);
+        if (!messages.isEmpty()) {
+            slackKudosCreator.store(messages);
+        }
     }
 }
