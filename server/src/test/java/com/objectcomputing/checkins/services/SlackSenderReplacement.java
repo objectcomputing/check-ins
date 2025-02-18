@@ -33,5 +33,14 @@ public class SlackSenderReplacement extends SlackSender {
         }
         return true;
     }
+
+    @Override
+    public boolean send(String channelId, String slackBlocks) {
+        if (!sent.containsKey(channelId)) {
+            sent.put(channelId, new ArrayList<String>());
+        }
+        sent.get(channelId).add(slackBlocks);
+        return true;
+    }
 }
 
