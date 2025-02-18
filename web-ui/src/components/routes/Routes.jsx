@@ -106,7 +106,7 @@ export default function Routes() {
       <Route path="/feedback/self-reviews">
         <SelfReviewsPage />
       </Route>
-      <Route exact path="/kudos">
+      <Route exact path="/kudos/:initialTab?">
         <Header title="Kudos" />
         <KudosPage />
       </Route>

@@ -20,7 +20,10 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import { selectCsrfToken, selectProfile } from "../../context/selectors";
+import {
+  selectCsrfToken,
+  selectActiveOrInactiveProfile,
+} from "../../context/selectors";
 import MemberSelector from '../member_selector/MemberSelector';
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
@@ -63,7 +66,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [kudosRecipientMembers, setKudosRecipientMembers] = useState(kudos.recipientMembers);
 
-  const sender = selectProfile(state, kudos.senderId);
+  const sender = selectActiveOrInactiveProfile(state, kudos.senderId);
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
