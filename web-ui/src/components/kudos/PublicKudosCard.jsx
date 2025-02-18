@@ -19,7 +19,10 @@ import {
   TextField,
   Link,
 } from "@mui/material";
-import { selectCsrfToken, selectProfile } from "../../context/selectors";
+import {
+  selectCsrfToken,
+  selectActiveOrInactiveProfile,
+} from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 import DateFnsUtils from "@date-io/date-fns";
@@ -50,7 +53,7 @@ const KudosCard = ({ kudos }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
-  const sender = selectProfile(state, kudos.senderId);
+  const sender = selectActiveOrInactiveProfile(state, kudos.senderId);
 
   const regexIndexOf = (text, regex, start) => {
     const indexInSuffix = text.slice(start).search(regex);
