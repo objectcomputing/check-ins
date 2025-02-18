@@ -17,6 +17,7 @@ public enum Permission {
   CAN_ADMINISTER_FEEDBACK_ANSWER("Administer feedback answers", "Feedback"),
   CAN_ADMINISTER_FEEDBACK_TEMPLATES("Administer feedback templates", "Feedback"),
   CAN_SEND_EMAIL("Send email", "Feedback"),
+  CAN_VIEW_TERMINATED_MEMBERS("Can view the profiles of terminated members", "User Management"),
   CAN_EDIT_ALL_ORGANIZATION_MEMBERS("Edit all member profiles", "User Management"),
   CAN_DELETE_ORGANIZATION_MEMBERS("Delete organization members", "User Management"),
   CAN_CREATE_ORGANIZATION_MEMBERS("Create organization members", "User Management"),
