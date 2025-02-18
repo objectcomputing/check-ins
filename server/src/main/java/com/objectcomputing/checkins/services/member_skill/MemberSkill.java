@@ -54,25 +54,33 @@ public class MemberSkill {
     @Schema(description = "the last used date of the skill")
     private LocalDate lastuseddate;
 
+    @Column(name="interested")
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "the member interest")
+    private boolean interested;
+
     public MemberSkill() {
     }
 
+    // Used in tests
     public MemberSkill(UUID memberid, UUID skillid) {
         this.memberid = memberid;
         this.skillid = skillid;
     }
 
+    // Used in tests
     public MemberSkill(UUID id, UUID memberid, UUID skillid) {
         this.id = id;
         this.memberid = memberid;
         this.skillid = skillid;
     }
 
-    public MemberSkill(UUID memberid, UUID skillid, String skilllevel, LocalDate lastuseddate) {
+    public MemberSkill(UUID memberid, UUID skillid, String skilllevel, LocalDate lastuseddate, boolean interested) {
         this.memberid = memberid;
         this.skillid = skillid;
         this.skilllevel = skilllevel;
         this.lastuseddate = lastuseddate;
+        this.interested = interested;
     }
 
     @Override
@@ -84,12 +92,13 @@ public class MemberSkill {
                 Objects.equals(memberid, that.memberid) &&
                 Objects.equals(skillid, that.skillid) &&
                 Objects.equals(skilllevel, that.skilllevel) &&
-                Objects.equals(lastuseddate, that.lastuseddate);
+                Objects.equals(lastuseddate, that.lastuseddate) &&
+                Objects.equals(interested, that.interested);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, memberid, skillid, skilllevel, lastuseddate);
+        return Objects.hash(id, memberid, skillid, skilllevel, lastuseddate, interested);
     }
 
     @Override
@@ -100,6 +109,7 @@ public class MemberSkill {
                 ", skillid=" + skillid + '\'' +
                 ", skilllevel=" + skilllevel + '\'' +
                 ", lastuseddate=" + lastuseddate +
+                ", interested=" + interested +
                 '}';
     }
 }

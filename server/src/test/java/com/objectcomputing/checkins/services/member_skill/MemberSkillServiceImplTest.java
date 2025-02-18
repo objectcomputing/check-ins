@@ -36,7 +36,7 @@ class MemberSkillServiceImplTest extends TestContainersSuite
     void testRead() {
         Skill skill = createSkill("Skill1", false, "First", false);
         MemberProfile member = createADefaultMemberProfile();
-        MemberSkill memberSkill = createMemberSkill(member, skill, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
+        MemberSkill memberSkill = createMemberSkill(member, skill, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
         assertEquals(memberSkill, memberSkillsServices.read(memberSkill.getId()));
     }
 
@@ -86,8 +86,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite
     void testSaveMemberSkillAlreadyExistingSkill() {
         Skill skill = createSkill("Skill1", false, "First", false);
         MemberProfile member = createADefaultMemberProfile();
-        MemberSkill savedSkill = createMemberSkill(member, skill, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        MemberSkill memberSkill = new MemberSkill(member.getId(), skill.getId(), SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
+        MemberSkill savedSkill = createMemberSkill(member, skill, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
+        MemberSkill memberSkill = new MemberSkill(member.getId(), skill.getId(), SkillLevel.PRACTITIONER_LEVEL, LocalDate.now(), true);
         AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Member %s already has this skill %s",
                 memberSkill.getMemberid(), memberSkill.getSkillid()), exception.getMessage());
@@ -117,8 +117,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite
         Skill skill2 = createSkill("Skill2", false, "Second", false);
         Skill skill3 = createSkill("Skill3", false, "Third", false);
         MemberProfile member1 = createADefaultMemberProfile();
-        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        MemberSkill ms2 = createMemberSkill(member1, skill2, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
+        MemberSkill ms2 = createMemberSkill(member1, skill2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
         MemberSkill ms3 = createMemberSkill(member1, skill3, SkillLevel.NOVICE_LEVEL, LocalDate.now());
 
         Set<MemberSkill> memberSkillSet = Set.of(ms1, ms2, ms3);
@@ -132,8 +132,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite
         Skill skill3 = createSkill("Skill3", false, "Third", false);
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
-        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
+        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
         MemberSkill ms3 = createMemberSkill(member1, skill3, SkillLevel.NOVICE_LEVEL, LocalDate.now());
 
         List<MemberSkill> memberSkillSet = List.of(ms1, ms2, ms3);
@@ -150,8 +150,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite
         Skill skill3 = createSkill("Skill3", false, "Third", false);
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
-        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
+        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
         MemberSkill ms3 = createMemberSkill(member1, skill3, SkillLevel.NOVICE_LEVEL, LocalDate.now());
 
         List<MemberSkill> memberSkillSet = List.of(ms1, ms2, ms3);
@@ -169,8 +169,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite
         Skill skill3 = createSkill("Skill3", false, "Third", false);
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
-        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
+        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
         MemberSkill ms3 = createMemberSkill(member1, skill3, SkillLevel.NOVICE_LEVEL, LocalDate.now());
 
         List<MemberSkill> memberSkillSet = List.of(ms1, ms2, ms3);
@@ -190,8 +190,8 @@ class MemberSkillServiceImplTest extends TestContainersSuite
         Skill skill3 = createSkill("Skill3", false, "Third", false);
         MemberProfile member1 = createADefaultMemberProfile();
         MemberProfile member2 = createASecondDefaultMemberProfile();
-        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
-        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        MemberSkill ms1 = createMemberSkill(member1, skill1, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
+        MemberSkill ms2 = createMemberSkill(member2, skill2, SkillLevel.PRACTITIONER_LEVEL, LocalDate.now());
         MemberSkill ms3 = createMemberSkill(member1, skill3, SkillLevel.NOVICE_LEVEL, LocalDate.now());
 
         Set<MemberSkill> memberSkillSet = Set.of(ms1, ms2, ms3);

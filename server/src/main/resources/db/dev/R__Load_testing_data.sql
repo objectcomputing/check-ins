@@ -1753,6 +1753,11 @@ INSERT INTO member_skills -- Revolver Ocelot, Java
 VALUES
 ('d27b679c-3aa8-4c4d-b08e-4eda63cea23f', '105f2968-a182-45a3-892c-eeff76383fe0', '06c03df3-85fe-4fc3-979e-9f1f6ba74a03', '5', '2022-08-01');
 
+INSERT INTO member_skills -- Faux Freddy, CSS
+(id, memberid, skillid, skilllevel, lastuseddate)
+VALUES
+('fabd11fa-2268-4e72-a2ad-e13aaaaaaa5b', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '6b56f0aa-09aa-4b09-bb81-03481af7e49f', '1', '2018-06-01');
+
 INSERT INTO kudos
 (id, message, senderid, teamid, datecreated, dateapproved, publiclyvisible)
 VALUES
