@@ -12,7 +12,7 @@ import {
   selectCurrentUser,
   selectHasCreateKudosPermission,
 } from "../context/selectors";
-import { getReceivedKudos, getSentKudos } from "../api/kudos";
+import { getReceivedKudos, getSentKudos, getAllKudos } from "../api/kudos";
 import { UPDATE_TOAST } from "../context/actions";
 import KudosCard from "../components/kudos_card/KudosCard";
 
@@ -48,6 +48,7 @@ const validTabName = (name) => {
   switch (name) {
     case "received":
     case "sent":
+    case "public":
       break;
     default:
       name && console.warn(`Invalid tab: ${name}`);
@@ -76,6 +77,8 @@ const KudosPage = () => {
   const [receivedKudosLoading, setReceivedKudosLoading] = useState(true);
   const [sentKudos, setSentKudos] = useState([]);
   const [sentKudosLoading, setSentKudosLoading] = useState(true);
+  const [publicKudos, setPublicKudos] = useState([]);
+  const [publicKudosLoading, setPublicKudosLoading] = useState(true);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
   const isInRange = (requestDate) => {
@@ -119,6 +122,15 @@ const KudosPage = () => {
     }
   }, [csrf, dispatch, currentUser.id, dateRange]);
 
+  const loadPublicKudos = useCallback(async () => {
+    setPublicKudosLoading(true);
+    const res = await getAllKudos(csrf);
+    if (res?.payload?.data && !res.error) {
+      setPublicKudosLoading(false);
+      return res.payload.data.filter((k) => isInRange(k.dateCreated));
+    }
+  }, [csrf, dispatch, currentUser.id, dateRange]);
+
   const loadAndSetReceivedKudos = () => {
     loadReceivedKudos().then((data) => {
       if (data) {
@@ -138,10 +150,19 @@ const KudosPage = () => {
     });
   };
 
+  const loadAndSetPublicKudos = () => {
+    loadPublicKudos().then((data) => {
+      if (data) {
+        setPublicKudos(data);
+      }
+    });
+  };
+
   useEffect(() => {
     if (csrf && currentUser && currentUser.id) {
       loadAndSetReceivedKudos();
       loadAndSetSentKudos();
+      loadAndSetPublicKudos();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csrf, currentUser, kudosTab, dateRange]);
@@ -202,6 +223,12 @@ const KudosPage = () => {
               icon={<UnarchiveIcon />}
               iconPosition="start"
             />
+            <Tab
+              label="Public"
+              value="public"
+              icon={<StarIcon />}
+              iconPosition="start"
+            />
           </TabList>
         </div>
         <TabPanel value="received" style={{ padding: "1rem 0" }}>
@@ -226,7 +253,7 @@ const KudosPage = () => {
           ) : (
             <div className="no-pending-kudos-message">
               <Typography variant="body2">
-                There are currently no pending kudos
+                There are currently no received kudos
               </Typography>
             </div>
           )}
@@ -247,6 +274,29 @@ const KudosPage = () => {
             <div className="no-sent-kudos-message">
               <Typography variant="body2">
                 There are currently no sent kudos
+              </Typography>
+            </div>
+          )}
+        </TabPanel>
+        <TabPanel value="public" style={{ padding: "1rem 0" }}>
+          {publicKudosLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonLoader key={index} type="kudos" />
+            ))
+          ) : publicKudos.length > 0
+            ? (
+            <div className="received-kudos-list">
+              {publicKudos.map((k) => (
+                <KudosCard
+                  key={k.id}
+                  kudos={k}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="no-pending-kudos-message">
+              <Typography variant="body2">
+                There are currently no public kudos
               </Typography>
             </div>
           )}
