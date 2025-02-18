@@ -1,0 +1,134 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root kudos-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+      >
+        <div
+          class="MuiAvatarGroup-root css-1ytufz-MuiAvatarGroup-root"
+        >
+          <div
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault MuiAvatarGroup-avatar css-17o22dy-MuiAvatar-root"
+          >
+            <p
+              aria-label="Brock Smith, Kent Brockman, Jimmy Olsen"
+              class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+              data-mui-internal-clone-element="true"
+            >
+              +3
+            </p>
+          </div>
+          <div
+            aria-label="Clark Kent"
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatarGroup-avatar css-1wlk0hk-MuiAvatar-root"
+            data-mui-internal-clone-element="true"
+          >
+            <img
+              class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+              src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+            />
+          </div>
+          <div
+            aria-label="Jimmy Olsen"
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatarGroup-avatar css-1wlk0hk-MuiAvatar-root"
+            data-mui-internal-clone-element="true"
+          >
+            <img
+              class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+              src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+            />
+          </div>
+          <div
+            aria-label="Jimmy Johnson"
+            class="MuiAvatar-root MuiAvatar-circular MuiAvatarGroup-avatar css-1wlk0hk-MuiAvatar-root"
+            data-mui-internal-clone-element="true"
+          >
+            <img
+              class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+              src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <span
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+        >
+          Kudos!
+        </span>
+        <span
+          class="MuiTypography-root MuiTypography-subtitle1 MuiCardHeader-subheader css-1s216c8-MuiTypography-root"
+        >
+          from 
+          <div
+            class="MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-filledDefault css-13htn8f-MuiChip-root"
+          >
+            <div
+              class="MuiAvatar-root MuiAvatar-circular MuiChip-avatar MuiChip-avatarSmall MuiChip-avatarColorDefault css-1wlk0hk-MuiAvatar-root"
+            >
+              <img
+                class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+              />
+            </div>
+            <span
+              class="MuiChip-label MuiChip-labelSmall css-wjsjww-MuiChip-label"
+            />
+          </div>
+        </span>
+      </div>
+    </div>
+    <div
+      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      >
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1xylxj1-MuiTypography-root-MuiLink-root"
+          href="/profile/6"
+        >
+          Brock
+        </a>
+         and 
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1xylxj1-MuiTypography-root-MuiLink-root"
+          href="/profile/4"
+        >
+          Brockman
+        </a>
+         did a great job helping 
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1xylxj1-MuiTypography-root-MuiLink-root"
+          href="/profile/3"
+        >
+          Clark
+        </a>
+        , Jimmy Olsen, 
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1xylxj1-MuiTypography-root-MuiLink-root"
+          href="/profile/7"
+        >
+          Jimmy T. Olsen
+        </a>
+        , and 
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1xylxj1-MuiTypography-root-MuiLink-root"
+          href="/profile/1"
+        >
+          Johnson
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+`;
