@@ -113,6 +113,7 @@ jobs:
             --set-env-vars "SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}" \
             --set-env-vars "SLACK_PULSE_SIGNING_SECRET=${{ secrets.SLACK_PULSE_SIGNING_SECRET }}" \
             --set-env-vars "SLACK_PULSE_BOT_TOKEN=${{ secrets.SLACK_PULSE_BOT_TOKEN }}" \
+            --set-env-vars "SLACK_KUDOS_CHANNEL_ID=${{ secrets.SLACK_KUDOS_CHANNEL_ID }}" \
             --platform "managed" \
             --max-instances 2 \
             --allow-unauthenticated

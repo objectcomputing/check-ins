@@ -139,7 +139,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: "Pending kudos deleted",
+          toast: "Kudos deleted",
         },
       });
       onKudosAction && onKudosAction();
