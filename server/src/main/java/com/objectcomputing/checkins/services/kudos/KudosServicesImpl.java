@@ -6,7 +6,9 @@ import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
-import com.objectcomputing.checkins.notifications.social_media.SlackPoster;
+import com.objectcomputing.checkins.notifications.social_media.SlackSender;
+import com.objectcomputing.checkins.services.slack.SlackReader;
+import com.objectcomputing.checkins.services.slack.kudos.BotSentKudosLocator;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -23,13 +25,15 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.util.Util;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.transaction.annotation.Transactional;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import jakarta.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,12 +62,16 @@ class KudosServicesImpl implements KudosServices {
     private final CheckInsConfiguration checkInsConfiguration;
     private final RoleServices roleServices;
     private final MemberProfileServices memberProfileServices;
-    private final SlackPoster slackPoster;
+    private final SlackSender slackSender;
     private final KudosConverter converter;
+    private final BotSentKudosLocator botSentKudosLocator;
 
     private enum NotificationType {
         creation, approval
     }
+
+    @Inject
+    private CheckInsConfiguration configuration;
 
     KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
@@ -75,8 +83,9 @@ class KudosServicesImpl implements KudosServices {
                              MemberProfileServices memberProfileServices,
                              @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              CheckInsConfiguration checkInsConfiguration,
-                             SlackPoster slackPoster,
-                             KudosConverter converter
+                             SlackSender slackSender,
+                             KudosConverter converter,
+                             BotSentKudosLocator botSentKudosLocator
                       ) {
         this.kudosRepository = kudosRepository;
         this.kudosRecipientServices = kudosRecipientServices;
@@ -88,8 +97,9 @@ class KudosServicesImpl implements KudosServices {
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
         this.checkInsConfiguration = checkInsConfiguration;
-        this.slackPoster = slackPoster;
+        this.slackSender = slackSender;
         this.converter = converter;
+        this.botSentKudosLocator = botSentKudosLocator;
     }
 
     @Override
@@ -152,9 +162,9 @@ class KudosServicesImpl implements KudosServices {
 
         boolean existingPublic = existingKudos.getPubliclyVisible();
         boolean proposedPublic = kudos.getPubliclyVisible();
+        boolean removePublicSlack = false;
         if (existingPublic && !proposedPublic) {
-            // TODO: Search for and remove the Slack Kudos that the Check-Ins
-            //       Integration posted.
+            removePublicSlack = true;
             existingKudos.setDateApproved(null);
         } else if ((!existingPublic && proposedPublic) ||
                    (proposedPublic &&
@@ -193,6 +203,12 @@ class KudosServicesImpl implements KudosServices {
         // from private to public.
         if (!existingPublic && proposedPublic) {
             sendNotification(updated, NotificationType.creation);
+        }
+
+        if (removePublicSlack) {
+            // Search for and remove the Slack Kudos that the Check-Ins
+            // Integration posted.
+            removeSlackMessage(existingKudos);
         }
 
         return updated;
@@ -245,6 +261,12 @@ class KudosServicesImpl implements KudosServices {
         kudosRecipientRepository.deleteAll(recipients);
 
         kudosRepository.deleteById(id);
+
+        if (kudos.getPubliclyVisible()) {
+            // Search for and remove the Slack Kudos that the Check-Ins
+            // Integration posted.
+            removeSlackMessage(kudos);
+        }
     }
 
     @Override
@@ -441,11 +463,9 @@ class KudosServicesImpl implements KudosServices {
     }
 
     private void slackApprovedKudos(Kudos kudos) {
-        HttpResponse httpResponse =
-            slackPoster.post(converter.toSlackBlock(kudos));
-        if (httpResponse.status() != HttpStatus.OK) {
-            LOG.error("Unable to POST to Slack: " + httpResponse.reason());
-        }
+        slackSender.send(configuration.getApplication()
+                                      .getSlack().getKudosChannel(),
+                         converter.toSlackBlock(kudos));
     }
 
     private boolean hasAdministerKudosPermission() {
@@ -505,6 +525,15 @@ class KudosServicesImpl implements KudosServices {
             if (!proposed.contains(recipient.getMemberId())) {
                 kudosRecipientRepository.delete(recipient);
             }
+        }
+    }
+
+    private void removeSlackMessage(Kudos kudos) {
+        String ts = botSentKudosLocator.find(kudos);
+        if (ts != null) {
+            slackSender.delete(configuration.getApplication()
+                                            .getSlack().getKudosChannel(),
+                               ts);
         }
     }
 }
