@@ -82,6 +82,9 @@ public class CheckInsConfiguration {
 
             @NotBlank
             private String signingSecret;
+
+            @NotBlank
+            private String kudosChannel;
         }
     }
 }
