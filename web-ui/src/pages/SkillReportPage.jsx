@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 
 import { Button, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -54,26 +54,32 @@ const SkillReportPage = props => {
     processedQPs
   );
 
-  const handleSearch = async searchRequestDTO => {
-    let res = await reportSkills(searchRequestDTO, csrf);
-    let memberSkillsFound;
-    if (res && res.payload) {
-      memberSkillsFound =
-        !res.error && res.payload.data.teamMembers
-          ? res.payload.data.teamMembers
-          : undefined;
-    }
-    // Filter out skills of terminated members
-    memberSkillsFound = memberSkillsFound?.filter(memberSkill =>
-      memberIds.includes(memberSkill.id)
-    );
-    if (memberSkillsFound && memberIds) {
-      let newSort = sortMembersBySkill(memberSkillsFound);
-      setSearchResults(newSort);
-    } else {
-      setSearchResults([]);
-    }
-  };
+  useEffect(() => {
+    const handleSearch = async () => {
+      let memberSkillsFound = [];
+
+      if (searchSkills.length > 0) {
+        const searchRequestDTO = createRequestDTO(editedSearchRequest);
+        const res = await reportSkills(searchRequestDTO, csrf);
+        if (res && res.payload) {
+          memberSkillsFound =
+            !res.error && res.payload.data?.teamMembers
+              ? res.payload.data.teamMembers
+              : [];
+        }
+        // Filter out skills of terminated members
+        memberSkillsFound = memberSkillsFound.filter(memberSkill =>
+          memberIds?.includes(memberSkill.id)
+        );
+        memberSkillsFound = sortMembersBySkill(memberSkillsFound);
+      }
+
+      setSearchResults(memberSkillsFound);
+    };
+
+    handleSearch();
+  }, [searchSkills]);
+
 
   function skillsToSkillLevelDTO(skills) {
     return skills.map((skill, index) => {
@@ -124,26 +130,6 @@ const SkillReportPage = props => {
             />
           )}
         />
-        <div className="SkillsSearch-actions fullWidth">
-          <Button
-            onClick={() => {
-              if (!searchSkills.length) {
-                window.snackDispatch({
-                  type: UPDATE_TOAST,
-                  payload: {
-                    severity: 'error',
-                    toast: 'Must select a skill'
-                  }
-                });
-              } else {
-                handleSearch(createRequestDTO(editedSearchRequest));
-              }
-            }}
-            color="primary"
-          >
-            Run Search
-          </Button>
-        </div>
       </div>
       <SearchResults searchResults={searchResults} />
     </div>
