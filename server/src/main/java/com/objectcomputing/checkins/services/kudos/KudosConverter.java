@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.kudos;
 
-import com.objectcomputing.checkins.notifications.social_media.SlackSearch;
+import com.objectcomputing.checkins.services.slack.SlackSearch;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipientServices;
 import com.objectcomputing.checkins.services.kudos.kudos_recipient.KudosRecipient;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -22,10 +22,6 @@ import java.util.ArrayList;
 
 @Singleton
 public class KudosConverter {
-    private record InternalBlock(
-      List<LayoutBlock> blocks
-    ) {}
-
     private final MemberProfileServices memberProfileServices;
     private final KudosRecipientServices kudosRecipientServices;
     private final SlackSearch slackSearch;
@@ -61,9 +57,8 @@ public class KudosConverter {
             .elements(content).build();
         RichTextBlock richTextBlock = RichTextBlock.builder()
             .elements(List.of(element)).build();
-        InternalBlock block = new InternalBlock(List.of(richTextBlock));
         Gson mapper = GsonFactory.createSnakeCase();
-        return mapper.toJson(block);
+        return mapper.toJson(List.of(richTextBlock));
     }
 
     private RichTextSectionElement.TextStyle boldItalic() {

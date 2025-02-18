@@ -5,6 +5,8 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRep
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServicesImpl;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodServices;
 import com.objectcomputing.checkins.services.pulse.PulseServices;
+import com.objectcomputing.checkins.services.slack.kudos.KudosChannelReader;
+
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +22,18 @@ public class CheckServicesImpl implements CheckServices {
     private final FeedbackRequestRepository feedbackRequestRepository;
     private final PulseServices pulseServices;
     private final ReviewPeriodServices reviewPeriodServices;
+    private final KudosChannelReader kudosChannelReader;
 
     public CheckServicesImpl(FeedbackRequestServicesImpl feedbackRequestServices,
                              FeedbackRequestRepository feedbackRequestRepository,
                              PulseServices pulseServices,
-                             ReviewPeriodServices reviewPeriodServices) {
+                             ReviewPeriodServices reviewPeriodServices,
+                             KudosChannelReader kudosChannelReader) {
         this.feedbackRequestServices = feedbackRequestServices;
         this.feedbackRequestRepository = feedbackRequestRepository;
         this.pulseServices = pulseServices;
         this.reviewPeriodServices = reviewPeriodServices;
+        this.kudosChannelReader = kudosChannelReader;
     }
 
     @Override
@@ -43,6 +48,7 @@ public class CheckServicesImpl implements CheckServices {
         }
         pulseServices.notifyUsers(today);
         reviewPeriodServices.sendNotifications(today);
+        kudosChannelReader.readChannel();
         return true;
     }
 

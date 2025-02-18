@@ -234,7 +234,12 @@ const ManageKudosPage = () => {
             : (
               <div>
                 {approvedKudos.filter(filterApprovedKudos).map(k =>
-                  <KudosCard key={k.id} kudos={k}/>
+                  <KudosCard
+                    key={k.id}
+                    kudos={k}
+                    includeEdit
+                    onKudosAction={loadAndSetApprovedKudos}
+                  />
                 )}
               </div>
             )

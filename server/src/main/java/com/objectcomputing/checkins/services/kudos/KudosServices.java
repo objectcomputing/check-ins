@@ -13,6 +13,8 @@ public interface KudosServices {
 
     Kudos approve(Kudos kudos);
 
+    Kudos savePreapproved(KudosCreateDTO kudos);
+
     List<KudosResponseDTO> getRecent();
 
     KudosResponseDTO getById(UUID id);
