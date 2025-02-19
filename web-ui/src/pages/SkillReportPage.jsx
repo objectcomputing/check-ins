@@ -67,10 +67,6 @@ const SkillReportPage = props => {
               ? res.payload.data.teamMembers
               : [];
         }
-        // Filter out skills of terminated members
-        memberSkillsFound = memberSkillsFound.filter(memberSkill =>
-          memberIds?.includes(memberSkill.id)
-        );
         memberSkillsFound = sortMembersBySkill(memberSkillsFound);
       }
 
