@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.kudos;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
-import com.objectcomputing.checkins.services.SlackPosterReplacement;
+import com.objectcomputing.checkins.services.SlackSenderReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.KudosFixture;
 import com.objectcomputing.checkins.services.fixture.TeamFixture;
@@ -60,14 +60,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // when attempting to post public Kudos to Slack.
 @DisabledInNativeImage
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
-@Property(name = "replace.slackposter", value = StringUtils.TRUE)
+@Property(name = "replace.slacksender", value = StringUtils.TRUE)
 class KudosControllerTest extends TestContainersSuite implements KudosFixture, TeamFixture, RoleFixture {
     @Inject
     @Named(MailJetFactory.HTML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
-    private SlackPosterReplacement slackPoster;
+    private SlackSenderReplacement slackSender;
 
     @Inject
     @Client("/services/kudos")
@@ -110,7 +110,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
         message = "Kudos!";
         emailSender.reset();
-        slackPoster.reset();
+        slackSender.reset();
     }
 
     @ParameterizedTest
@@ -252,15 +252,16 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         );
 
         // Check the posted slack block
-        assertEquals(1, slackPoster.posted.size());
+        assertEquals(1, slackSender.sent.size());
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode posted = mapper.readTree(slackPoster.posted.get(0));
+        String channelId = checkInsConfiguration.getApplication()
+                                                .getSlack().getKudosChannel();
+        List<String> sent = slackSender.sent.get(channelId);
+        JsonNode posted = mapper.readTree(sent.get(0));
 
-        assertEquals(JsonNodeType.OBJECT, posted.getNodeType());
-        JsonNode blocks = posted.get("blocks");
-        assertEquals(JsonNodeType.ARRAY, blocks.getNodeType());
+        assertEquals(JsonNodeType.ARRAY, posted.getNodeType());
 
-        var iter = blocks.elements();
+        var iter = posted.elements();
         assertTrue(iter.hasNext());
         JsonNode block = iter.next();
 

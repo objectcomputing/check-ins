@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.pulseresponse;
+package com.objectcomputing.checkins.services.slack.pulseresponse;
 
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 
@@ -54,7 +54,7 @@ public class PulseSlackCommand {
 
                 return response.isOk();
             } catch(Exception ex) {
-                LOG.error(ex.toString());
+                LOG.error("PulseSlackCommand.send: " + ex.toString());
                 return false;
             }
         } else {
@@ -68,7 +68,7 @@ public class PulseSlackCommand {
             return IOUtils.readText(
                        new BufferedReader(pulseSlackBlocks.asReader()));
         } catch(Exception ex) {
-            LOG.error(ex.toString());
+            LOG.error("PulseSlackCommand.getSlackBlocks: " + ex.toString());
             return "";
         }
     }

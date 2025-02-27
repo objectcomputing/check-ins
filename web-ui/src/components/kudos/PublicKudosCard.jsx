@@ -89,7 +89,7 @@ const KudosCard = ({ kudos }) => {
     }
     const firstAndLast = `${member.firstName} ${member.lastName}`;
     if (!members.some((k) => k.id != member.id &&
-                             firstAndLast != `${k.firstName} ${k.lastName}`)) {
+                             firstAndLast == `${k.firstName} ${k.lastName}`)) {
       names.push(firstAndLast);
     }
     if (!members.some((k) => k.id != member.id &&
@@ -110,22 +110,32 @@ const KudosCard = ({ kudos }) => {
   };
 
   const linkNames = (kudos) => {
-    const components = [ kudos.message ];
-    for (let member of kudos.recipientMembers) {
-      const names = searchNames(member, kudos.recipientMembers);
-      for (let name of names) {
-        for (let i = 0; i < components.length; i++) {
-          const component = components[i];
-          if (typeof(component) === "string") {
-            const built = linkMember(member, name, component);
-            if (built.length > 1) {
-              components.splice(i, 1, ...built);
+    const lines = [];
+    let index = 0;
+    for (let line of kudos.message.split('\n')) {
+      const components = [ line ];
+      for (let member of kudos.recipientMembers) {
+        const names = searchNames(member, kudos.recipientMembers);
+        for (let name of names) {
+          for (let i = 0; i < components.length; i++) {
+            const component = components[i];
+            if (typeof(component) === "string") {
+              const built = linkMember(member, name, component);
+              if (built.length > 1) {
+                components.splice(i, 1, ...built);
+              }
             }
           }
         }
       }
+      lines.push(
+        <Typography key={kudos.id + "-" + index} variant="body1">
+            {components}
+        </Typography>
+      );
+      index++;
     }
-    return components;
+    return lines;
   };
 
   const multiTooltip = (num, list) => {
@@ -189,9 +199,9 @@ const KudosCard = ({ kudos }) => {
           subheaderTypographyProps={{variant:"subtitle1"}}
         />
         <CardContent>
-          <Typography variant="body1">
+          <>
             {linkNames(kudos)}
-          </Typography>
+          </>
           {kudos.recipientTeam && (
       <AvatarGroup max={12}
                    renderSurplus={(extra) => multiTooltip(
