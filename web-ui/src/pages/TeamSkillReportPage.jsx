@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 
 import { Autocomplete, Button, TextField, Typography } from '@mui/material';
 
@@ -72,33 +72,33 @@ const TeamSkillReportPage = () => {
     processedQPs
   );
 
-  const handleSearch = async searchRequestDTO => {
-    let res = await reportSkills(searchRequestDTO, csrf);
-    let memberSkillsFound;
-    if (res && res.payload) {
-      memberSkillsFound =
-        !res.error && res.payload.data.teamMembers
-          ? res.payload.data.teamMembers
-          : undefined;
-    }
-    if (memberSkillsFound && memberProfiles) {
-      // Filter the member skill down to only members that are not terminated.
-      memberSkillsFound = memberSkillsFound.filter(
-        mSkill => memberProfiles.find(member => member.id == mSkill.id)
-      );
+  useEffect(() => {
+    const handleSearch = async () => {
+      if (searchSkills.length > 0) {
+        const searchRequestDTO = createRequest(editedSearchRequest);
+        const res = await reportSkills(searchRequestDTO, csrf);
+        let memberSkillsFound;
+        if (res && res.payload) {
+          memberSkillsFound =
+            !res.error && res.payload.data.teamMembers
+              ? res.payload.data.teamMembers
+              : [];
+        }
 
-      setAllSearchResults(memberSkillsFound);
-      let membersSelected = memberSkillsFound.filter(mSkill =>
-        selectedMembers.some(member => member.id === mSkill.id)
-      );
-      let newSort = sortMembersBySkill(membersSelected);
-      setSearchResults(newSort);
-    } else {
-      setSearchResults([]);
-      setAllSearchResults([]);
-    }
-    setShowRadar(true);
-  };
+        setAllSearchResults(memberSkillsFound);
+        const membersSelected = memberSkillsFound.filter(mSkill =>
+          selectedMembers.some(member => member.id === mSkill.id)
+        );
+        setSearchResults(sortMembersBySkill(membersSelected));
+        setShowRadar(true);
+      } else {
+        setSearchResults([]);
+        setAllSearchResults([]);
+        setShowRadar(false);
+      }
+    };
+    handleSearch();
+  }, [selectedMembers, searchSkills]);
 
   function skillsToSkillLevel(skills) {
     return skills.map(skill => {
@@ -194,24 +194,6 @@ const TeamSkillReportPage = () => {
             />
           )}
         />
-        <Button
-          onClick={() => {
-            if (!searchSkills.length) {
-              window.snackDispatch({
-                type: UPDATE_TOAST,
-                payload: {
-                  severity: 'error',
-                  toast: 'Must select a skill'
-                }
-              });
-              return;
-            }
-            handleSearch(createRequest(editedSearchRequest));
-          }}
-          color="primary"
-        >
-          Run Search
-        </Button>
       </div>
       {showRadar && (
         <div>
