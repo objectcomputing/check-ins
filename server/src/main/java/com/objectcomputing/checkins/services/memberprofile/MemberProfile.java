@@ -155,7 +155,7 @@ public class MemberProfile {
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate lastSeen;
 
-    @Column(name="ignorebirthday")
+    @Column(name="ignore_birthday")
     @Schema(description = "flag indicating the member would like to have their birthday ignored")
     @Nullable
     private Boolean ignoreBirthday;
