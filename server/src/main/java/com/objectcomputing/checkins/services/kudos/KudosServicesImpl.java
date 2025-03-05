@@ -1,11 +1,14 @@
 package com.objectcomputing.checkins.services.kudos;
 
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
-import com.objectcomputing.checkins.notifications.social_media.SlackPoster;
+import com.objectcomputing.checkins.notifications.social_media.SlackSender;
+import com.objectcomputing.checkins.services.slack.SlackReader;
+import com.objectcomputing.checkins.services.slack.kudos.BotSentKudosLocator;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -22,13 +25,15 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.util.Util;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.transaction.annotation.Transactional;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import jakarta.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
@@ -55,12 +62,16 @@ class KudosServicesImpl implements KudosServices {
     private final CheckInsConfiguration checkInsConfiguration;
     private final RoleServices roleServices;
     private final MemberProfileServices memberProfileServices;
-    private final SlackPoster slackPoster;
+    private final SlackSender slackSender;
     private final KudosConverter converter;
+    private final BotSentKudosLocator botSentKudosLocator;
 
     private enum NotificationType {
         creation, approval
     }
+
+    @Inject
+    private CheckInsConfiguration configuration;
 
     KudosServicesImpl(KudosRepository kudosRepository,
                              KudosRecipientServices kudosRecipientServices,
@@ -72,8 +83,9 @@ class KudosServicesImpl implements KudosServices {
                              MemberProfileServices memberProfileServices,
                              @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              CheckInsConfiguration checkInsConfiguration,
-                             SlackPoster slackPoster,
-                             KudosConverter converter
+                             SlackSender slackSender,
+                             KudosConverter converter,
+                             BotSentKudosLocator botSentKudosLocator
                       ) {
         this.kudosRepository = kudosRepository;
         this.kudosRecipientServices = kudosRecipientServices;
@@ -85,39 +97,16 @@ class KudosServicesImpl implements KudosServices {
         this.currentUserServices = currentUserServices;
         this.emailSender = emailSender;
         this.checkInsConfiguration = checkInsConfiguration;
-        this.slackPoster = slackPoster;
+        this.slackSender = slackSender;
         this.converter = converter;
+        this.botSentKudosLocator = botSentKudosLocator;
     }
 
     @Override
     @Transactional
     @RequiredPermission(Permission.CAN_CREATE_KUDOS)
     public Kudos save(KudosCreateDTO kudosDTO) {
-        UUID senderId = kudosDTO.getSenderId();
-        if (memberProfileRetrievalServices.getById(senderId).isEmpty()) {
-            throw new BadArgException("Kudos sender %s does not exist".formatted(senderId));
-        }
-
-        if (kudosDTO.getTeamId() != null) {
-            UUID teamId = kudosDTO.getTeamId();
-            if (teamRepository.findById(teamId).isEmpty()) {
-                throw new BadArgException("Team %s does not exist".formatted(teamId));
-            }
-        }
-
-        if (kudosDTO.getRecipientMembers() == null || kudosDTO.getRecipientMembers().isEmpty()) {
-            throw new BadArgException("Kudos must contain at least one recipient");
-        }
-
-        Kudos kudos = new Kudos(kudosDTO);
-
-        Kudos savedKudos = kudosRepository.save(kudos);
-
-        for (MemberProfile recipient : kudosDTO.getRecipientMembers()) {
-            KudosRecipient kudosRecipient = new KudosRecipient(savedKudos.getId(), recipient.getId());
-            kudosRecipientServices.save(kudosRecipient);
-        }
-
+        Kudos savedKudos = saveCommon(kudosDTO, true);
         sendNotification(savedKudos, NotificationType.creation);
         return savedKudos;
     }
@@ -137,6 +126,91 @@ class KudosServicesImpl implements KudosServices {
 
         Kudos updated = kudosRepository.update(existingKudos);
         sendNotification(updated, NotificationType.approval);
+        return updated;
+    }
+
+    @Override
+    public Kudos savePreapproved(KudosCreateDTO kudos) {
+        Kudos savedKudos = saveCommon(kudos, false);
+        savedKudos.setDateApproved(LocalDate.now());
+        return kudosRepository.update(savedKudos);
+    }
+
+    @Override
+    public Kudos update(KudosUpdateDTO kudos) {
+        // Find the corresponding kudos and make sure we have permission.
+        final UUID kudosId = kudos.getId();
+        final Kudos existingKudos =
+            kudosRepository.findById(kudosId).orElseThrow(() ->
+            new BadArgException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
+
+        final MemberProfile currentUser = currentUserServices.getCurrentUser();
+        if (!currentUser.getId().equals(existingKudos.getSenderId()) &&
+            !hasAdministerKudosPermission()) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
+
+        if (kudos.getRecipientMembers() == null ||
+            kudos.getRecipientMembers().isEmpty()) {
+            throw new BadArgException(
+                          "Kudos must contain at least one recipient");
+        }
+
+        // Begin modifying the existing kudos to reflect desired changes.
+        final String originalMessage = existingKudos.getMessage();
+        existingKudos.setMessage(kudos.getMessage());
+
+        boolean existingPublic = existingKudos.getPubliclyVisible();
+        boolean proposedPublic = kudos.getPubliclyVisible();
+        boolean removePublicSlack = false;
+        if (existingPublic && !proposedPublic) {
+            removePublicSlack = true;
+            existingKudos.setDateApproved(null);
+        } else if ((!existingPublic && proposedPublic) ||
+                   (proposedPublic &&
+                    !originalMessage.equals(existingKudos.getMessage()))) {
+            // Clear the date approved when going from private to public or
+            // if public and the text changed, require approval again.
+            existingKudos.setDateApproved(null);
+        }
+
+        existingKudos.setPubliclyVisible(kudos.getPubliclyVisible());
+
+        List<KudosRecipient> recipients = kudosRecipientRepository
+                                              .findByKudosId(kudosId);
+        Set<UUID> proposed = kudos.getRecipientMembers()
+                                           .stream()
+                                           .map(r -> r.getId())
+                                           .collect(Collectors.toSet());
+        boolean different = (recipients.size() != proposed.size());
+        if (!different) {
+            Set<UUID> existing = recipients.stream()
+                                           .map(r -> r.getMemberId())
+                                           .collect(Collectors.toSet());
+            different = !existing.equals(proposed);
+        }
+
+        // First, update the Kudos so that we only change recipients if they
+        // are different and we were able to update the Kudos.
+        final Kudos updated = kudosRepository.update(existingKudos);
+
+        // Change recipients, if necessary.
+        if (different) {
+            updateRecipients(updated, recipients, proposed);
+        }
+
+        // The kudos has been updated.  Send notification to admin, if going
+        // from private to public.
+        if (!existingPublic && proposedPublic) {
+            sendNotification(updated, NotificationType.creation);
+        }
+
+        if (removePublicSlack) {
+            // Search for and remove the Slack Kudos that the Check-Ins
+            // Integration posted.
+            removeSlackMessage(existingKudos);
+        }
+
         return updated;
     }
 
@@ -172,16 +246,27 @@ class KudosServicesImpl implements KudosServices {
     }
 
     @Override
-    @RequiredPermission(Permission.CAN_ADMINISTER_KUDOS)
     public void delete(UUID id) {
         Kudos kudos = kudosRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(id)));
+
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        if (!currentUser.getId().equals(kudos.getSenderId()) &&
+            !hasAdministerKudosPermission()) {
+            throw new PermissionException(NOT_AUTHORIZED_MSG);
+        }
 
         // Delete all KudosRecipients associated with this kudos
         List<KudosRecipient> recipients = kudosRecipientServices.getAllByKudosId(kudos.getId());
         kudosRecipientRepository.deleteAll(recipients);
 
         kudosRepository.deleteById(id);
+
+        if (kudos.getPubliclyVisible()) {
+            // Search for and remove the Slack Kudos that the Check-Ins
+            // Integration posted.
+            removeSlackMessage(kudos);
+        }
     }
 
     @Override
@@ -248,7 +333,8 @@ class KudosServicesImpl implements KudosServices {
             Kudos relatedKudos = kudosRepository.findById(kudosId).orElseThrow(() ->
                     new NotFoundException(KUDOS_DOES_NOT_EXIST_MSG.formatted(kudosId)));
 
-            if (relatedKudos.getDateApproved() != null) {
+            if (!relatedKudos.getPubliclyVisible() ||
+                relatedKudos.getDateApproved() != null) {
                 kudosList.add(constructKudosResponseDTO(relatedKudos));
             }
         });
@@ -377,14 +463,77 @@ class KudosServicesImpl implements KudosServices {
     }
 
     private void slackApprovedKudos(Kudos kudos) {
-        HttpResponse httpResponse =
-            slackPoster.post(converter.toSlackBlock(kudos));
-        if (httpResponse.status() != HttpStatus.OK) {
-            LOG.error("Unable to POST to Slack: " + httpResponse.reason());
-        }
+        slackSender.send(configuration.getApplication()
+                                      .getSlack().getKudosChannel(),
+                         converter.toSlackBlock(kudos));
     }
 
     private boolean hasAdministerKudosPermission() {
         return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_KUDOS);
+    }
+
+    private Kudos saveCommon(KudosCreateDTO kudosDTO, boolean verifyAndNotify) {
+        UUID senderId = kudosDTO.getSenderId();
+        if (memberProfileRetrievalServices.getById(senderId).isEmpty()) {
+            throw new BadArgException("Kudos sender %s does not exist".formatted(senderId));
+        }
+
+        if (kudosDTO.getTeamId() != null) {
+            UUID teamId = kudosDTO.getTeamId();
+            if (teamRepository.findById(teamId).isEmpty()) {
+                throw new BadArgException("Team %s does not exist".formatted(teamId));
+            }
+        }
+
+        if (kudosDTO.getRecipientMembers() == null || kudosDTO.getRecipientMembers().isEmpty()) {
+            throw new BadArgException("Kudos must contain at least one recipient");
+        }
+
+        Kudos savedKudos = kudosRepository.save(new Kudos(kudosDTO));
+
+        for (MemberProfile recipient : kudosDTO.getRecipientMembers()) {
+            KudosRecipient kudosRecipient = new KudosRecipient(savedKudos.getId(), recipient.getId());
+            if (verifyAndNotify) {
+                // Going through the service verifies the sender and recipient
+                // and sends email notification after saving.
+                kudosRecipientServices.save(kudosRecipient);
+            } else {
+                // This does none of that and just stores it in the database.
+                kudosRecipientRepository.save(kudosRecipient);
+            }
+        }
+
+        return savedKudos;
+    }
+
+    private void updateRecipients(Kudos updated,
+                                  List<KudosRecipient> recipients,
+                                  Set<UUID> proposed) {
+        // Add the new recipients.
+        Set<UUID> existing = recipients.stream()
+                                       .map(r -> r.getMemberId())
+                                       .collect(Collectors.toSet());
+        for (UUID id : proposed) {
+            if (!existing.contains(id)) {
+                kudosRecipientServices.save(
+                    new KudosRecipient(updated.getId(), id));
+            }
+        }
+
+        // Remove any that are no longer designated as recipients.
+        for (KudosRecipient recipient : recipients) {
+            if (!proposed.contains(recipient.getMemberId())) {
+                kudosRecipientRepository.delete(recipient);
+            }
+        }
+    }
+
+    private void removeSlackMessage(Kudos kudos) {
+        String ts = botSentKudosLocator.find(kudos);
+        if (ts != null) {
+            slackSender.delete(configuration.getApplication()
+                                            .getSlack().getKudosChannel(),
+                               ts);
+        }
     }
 }

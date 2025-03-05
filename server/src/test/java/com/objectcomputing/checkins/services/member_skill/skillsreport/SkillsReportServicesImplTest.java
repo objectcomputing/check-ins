@@ -108,6 +108,7 @@ class SkillsReportServicesImplTest extends TestContainersSuite
         MemberProfile member2 = createASecondDefaultMemberProfile();
         MemberProfile member3 = createAThirdDefaultMemberProfile();
         MemberProfile member4 = createADefaultMemberProfileForPdl(member1);
+        MemberProfile member5 = createAPastTerminatedMemberProfile();
 
         final UUID skillId1 = skill1.getId();
         final UUID skillId2 = skill2.getId();
@@ -127,6 +128,12 @@ class SkillsReportServicesImplTest extends TestContainersSuite
         final MemberSkill ms7 = createMemberSkill(member4, skill1, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
         final MemberSkill ms8 = createMemberSkill(member4, skill2, SkillLevel.INTERMEDIATE_LEVEL, LocalDate.now());
         final MemberSkill ms9 = createMemberSkill(member4, skill4, SkillLevel.EXPERT_LEVEL, LocalDate.now());
+
+        // Skills for the terminated member
+        createMemberSkill(member5, skill1, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        createMemberSkill(member5, skill2, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        createMemberSkill(member5, skill3, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
+        createMemberSkill(member5, skill4, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
 
         // List of skills required in first request
         final SkillLevelDTO dto1 = new SkillLevelDTO();

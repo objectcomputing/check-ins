@@ -27,7 +27,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
             "employeeId, startDate, " +
             "PGP_SYM_DECRYPT(cast(bioText as bytea), '${aes.key}') as bioText, " +
-            "supervisorid, terminationDate, birthDate, voluntary, excluded, last_seen " +
+            "supervisorid, terminationDate, birthDate, voluntary, excluded, last_seen, ignore_birthday " +
             "FROM \"member_profile\" mp " +
             "WHERE  (:workEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.workEmail as bytea), '${aes.key}') = :workEmail) ",
             nativeQuery = true)
@@ -44,7 +44,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
             "employeeId, startDate, " +
             "PGP_SYM_DECRYPT(cast(bioText as bytea), '${aes.key}') as bioText, " +
-            "supervisorid, terminationDate, birthDate, voluntary, excluded, last_seen " +
+            "supervisorid, terminationDate, birthDate, voluntary, excluded, last_seen, ignore_birthday " +
             "FROM \"member_profile\" mp " +
             "WHERE (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName) " +
             "AND (:middleName IS NULL OR PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') = :middleName) " +
@@ -72,12 +72,12 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     List<String> findWorkEmailByIdIn(Set<String> ids);
 
     @Query(value = "WITH RECURSIVE subordinate AS (SELECT " +
-    "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, last_seen, 0 as level " +
+    "id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, last_seen, ignore_birthday, 0 as level " +
     "FROM member_profile " +
     "WHERE id = :id and terminationdate is NULL " +
     "   UNION ALL " +
     "SELECT " +
-    "e.id, e.firstname, e.middlename, e.lastname, e.suffix, e.title, e.pdlid, e.location, e.workemail, e.employeeid, e.startdate, e.biotext, e.supervisorid, e.terminationdate, e.birthdate, e.voluntary, e.excluded, e.last_seen, level + 1 " +
+    "e.id, e.firstname, e.middlename, e.lastname, e.suffix, e.title, e.pdlid, e.location, e.workemail, e.employeeid, e.startdate, e.biotext, e.supervisorid, e.terminationdate, e.birthdate, e.voluntary, e.excluded, e.last_seen, e.ignore_birthday, level + 1 " +
     "FROM member_profile e " +
     "JOIN subordinate s " +
     "ON s.supervisorid = e.id " +
@@ -96,7 +96,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     "PGP_SYM_DECRYPT(cast(s.workemail as bytea), '${aes.key}') as workemail, " +
     "s.employeeid, s.startdate, " +
     "PGP_SYM_DECRYPT(cast(s.biotext as bytea), '${aes.key}') as biotext, " +
-    "s.supervisorid, s.terminationdate, s.birthdate, s.voluntary, s.excluded, s.last_seen, " +
+    "s.supervisorid, s.terminationdate, s.birthdate, s.voluntary, s.excluded, s.last_seen, s.ignore_birthday, " +
     "s.level " +
     "FROM subordinate s " +
     "WHERE s.id <> :id " +
@@ -106,11 +106,11 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     @Query(
             value = """
                     WITH RECURSIVE subordinate AS (
-                        SELECT id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, last_seen, 0 as level
+                        SELECT id, firstname, middlename, lastname, suffix, title, pdlid, location, workemail, employeeid, startdate, biotext, supervisorid, terminationdate, birthdate, voluntary, excluded, last_seen, ignore_birthday, 0 as level
                             FROM member_profile
                             WHERE id = :id and terminationdate is NULL
                         UNION ALL
-                            SELECT e.id, e.firstname, e.middlename, e.lastname, e.suffix, e.title, e.pdlid, e.location, e.workemail, e.employeeid, e.startdate, e.biotext, e.supervisorid, e.terminationdate, e.birthdate, e.voluntary, e.excluded, e.last_seen, level + 1
+                            SELECT e.id, e.firstname, e.middlename, e.lastname, e.suffix, e.title, e.pdlid, e.location, e.workemail, e.employeeid, e.startdate, e.biotext, e.supervisorid, e.terminationdate, e.birthdate, e.voluntary, e.excluded, e.last_seen, e.ignore_birthday, level + 1
                                 FROM member_profile AS e JOIN subordinate AS s ON s.id = e.supervisorid
                                 WHERE e.terminationdate is NULL
                     )
@@ -126,7 +126,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
                         PGP_SYM_DECRYPT(cast(s.workemail as bytea), '${aes.key}') as workemail,
                         s.employeeid, s.startdate,
                         PGP_SYM_DECRYPT(cast(s.biotext as bytea), '${aes.key}') as biotext,
-                        s.supervisorid, s.terminationdate, s.birthdate, s.voluntary, s.excluded, s.last_seen,
+                        s.supervisorid, s.terminationdate, s.birthdate, s.voluntary, s.excluded, s.last_seen, s.ignore_birthday, 
                         s.level
                     FROM subordinate s
                     WHERE s.id <> :id

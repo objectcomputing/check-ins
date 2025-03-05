@@ -103,7 +103,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
                 null, "Parks Director", null, "Pawnee, Indiana",
                 "ron@objectcomputing.com", "mr-ron-swanson",
                 LocalDate.now(), "enjoys woodworking, breakfast meats, and saxophone jazz",
-                null, null, null, false, false, null));
+                null, null, null, false, false, null, false));
     }
 
     default MemberProfile createASecondDefaultRecipient() {
@@ -111,7 +111,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
                 null, "Parks Deputy Director", null, "Pawnee, Indiana",
                 "leslie@objectcomputing.com", "ms-leslie-knope",
                 LocalDate.now(), "proud member of numerous action committees",
-                null, null, null, false, false, null));
+                null, null, null, false, false, null, false));
     }
 
     default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {

@@ -38,7 +38,7 @@ public class BirthDayServicesImpl implements BirthDayServices{
                 if (month != null) {
                     memberProfileAll = memberProfileAll
                             .stream()
-                            .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null)
+                            .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null && (member.getIgnoreBirthday() == null || member.getIgnoreBirthday() == Boolean.FALSE))
                             .toList();
                 }
             }
@@ -48,7 +48,7 @@ public class BirthDayServicesImpl implements BirthDayServices{
                 if (day != null) {
                     memberProfileAll = memberProfiles
                             .stream()
-                            .filter(member -> member.getBirthDate() != null && day.equals(member.getBirthDate().getDayOfMonth()) && member.getTerminationDate() == null)
+                            .filter(member -> member.getBirthDate() != null && day.equals(member.getBirthDate().getDayOfMonth()) && member.getTerminationDate() == null && (member.getIgnoreBirthday() == null || member.getIgnoreBirthday() == Boolean.FALSE))
                             .toList();
                 }
             }
@@ -63,7 +63,7 @@ public class BirthDayServicesImpl implements BirthDayServices{
         LocalDate today = LocalDate.now();
         List<MemberProfile> results = memberProfiles
                 .stream()
-                .filter(member -> member.getBirthDate() != null && today.getMonthValue() == member.getBirthDate().getMonthValue())
+                .filter(member -> member.getBirthDate() != null && today.getMonthValue() == member.getBirthDate().getMonthValue() && (member.getIgnoreBirthday() == null || member.getIgnoreBirthday() == Boolean.FALSE))
                 .toList();
         return profileToBirthDateResponseDto(results);
     }

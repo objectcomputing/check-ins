@@ -20,7 +20,10 @@ import {
   selectSupervisorHierarchyIds,
   selectSubordinates,
   selectIsSubordinateOfCurrentUser,
-  selectHasReportPermission
+  selectHasReportPermission,
+  selectActiveOrInactiveProfile,
+  selectCanEditAllOrganizationMembers,
+  selectCanViewTerminatedMembers,
 } from './selectors';
 
 describe('Selectors', () => {
@@ -1524,5 +1527,156 @@ describe('Selectors', () => {
     };
 
     expect(selectHasReportPermission(testState)).toBe(false);
+  });
+
+  it("selectCanEditAllOrganizationMembers should return false when user does not have 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanEditAllOrganizationMembers(testState)).toBe(false);
+  });
+
+  it("selectCanEditAllOrganizationMembers should return true when user has 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanEditAllOrganizationMembers(testState)).toBe(true);
+  });
+
+  it("selectCanViewTerminatedMembers should return false when user does not have 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' or 'CAN_VIEW_TERMINATED_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanViewTerminatedMembers(testState)).toBe(false);
+  });
+
+  it("selectCanViewTerminatedMembers should return true when user has 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' or 'CAN_VIEW_TERMINATED_MEMBERS' permissions", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+    const otherTestState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_TERMINATED_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+        ]
+      }
+    };
+
+    expect(selectCanViewTerminatedMembers(testState)).toBe(true);
+    expect(selectCanViewTerminatedMembers(otherTestState)).toBe(true);
+  });
+
+  it('selectActiveOrInactiveProfile should a profile if active or inactive', () => {
+    const activeTestMember = {
+      id: 1,
+      bioText: 'foo',
+      employeeId: 11,
+      name: 'A Person',
+      firstName: 'A',
+      lastName: 'PersonA',
+      location: 'St Louis',
+      title: 'engineer',
+      workEmail: 'employee@sample.com',
+      pdlId: 9,
+      startDate: [2012, 9, 29],
+    };
+    const inactiveTestMember = {
+      id: 2,
+      bioText: 'foo',
+      employeeId: 12,
+      name: 'B Person',
+      firstName: 'B',
+      lastName: 'PersonB',
+      location: 'St Louis',
+      title: 'engineer',
+      workEmail: 'employee@sample.com',
+      pdlId: 9,
+      startDate: [2012, 9, 29],
+      terminationDate: [2013, 9, 29],
+    };
+    /** @type MemberProfile[] */
+    const testActiveMemberProfiles = [
+      activeTestMember,
+      {
+        id: 3,
+        bioText: 'foo',
+        employeeId: 13,
+        name: 'C Person',
+        firstName: 'C',
+        lastName: 'PersonC',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: 9,
+        startDate: [2012, 9, 29],
+      }
+    ];
+    /** @type MemberProfile[] */
+    const testInactiveMemberProfiles = [
+      inactiveTestMember,
+      {
+        id: 4,
+        bioText: 'foo',
+        employeeId: 13,
+        name: 'D Person',
+        firstName: 'D',
+        lastName: 'PersonD',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: 9,
+        startDate: [2012, 9, 29],
+        terminationDate: [2013, 9, 29],
+      }
+    ];
+    const testState = {
+      memberProfiles: testActiveMemberProfiles,
+      terminatedMembers: testInactiveMemberProfiles,
+    };
+
+    expect(selectActiveOrInactiveProfile(testState, activeTestMember.id)).toEqual(activeTestMember);
+    expect(selectActiveOrInactiveProfile(testState, inactiveTestMember.id)).toEqual(inactiveTestMember);
   });
 });

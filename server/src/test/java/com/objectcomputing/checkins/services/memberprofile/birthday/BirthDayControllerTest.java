@@ -81,4 +81,23 @@ class BirthDayControllerTest extends TestContainersSuite implements MemberProfil
         assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
 
     }
+
+    @Test
+    void testGETFindByValueDoesNotIncludeIgnoredBirthdays() {
+
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        assignAdminRole(memberProfileOfAdmin);
+
+        MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
+        MemberProfile ignoredMember = createUserWithIgnoredBirthday();
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?month=%s", memberProfile.getBirthDate().getMonth().toString())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<List<BirthDayResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(BirthDayResponseDTO.class));
+
+        assertEquals(1, response.body().size());
+        assertEquals(memberProfile.getId(), response.body().get(0).getUserId());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
 }

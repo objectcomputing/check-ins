@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.permissions.Permission;
@@ -86,7 +87,7 @@ public class CurrentUserController {
         dto.setPermissions(permissions);
         dto.setRole(roles);
         dto.setImageUrl(imageUrl);
-        dto.setMemberProfile(entity);
+        dto.setMemberProfile(MemberProfileController.fromEntity(entity));
         return dto;
     }
 }

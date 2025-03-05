@@ -327,8 +327,13 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         case ReviewStatus.OPEN:
           onPeriodSelected(id);
           break;
+        case ReviewStatus.CLOSED:
+          if (mode === selfReviewMode) {
+            onPeriodSelected(id);
+          }
+          break;
         default:
-          // We do nothing if the status is CLOSED or UNKNOWN.
+          // We do nothing if the status is UNKNOWN.
           break;
       }
     },

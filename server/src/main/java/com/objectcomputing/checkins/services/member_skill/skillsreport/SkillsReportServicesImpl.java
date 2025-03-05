@@ -92,7 +92,8 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                 throw new BadArgException("Invalid requested skill ID");
             }
 
-            final List<MemberSkill> temp = memberSkillRepo.findBySkillid(skill.getId());
+            final List<MemberSkill> temp =
+                memberSkillRepo.activeMemberSkills(skill.getId().toString());
             if (skill.getLevel() != null && !temp.isEmpty()) {
                 for (MemberSkill memSkill : temp) {
                     if (memSkill.getSkilllevel() != null && isSkillLevelSatisfied(memSkill.getSkilllevel(), skill.getLevel())) {
