@@ -58,7 +58,7 @@ public class MemberProfileController {
     public List<MemberProfileResponseDTO> getSupervisorsForId(UUID id) {
         return memberProfileServices.getSupervisorsForId(id)
                 .stream()
-                .map(this::fromEntity)
+                .map(MemberProfileController::fromEntity)
                 .toList();
     }
 
@@ -83,7 +83,7 @@ public class MemberProfileController {
                                                       @QueryValue(value = "terminated", defaultValue = "false") Boolean terminated) {
         return memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId, terminated)
                 .stream()
-                .map(this::fromEntity)
+                .map(MemberProfileController::fromEntity)
                 .toList();
     }
 
@@ -128,7 +128,7 @@ public class MemberProfileController {
         return URI.create("/member-profiles/" + id);
     }
 
-    private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
+    public static MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
         dto.setFirstName(entity.getFirstName());
