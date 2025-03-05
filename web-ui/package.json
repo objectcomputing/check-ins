@@ -1,6 +1,6 @@
 {
   "name": "web-ui",
-  "version": "0.8.14",
+  "version": "0.8.15",
   "private": true,
   "type": "module",
   "dependencies": {
@@ -24,7 +24,7 @@
     "canvas-confetti": "^1.6.0",
     "date-fns": "^2.24.0",
     "dayjs": "^1.11.11",
-    "dompurify": "^3.1.0",
+    "dompurify": "^3.2.4",
     "fuse.js": "^6.4.6",
     "html-react-parser": "^5.1.12",
     "isomorphic-fetch": "^3.0.0",

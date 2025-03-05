@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 export const selectMemberProfiles = state => state.memberProfiles || [];
-export const selectTerminatedMembers = state => state.terminatedMembers;
+export const selectTerminatedMembers = state => state.terminatedMembers || [];
 export const selectMemberSkills = state => state.memberSkills || [];
 export const selectSkills = state => state.skills || [];
 export const selectTeamMembers = state => state.teamMembers;
@@ -242,6 +242,14 @@ export const selectCanEditAllOrganizationMembers = hasPermission(
   'CAN_EDIT_ALL_ORGANIZATION_MEMBERS',
 );
 
+export const selectCanViewTerminatedMembers = createSelector(
+    selectCanEditAllOrganizationMembers,
+    hasPermission(
+        'CAN_VIEW_TERMINATED_MEMBERS'
+    ),
+    (canEdit, canView) => canEdit || canView
+);
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   userProfile =>
@@ -325,6 +333,13 @@ export const selectProfile = createSelector(
   selectProfileMap,
   (state, profileId) => profileId,
   (profileMap, profileId) => profileMap[profileId]
+);
+
+export const selectActiveOrInactiveProfile = createSelector(
+  selectProfileMap,
+  selectProfileMapForTerminatedMembers,
+  (state, profileId) => profileId,
+  (profileMap, termedProfileMap, profileId) => profileMap[profileId] || termedProfileMap[profileId]
 );
 
 export const selectSkill = createSelector(

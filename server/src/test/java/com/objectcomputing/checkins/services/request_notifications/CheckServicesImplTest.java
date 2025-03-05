@@ -13,6 +13,7 @@ import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
+import com.objectcomputing.checkins.services.SlackReaderReplacement;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,10 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 @Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
+@Property(name = "replace.slackreader", value = StringUtils.TRUE)
 class CheckServicesImplTest extends TestContainersSuite
                             implements FeedbackTemplateFixture, FeedbackRequestFixture, MemberProfileFixture, RoleFixture {
     @Inject
     CurrentUserServicesReplacement currentUserServices;
+
+    @Inject
+    private SlackReaderReplacement slackReader;
 
     @Inject
     @Named(MailJetFactory.MJML_FORMAT)

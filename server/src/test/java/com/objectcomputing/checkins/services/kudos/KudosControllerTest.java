@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.kudos;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.notifications.email.MailJetFactory;
 import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
-import com.objectcomputing.checkins.services.SlackPosterReplacement;
+import com.objectcomputing.checkins.services.SlackSenderReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.KudosFixture;
 import com.objectcomputing.checkins.services.fixture.TeamFixture;
@@ -41,6 +41,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,14 +60,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // when attempting to post public Kudos to Slack.
 @DisabledInNativeImage
 @Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
-@Property(name = "replace.slackposter", value = StringUtils.TRUE)
+@Property(name = "replace.slacksender", value = StringUtils.TRUE)
 class KudosControllerTest extends TestContainersSuite implements KudosFixture, TeamFixture, RoleFixture {
     @Inject
     @Named(MailJetFactory.HTML_FORMAT)
     private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
-    private SlackPosterReplacement slackPoster;
+    private SlackSenderReplacement slackSender;
 
     @Inject
     @Client("/services/kudos")
@@ -79,6 +80,8 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
 
     private String message;
     private MemberProfile sender;
+    private MemberProfile recipient;
+    private MemberProfile other;
     private MemberProfile admin;
     private UUID senderId;
     private String senderWorkEmail;
@@ -94,18 +97,20 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         senderId = sender.getId();
         senderWorkEmail = sender.getWorkEmail();
 
-        MemberProfile recipient = createASecondDefaultMemberProfile();
+        recipient = createASecondDefaultMemberProfile();
         recipientMembers = List.of(recipient);
 
         admin = createAThirdDefaultMemberProfile();
         assignAdminRole(admin);
+
+        other = createAnotherSupervisor();
 
         Team team = createDefaultTeam();
         teamId = team.getId();
 
         message = "Kudos!";
         emailSender.reset();
-        slackPoster.reset();
+        slackSender.reset();
     }
 
     @ParameterizedTest
@@ -115,7 +120,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
             "true, false",
             "true, true"
     })
-    void testCreateKudos(boolean supplyTeam, boolean publiclyVisible) {
+    Kudos testCreateKudos(boolean supplyTeam, boolean publiclyVisible) {
         KudosCreateDTO kudosCreateDTO = new KudosCreateDTO(
                 message,
                 senderId,
@@ -127,7 +132,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         HttpRequest<KudosCreateDTO> request = HttpRequest.POST("/", kudosCreateDTO).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpResponse<Kudos> httpResponse = client.exchange(request, Kudos.class);
 
-        Kudos kudos = httpResponse.body();
+        final Kudos kudos = httpResponse.body();
         assertEquals(message, kudos.getMessage());
         assertEquals(publiclyVisible, kudos.getPubliclyVisible());
         assertEquals(senderId, kudos.getSenderId());
@@ -164,6 +169,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
                     emailSender.events.getFirst()
             );
         }
+        return kudos;
     }
 
     @Test
@@ -228,7 +234,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         assertNull(kudos.getDateApproved());
         KudosRecipient recipient = createKudosRecipient(kudos.getId(), recipientMembers.getFirst().getId());
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Kudos> response = client.exchange(request, Kudos.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -246,15 +252,16 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         );
 
         // Check the posted slack block
-        assertEquals(1, slackPoster.posted.size());
+        assertEquals(1, slackSender.sent.size());
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode posted = mapper.readTree(slackPoster.posted.get(0));
+        String channelId = checkInsConfiguration.getApplication()
+                                                .getSlack().getKudosChannel();
+        List<String> sent = slackSender.sent.get(channelId);
+        JsonNode posted = mapper.readTree(sent.get(0));
 
-        assertEquals(JsonNodeType.OBJECT, posted.getNodeType());
-        JsonNode blocks = posted.get("blocks");
-        assertEquals(JsonNodeType.ARRAY, blocks.getNodeType());
+        assertEquals(JsonNodeType.ARRAY, posted.getNodeType());
 
-        var iter = blocks.elements();
+        var iter = posted.elements();
         assertTrue(iter.hasNext());
         JsonNode block = iter.next();
 
@@ -298,7 +305,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         UUID nonExistentKudosId = UUID.randomUUID();
         kudos.setId(nonExistentKudosId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -310,7 +317,7 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testApproveAlreadyApprovedKudos() {
         Kudos kudos = createApprovedKudos(senderId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -322,11 +329,10 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testApproveKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        final HttpRequest<Kudos> request = HttpRequest.PUT("", kudos).basicAuth(senderWorkEmail, MEMBER_ROLE);
+        final HttpRequest<Kudos> request = HttpRequest.PUT("/approve", kudos).basicAuth(senderWorkEmail, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("Forbidden", responseException.getMessage());
         assertEquals(0, emailSender.events.size());
     }
 
@@ -562,10 +568,114 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
     void testDeleteKudosWithoutAdministerPermission() {
         Kudos kudos = createADefaultKudos(senderId);
 
-        HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s", kudos.getId())).basicAuth(senderWorkEmail, MEMBER_ROLE);
+        HttpRequest<Object> request = HttpRequest.DELETE(String.format("/%s", kudos.getId())).basicAuth(recipient.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.exchange(request));
 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("Forbidden", responseException.getMessage());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "false, false",
+            "false, true",
+            "true, false",
+            "true, true"
+    })
+    void testUpdateKudos(boolean supplyTeam, boolean publiclyVisible) {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(supplyTeam, publiclyVisible);
+
+        // Set of changes to make.
+        final String message = "New kudos message";
+        final boolean visible = !publiclyVisible;
+        final List<MemberProfile> members = new ArrayList<>();
+        members.add(other);
+        if (!supplyTeam || publiclyVisible) {
+            // On some tests, retain the original recipient.
+            members.add(recipient);
+        }
+
+        // Create the DTO
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(), message,
+                                                     visible, members);
+
+        // Make the call
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed)
+                       .basicAuth(senderWorkEmail, MEMBER_ROLE);
+        final HttpResponse<Kudos> response = client.exchange(request,
+                                                             Kudos.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        final Kudos updated = response.body();
+        assertEquals(message, updated.getMessage());
+        assertEquals(visible, updated.getPubliclyVisible());
+        assertNull(updated.getDateApproved());
+
+        final List<KudosRecipient> kudosRecipients =
+                    findKudosRecipientByKudosId(updated.getId());
+        assertEquals(members.size(), kudosRecipients.size());
+        for (MemberProfile member : members) {
+            boolean found = false;
+            for (KudosRecipient recipient : kudosRecipients) {
+                if (recipient.getMemberId().equals(member.getId())) {
+                    found = true;
+                }
+            }
+            assertTrue(found);
+        }
+    }
+
+    @Test
+    void testUpdateKudosNoPermission() {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(false, true);
+
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(),
+                                                     kudos.getMessage(),
+                                                     false, recipientMembers);
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed).basicAuth(other.getWorkEmail(),
+                                                    MEMBER_ROLE);
+        final HttpClientResponseException responseException =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.exchange(request, Kudos.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    @Test
+    void testUpdateKudosAdminPermission() {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(false, true);
+
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(),
+                                                     kudos.getMessage(),
+                                                     false, recipientMembers);
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed).basicAuth(admin.getWorkEmail(),
+                                                    ADMIN_ROLE);
+        final HttpResponse<Kudos> response = client.exchange(request,
+                                                             Kudos.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testUpdateKudosNoMembers() {
+        // Create a kudos
+        final Kudos kudos = testCreateKudos(false, true);
+
+        final List<MemberProfile> members = new ArrayList<>();
+        KudosUpdateDTO proposed = new KudosUpdateDTO(kudos.getId(),
+                                                     kudos.getMessage(),
+                                                     false, members);
+        final HttpRequest<KudosUpdateDTO> request =
+            HttpRequest.PUT("", proposed).basicAuth(senderWorkEmail,
+                                                    MEMBER_ROLE);
+        final HttpClientResponseException responseException =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.exchange(request, Kudos.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 }

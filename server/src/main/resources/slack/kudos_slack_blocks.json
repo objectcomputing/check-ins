@@ -1,0 +1,43 @@
+[
+  {
+    "type": "section",
+    "block_id": "%s",
+    "text": {
+      "type": "plain_text",
+      "text": "Would you like to automatically add this Kudos to Check-Ins?"
+    }
+  },
+  {
+    "type": "section",
+    "text": {
+      "type": "plain_text",
+      "text": "%s"
+    }
+  },
+  {
+    "type": "divider"
+  },
+  {
+    "type": "actions",
+    "elements": [
+      {
+        "type": "button",
+        "action_id": "yes_button",
+        "text": {
+          "type": "plain_text",
+          "text": "Yes"
+        },
+        "value": "yes"
+      },
+      {
+        "type": "button",
+        "action_id": "no_button",
+        "text": {
+          "type": "plain_text",
+          "text": "No"
+        },
+        "value": "no"
+      }
+    ]
+  }
+]

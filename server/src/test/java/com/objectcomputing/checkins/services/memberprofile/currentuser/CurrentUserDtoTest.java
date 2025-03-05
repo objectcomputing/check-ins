@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
 import io.micronaut.validation.validator.Validator;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -54,7 +55,7 @@ class CurrentUserDtoTest extends TestContainersSuite {
         assertEquals("some.last.name", dto.getLastName());
         dto.setName(dto.getFirstName() + ' ' + dto.getLastName());
 
-        dto.setMemberProfile(new MemberProfile());
+        dto.setMemberProfile(new MemberProfileResponseDTO());
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
