@@ -155,6 +155,11 @@ public class MemberProfile {
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
     private LocalDate lastSeen;
 
+    @Column(name="ignorebirthday")
+    @Schema(description = "flag indicating the member would like to have their birthday ignored")
+    @Nullable
+    private Boolean ignoreBirthday;
+
     public MemberProfile(@NotBlank String firstName,
                          @Nullable String middleName,
                          @NotBlank String lastName,
@@ -171,9 +176,10 @@ public class MemberProfile {
                          @Nullable LocalDate birthDate,
                          @Nullable Boolean voluntary,
                          @Nullable Boolean excluded,
-                         @Nullable LocalDate lastSeen) {
+                         @Nullable LocalDate lastSeen,
+                         @Nullable Boolean ignoreBirthday) {
         this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded, lastSeen);
+                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded, lastSeen, ignoreBirthday);
     }
 
     public MemberProfile(UUID id,
@@ -193,7 +199,8 @@ public class MemberProfile {
                          @Nullable LocalDate birthDate,
                          @Nullable Boolean voluntary,
                          @Nullable Boolean excluded,
-                         @Nullable LocalDate lastSeen) {
+                         @Nullable LocalDate lastSeen,
+                         @Nullable Boolean ignoreBirthday) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -212,6 +219,7 @@ public class MemberProfile {
         this.voluntary = voluntary;
         this.excluded = excluded;
         this.lastSeen = lastSeen;
+        this.ignoreBirthday = ignoreBirthday;
     }
 
     public MemberProfile() {
@@ -246,14 +254,15 @@ public class MemberProfile {
                 Objects.equals(birthDate, that.birthDate) &&
                 Objects.equals(voluntary, that.voluntary) &&
                 Objects.equals(excluded, that.excluded) &&
-                Objects.equals(lastSeen, that.lastSeen);
+                Objects.equals(lastSeen, that.lastSeen) &&
+                Objects.equals(ignoreBirthday, that.ignoreBirthday);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
                 workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate,
-                voluntary, excluded, lastSeen);
+                voluntary, excluded, lastSeen, ignoreBirthday);
     }
 
     @Override
@@ -274,6 +283,7 @@ public class MemberProfile {
                 ", voluntary=" + voluntary +
                 ", excluded=" + excluded +
                 ", lastSeen=" + lastSeen +
+                ", ignoreBirthday=" + ignoreBirthday +
                 '}';
     }
 }

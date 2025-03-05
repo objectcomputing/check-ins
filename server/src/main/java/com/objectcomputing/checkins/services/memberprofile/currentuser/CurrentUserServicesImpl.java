@@ -98,7 +98,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         }
         LocalDate lastSeen = LocalDate.now();
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
-                "", workEmail, "", null, "", null, null, null, null, null, lastSeen));
+                "", workEmail, "", null, "", null, null, null, null, null, lastSeen, false));
 
         Optional<Role> role = roleServices.findByRole("MEMBER");
         if(role.isPresent()){

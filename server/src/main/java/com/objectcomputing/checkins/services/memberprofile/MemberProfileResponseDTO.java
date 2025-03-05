@@ -92,6 +92,10 @@ public class MemberProfileResponseDTO {
     @Schema(description = "Last date employee logged in")
     private LocalDate lastSeen;
 
+    @Nullable
+    @Schema(description = "The employee would like their birthday to not be celebrated", nullable = true)
+    private Boolean ignoreBirthday;
+
     @Override
     public String toString() {
         return "MemberProfileResponseDTO{" +
@@ -114,6 +118,7 @@ public class MemberProfileResponseDTO {
                 ", voluntary=" + voluntary +
                 ", excluded=" + excluded +
                 ", lastSeen=" + lastSeen +
+                ", ignoreBirthday=" + ignoreBirthday +
                 '}';
     }
 }
