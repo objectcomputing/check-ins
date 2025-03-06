@@ -28,6 +28,7 @@ export const UPDATE_TEAMS = '@@check-ins/update_teams';
 export const UPDATE_TERMINATED_MEMBERS =
   '@@check-ins/update_terminated_members';
 export const UPDATE_TOAST = '@@check-ins/update_toast';
+export const UPDATE_CURRENT_USER_PROFILE = '@@check-ins/update_current_user_profile';
 export const UPDATE_USER_BIO = '@@check-ins/update_bio';
 export const UPDATE_FEEEDBACK_SUGGESTIONS =
   '@@check-ins/update_feedback_suggestions';

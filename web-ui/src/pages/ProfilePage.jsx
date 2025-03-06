@@ -5,10 +5,9 @@ import { AppContext } from '../context/AppContext';
 import {
   selectCurrentUser,
   selectMyGuilds,
-  selectUserProfile,
   selectMyTeams
 } from '../context/selectors';
-import { UPDATE_GUILD, UPDATE_USER_BIO } from '../context/actions';
+import { UPDATE_GUILD, UPDATE_CURRENT_USER_PROFILE } from '../context/actions';
 import { addGuildMember, deleteGuildMember } from '../api/guild';
 import { updateMember } from '../api/member';
 import { getEmployeeHours } from '../api/hours';
@@ -18,10 +17,15 @@ import SkillSection from '../components/skills/SkillSection';
 import ProgressBar from '../components/contribution_hours/ProgressBar';
 import VolunteerTables from '../components/volunteer/VolunteerTables';
 
-import { Info } from '@mui/icons-material';
+import { Info, ManageAccounts } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, Chip, TextField, Avatar } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import Autocomplete from '@mui/material/Autocomplete';
+import FormLabel from '@mui/material/FormLabel';
+import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 import './ProfilePage.css';
 
@@ -32,13 +36,12 @@ const storeMember = debounce(realStoreMember, 1500);
 const ProfilePage = () => {
   const { state, dispatch } = useContext(AppContext);
   const memberProfile = selectCurrentUser(state);
-  const userProfile = selectUserProfile(state);
 
   const { csrf, guilds } = state;
-  const { id, bioText, pdlId } = memberProfile;
-  const { firstName, lastName, name } = userProfile;
+  const { id, bioText, pdlId, ignoreBirthday, firstName, lastName, name } = memberProfile;
 
   const [bio, setBio] = useState();
+  const [prefs, setPrefs] = useState({ignoreBirthday});
   const [myHours, setMyHours] = useState(null);
 
   const myTeams = selectMyTeams(state);
@@ -62,24 +65,43 @@ const ProfilePage = () => {
       setBio(bioText);
     }
     updateBio();
-  }, [bioText]);
+  }, [setBio, bioText]);
 
-  const updateProfile = newBio => {
+  useEffect(() => {
+    async function updatePrefs() {
+      setPrefs({...prefs, ignoreBirthday})
+    }
+    updatePrefs()
+  }, [setPrefs, ignoreBirthday]);
+
+  const updateProfile = newProfile => {
     dispatch({
-      type: UPDATE_USER_BIO,
-      payload: newBio
+      type: UPDATE_CURRENT_USER_PROFILE,
+      payload: newProfile
     });
   };
 
-  const handleBioChange = e => {
+  const handleIgnoreBirthdayChange = useCallback(async e => {
+    if (!csrf) {
+      return;
+    }
+    const { checked } = e.target;
+    setPrefs({ ...prefs, ignoreBirthday: !checked });
+    const newProfile = { ...memberProfile, ignoreBirthday: !checked };
+    const { payload } = await realStoreMember(newProfile, csrf);
+    updateProfile(payload.data);
+  }, [csrf, prefs, setPrefs, memberProfile, realStoreMember, updateProfile]);
+
+  const handleBioChange = useCallback(async e => {
     if (!csrf) {
       return;
     }
     const { value } = e.target;
     setBio(value);
-    storeMember({ ...memberProfile, bioText: value }, csrf);
-    updateProfile(value);
-  };
+    const newProfile = { ...memberProfile, bioText: value };
+    storeMember(newProfile, csrf);
+    updateProfile(newProfile);
+  }, [csrf, setBio, memberProfile, storeMember, updateProfile]);
 
   const addOrDeleteGuildMember = useCallback(
     async newVal => {
@@ -146,6 +168,28 @@ const ProfilePage = () => {
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
       <div className="profile-grid">
+        <div className="profile-page-prefs">
+          <Card>
+            <CardHeader
+              avatar={<Avatar sx={{ mr: 1 }}><ManageAccounts /></Avatar>}
+              title="Preferences"
+              titleTypographyProps={{ variant: 'h5', component: 'h2' }}
+            />
+            <CardContent>
+              <FormControl fullWidth component="fieldset" variant="standard">
+                <FormLabel component="legend">Celebrations</FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Switch checked={!!!prefs.ignoreBirthday} onChange={handleIgnoreBirthdayChange} name="birthday" />
+                    }
+                    label="My Birthday"
+                  />
+                </FormGroup>
+              </FormControl>
+            </CardContent>
+          </Card>
+        </div>
         <div className="profile-page-bio">
           <Card>
             <CardHeader

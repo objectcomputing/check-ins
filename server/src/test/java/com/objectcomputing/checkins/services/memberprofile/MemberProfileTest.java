@@ -65,7 +65,7 @@ class MemberProfileTest extends TestContainersSuite
         MemberProfile memberProfile = new MemberProfile(firstName, null, lastName,
                 null, null, null, null, workEmail,
                 null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, false);
         assertEquals(firstName, memberProfile.getFirstName());
         assertEquals(lastName, memberProfile.getLastName());
         assertEquals(workEmail, memberProfile.getWorkEmail());
@@ -79,7 +79,7 @@ class MemberProfileTest extends TestContainersSuite
         MemberProfile memberProfile = new MemberProfile(firstName, null, lastName,
                 null, null, null, null, workEmail,
                 null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, false);
         assertEquals(firstName, memberProfile.getFirstName());
         assertEquals(lastName, memberProfile.getLastName());
         assertEquals(workEmail, memberProfile.getWorkEmail());
@@ -113,7 +113,7 @@ class MemberProfileTest extends TestContainersSuite
         LocalDate lastSeen = LocalDate.now();
 
         MemberProfile memberProfile = new MemberProfile(id, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorId, terminationDate, birthDate, voluntary, excluded, lastSeen);
+                employeeId, startDate, bioText, supervisorId, terminationDate, birthDate, voluntary, excluded, lastSeen, false);
 
         assertEquals(id, memberProfile.getId());
         assertEquals(firstName, memberProfile.getFirstName());
@@ -157,7 +157,7 @@ class MemberProfileTest extends TestContainersSuite
         final LocalDate lastSeen = LocalDate.now();
 
         MemberProfile memberProfile = new MemberProfile(id, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorId, terminationDate, birthDate, voluntary, excluded, lastSeen);
+                employeeId, startDate, bioText, supervisorId, terminationDate, birthDate, voluntary, excluded, lastSeen, false);
 
         String toString = memberProfile.toString();
         assertTrue(toString.contains(id.toString()));
@@ -184,7 +184,7 @@ class MemberProfileTest extends TestContainersSuite
     void testSaveProfileWithExistingEmail() {
         MemberProfile existingProfile = createADefaultMemberProfile();
         String workEmail = existingProfile.getWorkEmail();
-        MemberProfile newProfile = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, workEmail, null, null, null, null, null, null, null, null, null);
+        MemberProfile newProfile = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, workEmail, null, null, null, null, null, null, null, null, null, false);
 
         // The current user must have permission to create new members.
         currentUserServices.currentUser = existingProfile;
@@ -203,7 +203,7 @@ class MemberProfileTest extends TestContainersSuite
                 LocalDate.now().minusDays(3).minusYears(5),
                 "Needs supervision due to building being ultra flammable",
                 supervisorProfile.getId(), null, null, null, null,
-                LocalDate.now());
+                LocalDate.now(), false);
 
         // Need permission to create new profiles.
         currentUserServices.currentUser = supervisorProfile;
@@ -239,7 +239,7 @@ class MemberProfileTest extends TestContainersSuite
 
         currentUserServices.currentUser = existingProfile;
 
-        MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, pdlId, null, existingProfile.getWorkEmail(), null, null, null, null, null, null, null, null, null);
+        MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, pdlId, null, existingProfile.getWorkEmail(), null, null, null, null, null, null, null, null, null, false);
 
         MemberProfile result = memberProfileServices.updateProfile(updatedProfile);
 
@@ -264,7 +264,7 @@ class MemberProfileTest extends TestContainersSuite
 
         currentUserServices.currentUser = existingProfile;
 
-        MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, null, null, existingProfile.getWorkEmail(), null, null, null, supervisorId, null, null, null, null, null);
+        MemberProfile updatedProfile = new MemberProfile(id, existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, null, null, existingProfile.getWorkEmail(), null, null, null, supervisorId, null, null, null, null, null, false);
 
         MemberProfile result = memberProfileServices.updateProfile(updatedProfile);
 
@@ -356,7 +356,7 @@ class MemberProfileTest extends TestContainersSuite
     void testEmailAssignmentWithInvalidPDL() {
         MemberProfile existingProfile = createADefaultMemberProfile();
         UUID pdlId = UUID.randomUUID();
-        MemberProfile member = new MemberProfile(existingProfile.getId(), existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, pdlId, null, existingProfile.getWorkEmail(), null, null, null, null, null, null, null, null, null);
+        MemberProfile member = new MemberProfile(existingProfile.getId(), existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, pdlId, null, existingProfile.getWorkEmail(), null, null, null, null, null, null, null, null, null, false);
 
         memberProfileServices.emailAssignment(member, true);
 
@@ -367,7 +367,7 @@ class MemberProfileTest extends TestContainersSuite
     void testEmailAssignmentWithInvalidSupervisor() {
         MemberProfile existingProfile = createADefaultMemberProfile();
         UUID supervisorId = UUID.randomUUID();
-        MemberProfile member = new MemberProfile(existingProfile.getId(), existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, null, null, existingProfile.getWorkEmail(), null, null, null, supervisorId, null, null, null, null, null);
+        MemberProfile member = new MemberProfile(existingProfile.getId(), existingProfile.getFirstName(), null, existingProfile.getLastName(), null, null, null, null, existingProfile.getWorkEmail(), null, null, null, supervisorId, null, null, null, null, null, false);
 
         memberProfileServices.emailAssignment(member, true);
 
@@ -377,7 +377,7 @@ class MemberProfileTest extends TestContainersSuite
     @Test
     void testEmailAssignmentWithInvalidMember() {
         MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, false);
 
         memberProfileServices.emailAssignment(member, true);
 
@@ -387,7 +387,7 @@ class MemberProfileTest extends TestContainersSuite
     @Test
     void testEmailAssignmentWithNullRoleId() {
         MemberProfile member = new MemberProfile(UUID.randomUUID(), "John", null, "Smith", null, null, null, null, "john.smith@example.com",
-                null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, false);
 
         memberProfileServices.emailAssignment(member, true);
 
