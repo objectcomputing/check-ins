@@ -823,8 +823,8 @@ exports[`renders correctly 1`] = `
                 </div>
               </div>
             </div>
-            <ul
-              class="MuiList-root MuiList-padding css-h4y409-MuiList-root"
+            <div
+              class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-zow5z4-MuiGrid-root"
             />
           </div>
           <div

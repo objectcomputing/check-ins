@@ -9,12 +9,13 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import RadioGroup from '@mui/material/RadioGroup';
+import Radio from '@mui/material/Radio';
 import { styled } from '@mui/material/styles';
-import DiscreteSlider from '../discrete_slider/DiscreteSlider';
 
-import './SkillSlider.css';
+import './SkillLevel.css';
 
-const PREFIX = 'SkillSlider';
+const PREFIX = 'SkillLevel';
 const classes = {
   hidden: `${PREFIX}-hidden`
 };
@@ -28,7 +29,7 @@ const Root = styled('span')(() => ({
   }
 }));
 
-const SkillSlider = ({
+const SkillLevel = ({
   id,
   name,
   startLevel,
@@ -44,7 +45,10 @@ const SkillSlider = ({
     setCurrCheck(!currCheck);
   };
 
-  const updateLevel = (e, value) => setSkillLevel(value);
+  const updateLevel = (e, value) => {
+    setSkillLevel(value);
+    updateSkillLevel(e, value);
+  }
 
   const updateSkillLevel = debounce((event, value) => {
     onUpdate(lastUsed, value, id);
@@ -66,40 +70,26 @@ const SkillSlider = ({
   return (
     <>
       <Root>
-        <Typography variant="body1" className="skill-slider-title">
+        <Typography variant="body1">
           {name}
         </Typography>
-        <div className="skill-slider-container">
-          <DiscreteSlider
-            inStartPos={skillLevel}
+        <div className="skill-level-container">
+          <RadioGroup
+            row
+            value={skillLevel}
             onChange={updateLevel}
-            onChangeCommitted={updateSkillLevel}
-          />
+          >
+            <FormControlLabel value="0" control={<Radio/>} label="None"/>
+            <FormControlLabel value="1" control={<Radio/>} label="Novice"/>
+            <FormControlLabel value="2" control={<Radio/>} label="Practitioner"/>
+            <FormControlLabel value="3" control={<Radio/>} label="Expert"/>
+          </RadioGroup>
           <IconButton onClick={() => onDelete(id)} size="large">
             <DeleteIcon />
           </IconButton>
         </div>
-        {false && (
-          <FormControl>
-            <FormControlLabel
-              control={<Checkbox color="primary" value="current" />}
-              label="Currently Used"
-              labelPlacement="top"
-              checked={currCheck}
-              onChange={datePickerVisibility}
-            />
-          </FormControl>
-        )}
-        {false && (
-          <TextField
-            className={currCheck ? classes.hidden : undefined}
-            type="date"
-            onChange={(event, value) => updateLastUsed(value)}
-            defaultValue={formatDate(lastUsed)}
-          />
-        )}
       </Root>
     </>
   );
 };
-export default SkillSlider;
+export default SkillLevel;
