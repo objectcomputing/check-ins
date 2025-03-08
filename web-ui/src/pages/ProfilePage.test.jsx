@@ -7,18 +7,18 @@ const userProfile = {
   id: 'member-id',
   name: 'Mitch Hedberg',
   role: ['MEMBER'],
-  workEmail: 'hedbergm@objectcomputing.com',
-  title: 'Strategic Placement Specialist',
-  location: 'Roseville, Minnesota',
-  memberProfile: {
-    id: 'member-id',
-    bioText: 'Died too young.',
-  },
 };
 
 const userStateWithPermission = {
   state: {
-    memberProfiles: [ userProfile ],
+    memberProfiles: [{
+      name: 'Mitch Hedberg',
+      id: 'member-id',
+      bioText: 'Died too young.',
+      workEmail: 'hedbergm@objectcomputing.com',
+      title: 'Strategic Placement Specialist',
+      location: 'Roseville, Minnesota',
+    }],
     userProfile: userProfile,
   }
 };

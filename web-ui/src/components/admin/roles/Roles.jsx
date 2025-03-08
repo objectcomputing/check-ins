@@ -3,18 +3,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../../context/AppContext';
 import {
   SET_ROLES,
-  SET_USER_ROLES,
+  SET_MEMBER_ROLES,
   UPDATE_TOAST
 } from '../../../context/actions';
 import {
-  addUserToRole,
+  addMemberToRole,
   addNewRole,
-  removeUserFromRole,
+  removeMemberFromRole,
   updateRole
 } from '../../../api/roles';
 import {
   selectCanEditMemberRolesPermission,
-  noPermission,
+  noPermission, selectMemberRoles, selectCsrfToken, selectRoles, selectMemberProfiles,
 } from '../../../context/selectors';
 import RoleUserCards from './RoleUserCards';
 
@@ -52,8 +52,11 @@ import './Roles.css';
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
-  // roles here is all possible roles, not the selected roles.
-  const { csrf, memberProfiles, roles, userRoles } = state;
+
+  const csrf = selectCsrfToken(state);
+  const memberProfiles = selectMemberProfiles(state);
+  const roles = selectRoles(state); // all possible roles, not the selected roles.
+  const memberRoles = selectMemberRoles(state);
 
   const [showAddUser, setShowAddUser] = useState(false);
   const [showEditRole, setShowEditRole] = useState(false);
@@ -97,25 +100,25 @@ const Roles = () => {
     }
 
     const newRoleToMemberMap = {};
-    for (const userRole of userRoles || []) {
+    for (const memberRole of memberRoles || []) {
       const role = roles.find(
-        role => role.id === userRole?.memberRoleId?.roleId
+        role => role.id === memberRole?.memberRoleId?.roleId
       );
       if (role) {
         let memberList = newRoleToMemberMap[role.role];
         if (!memberList) {
           memberList = newRoleToMemberMap[role.role] = [];
         }
-        if (memberMap[userRole?.memberRoleId?.memberId] !== undefined) {
+        if (memberMap[memberRole?.memberRoleId?.memberId] !== undefined) {
           memberList.push({
-            ...memberMap[userRole?.memberRoleId?.memberId],
+            ...memberMap[memberRole?.memberRoleId?.memberId],
             roleId: role.id
           });
         }
       }
     }
     setRoleToMemberMap(newRoleToMemberMap);
-  }, [userRoles, memberProfiles, roles]);
+  }, [memberRoles, memberProfiles, roles]);
 
   const getRoleStats = role => {
     let members = roleToMemberMap[role];
@@ -125,20 +128,20 @@ const Roles = () => {
   const removeFromRole = async (member, role) => {
     const members = roleToMemberMap[role];
     const { roleId } = members.find(m => member.id === m.id);
-    let res = await removeUserFromRole(roleId, member.id, csrf);
+    let res = await removeMemberFromRole(roleId, member.id, csrf);
     let data =
       res.payload && res.payload.status === 200 && !res.error
         ? res.payload
         : null;
     if (data) {
       // TODO: Remove role from map....
-      const filtered = userRoles.filter(
-        userRole =>
-          userRole?.memberRoleId?.roleId !== roleId ||
-          userRole?.memberRoleId?.memberId !== member.id
+      const filtered = memberRoles.filter(
+        memberRole =>
+          memberRole?.memberRoleId?.roleId !== roleId ||
+          memberRole?.memberRoleId?.memberId !== member.id
       );
       dispatch({
-        type: SET_USER_ROLES,
+        type: SET_MEMBER_ROLES,
         payload: filtered
       });
       window.snackDispatch({
@@ -153,14 +156,14 @@ const Roles = () => {
 
   const addToRole = async member => {
     const role = roles.find(role => role.role === currentRole.role);
-    let res = await addUserToRole(role.id, member.id, csrf);
+    let res = await addMemberToRole(role.id, member.id, csrf);
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
       setShowAddUser(false);
       dispatch({
-        type: SET_USER_ROLES,
-        payload: [...userRoles, data]
+        type: SET_MEMBER_ROLES,
+        payload: [...memberRoles, data]
       });
       window.snackDispatch({
         type: UPDATE_TOAST,

@@ -13,7 +13,12 @@ exports[`DiscreteSlider > renders slider with title 1`] = `
     </p>
     <div
       class="css-cg7vlo"
-    />
+    >
+      <input
+        data-testid="discrete-slider"
+        type="range"
+      />
+    </div>
   </div>
 </div>
 `;

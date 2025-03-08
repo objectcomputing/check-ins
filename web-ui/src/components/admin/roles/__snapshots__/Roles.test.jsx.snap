@@ -47,14 +47,14 @@ exports[`renders correctly 1`] = `
                   role="combobox"
                   tabindex="0"
                 >
-                  ADMIN, PDL
+                  ADMIN, MEMBER, PDL
                 </div>
                 <input
                   aria-hidden="true"
                   aria-invalid="false"
                   class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
                   tabindex="-1"
-                  value="ADMIN,PDL"
+                  value="ADMIN,MEMBER,PDL"
                 />
                 <svg
                   aria-hidden="true"
@@ -83,7 +83,7 @@ exports[`renders correctly 1`] = `
               <p
                 class="MuiFormHelperText-root MuiFormHelperText-sizeMedium MuiFormHelperText-contained MuiFormHelperText-filled css-1wc848c-MuiFormHelperText-root"
               >
-                Showing 2/2 roles
+                Showing 3/3 roles
               </p>
             </div>
             <div
@@ -202,12 +202,14 @@ exports[`renders correctly 1`] = `
                       <h6
                         class="MuiTypography-root MuiTypography-subtitle1 css-10wpov9-MuiTypography-root"
                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                      />
+                      >
+                        Administrator
+                      </h6>
                       <h6
                         class="MuiTypography-root MuiTypography-subtitle2 css-ati914-MuiTypography-root"
                         style="font-size: 0.75rem;"
                       >
-                        0
+                        1
                          Users
                       </h6>
                     </div>
@@ -260,6 +262,57 @@ exports[`renders correctly 1`] = `
                     class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
                   />
                 </li>
+                <div>
+                  <li
+                    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding roles-list-item css-1p823my-MuiListItem-root"
+                  >
+                    <div
+                      class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                    >
+                      <div
+                        class="MuiAvatar-root MuiAvatar-circular large css-1wlk0hk-MuiAvatar-root"
+                      >
+                        <img
+                          alt="Señior Test's avatar"
+                          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                          src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="MuiListItemText-root MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                    >
+                      <h2
+                        class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+                      >
+                        Señior Test
+                      </h2>
+                      <h3
+                        class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                      />
+                    </div>
+                    <div
+                      class="icon"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                        data-testid="DeleteIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+                        />
+                      </svg>
+                    </div>
+                  </li>
+                  <li
+                    class="MuiDivider-root MuiDivider-inset css-uls1yk-MuiDivider-root"
+                    role="separator"
+                    style="margin-right: 2rem;"
+                  />
+                </div>
               </div>
             </ul>
           </div>
@@ -296,7 +349,156 @@ exports[`renders correctly 1`] = `
                       <h6
                         class="MuiTypography-root MuiTypography-subtitle1 css-10wpov9-MuiTypography-root"
                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                      >
+                        Prof. Dev. Lead
+                      </h6>
+                      <h6
+                        class="MuiTypography-root MuiTypography-subtitle2 css-ati914-MuiTypography-root"
+                        style="font-size: 0.75rem;"
+                      >
+                        1
+                         Users
+                      </h6>
+                    </div>
+                    <div
+                      class="role-header-buttons"
+                    >
+                      <button
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+                        tabindex="0"
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                          data-testid="PersonAddIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4m-9-2V7H4v3H1v2h3v3h2v-3h3v-2zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4"
+                          />
+                        </svg>
+                        <span
+                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                        />
+                      </button>
+                      <button
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary role-edit css-1d3f8j8-MuiButtonBase-root-MuiButton-root"
+                        tabindex="0"
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                          data-testid="EditIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
+                          />
+                        </svg>
+                        <span
+                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                        />
+                      </button>
+                    </div>
+                  </div>
+                  <hr
+                    class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
+                  />
+                </li>
+                <div>
+                  <li
+                    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding roles-list-item css-1p823my-MuiListItem-root"
+                  >
+                    <div
+                      class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                    >
+                      <div
+                        class="MuiAvatar-root MuiAvatar-circular large css-1wlk0hk-MuiAvatar-root"
+                      >
+                        <img
+                          alt="Señora Test's avatar"
+                          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                          src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="MuiListItemText-root MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                    >
+                      <h2
+                        class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+                      >
+                        Señora Test
+                      </h2>
+                      <h3
+                        class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
                       />
+                    </div>
+                    <div
+                      class="icon"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                        data-testid="DeleteIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+                        />
+                      </svg>
+                    </div>
+                  </li>
+                  <li
+                    class="MuiDivider-root MuiDivider-inset css-uls1yk-MuiDivider-root"
+                    role="separator"
+                    style="margin-right: 2rem;"
+                  />
+                </div>
+              </div>
+            </ul>
+          </div>
+          <div
+            class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root role css-bhp9pd-MuiPaper-root-MuiCard-root"
+        >
+          <div
+            class="MuiCardContent-root role-card css-46bh2p-MuiCardContent-root"
+          >
+            <ul
+              class="MuiList-root MuiList-padding css-h4y409-MuiList-root"
+              style="padding-top: 0px;"
+            >
+              <div>
+                <li
+                  class="MuiListSubheader-root MuiListSubheader-gutters MuiListSubheader-sticky css-uob957-MuiListSubheader-root"
+                  style="padding: 0px;"
+                >
+                  <div
+                    class="role-header"
+                  >
+                    <div
+                      class="role-header-title"
+                    >
+                      <h4
+                        class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+                      >
+                        MEMBER
+                      </h4>
+                      <h6
+                        class="MuiTypography-root MuiTypography-subtitle1 css-10wpov9-MuiTypography-root"
+                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                      >
+                        A member of the org
+                      </h6>
                       <h6
                         class="MuiTypography-root MuiTypography-subtitle2 css-ati914-MuiTypography-root"
                         style="font-size: 0.75rem;"

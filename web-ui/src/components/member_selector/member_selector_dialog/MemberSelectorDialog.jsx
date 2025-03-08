@@ -38,7 +38,7 @@ import {
   selectCsrfToken,
   selectCurrentMembers,
   selectActiveGuilds,
-  selectMappedUserRoles,
+  selectMappedMemberRoles,
   selectRoles,
   selectSkills,
   selectSubordinates,
@@ -320,11 +320,11 @@ const MemberSelectorDialog = ({
             );
             break;
           case FilterType.ROLE:
-            const mappedUserRoles = selectMappedUserRoles(state);
+            const mappedMemberRoles = selectMappedMemberRoles(state);
             filteredMemberList = filteredMemberList.filter(
               member =>
-                member.id in mappedUserRoles &&
-                mappedUserRoles[member.id].has(filter.role)
+                member.id in mappedMemberRoles &&
+                mappedMemberRoles[member.id].has(filter.role)
             );
             break;
           case FilterType.SKILL:

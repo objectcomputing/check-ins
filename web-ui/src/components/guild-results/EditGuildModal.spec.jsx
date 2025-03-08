@@ -59,17 +59,17 @@ const initialState = {
       name: 'Current User',
       firstName: 'Current',
       lastName: 'User',
+      id: currentUserProfile.id,
       role: ['MEMBER'],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
-      memberProfile: currentUserProfile
     },
     checkins: [],
     guilds: [testGuild, emptyGuild],
     teams: [],
     skills: [],
     roles: [],
-    userRoles: [],
+    memberRoles: [],
     memberSkills: [],
     index: 0,
     memberProfiles: [

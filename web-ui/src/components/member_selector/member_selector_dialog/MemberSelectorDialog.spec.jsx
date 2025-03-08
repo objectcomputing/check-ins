@@ -63,7 +63,7 @@ const initialState = {
   guilds: [testGuild],
   teams: [],
   roles: [],
-  userRoles: [],
+  memberRoles: [],
   memberSkills: [],
   index: 0
 };

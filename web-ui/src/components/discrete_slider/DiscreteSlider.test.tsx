@@ -4,8 +4,8 @@ import DiscreteSlider from './DiscreteSlider';
 
 vi.mock('@mui/material/Slider', () => {
   return {
-    default: () => (props: any) => {
-      const { onChange, 'data-testid': testId, ...rest } = props;
+    default: (props: any) => {
+      const { onChange, 'data-testid': testId } = props;
 
       return (
         <input
@@ -14,7 +14,6 @@ vi.mock('@mui/material/Slider', () => {
           onChange={event => {
             onChange(null, parseInt(event.target.value, 10));
           }}
-          {...rest}
         />
       );
     }

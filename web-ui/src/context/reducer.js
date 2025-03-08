@@ -12,7 +12,7 @@ import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
   SET_ROLES,
-  SET_USER_ROLES,
+  SET_MEMBER_ROLES,
   UPDATE_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
@@ -47,7 +47,7 @@ export const initialState = {
   terminatedMembers: [],
   memberSkills: null,
   roles: null,
-  userRoles: null,
+  memberRoles: null,
   skills: null,
   teams: null,
   guilds: null,
@@ -81,12 +81,10 @@ const convertMemberDates = member => {
 export const reducer = (state, action) => {
   switch (action.type) {
     case MY_PROFILE_UPDATE:
-      convertMemberDates(action.payload.memberProfile);
-      state.userProfile = { ...action.payload };
+      state.userProfile = { id: action.payload.memberProfile.id, role: action.payload.role, permissions: action.payload.permissions };
       break;
     case UPDATE_CURRENT_USER_PROFILE:
       convertMemberDates(action.payload);
-      state.userProfile = { ...state.userProfile, memberProfile: { ...action.payload } };
       const profileId = action.payload.id;
       const memberProfiles = state.memberProfiles.reduce((acc, current) => {
         if(current.id !== profileId) {
@@ -215,8 +213,8 @@ export const reducer = (state, action) => {
     case SET_ROLES:
       state.roles = action.payload;
       break;
-    case SET_USER_ROLES:
-      state.userRoles = action.payload;
+    case SET_MEMBER_ROLES:
+      state.memberRoles = action.payload;
       break;
     case DELETE_ROLE:
       state.roles = state.roles.filter(role => role.id !== action.payload);
