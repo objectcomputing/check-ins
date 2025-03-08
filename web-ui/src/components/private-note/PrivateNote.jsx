@@ -162,7 +162,7 @@ const PrivateNote = () => {
           ) : (
             <Editor
               apiKey="246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e"
-              id="tiny-mce-checkin-notes"
+              id="tiny-mce-checkin-private-notes"
               value={note && note.description ? note.description : ''}
               onEditorChange={handleNoteChange}
               readOnly={
