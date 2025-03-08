@@ -32,8 +32,7 @@ import {
   selectCurrentUserId,
   selectHasCreateReviewPeriodPermission,
   selectReviewPeriod,
-  selectReviewPeriods,
-  selectUserProfile
+  selectReviewPeriods
 } from '../../../context/selectors';
 
 import ReviewPeriodCard from './ReviewPeriodCard.jsx';
@@ -123,7 +122,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
-  const userProfile = selectUserProfile(state);
 
   useEffect(() => {
     setPeriods(selectReviewPeriods(state)

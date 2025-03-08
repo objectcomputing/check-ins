@@ -24,15 +24,21 @@ const initialState = {
     ],
     currentCheckin: [{ id: '10-982409128354' }],
     userProfile: {
-      memberProfile: {
-        id: '130u410234'
-      },
+      id: '130u410234',
       name: 'holmes',
       role: ['PDL'],
       permissions: [{ permission: 'CAN_ADMINISTER_CHECKIN_DOCUMENTS' }],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
+    memberProfiles: [
+      {
+        id: '130u410234',
+        name: 'holmes',
+        imageUrl:
+            'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
+      }
+    ],
     index: 0
   }
 };

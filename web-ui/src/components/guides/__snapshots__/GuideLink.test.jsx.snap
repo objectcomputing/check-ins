@@ -4,6 +4,7 @@ exports[`renders correctly 1`] = `
 <div>
   <a
     class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    data-testid="some-id"
     href="/pdfs/myFileName.pdf"
     target="_blank"
   >
@@ -24,6 +25,7 @@ exports[`renders descriptions 1`] = `
 <div>
   <a
     class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    data-testid="some-id"
     href="/pdfs/myFileName.pdf"
     target="_blank"
   >

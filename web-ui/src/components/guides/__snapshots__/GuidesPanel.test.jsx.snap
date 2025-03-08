@@ -29,7 +29,7 @@ exports[`renders correctly 1`] = `
         <span
           class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
         >
-          Team Member Resources
+          Check-In Resources
         </span>
       </div>
     </div>
@@ -38,6 +38,7 @@ exports[`renders correctly 1`] = `
     >
       <a
         class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        data-testid="mockument-1"
         href="/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf"
         target="_blank"
       >
@@ -58,17 +59,44 @@ exports[`renders correctly 1`] = `
       </a>
       <a
         class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        data-testid="mockument-2"
         href="/pdfs/Expectations_Worksheet.pdf"
         target="_blank"
       >
         <div
-          class="MuiListItemText-root MuiListItemText-dense css-tlelie-MuiListItemText-root"
+          class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
         >
           <span
             class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
           >
             Expectations Worksheet
           </span>
+          <p
+            class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+          >
+            My worksheet
+          </p>
+        </div>
+      </a>
+      <a
+        class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+        data-testid="mockument-3"
+        href="/pdfs/Expectations_Discussion_Guide_for_PDLs.pdf"
+        target="_blank"
+      >
+        <div
+          class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+          >
+            Expectations Discussion Guide for PDLs
+          </span>
+          <p
+            class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+          >
+            My PDL description
+          </p>
         </div>
       </a>
     </ul>
