@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 
 import { AppContext } from '../../context/AppContext';
 import { UPDATE_GUILDS, UPDATE_TOAST } from '../../context/actions';
+import { selectIsAdmin, selectCurrentUser } from '../../context/selectors';
 import EditGuildModal from './EditGuildModal';
 
 import {
@@ -57,7 +58,7 @@ const StyledCard = styled(Card)(() => ({
 
 const inactiveStyle = {
   'color': 'var(--action-disabled)',
-  'font-size': '0.75em',
+  'fontSize': '0.75em',
 };
 
 const propTypes = {
@@ -72,11 +73,11 @@ const displayName = 'GuildSummaryCard';
 
 const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { guilds, userProfile, csrf } = state;
+  const { guilds, csrf } = state;
   const [open, setOpen] = useState(isOpen);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
+  const isAdmin = selectIsAdmin(state);
+  const currentUser = selectCurrentUser(state);
 
   let leads =
     guild.guildMembers == null
@@ -90,7 +91,7 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
   const isGuildLead =
     leads === null
       ? false
-      : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
+      : leads.some(lead => lead.memberId === currentUser.id);
 
   const handleOpen = () => {
     setOpen(true);

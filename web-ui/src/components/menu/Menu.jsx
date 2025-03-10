@@ -28,6 +28,7 @@ import {
   selectCanEditAllOrganizationMembers,
   selectHasUploadHoursPermission,
   selectHasPermissionAssignmentPermission,
+  selectCurrentUser,
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 
@@ -108,8 +109,7 @@ function Menu({ children }) {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const csrf = selectCsrfToken(state);
-  const { id, workEmail } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
+  const { id, workEmail } = selectCurrentUser(state);
   const hasReportPermission = selectHasReportPermission(state);
   const canViewFeedbackAnswer = selectCanViewFeedbackAnswerPermission(state);
   const canViewFeedbackRequest = selectCanViewFeedbackRequestPermission(state);

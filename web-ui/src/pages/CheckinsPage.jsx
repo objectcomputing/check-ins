@@ -24,7 +24,6 @@ import CheckinDocs from '../components/checkin/documents/CheckinDocs';
 import CheckinsHistory from '../components/checkin/CheckinHistory';
 import Profile from '../components/profile/Profile';
 import GuidesPanel from '../components/guides/GuidesPanel';
-import PDLGuidesPanel from '../components/guides/PDLGuidesPanel';
 import Note from '../components/notes/Note';
 import PrivateNote from '../components/private-note/PrivateNote';
 import Personnel from '../components/personnel/Personnel';
@@ -234,7 +233,6 @@ const CheckinsPage = () => {
           <div className="right-sidebar">
             {isPdl && <Personnel history={history} />}
             <GuidesPanel />
-            <PDLGuidesPanel />
           </div>
         </Grid>
       </Grid>

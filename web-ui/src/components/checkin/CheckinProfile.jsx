@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { getMember } from '../../api/member';
 import { AppContext } from '../../context/AppContext';
+import { selectCurrentUser } from '../../context/selectors.js';
 import { getAvatarURL } from '../../api/api.js';
 
 import Avatar from '@mui/material/Avatar';
@@ -11,11 +12,8 @@ const displayName = 'CheckinProfile';
 const CheckinProfile = () => {
   const { state } = useContext(AppContext);
   const { csrf, selectedProfile, userProfile } = state;
-  const { name, pdlId, title, workEmail } = selectedProfile
-    ? selectedProfile
-    : userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile
-      : {};
+  const currentUserProfile = selectCurrentUser(state);
+  const { name, pdlId, title, workEmail } = selectedProfile ? selectedProfile : currentUserProfile;
   const [pdl, setPDL] = useState();
 
   // Get PDL's name

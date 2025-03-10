@@ -29,7 +29,7 @@ const initialState = {
     teams: [],
     skills: [],
     roles: [],
-    userRoles: [],
+    memberRoles: [],
     memberSkills: [],
     memberProfiles: []
   }

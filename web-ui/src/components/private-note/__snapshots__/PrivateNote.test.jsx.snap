@@ -1,3 +1,66 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`renders correctly 1`] = `<div />`;
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root private-note css-bhp9pd-MuiPaper-root-MuiCard-root"
+  >
+    <div
+      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+    >
+      <div
+        class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+          data-testid="LockIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2m-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2m3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1z"
+          />
+        </svg>
+      </div>
+      <div
+        class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+        >
+          Private Notes
+        </h2>
+      </div>
+    </div>
+    <div
+      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+    >
+      <div
+        class="container"
+      >
+        <div
+          class="skeleton"
+        >
+          <span
+            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+            style="height: 2rem;"
+          />
+          <span
+            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+            style="height: 2rem;"
+          />
+          <span
+            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+            style="height: 2rem;"
+          />
+          <span
+            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-1e1x4vv-MuiSkeleton-root"
+            style="height: 2rem;"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
