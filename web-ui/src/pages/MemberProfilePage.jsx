@@ -82,7 +82,7 @@ const MemberProfilePage = () => {
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
   const [guilds, setGuilds] = useState([]);
-  const isCurrentUser = userProfile?.memberProfile?.id === memberId;
+  const isCurrentUser = userProfile?.id === memberId;
 
   useEffect(() => {
     async function getTeamsAndGuilds() {

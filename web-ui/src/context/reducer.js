@@ -172,7 +172,7 @@ export const reducer = (state, action) => {
       break;
     case UPDATE_MEMBER_PROFILES:
       action.payload.forEach(convertMemberDates);
-      const currentProfileId = state?.userProfile?.memberProfile?.id;
+      const currentProfileId = state?.userProfile?.id;
       const currentProfile = action.payload.find((current) => {
         if(currentProfileId && current.id === currentProfileId) {
           return current;
