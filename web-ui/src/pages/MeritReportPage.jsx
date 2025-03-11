@@ -17,8 +17,6 @@ import './MeritReportPage.css';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { useQueryParameters } from '../helpers/query-parameters';
 
-import markdown from 'markdown-builder';
-
 const MeritReportPage = () => {
   const { state, dispatch } = useContext(AppContext);
 
