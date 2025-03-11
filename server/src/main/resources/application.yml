@@ -37,7 +37,7 @@ micronaut:
 
   security:
     enabled: true
-    authentication: cookie
+    authentication: idtoken
     token:
       jwt:
         enabled: true
