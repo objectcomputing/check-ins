@@ -3,13 +3,13 @@ import PdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Card, CardHeader, List } from '@mui/material';
 
 import { AppContext } from '../../context/AppContext.jsx';
-import { selectCsrfToken, selectRoles } from '../../context/selectors.js';
+import {selectCsrfToken, selectCurrentUserRoles, selectRoles} from '../../context/selectors.js';
 import { getDocumentsForRoleId } from '../../api/document.js';
 
 import GuideLink from './GuideLink';
 import './GuidesPanel.css';
 
-const fallbackPdfs = [
+const fallback = [
   {
     id: '1-member',
     name: 'Expectations Discussion Guide for Team Members',
@@ -37,47 +37,47 @@ const fallbackPdfs = [
   }
 ];
 
-export const fetchDocumentsForRole = (roleName, allRoles, csrf, setDocuments, fallback, mockuments) => {
+const GuidesPanel = () => {
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+  const userRoles = selectCurrentUserRoles(state);
+  const allRoles = selectRoles(state);
+
+  const [documents, setDocuments] = useState([]);
+
   useEffect(() => {
     const getDocuments = async () => {
-      if (mockuments && mockuments.length > 0) {
-        setDocuments(mockuments);
-      } else {
-        const memberRoleId = allRoles.find(role => role.role === roleName)?.id;
-        const res = await getDocumentsForRoleId(memberRoleId, csrf);
-        const responseBody = res.payload?.data && !res.error
-          ? res.payload.data
-          : undefined;
-        setDocuments(responseBody?.length > 0 ? responseBody : fallback);
+      const docs = [];
+      if(userRoles) {
+        for (const roleName of userRoles) {
+          const memberRoleId = allRoles.find(role => role.role === roleName)?.id;
+          const res = await getDocumentsForRoleId(memberRoleId, csrf);
+          const responseBody = res.payload?.data && !res.error
+              ? res.payload.data
+              : undefined;
+          if (responseBody?.length > 0) {
+            docs.push(...responseBody);
+          }
+        }
       }
+
+      setDocuments(docs.length > 0 ? docs : fallback);
     };
     if (csrf) {
       getDocuments();
     }
-  }, [csrf]);
-};
+  }, [allRoles, userRoles, csrf, setDocuments, getDocumentsForRoleId]);
 
-export const generate = (title, documents) => {
   return (
-    <Card>
-      <CardHeader avatar={<PdfIcon />} title={title} />
-      <List dense>
-        {documents.map(doc => (
-          <GuideLink key={doc.id} id={doc.id} name={doc.name} description={doc.description} url={doc.url} />
-        ))}
-      </List>
-    </Card>
-  );
-};
-
-const GuidesPanel = () => {
-  const { state } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-
-  const [documents, setDocuments] = useState([]);
-  fetchDocumentsForRole('MEMBER', selectRoles(state), csrf, setDocuments, fallbackPdfs, state.mockuments);
-
-  return generate('Team Member Resources', documents);
+      <Card>
+        <CardHeader avatar={<PdfIcon />} title={"Check-In Resources"} />
+        <List dense>
+          {documents.map(doc => (
+              <GuideLink key={doc.id} id={doc.id} name={doc.name} description={doc.description} url={doc.url} />
+          ))}
+        </List>
+      </Card>
+  );;
 };
 
 export default GuidesPanel;

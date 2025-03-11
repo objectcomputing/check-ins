@@ -450,7 +450,7 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
         </button>
       </div>
       <a
-        href="/profile/undefined"
+        href="/profile/some-id"
       >
         <div
           class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
@@ -902,7 +902,7 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
         </button>
       </div>
       <a
-        href="/profile/undefined"
+        href="/profile/some-id"
       >
         <div
           class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"

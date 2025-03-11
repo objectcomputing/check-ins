@@ -3,16 +3,14 @@ import MemberIcon from './MemberIcon';
 import { AppContext } from '../../context/AppContext';
 import { getMembersByTeam, getTeamsByMember } from '../../api/team';
 import { getMember } from '../../api/member';
+import { selectCurrentUser } from '../../context/selectors';
 
 import './TeamMember.css';
 
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
-  const { csrf, userProfile } = state;
-  const id =
-    userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile.id
-      : undefined;
+  const { csrf } = state;
+  const { id } = selectCurrentUser(state);
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     imageUrl: null

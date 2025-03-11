@@ -11,10 +11,7 @@ const initialState = {
       { name: 'mr. test', firstName: 'mr', lastName: 'test', id: '1234' }
     ],
     userProfile: {
-      memberProfile: {
-        id: '1234',
-        name: 'mr. test'
-      }
+      id: '1234',
     }
   }
 };

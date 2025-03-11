@@ -1,27 +1,15 @@
-import React, { useContext, useState, useCallback } from 'react';
-import { styled } from '@mui/material/styles';
-import { AppContext } from '../../context/AppContext';
-import { UPDATE_TEAMS, UPDATE_TOAST } from '../../context/actions';
+import React, {useContext, useState} from 'react';
+import {styled} from '@mui/material/styles';
+import {AppContext} from '../../context/AppContext';
+import {UPDATE_TEAMS} from '../../context/actions';
 import EditTeamModal from './EditTeamModal';
 import KudosDialog from '../kudos_dialog/KudosDialog';
-import { Link } from 'react-router-dom';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import {Link} from 'react-router-dom';
+import {Card, CardActions, CardContent, CardHeader, Tooltip, Typography,} from '@mui/material';
 import PropTypes from 'prop-types';
-import { updateTeam } from '../../api/team.js';
+import {updateTeam} from '../../api/team.js';
 import SplitButton from '../split-button/SplitButton';
+import {selectCurrentUser, selectIsAdmin} from "../../context/selectors.js";
 
 const PREFIX = 'TeamSummaryCard';
 const classes = {
@@ -65,13 +53,13 @@ const displayName = 'TeamSummaryCard';
 
 const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { teams, userProfile, csrf } = state;
+  const { teams, csrf } = state;
   const [openKudos, setOpenKudos] = useState(false);
   // const [selectedTeam, setSelectedTeam] = useState(null);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
+  const isAdmin = selectIsAdmin(state);
+  const currentUser = selectCurrentUser(state);
 
   let leads =
     team.teamMembers == null
@@ -85,7 +73,7 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const isTeamLead =
     leads === null
       ? false
-      : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
+      : leads.some(lead => lead.memberId === currentUser.id);
 
   const handleOpenKudos = () => setOpenKudos(true);
   const handleCloseKudos = () => setOpenKudos(false);
