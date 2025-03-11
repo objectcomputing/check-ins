@@ -2,8 +2,8 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'maven-publish'
-    id("com.gradleup.shadow") version "8.3.2"
-    id("io.micronaut.application") version "4.4.3"
+    id("com.gradleup.shadow") version "8.3.6"
+    id("io.micronaut.application") version "4.5.0"
     id "jacoco"
 }
 
