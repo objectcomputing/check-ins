@@ -6,20 +6,21 @@ exports[`<Menu /> > renders correctly 1`] = `
     class="Menu-root"
   >
     <header
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed Menu-appBar mui-fixed css-11b3ww9-MuiPaper-root-MuiAppBar-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed Menu-appBar mui-fixed css-zanzjh-MuiPaper-root-MuiAppBar-root"
+      style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
     >
       <div
-        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-hyum1k-MuiToolbar-root"
+        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
       >
         <button
           aria-label="open drawer"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge Menu-menuButton css-184mzhy-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge Menu-menuButton css-1j9tf9y-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
             data-testid="MenuIcon"
             focusable="false"
             viewBox="0 0 24 24"
@@ -28,21 +29,18 @@ exports[`<Menu /> > renders correctly 1`] = `
               d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"
             />
           </svg>
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
       </div>
       <a
         href="/profile/some-id"
       >
         <div
-          class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+          class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
           style="position: absolute; cursor: pointer; right: 5px; top: 10px; text-decoration: none;"
         >
           <img
             alt="holmes's avatar"
-            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
           />
         </div>
@@ -53,12 +51,12 @@ exports[`<Menu /> > renders correctly 1`] = `
     >
       <div
         aria-hidden="true"
-        class="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden css-14eljdh-MuiModal-root-MuiDrawer-root"
+        class="MuiDrawer-root MuiDrawer-anchorLeft MuiDrawer-modal MuiModal-root MuiModal-hidden css-h2qaug-MuiModal-root-MuiDrawer-root"
         role="presentation"
       >
         <div
           aria-hidden="true"
-          class="MuiBackdrop-root MuiModal-backdrop css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop"
+          class="MuiBackdrop-root MuiModal-backdrop css-4nmryk-MuiBackdrop-root-MuiModal-backdrop"
           style="opacity: 0; visibility: hidden;"
         />
         <div
@@ -66,8 +64,8 @@ exports[`<Menu /> > renders correctly 1`] = `
           tabindex="-1"
         />
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation16 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft css-4t3x6l-MuiPaper-root-MuiDrawer-paper"
-          style="visibility: hidden; webkit-transform: translateX(-0px); transform: translateX(-0px);"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation16 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft css-cyqh1t-MuiPaper-root-MuiDrawer-paper"
+          style="--Paper-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2),0px 16px 24px 2px rgba(0,0,0,0.14),0px 6px 30px 5px rgba(0,0,0,0.12); visibility: hidden; webkit-transform: translateX(-0px); transform: translateX(-0px);"
           tabindex="-1"
         >
           <div>
@@ -82,151 +80,130 @@ exports[`<Menu /> > renders correctly 1`] = `
               />
             </div>
             <nav
-              class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding Menu-listStyle css-b7dj7n-MuiList-root"
             >
               <div>
                 <span
                   class="Menu-listItem"
                 >
                   <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                     href="/"
                     tabindex="0"
                   >
                     <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                      class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                       >
                         HOME
                       </span>
                     </div>
-                    <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
                   </a>
                 </span>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       CHECK-IN
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       DIRECTORY
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
+                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
                   style="min-height: 0px;"
                 >
                   <div
-                    class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+                    class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
                   >
                     <div
-                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
                     >
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/guilds"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Guilds & Communities
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/people"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             People
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/teams"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Teams
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       FEEDBACK
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
               </div>
             </nav>
@@ -238,10 +215,11 @@ exports[`<Menu /> > renders correctly 1`] = `
         />
       </div>
       <div
-        class="MuiDrawer-root MuiDrawer-docked css-f7jlii-MuiDrawer-docked"
+        class="MuiDrawer-root MuiDrawer-anchorLeft MuiDrawer-docked css-slg7za-MuiDrawer-docked"
       >
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-12i7wg6-MuiPaper-root-MuiDrawer-paper"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-1lwhjos-MuiPaper-root-MuiDrawer-paper"
+          style="--Paper-shadow: none;"
         >
           <div>
             <div />
@@ -255,151 +233,130 @@ exports[`<Menu /> > renders correctly 1`] = `
               />
             </div>
             <nav
-              class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding Menu-listStyle css-b7dj7n-MuiList-root"
             >
               <div>
                 <span
                   class="Menu-listItem"
                 >
                   <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                     href="/"
                     tabindex="0"
                   >
                     <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                      class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                       >
                         HOME
                       </span>
                     </div>
-                    <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
                   </a>
                 </span>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       CHECK-IN
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       DIRECTORY
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
+                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
                   style="min-height: 0px;"
                 >
                   <div
-                    class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+                    class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
                   >
                     <div
-                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
                     >
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/guilds"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Guilds & Communities
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/people"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             People
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/teams"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Teams
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       FEEDBACK
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
               </div>
             </nav>
@@ -422,20 +379,21 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
     class="Menu-root"
   >
     <header
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed Menu-appBar mui-fixed css-11b3ww9-MuiPaper-root-MuiAppBar-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed Menu-appBar mui-fixed css-zanzjh-MuiPaper-root-MuiAppBar-root"
+      style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
     >
       <div
-        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-hyum1k-MuiToolbar-root"
+        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
       >
         <button
           aria-label="open drawer"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge Menu-menuButton css-184mzhy-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge Menu-menuButton css-1j9tf9y-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
             data-testid="MenuIcon"
             focusable="false"
             viewBox="0 0 24 24"
@@ -444,21 +402,18 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
               d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"
             />
           </svg>
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
       </div>
       <a
         href="/profile/some-id"
       >
         <div
-          class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+          class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
           style="position: absolute; cursor: pointer; right: 5px; top: 10px; text-decoration: none;"
         >
           <img
             alt="holmes's avatar"
-            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
           />
         </div>
@@ -469,12 +424,12 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
     >
       <div
         aria-hidden="true"
-        class="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden css-14eljdh-MuiModal-root-MuiDrawer-root"
+        class="MuiDrawer-root MuiDrawer-anchorLeft MuiDrawer-modal MuiModal-root MuiModal-hidden css-h2qaug-MuiModal-root-MuiDrawer-root"
         role="presentation"
       >
         <div
           aria-hidden="true"
-          class="MuiBackdrop-root MuiModal-backdrop css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop"
+          class="MuiBackdrop-root MuiModal-backdrop css-4nmryk-MuiBackdrop-root-MuiModal-backdrop"
           style="opacity: 0; visibility: hidden;"
         />
         <div
@@ -482,8 +437,8 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
           tabindex="-1"
         />
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation16 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft css-4t3x6l-MuiPaper-root-MuiDrawer-paper"
-          style="visibility: hidden; webkit-transform: translateX(-0px); transform: translateX(-0px);"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation16 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft css-cyqh1t-MuiPaper-root-MuiDrawer-paper"
+          style="--Paper-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2),0px 16px 24px 2px rgba(0,0,0,0.14),0px 6px 30px 5px rgba(0,0,0,0.12); visibility: hidden; webkit-transform: translateX(-0px); transform: translateX(-0px);"
           tabindex="-1"
         >
           <div>
@@ -498,169 +453,145 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
               />
             </div>
             <nav
-              class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding Menu-listStyle css-b7dj7n-MuiList-root"
             >
               <div>
                 <span
                   class="Menu-listItem"
                 >
                   <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                     href="/"
                     tabindex="0"
                   >
                     <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                      class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                       >
                         HOME
                       </span>
                     </div>
-                    <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
                   </a>
                 </span>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       CHECK-IN
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       DIRECTORY
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
+                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
                   style="min-height: 0px;"
                 >
                   <div
-                    class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+                    class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
                   >
                     <div
-                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
                     >
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/guilds"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Guilds & Communities
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/people"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             People
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/teams"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Teams
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       FEEDBACK
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       REPORTS
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
               </div>
             </nav>
@@ -672,10 +603,11 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
         />
       </div>
       <div
-        class="MuiDrawer-root MuiDrawer-docked css-f7jlii-MuiDrawer-docked"
+        class="MuiDrawer-root MuiDrawer-anchorLeft MuiDrawer-docked css-slg7za-MuiDrawer-docked"
       >
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-12i7wg6-MuiPaper-root-MuiDrawer-paper"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-1lwhjos-MuiPaper-root-MuiDrawer-paper"
+          style="--Paper-shadow: none;"
         >
           <div>
             <div />
@@ -689,169 +621,145 @@ exports[`<Menu /> > renders correctly for admin 1`] = `
               />
             </div>
             <nav
-              class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding Menu-listStyle css-b7dj7n-MuiList-root"
             >
               <div>
                 <span
                   class="Menu-listItem"
                 >
                   <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                     href="/"
                     tabindex="0"
                   >
                     <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                      class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                       >
                         HOME
                       </span>
                     </div>
-                    <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
                   </a>
                 </span>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       CHECK-IN
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       DIRECTORY
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
+                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
                   style="min-height: 0px;"
                 >
                   <div
-                    class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+                    class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
                   >
                     <div
-                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
                     >
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/guilds"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Guilds & Communities
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/people"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             People
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/teams"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Teams
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       FEEDBACK
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       REPORTS
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
               </div>
             </nav>
@@ -874,20 +782,21 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
     class="Menu-root"
   >
     <header
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed Menu-appBar mui-fixed css-11b3ww9-MuiPaper-root-MuiAppBar-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed Menu-appBar mui-fixed css-zanzjh-MuiPaper-root-MuiAppBar-root"
+      style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
     >
       <div
-        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-hyum1k-MuiToolbar-root"
+        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
       >
         <button
           aria-label="open drawer"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge Menu-menuButton css-184mzhy-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge Menu-menuButton css-1j9tf9y-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
             data-testid="MenuIcon"
             focusable="false"
             viewBox="0 0 24 24"
@@ -896,21 +805,18 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
               d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"
             />
           </svg>
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
       </div>
       <a
         href="/profile/some-id"
       >
         <div
-          class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+          class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
           style="position: absolute; cursor: pointer; right: 5px; top: 10px; text-decoration: none;"
         >
           <img
             alt="holmes's avatar"
-            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
           />
         </div>
@@ -921,12 +827,12 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
     >
       <div
         aria-hidden="true"
-        class="MuiDrawer-root MuiDrawer-modal MuiModal-root MuiModal-hidden css-14eljdh-MuiModal-root-MuiDrawer-root"
+        class="MuiDrawer-root MuiDrawer-anchorLeft MuiDrawer-modal MuiModal-root MuiModal-hidden css-h2qaug-MuiModal-root-MuiDrawer-root"
         role="presentation"
       >
         <div
           aria-hidden="true"
-          class="MuiBackdrop-root MuiModal-backdrop css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop"
+          class="MuiBackdrop-root MuiModal-backdrop css-4nmryk-MuiBackdrop-root-MuiModal-backdrop"
           style="opacity: 0; visibility: hidden;"
         />
         <div
@@ -934,8 +840,8 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
           tabindex="-1"
         />
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation16 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft css-4t3x6l-MuiPaper-root-MuiDrawer-paper"
-          style="visibility: hidden; webkit-transform: translateX(-0px); transform: translateX(-0px);"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation16 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft css-cyqh1t-MuiPaper-root-MuiDrawer-paper"
+          style="--Paper-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2),0px 16px 24px 2px rgba(0,0,0,0.14),0px 6px 30px 5px rgba(0,0,0,0.12); visibility: hidden; webkit-transform: translateX(-0px); transform: translateX(-0px);"
           tabindex="-1"
         >
           <div>
@@ -950,151 +856,130 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
               />
             </div>
             <nav
-              class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding Menu-listStyle css-b7dj7n-MuiList-root"
             >
               <div>
                 <span
                   class="Menu-listItem"
                 >
                   <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                     href="/"
                     tabindex="0"
                   >
                     <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                      class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                       >
                         HOME
                       </span>
                     </div>
-                    <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
                   </a>
                 </span>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       CHECK-IN
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       DIRECTORY
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
+                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
                   style="min-height: 0px;"
                 >
                   <div
-                    class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+                    class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
                   >
                     <div
-                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
                     >
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/guilds"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Guilds & Communities
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/people"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             People
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/teams"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Teams
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       FEEDBACK
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
               </div>
             </nav>
@@ -1106,10 +991,11 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
         />
       </div>
       <div
-        class="MuiDrawer-root MuiDrawer-docked css-f7jlii-MuiDrawer-docked"
+        class="MuiDrawer-root MuiDrawer-anchorLeft MuiDrawer-docked css-slg7za-MuiDrawer-docked"
       >
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-12i7wg6-MuiPaper-root-MuiDrawer-paper"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper Menu-drawerPaper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-1lwhjos-MuiPaper-root-MuiDrawer-paper"
+          style="--Paper-shadow: none;"
         >
           <div>
             <div />
@@ -1123,151 +1009,130 @@ exports[`<Menu /> > renders correctly for pdl 1`] = `
               />
             </div>
             <nav
-              class="MuiList-root MuiList-padding Menu-listStyle css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding Menu-listStyle css-b7dj7n-MuiList-root"
             >
               <div>
                 <span
                   class="Menu-listItem"
                 >
                   <a
-                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                    class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                     href="/"
                     tabindex="0"
                   >
                     <div
-                      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                      class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                       >
                         HOME
                       </span>
                     </div>
-                    <span
-                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                    />
                   </a>
                 </span>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       CHECK-IN
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       DIRECTORY
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
                 <div
-                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
+                  class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-qr6njo-MuiCollapse-root"
                   style="min-height: 0px;"
                 >
                   <div
-                    class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+                    class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
                   >
                     <div
-                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+                      class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
                     >
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters Mui-selected MuiListItemButton-root MuiListItemButton-gutters Mui-selected Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/guilds"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Guilds & Communities
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/people"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             People
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                       <a
-                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                        class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-nested css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                         href="/teams"
                         tabindex="0"
                       >
                         <div
-                          class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                          class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                         >
                           <span
-                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-10hburv-MuiTypography-root"
+                            class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary Menu-subListItem css-rizt0-MuiTypography-root"
                           >
                             Teams
                           </span>
                         </div>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </a>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-16ac5r2-MuiButtonBase-root-MuiListItemButton-root"
+                  class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-gutters Menu-listItem css-4bx69l-MuiButtonBase-root-MuiListItemButton-root"
                   role="button"
                   tabindex="0"
                 >
                   <div
-                    class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                    class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                   >
                     <span
-                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                      class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                     >
                       FEEDBACK
                     </span>
                   </div>
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
                 </div>
               </div>
             </nav>

@@ -3,11 +3,11 @@
 exports[`renders correctly - canceled 1`] = `
 <div>
   <div
-    class="feedback-submit-page css-qzd6ow"
+    class="feedback-submit-page css-9mle9k"
     data-testid="canceled-request-id"
   >
     <h3
-      class="MuiTypography-root MuiTypography-h3 FeedbackSubmitPage-announcement css-gepadz-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-h3 FeedbackSubmitPage-announcement css-13msox4-MuiTypography-root"
     >
       This feedback request has been canceled.
     </h3>
@@ -18,7 +18,7 @@ exports[`renders correctly - canceled 1`] = `
 exports[`renders correctly - submitted 1`] = `
 <div>
   <div
-    class="feedback-submit-page css-qzd6ow"
+    class="feedback-submit-page css-9mle9k"
     data-testid="request-id"
   >
     <div
@@ -28,23 +28,24 @@ exports[`renders correctly - submitted 1`] = `
         class="MuiBox-root css-180b3ld"
       >
         <header
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-hip9hq-MuiPaper-root-MuiAppBar-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-ptdwpq-MuiPaper-root-MuiAppBar-root"
+          style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
         >
           <div
-            class="MuiTabs-root css-1ujnqem-MuiTabs-root"
+            class="MuiTabs-root css-jhczcq-MuiTabs-root"
           >
             <div
-              class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+              class="MuiTabs-scroller MuiTabs-fixed css-s2t35c-MuiTabs-scroller"
               style="overflow: hidden; margin-bottom: 0px;"
             >
               <div
-                class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+                class="MuiTabs-list MuiTabs-flexContainer css-hzcega-MuiTabs-list"
                 role="tablist"
               >
                 <button
                   aria-controls="full-width-tabpanel-0"
                   aria-selected="false"
-                  class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorInherit MuiTab-fullWidth css-u40yv4-MuiButtonBase-root-MuiTab-root"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorInherit MuiTab-fullWidth css-bo8shb-MuiButtonBase-root-MuiTab-root"
                   id="full-width-tab-0"
                   role="tab"
                   tabindex="-1"
@@ -52,7 +53,7 @@ exports[`renders correctly - submitted 1`] = `
                 >
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper MuiTab-icon css-1umw9bq-MuiSvgIcon-root"
                     data-testid="HourglassEmptyIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -66,7 +67,7 @@ exports[`renders correctly - submitted 1`] = `
                 <button
                   aria-controls="full-width-tabpanel-1"
                   aria-selected="true"
-                  class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorInherit MuiTab-fullWidth Mui-selected css-u40yv4-MuiButtonBase-root-MuiTab-root"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-labelIcon MuiTab-textColorInherit MuiTab-fullWidth Mui-selected css-bo8shb-MuiButtonBase-root-MuiTab-root"
                   id="full-width-tab-1"
                   role="tab"
                   tabindex="0"
@@ -74,7 +75,7 @@ exports[`renders correctly - submitted 1`] = `
                 >
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper MuiTab-icon css-1umw9bq-MuiSvgIcon-root"
                     data-testid="CheckCircleIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -85,7 +86,7 @@ exports[`renders correctly - submitted 1`] = `
                   </svg>
                   Your Review
                   <span
-                    class="MuiTabs-indicator css-11yukd5-MuiTabs-indicator"
+                    class="MuiTabs-indicator css-ehhs8s-MuiTabs-indicator"
                   />
                 </button>
               </div>
@@ -114,13 +115,13 @@ exports[`renders correctly - submitted 1`] = `
                   class="MuiBox-root css-19kzrtu"
                 >
                   <p
-                    class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
                   >
                     <div
-                      class="submit-form css-1upxzzf"
+                      class="submit-form css-1799q8o"
                     >
                       <span
-                        class="MuiTypography-root MuiTypography-h3 FeedbackSubmitForm-announcement css-gepadz-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-h3 FeedbackSubmitForm-announcement css-13msox4-MuiTypography-root"
                       >
                         Reviewing
                          Feedback on

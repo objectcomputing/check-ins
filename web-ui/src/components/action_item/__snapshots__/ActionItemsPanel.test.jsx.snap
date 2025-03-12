@@ -3,17 +3,18 @@
 exports[`ActionItemsPanel > renders correctly 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root action-items css-bhp9pd-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root action-items css-1j74uew-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
   >
     <div
-      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+      class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
     >
       <div
-        class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+        class="MuiCardHeader-avatar css-1r9wl67-MuiCardHeader-avatar"
       >
         <svg
           aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
           data-testid="ArrowForwardIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -24,17 +25,17 @@ exports[`ActionItemsPanel > renders correctly 1`] = `
         </svg>
       </div>
       <div
-        class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+        class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
       >
         <h2
-          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
         >
           Action Items
         </h2>
       </div>
     </div>
     <div
-      class="MuiCardContent-root action-items-container css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root action-items-container css-1lt5qva-MuiCardContent-root"
     >
       <div
         data-rbd-droppable-context-id="0"
@@ -50,13 +51,13 @@ exports[`ActionItemsPanel > renders correctly 1`] = `
         />
         <button
           aria-label="create"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge edit-icon css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge edit-icon css-154kngp-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
             data-testid="DoneIcon"
             focusable="false"
             viewBox="0 0 24 24"
@@ -65,9 +66,6 @@ exports[`ActionItemsPanel > renders correctly 1`] = `
               d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"
             />
           </svg>
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </button>
       </div>
     </div>

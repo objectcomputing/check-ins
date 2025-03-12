@@ -3,52 +3,53 @@
 exports[`FeedbackResponseCard > renders correctly for radio button responses 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-1j74uew-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
   >
     <div
-      class="MuiCardContent-root response-card-content css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root response-card-content css-1lt5qva-MuiCardContent-root"
     >
       <div
         class="response-card-recipient-info"
       >
         <div
-          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-1wlk0hk-MuiAvatar-root"
+          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-fmeqll-MuiAvatar-root"
         >
           <img
-            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/undefined"
           />
         </div>
         <p
-          class="MuiTypography-root MuiTypography-body1 responder-name css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 responder-name css-rizt0-MuiTypography-root"
         />
       </div>
       <div
-        class="MuiFormGroup-root MuiFormGroup-row MuiRadioGroup-root MuiRadioGroup-row feedback-answer-radio css-qfz70r-MuiFormGroup-root"
+        class="MuiFormGroup-root MuiFormGroup-row MuiRadioGroup-root MuiRadioGroup-row feedback-answer-radio css-cis11t-MuiFormGroup-root"
         role="radiogroup"
       >
         <label
-          class="MuiFormControlLabel-root Mui-disabled MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+          class="MuiFormControlLabel-root Mui-disabled MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
         >
           <span
             aria-disabled="true"
-            class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-checked Mui-disabled MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+            class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-checked Mui-disabled MuiRadio-root MuiRadio-colorPrimary css-1v7jmtj-MuiButtonBase-root-MuiRadio-root"
             tabindex="-1"
           >
             <input
               checked=""
-              class="PrivateSwitchBase-input css-1m9pwf3"
+              class="PrivateSwitchBase-input css-j8yymo"
               disabled=""
               name=":r0:"
               type="radio"
               value="Yes"
             />
             <span
-              class="css-hyxlzm"
+              class="css-1qiat4j"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1rr0-MuiSvgIcon-root"
                 data-testid="RadioButtonUncheckedIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -59,7 +60,7 @@ exports[`FeedbackResponseCard > renders correctly for radio button responses 1`]
               </svg>
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-11zohuh-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-z8nmqa-MuiSvgIcon-root"
                 data-testid="RadioButtonCheckedIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -71,32 +72,32 @@ exports[`FeedbackResponseCard > renders correctly for radio button responses 1`]
             </span>
           </span>
           <span
-            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label Mui-disabled css-ahj2mt-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label Mui-disabled css-rizt0-MuiTypography-root"
           >
             Yes
           </span>
         </label>
         <label
-          class="MuiFormControlLabel-root Mui-disabled MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+          class="MuiFormControlLabel-root Mui-disabled MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
         >
           <span
             aria-disabled="true"
-            class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+            class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-disabled MuiRadio-root MuiRadio-colorPrimary css-1v7jmtj-MuiButtonBase-root-MuiRadio-root"
             tabindex="-1"
           >
             <input
-              class="PrivateSwitchBase-input css-1m9pwf3"
+              class="PrivateSwitchBase-input css-j8yymo"
               disabled=""
               name=":r0:"
               type="radio"
               value="No"
             />
             <span
-              class="css-hyxlzm"
+              class="css-1qiat4j"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1rr0-MuiSvgIcon-root"
                 data-testid="RadioButtonUncheckedIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -107,7 +108,7 @@ exports[`FeedbackResponseCard > renders correctly for radio button responses 1`]
               </svg>
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hhw7if-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-o8rdeq-MuiSvgIcon-root"
                 data-testid="RadioButtonCheckedIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -119,7 +120,7 @@ exports[`FeedbackResponseCard > renders correctly for radio button responses 1`]
             </span>
           </span>
           <span
-            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label Mui-disabled css-ahj2mt-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label Mui-disabled css-rizt0-MuiTypography-root"
           >
             No
           </span>
@@ -133,24 +134,25 @@ exports[`FeedbackResponseCard > renders correctly for radio button responses 1`]
 exports[`FeedbackResponseCard > renders correctly for slider responses 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-1j74uew-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
   >
     <div
-      class="MuiCardContent-root response-card-content css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root response-card-content css-1lt5qva-MuiCardContent-root"
     >
       <div
         class="response-card-recipient-info"
       >
         <div
-          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-1wlk0hk-MuiAvatar-root"
+          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-fmeqll-MuiAvatar-root"
         >
           <img
-            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/undefined"
           />
         </div>
         <p
-          class="MuiTypography-root MuiTypography-body1 responder-name css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 responder-name css-rizt0-MuiTypography-root"
         />
       </div>
     </div>
@@ -161,24 +163,25 @@ exports[`FeedbackResponseCard > renders correctly for slider responses 1`] = `
 exports[`FeedbackResponseCard > renders correctly for text responses 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root response-card css-1j74uew-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
   >
     <div
-      class="MuiCardContent-root response-card-content css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root response-card-content css-1lt5qva-MuiCardContent-root"
     >
       <div
         class="response-card-recipient-info"
       >
         <div
-          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-1wlk0hk-MuiAvatar-root"
+          class="MuiAvatar-root MuiAvatar-circular avatar-photo css-fmeqll-MuiAvatar-root"
         >
           <img
-            class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+            class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
             src="http://localhost:8080/services/member-profiles/member-photos/undefined"
           />
         </div>
         <p
-          class="MuiTypography-root MuiTypography-body1 responder-name css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 responder-name css-rizt0-MuiTypography-root"
         />
       </div>
       <pre

@@ -3,13 +3,13 @@
 exports[`renders correctly 1`] = `
 <div>
   <div
-    class="css-17ynavw"
+    class="css-bszma3"
   >
     <hr
-      class="MuiDivider-root MuiDivider-fullWidth person-divider css-9mgopn-MuiDivider-root"
+      class="MuiDivider-root MuiDivider-fullWidth person-divider css-1jpc804-MuiDivider-root"
     />
     <div
-      class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-8 person-row css-r1hick-MuiGrid-root"
+      class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-8 person-row css-g3bgh6-MuiGrid-root"
       style="padding-left: 16px; padding-right: 16px;"
     >
       <div
@@ -23,11 +23,11 @@ exports[`renders correctly 1`] = `
             s="2"
           >
             <div
-              class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+              class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
               style="margin-right: 1em;"
             >
               <img
-                class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
                 src="http://localhost:8080/services/member-profiles/member-photos/undefined"
               />
             </div>
@@ -36,23 +36,23 @@ exports[`renders correctly 1`] = `
             class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-8 MuiGrid-grid-lg-true small-margin css-1kq4prl-MuiGrid-root"
           >
             <p
-              class="MuiTypography-root MuiTypography-body1 person-name css-ahj2mt-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 person-name css-rizt0-MuiTypography-root"
             />
             <p
-              class="MuiTypography-root MuiTypography-body1 position-text css-ahj2mt-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 position-text css-rizt0-MuiTypography-root"
             />
           </div>
           <div
             class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-lg-true makeStyles-marginMobile-1 css-qixcmv-MuiGrid-root"
           >
             <p
-              class="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-darkGrayTypography css-ahj2mt-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-darkGrayTypography css-rizt0-MuiTypography-root"
             >
               Sent on 
               July 07, 2020
             </p>
             <p
-              class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body2 css-7ctihp-MuiTypography-root"
             >
               No due date
             </p>
@@ -61,7 +61,7 @@ exports[`renders correctly 1`] = `
             class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-6 MuiGrid-grid-md-true css-j90o1n-MuiGrid-root"
           >
             <p
-              class="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-greenTypography css-ahj2mt-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-greenTypography css-rizt0-MuiTypography-root"
             >
               Submitted 
               July 08, 2020
@@ -71,23 +71,20 @@ exports[`renders correctly 1`] = `
             class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-6 MuiGrid-grid-md-true align-end css-j90o1n-MuiGrid-root"
           >
             <a
-              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary response-link css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary response-link css-1uent87-MuiButtonBase-root-MuiButton-root"
               href="/feedback/view/responses/?request=c15961e4-6e9b-42cd-8140-ece9efe2445c"
               tabindex="0"
             >
               View response
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </a>
             <button
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-53g0n7-MuiButtonBase-root-MuiIconButton-root"
               tabindex="0"
               type="button"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="MoreVertIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -96,9 +93,6 @@ exports[`renders correctly 1`] = `
                   d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"
                 />
               </svg>
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </button>
           </div>
         </div>
