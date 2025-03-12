@@ -57,7 +57,9 @@
     "serve": "vite preview",
     "start": "vite",
     "test": "vitest",
-    "update-test": "vitest -u"
+    "update-test": "vitest -u",
+    "postinstall": "husky init",
+    "prepare": "husky"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -76,10 +78,10 @@
   },
   "devDependencies": {
     "@ladle/react": "^5.0.1",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
-    "@testing-library/dom": "^10.4.0",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "@vitest/coverage-v8": "^3.0.8",
@@ -88,6 +90,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-vitest": "^0.5.4",
     "globals": "^16.0.0",
+    "husky": "^9.1.7",
     "jsdom": "^26.0.0",
     "msw": "^2.7.3",
     "prettier": "3.5.3",
