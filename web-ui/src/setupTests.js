@@ -36,6 +36,11 @@ global.waitForSnapshot = async (testId, component, options) => {
   await screen.findByTestId(testId);
   expect(rendered.container).toMatchSnapshot();
 };
+global.waitForRole = async (role, roleOptions, component, renderOptions) => {
+  const rendered = render(component, renderOptions);
+  await screen.findByRole(role, roleOptions);
+  expect(rendered.container).toMatchSnapshot();
+};
 
 global.window = global.window || {};
 global.window.requestAnimationFrame = global.requestAnimationFrame =

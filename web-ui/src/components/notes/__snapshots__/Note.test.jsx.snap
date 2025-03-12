@@ -38,29 +38,13 @@ exports[`renders correctly 1`] = `
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <div
-        class="container"
-      >
-        <div
-          class="skeleton"
-        >
-          <span
-            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-kkcbhd-MuiSkeleton-root"
-            style="height: 2rem;"
-          />
-          <span
-            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-kkcbhd-MuiSkeleton-root"
-            style="height: 2rem;"
-          />
-          <span
-            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-kkcbhd-MuiSkeleton-root"
-            style="height: 2rem;"
-          />
-          <span
-            class="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse css-kkcbhd-MuiSkeleton-root"
-            style="height: 2rem;"
-          />
-        </div>
-      </div>
+        data-testid="tiny-mce-checkin-notes"
+        style="display: none;"
+      />
+      <textarea
+        id="tiny-mce-checkin-notes"
+        style="visibility: hidden;"
+      />
     </div>
   </div>
 </div>

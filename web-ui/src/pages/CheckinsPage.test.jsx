@@ -70,10 +70,20 @@ const mockuments = [
   }
 ];
 
+const notes = [
+  {
+    id: 'note-1',
+    description: 'Some kind of note...'
+  }
+];
+
 const server = setupServer(
   http.get('http://localhost:8080/services/document/1', () => {
     return HttpResponse.json(mockuments);
-  })
+  }),
+  http.get(`http://localhost:8080/services/checkin-notes?checkinid=${mockCheckinId}`, () => {
+    return HttpResponse.json(notes);
+  }),
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
@@ -99,7 +109,7 @@ global.requestAnimationFrame = function (callback) {
 
 it('renders correctly', async () => {
   await waitForSnapshot(
-    'mockument-2',
+    'tiny-mce-checkin-notes',
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Router history={history}>
         <AppContextProvider value={initialState}>

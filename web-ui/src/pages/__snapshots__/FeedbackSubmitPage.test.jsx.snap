@@ -8,6 +8,7 @@ exports[`renders correctly - canceled 1`] = `
   >
     <h3
       class="MuiTypography-root MuiTypography-h3 FeedbackSubmitPage-announcement css-13msox4-MuiTypography-root"
+      data-testid="canceled-request-id-canceled"
     >
       This feedback request has been canceled.
     </h3>

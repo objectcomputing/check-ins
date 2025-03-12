@@ -3,6 +3,8 @@ import Notes from './Note';
 import { AppContextProvider } from '../../context/AppContext';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
+import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
 
 const mockMemberId = '912834091823';
 const mockCheckinId = '837465917381';
@@ -29,6 +31,7 @@ const checkin = {
 
 const initialState = {
   state: {
+    csrf: 'fake-csrf',
     userProfile: {
       name: 'holmes',
       memberProfile: {
@@ -54,8 +57,25 @@ const initialState = {
   }
 };
 
-it('renders correctly', () => {
-  snapshot(
+const notes = [
+  {
+    id: 'note-1',
+    description: 'Some kind of note...'
+  }
+];
+
+const server = setupServer(
+  http.get(`http://localhost:8080/services/checkin-notes?checkinid=${checkin.id}`, () => {
+    return HttpResponse.json(notes);
+  }),
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+it('renders correctly', async () => {
+  await waitForSnapshot('tiny-mce-checkin-notes',
     <Router history={history}>
       <AppContextProvider value={initialState}>
         <Notes

@@ -162,6 +162,8 @@ const PrivateNote = () => {
               </div>
             </div>
           ) : (
+            <>
+            <div style={{ display: "none" }} data-testid="tiny-mce-checkin-private-notes" />
             <Editor
               apiKey="246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e"
               id="tiny-mce-checkin-private-notes"
@@ -185,11 +187,12 @@ const PrivateNote = () => {
                 import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'
               }
             />
-          )}
-        </CardContent>
-      </Card>
-    )
-  );
-};
+            </>
+            )}
+            </CardContent>
+            </Card>
+            )
+            );
+          };
 
-export default PrivateNote;
+          export default PrivateNote;

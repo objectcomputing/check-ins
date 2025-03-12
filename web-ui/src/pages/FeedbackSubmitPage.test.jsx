@@ -82,7 +82,7 @@ it('renders correctly - submitted', async () => {
 
 it('renders correctly - canceled', async () => {
   await waitForSnapshot(
-    'canceled-request-id',
+    'canceled-request-id-canceled',
     <AppContextProvider value={userStateWithPermission}>
       <MemoryRouter
         initialEntries={[

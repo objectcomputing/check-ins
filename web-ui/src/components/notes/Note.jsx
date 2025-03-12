@@ -51,6 +51,8 @@ const Notes = props => {
           res.payload && res.payload.data && res.payload.data.length > 0
             ? res.payload.data[0]
             : null;
+        console.log(JSON.stringify(res));
+        console.log(currentNote);
         if (currentNote) {
           setNote(currentNote);
         } else if (currentUserId === pdlId) {
@@ -100,7 +102,7 @@ const Notes = props => {
     }
 
     setNote(note => {
-      const newNote = { ...note, description: content };
+        const newNote = { ...note, description: content };
       updateNote(newNote, csrf);
       return newNote;
     });
@@ -124,6 +126,8 @@ const Notes = props => {
             </div>
           </div>
         ) : (
+          <>
+          <div style={{display:"none"}} data-testid="tiny-mce-checkin-notes" />
           <Editor
             apiKey="246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e"
             id="tiny-mce-checkin-notes"
@@ -147,6 +151,7 @@ const Notes = props => {
               import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'
             }
           />
+          </>
         )}
       </CardContent>
     </Card>
