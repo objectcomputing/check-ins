@@ -8,7 +8,7 @@ export const getCertifications = async cookie => {
     headers: {
       'X-CSRF-Header': cookie,
       Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8',
+      'Content-Type': 'application/json;charset=UTF-8'
     }
   });
 };
@@ -29,9 +29,9 @@ export const createCertification = async (data, cookie) => {
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=UTF-8'
     },
-    data: data,
+    data: data
   });
-}
+};
 
 export const updateCertification = async (id, data, cookie) => {
   return resolve({
@@ -42,9 +42,9 @@ export const updateCertification = async (id, data, cookie) => {
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=UTF-8'
     },
-    data: data,
+    data: data
   });
-}
+};
 
 export const mergeCertification = async (sourceId, targetId, cookie) => {
   return resolve({
@@ -55,6 +55,6 @@ export const mergeCertification = async (sourceId, targetId, cookie) => {
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=UTF-8'
     },
-    data: { sourceId, targetId },
+    data: { sourceId, targetId }
   });
-}
+};

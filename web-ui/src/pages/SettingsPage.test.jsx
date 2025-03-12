@@ -11,11 +11,11 @@ const initialState = {
     userProfile: {
       name: 'Current User',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_ADMINISTER_SETTINGS' }],
+      permissions: [{ permission: 'CAN_ADMINISTER_SETTINGS' }]
     },
     loading: {
-      teams: [],
-    },
+      teams: []
+    }
   }
 };
 
@@ -23,28 +23,28 @@ const server = setupServer(
   http.get('http://localhost:8080/services/settings/options', ({ request }) => {
     return HttpResponse.json([
       {
-        'name': 'STRING_SETTING',
-        'description': 'The description',
-        'category': 'THEME',
-        'type': 'STRING',
-        'value': 'The value',
+        name: 'STRING_SETTING',
+        description: 'The description',
+        category: 'THEME',
+        type: 'STRING',
+        value: 'The value'
       },
       {
-        'name': 'OTHER_SETTING',
-        'description': 'The description',
-        'category': 'THEME',
-        'type': 'NUMBER',
-        'value': '42',
+        name: 'OTHER_SETTING',
+        description: 'The description',
+        category: 'THEME',
+        type: 'NUMBER',
+        value: '42'
       },
       {
-        'name': 'ANOTHER_SETTING',
-        'description': 'The description',
-        'category': 'INTEGRATIONS',
-        'type': 'BOOLEAN',
-        'value': 'false',
-      },
+        name: 'ANOTHER_SETTING',
+        description: 'The description',
+        category: 'INTEGRATIONS',
+        type: 'BOOLEAN',
+        value: 'false'
+      }
     ]);
-  }),
+  })
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));

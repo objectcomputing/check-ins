@@ -317,13 +317,17 @@ const KudosDialog = ({ open, recipient, teamId, onClose }) => {
               value={message}
               onChange={handleMessageChange}
             />
-            {publicKudos ? <Alert
-              severity="info"
-              style={{ marginTop: '1rem', marginBottom: '2rem' }}
-            >
-              Kudos will be visible to admins for approval, then sent to the
-              recipient.
-            </Alert> : <div style={{ height: "20px" }}/>}
+            {publicKudos ? (
+              <Alert
+                severity="info"
+                style={{ marginTop: '1rem', marginBottom: '2rem' }}
+              >
+                Kudos will be visible to admins for approval, then sent to the
+                recipient.
+              </Alert>
+            ) : (
+              <div style={{ height: '20px' }} />
+            )}
             <Button
               variant="contained"
               disabled={message.trim().length === 0}

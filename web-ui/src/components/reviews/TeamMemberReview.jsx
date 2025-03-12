@@ -1,24 +1,15 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import { AppContext } from '../../context/AppContext';
-import { selectCsrfToken, selectCurrentUser, selectProfile } from '../../context/selectors';
+import {
+  selectCsrfToken,
+  selectCurrentUser,
+  selectProfile
+} from '../../context/selectors';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import {
-  AppBar,
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Modal,
-  Tab,
-  Tabs,
-  Typography
-} from '@mui/material';
+import { AppBar, Box, Tab, Tabs, Typography } from '@mui/material';
 import FeedbackSubmitForm from '../feedback_submit_form/FeedbackSubmitForm';
 
 const propTypes = {
@@ -103,10 +94,6 @@ const TeamMemberReview = ({
     setValue(newValue);
   };
 
-  const handleChangeIndex = index => {
-    setValue(index);
-  };
-
   let selfReviewIcon = <HourglassEmptyIcon />;
   if (selfReview && selfReview.status?.toUpperCase() === 'SUBMITTED') {
     selfReviewIcon = <CheckCircleIcon />;
@@ -134,59 +121,66 @@ const TeamMemberReview = ({
               key={0}
             />
             {reviews &&
-              reviews.filter(r => !!r).map((review, index) => {
-                const reviewer = review.recipientId == memberProfile?.id ?
-                                 memberProfile :
-                                 selectProfile(state, review.recipientId);
-                let label = reviewer?.firstName + "'s Review";
-                if (reviewer?.id === currentUser?.id) {
-                  label = 'Your Review';
-                }
+              reviews
+                .filter(r => !!r)
+                .map((review, index) => {
+                  const reviewer =
+                    review.recipientId == memberProfile?.id
+                      ? memberProfile
+                      : selectProfile(state, review.recipientId);
+                  let label = reviewer?.firstName + "'s Review";
+                  if (reviewer?.id === currentUser?.id) {
+                    label = 'Your Review';
+                  }
 
-                let icon = <HourglassEmptyIcon />;
-                if (review.status.toUpperCase() === 'SUBMITTED') {
-                  icon = <CheckCircleIcon />;
-                }
+                  let icon = <HourglassEmptyIcon />;
+                  if (review.status.toUpperCase() === 'SUBMITTED') {
+                    icon = <CheckCircleIcon />;
+                  }
 
-                return (
-                  <Tab key={index + 1}
-                       icon={icon}
-                       label={label}
-                       {...a11yProps(index + 1)} />
-                );
-              })}
+                  return (
+                    <Tab
+                      key={index + 1}
+                      icon={icon}
+                      label={label}
+                      {...a11yProps(index + 1)}
+                    />
+                  );
+                })}
           </Tabs>
         </AppBar>
-        <SwipeableViews
-          axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-          index={value}
-          onChangeIndex={handleChangeIndex}
-        >
-          <TabPanel key={0} value={value} index={0} dir={theme.direction}>
-            {selfReview?.id ? (
-              <FeedbackSubmitForm
-                requesteeName={
-                  memberProfile?.firstName + ' ' + memberProfile?.lastName
-                }
-                requestId={selfReview?.id}
-                request={selfReview}
-                reviewOnly={true}
-              />
-            ) : (<Typography variant="h4">Not Available</Typography>)}
-          </TabPanel>
-          {reviews &&
-            reviews.filter(r => !!r).map((review, index) => {
+        <TabPanel key={0} value={value} index={0} dir={theme.direction}>
+          {selfReview?.id ? (
+            <FeedbackSubmitForm
+              requesteeName={
+                memberProfile?.firstName + ' ' + memberProfile?.lastName
+              }
+              requestId={selfReview?.id}
+              request={selfReview}
+              reviewOnly={true}
+            />
+          ) : (
+            <Typography variant="h4">Not Available</Typography>
+          )}
+        </TabPanel>
+        {reviews &&
+          reviews
+            .filter(r => !!r)
+            .map((review, index) => {
               const reviewer = selectProfile(state, review.recipientId);
               const requestee = selectProfile(state, review.requesteeId);
               const requesteeName = requestee?.name;
-              const readOnly = (reviewer?.id !== currentUser?.id ||
-                                review.status?.toUpperCase() === 'SUBMITTED');
+              const readOnly =
+                reviewer?.id !== currentUser?.id ||
+                review.status?.toUpperCase() === 'SUBMITTED';
 
               return (
-                <TabPanel key={index + 1}
-                          value={value}
-                          index={index + 1}
-                          dir={theme.direction}>
+                <TabPanel
+                  key={index + 1}
+                  value={value}
+                  index={index + 1}
+                  dir={theme.direction}
+                >
                   <FeedbackSubmitForm
                     requesteeName={requesteeName}
                     requestId={review.id}
@@ -196,7 +190,6 @@ const TeamMemberReview = ({
                 </TabPanel>
               );
             })}
-        </SwipeableViews>
       </Box>
     </Root>
   );

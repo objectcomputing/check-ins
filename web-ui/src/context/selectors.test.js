@@ -26,7 +26,9 @@ import {
   selectCanViewTerminatedMembers,
   selectHasAnniversaryReportPermission,
   selectHasBirthdayReportPermission,
-  selectHasCheckinsReportPermission, selectHasSkillsReportPermission, selectHasTeamSkillsReportPermission,
+  selectHasCheckinsReportPermission,
+  selectHasSkillsReportPermission,
+  selectHasTeamSkillsReportPermission
 } from './selectors';
 
 describe('Selectors', () => {
@@ -663,7 +665,10 @@ describe('Selectors', () => {
       mockSelectMemberRoles.mockReturnValue(memberRoles);
       mockSelectTerminatedMemberIds.mockReturnValue(memberIds);
 
-      const result = selectTerminatedMemberRoles.resultFunc(memberRoles, memberIds);
+      const result = selectTerminatedMemberRoles.resultFunc(
+        memberRoles,
+        memberIds
+      );
       expect(result).toEqual([
         {
           memberRoleId: {
@@ -1328,7 +1333,7 @@ describe('Selectors', () => {
 
     const testState = {
       userProfile: {
-        id: testMemberProfiles[0].id,
+        id: testMemberProfiles[0].id
       },
       memberProfiles: testMemberProfiles
     };
@@ -1408,7 +1413,7 @@ describe('Selectors', () => {
 
     const testState = {
       userProfile: {
-        id: testMemberProfiles[0].id,
+        id: testMemberProfiles[0].id
       },
       memberProfiles: testMemberProfiles
     };
@@ -1425,7 +1430,7 @@ describe('Selectors', () => {
         lastName: 'Emmerich',
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
         ]
       }
     };
@@ -1441,7 +1446,7 @@ describe('Selectors', () => {
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
-          { permission: 'CAN_VIEW_ANNIVERSARY_REPORT' },
+          { permission: 'CAN_VIEW_ANNIVERSARY_REPORT' }
         ]
       }
     };
@@ -1522,9 +1527,7 @@ describe('Selectors', () => {
       userProfile: {
         firstName: 'Huey',
         lastName: 'Emmerich',
-        permissions: [
-          { permission: 'CAN_VIEW_CHECKINS_REPORT' }
-        ]
+        permissions: [{ permission: 'CAN_VIEW_CHECKINS_REPORT' }]
       }
     };
 
@@ -1551,9 +1554,7 @@ describe('Selectors', () => {
       userProfile: {
         firstName: 'Huey',
         lastName: 'Emmerich',
-        permissions: [
-          { permission: 'CAN_VIEW_SKILLS_REPORT' }
-        ]
+        permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }]
       }
     };
 
@@ -1580,9 +1581,7 @@ describe('Selectors', () => {
       userProfile: {
         firstName: 'Huey',
         lastName: 'Emmerich',
-        permissions: [
-          { permission: 'CAN_VIEW_SKILLS_REPORT' }
-        ]
+        permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }]
       }
     };
 
@@ -1596,7 +1595,7 @@ describe('Selectors', () => {
         lastName: 'Emmerich',
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
         ]
       }
     };
@@ -1612,7 +1611,7 @@ describe('Selectors', () => {
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
         ]
       }
     };
@@ -1627,7 +1626,7 @@ describe('Selectors', () => {
         lastName: 'Emmerich',
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
         ]
       }
     };
@@ -1643,7 +1642,7 @@ describe('Selectors', () => {
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
         ]
       }
     };
@@ -1654,7 +1653,7 @@ describe('Selectors', () => {
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_VIEW_TERMINATED_MEMBERS' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
         ]
       }
     };
@@ -1675,7 +1674,7 @@ describe('Selectors', () => {
       title: 'engineer',
       workEmail: 'employee@sample.com',
       pdlId: 9,
-      startDate: [2012, 9, 29],
+      startDate: [2012, 9, 29]
     };
     const inactiveTestMember = {
       id: 2,
@@ -1689,7 +1688,7 @@ describe('Selectors', () => {
       workEmail: 'employee@sample.com',
       pdlId: 9,
       startDate: [2012, 9, 29],
-      terminationDate: [2013, 9, 29],
+      terminationDate: [2013, 9, 29]
     };
     /** @type MemberProfile[] */
     const testActiveMemberProfiles = [
@@ -1705,7 +1704,7 @@ describe('Selectors', () => {
         title: 'engineer',
         workEmail: 'employee@sample.com',
         pdlId: 9,
-        startDate: [2012, 9, 29],
+        startDate: [2012, 9, 29]
       }
     ];
     /** @type MemberProfile[] */
@@ -1723,15 +1722,19 @@ describe('Selectors', () => {
         workEmail: 'employee@sample.com',
         pdlId: 9,
         startDate: [2012, 9, 29],
-        terminationDate: [2013, 9, 29],
+        terminationDate: [2013, 9, 29]
       }
     ];
     const testState = {
       memberProfiles: testActiveMemberProfiles,
-      terminatedMembers: testInactiveMemberProfiles,
+      terminatedMembers: testInactiveMemberProfiles
     };
 
-    expect(selectActiveOrInactiveProfile(testState, activeTestMember.id)).toEqual(activeTestMember);
-    expect(selectActiveOrInactiveProfile(testState, inactiveTestMember.id)).toEqual(inactiveTestMember);
+    expect(
+      selectActiveOrInactiveProfile(testState, activeTestMember.id)
+    ).toEqual(activeTestMember);
+    expect(
+      selectActiveOrInactiveProfile(testState, inactiveTestMember.id)
+    ).toEqual(inactiveTestMember);
   });
 });

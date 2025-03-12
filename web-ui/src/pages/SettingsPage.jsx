@@ -39,9 +39,11 @@ const SettingsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       // Get the options from the server
-      const allOptions = selectHasViewSettingsPermission(state) ||
-                         selectHasAdministerSettingsPermission(state) ?
-                            (await getAllOptions()).payload.data : [];
+      const allOptions =
+        selectHasViewSettingsPermission(state) ||
+        selectHasAdministerSettingsPermission(state)
+          ? (await getAllOptions()).payload.data
+          : [];
 
       if (allOptions) {
         // Sort the options by category, store them, and upate the state.
@@ -68,7 +70,7 @@ const SettingsPage = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: 'warning',
-          toast: "The Logo URL setting has yet to be implemented.",
+          toast: 'The Logo URL setting has yet to be implemented.'
         }
       });
     }
@@ -77,11 +79,11 @@ const SettingsPage = () => {
   const keyedHandler = (key, event) => {
     if (handlers[key]) {
       handlers[key].setting.value = event.target.value;
-      setState({update: true});
+      setState({ update: true });
     }
   };
 
-  const handlePulseEmailFrequency = (event) => {
+  const handlePulseEmailFrequency = event => {
     keyedHandler('PULSE_EMAIL_FREQUENCY', event);
   };
 
@@ -91,51 +93,57 @@ const SettingsPage = () => {
     // a file reference object.
     LOGO_URL: {
       onChange: handleLogoUrl,
-      setting: fileRef,
+      setting: fileRef
     },
 
     // All others need to provide an `onChange` method and a `setting` object.
     PULSE_EMAIL_FREQUENCY: {
       onChange: handlePulseEmailFrequency,
-      setting: undefined,
-    },
+      setting: undefined
+    }
   };
 
   const addHandlersToSettings = settings => {
-    return settings ? settings.map(setting => {
-      const handler = handlers[setting.name.toUpperCase()];
-      if (handler) {
-        if (setting.type.toUpperCase() === 'FILE') {
-          return {
-            ...setting,
-            handleFunction: handler.onChange,
-            fileRef: handler.setting,
-          };
-        }
+    return settings
+      ? settings.map(setting => {
+          const handler = handlers[setting.name.toUpperCase()];
+          if (handler) {
+            if (setting.type.toUpperCase() === 'FILE') {
+              return {
+                ...setting,
+                handleFunction: handler.onChange,
+                fileRef: handler.setting
+              };
+            }
 
-        handler.setting = setting;
-        return { ...setting, handleChange: handler.onChange };
-      }
+            handler.setting = setting;
+            return { ...setting, handleChange: handler.onChange };
+          }
 
-      console.warn(`WARNING: No handler for ${setting.name}`);
-      return setting;
-    }) : [];
+          console.warn(`WARNING: No handler for ${setting.name}`);
+          return setting;
+        })
+      : [];
   };
 
   const save = async () => {
     let errors;
     let saved = 0;
-    for(let key of Object.keys(handlers)) {
+    for (let key of Object.keys(handlers)) {
       const setting = handlers[key].setting;
       // The settings controller does not allow blank values.
-      if (setting?.name && `${setting.value}` != "") {
+      if (setting?.name && `${setting.value}` != '') {
         let res;
         if (setting.id) {
-          res = await putOption({ name: setting.name,
-                                  value: setting.value }, csrf);
+          res = await putOption(
+            { name: setting.name, value: setting.value },
+            csrf
+          );
         } else {
-          res = await postOption({ name: setting.name,
-                                   value: setting.value }, csrf);
+          res = await postOption(
+            { name: setting.name, value: setting.value },
+            csrf
+          );
           if (res?.payload?.data) {
             setting.id = res.payload.data.id;
           }
@@ -143,7 +151,7 @@ const SettingsPage = () => {
         if (res?.error) {
           const error = res?.error?.message;
           if (errors) {
-            errors += "\n" + error;
+            errors += '\n' + error;
           } else {
             errors = error;
           }
@@ -161,7 +169,7 @@ const SettingsPage = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: 'error',
-          toast: errors,
+          toast: errors
         }
       });
     } else if (saved > 0) {
@@ -169,7 +177,7 @@ const SettingsPage = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: 'success',
-          toast: 'Settings have been saved',
+          toast: 'Settings have been saved'
         }
       });
     }
@@ -186,40 +194,43 @@ const SettingsPage = () => {
   const updatedSettingsControls = addHandlersToSettings(settingsControls);
   const categories = {};
 
-  return (selectHasViewSettingsPermission(state) ||
-          selectHasAdministerSettingsPermission(state)) ? (
+  return selectHasViewSettingsPermission(state) ||
+    selectHasAdministerSettingsPermission(state) ? (
     <div className="settings-page">
       {updatedSettingsControls.map((componentInfo, index) => {
         const Component = componentMapping[componentInfo.type.toUpperCase()];
-        const info = {...componentInfo, name: titleCase(componentInfo.name)};
+        const info = { ...componentInfo, name: titleCase(componentInfo.name) };
         if (categories[info.category]) {
           return <Component key={index} {...info} />;
         } else {
           categories[info.category] = true;
           return (
             <div key={index}>
-              <Typography data-testid={info.category}
-                          variant="h4"
-                          sx={{textDecoration: 'underline'}}
-                          display="inline">{titleCase(info.category)}
+              <Typography
+                data-testid={info.category}
+                variant="h4"
+                sx={{ textDecoration: 'underline' }}
+                display="inline"
+              >
+                {titleCase(info.category)}
               </Typography>
               <Component {...info} />
             </div>
           );
         }
       })}
-      {// Check length against an explicit value.  If length is zero, it will
-       // be displayed instead of evaluated to false.
-       settingsControls && settingsControls.length > 0 &&
-       selectHasAdministerSettingsPermission(state) &&
-      <div className="buttons">
-        <Button
-          disableRipple
-          color="primary"
-          onClick={save}>
-          Save
-        </Button>
-      </div>
+      {
+        // Check length against an explicit value.  If length is zero, it will
+        // be displayed instead of evaluated to false.
+        settingsControls &&
+          settingsControls.length > 0 &&
+          selectHasAdministerSettingsPermission(state) && (
+            <div className="buttons">
+              <Button disableRipple color="primary" onClick={save}>
+                Save
+              </Button>
+            </div>
+          )
       }
     </div>
   ) : (

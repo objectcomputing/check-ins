@@ -4,13 +4,17 @@ import { Link } from 'react-router-dom';
 
 import MemberModal from './MemberModal';
 import { AppContext } from '../../context/AppContext';
-import { DELETE_MEMBER_PROFILE, UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../context/actions';
+import {
+  DELETE_MEMBER_PROFILE,
+  UPDATE_MEMBER_PROFILES,
+  UPDATE_TOAST
+} from '../../context/actions';
 import {
   selectProfileMap,
   selectHasCreateMembersPermission,
   selectHasDeleteMembersPermission,
   selectHasImpersonateMembersPermission,
-  selectCanEditAllOrganizationMembers,
+  selectCanEditAllOrganizationMembers
 } from '../../context/selectors';
 import { getAvatarURL, resolve } from '../../api/api.js';
 
@@ -87,8 +91,10 @@ const AdminMemberCard = ({ member, index }) => {
     // is due to the fact that users can edit their own profiles.  But, only
     // certain users can create new profiles.  So, we associate the edit feature
     // with profile creation.
-    if (selectHasCreateMembersPermission(state) ||
-        selectCanEditAllOrganizationMembers(state)) {
+    if (
+      selectHasCreateMembersPermission(state) ||
+      selectCanEditAllOrganizationMembers(state)
+    ) {
       entries.push('Edit');
       actionFunctions.push(handleOpen);
     }
@@ -98,13 +104,13 @@ const AdminMemberCard = ({ member, index }) => {
     }
     if (selectHasImpersonateMembersPermission(state)) {
       // If we have not already impersonated a user, we can provide that option.
-      if (document.cookie.indexOf("OJWT=") == -1) {
+      if (document.cookie.indexOf('OJWT=') == -1) {
         entries.push('Impersonate');
         actionFunctions.push(handleImpersonate);
       }
     }
     return entries;
-  }
+  };
 
   const handleAction = (e, index) => {
     if (index < actionFunctions.length) {
@@ -128,8 +134,8 @@ const AdminMemberCard = ({ member, index }) => {
     });
 
     // If that was successful, take the user back to the main page.
-    if (!res.error) window.location.href = "/";
-  }
+    if (!res.error) window.location.href = '/';
+  };
 
   const handleDeleteMember = async () => {
     let res = await deleteMember(memberId, csrf);
@@ -233,13 +239,13 @@ const AdminMemberCard = ({ member, index }) => {
           selectCanEditAllOrganizationMembers(state) ||
           selectHasImpersonateMembersPermission(state)) && (
           <CardActions>
-            {options().length > 0 &&
+            {options().length > 0 && (
               <SplitButton
                 className="split-button"
                 options={options()}
                 onClick={handleAction}
               />
-            }
+            )}
             <Dialog
               open={openDelete}
               onClose={handleCloseDeleteConfirmation}

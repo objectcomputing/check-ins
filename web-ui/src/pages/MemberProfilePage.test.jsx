@@ -11,7 +11,7 @@ const initialState = {
       { name: 'mr. test', firstName: 'mr', lastName: 'test', id: '1234' }
     ],
     userProfile: {
-      id: '1234',
+      id: '1234'
     }
   }
 };

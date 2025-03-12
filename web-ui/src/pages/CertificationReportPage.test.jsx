@@ -8,7 +8,7 @@ const userStateWithPermission = {
     userProfile: {
       name: 'Mitch Hedberg',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_MANAGE_EARNED_CERTIFICATIONS' }],
+      permissions: [{ permission: 'CAN_MANAGE_EARNED_CERTIFICATIONS' }]
     }
   }
 };

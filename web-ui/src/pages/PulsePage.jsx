@@ -26,7 +26,7 @@ const PulsePage = () => {
   const [submitAnonymously, setSubmitAnonymously] = useState(false);
 
   const today = format(new Date(), 'yyyy-MM-dd');
-  const cookieName = "pulse_submitted_anonymously";
+  const cookieName = 'pulse_submitted_anonymously';
   const pulseURL = '/services/pulse-responses';
 
   useEffect(() => {
@@ -42,8 +42,8 @@ const PulsePage = () => {
     const [year, month, day] = pulse.submissionDate;
     setSubmittedToday(
       year === now.getFullYear() &&
-      month === now.getMonth() + 1 &&
-      day === now.getDate()
+        month === now.getMonth() + 1 &&
+        day === now.getDate()
     );
   }, [pulse]);
 
@@ -89,7 +89,7 @@ const PulsePage = () => {
       internalScore: internalScore + 1, // converts to 1-based
       submissionDate: today,
       updatedDate: today,
-      teamMemberId: submitAnonymously ? null : myId,
+      teamMemberId: submitAnonymously ? null : myId
     };
     const res = await initiate(pulseURL, csrf, data);
     if (res.error) return;
@@ -132,17 +132,18 @@ const PulsePage = () => {
               style={{ marginTop: 0 }}
               onClick={submit}
               disabled={internalScore == null}
-              variant="contained">
+              variant="contained"
+            >
               Submit
             </Button>
-            <div style={{ padding: '.3rem' }}/>
+            <div style={{ padding: '.3rem' }} />
             <label>
               <Checkbox
                 disableRipple
                 id="submit-anonymously"
                 type="checkbox"
                 checked={submitAnonymously}
-                onChange={(event) => setSubmitAnonymously(event.target.checked)}
+                onChange={event => setSubmitAnonymously(event.target.checked)}
               />
               Submit Anonymously
             </label>

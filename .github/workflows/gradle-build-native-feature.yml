@@ -8,6 +8,8 @@ on:
       - 'doc-**/*'
       - 'hotfix-**/*'
       - 'dependabot/**/*'
+env:
+  HUSKY: 0
 jobs:
   build:
     runs-on: ubuntu-latest

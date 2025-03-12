@@ -16,7 +16,7 @@ import {
   selectCanCreateCheckinsPermission,
   selectCanUpdateCheckinsPermission,
   selectCanViewPrivateNotesPermission,
-  selectCanUpdateAllCheckinsPermission,
+  selectCanUpdateAllCheckinsPermission
 } from '../context/selectors';
 import { getCheckins, createNewCheckin } from '../context/thunks';
 import { UPDATE_CHECKIN, UPDATE_TOAST } from '../context/actions';
@@ -160,16 +160,16 @@ const CheckinsPage = () => {
                 className="create-checkin-tooltip-wrapper"
               >
                 {(updateAll || isPdl || currentUserId === memberId) &&
-                 selectCanCreateCheckinsPermission(state) && (
-                  <Button
-                    disabled={hasOpenCheckins}
-                    className={classes.addButton}
-                    startIcon={<CheckCircleIcon />}
-                    onClick={handleCreate}
-                  >
-                    Create Check-In
-                  </Button>
-                )}
+                  selectCanCreateCheckinsPermission(state) && (
+                    <Button
+                      disabled={hasOpenCheckins}
+                      className={classes.addButton}
+                      startIcon={<CheckCircleIcon />}
+                      onClick={handleCreate}
+                    >
+                      Create Check-In
+                    </Button>
+                  )}
               </div>
             </Tooltip>
           </div>

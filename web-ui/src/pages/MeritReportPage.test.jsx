@@ -8,7 +8,7 @@ const userStateWithPermission = {
     userProfile: {
       name: 'Mitch Hedberg',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_CREATE_MERIT_REPORT' }],
+      permissions: [{ permission: 'CAN_CREATE_MERIT_REPORT' }]
     }
   }
 };

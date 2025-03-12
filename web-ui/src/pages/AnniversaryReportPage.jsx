@@ -15,7 +15,7 @@ import { sortAnniversaries } from '../context/util';
 import {
   selectCsrfToken,
   selectHasAnniversaryReportPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
@@ -64,13 +64,13 @@ const AnniversaryReportPage = () => {
       const anniversaryResults = await getAnniversaries(monthsToSearch, csrf);
       setSearchAnniversaryResults(sortAnniversaries(anniversaryResults));
       setHasSearched(true);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'error',
-          toast: e,
+          toast: e
         }
       });
     }
@@ -125,11 +125,11 @@ const AnniversaryReportPage = () => {
         </Button>
       </div>
       <div>
-        {
-          loading ?
+        {loading ? (
           Array.from({ length: 10 }).map((_, index) => (
-                        <SkeletonLoader key={index} type="feedback_requests" />
-                     )) :
+            <SkeletonLoader key={index} type="feedback_requests" />
+          ))
+        ) : (
           <div className="search-results">
             <SearchBirthdayAnniversaryResults
               hasSearched={hasSearched}
@@ -137,7 +137,7 @@ const AnniversaryReportPage = () => {
               results={searchAnniversaryResults}
             />
           </div>
-        }
+        )}
       </div>
     </div>
   ) : (

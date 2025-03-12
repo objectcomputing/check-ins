@@ -38,7 +38,7 @@ export const getCheckinDateForPeriod = (checkins, reportDate) => {
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
   const scheduled = checkins.filter(checkin => {
     const checkinDate = getCheckinDate(checkin);
-    return (checkinDate >= startOfQuarter && checkinDate <= endOfQuarter);
+    return checkinDate >= startOfQuarter && checkinDate <= endOfQuarter;
   });
   return getLastCheckinDate(scheduled);
 };
@@ -49,14 +49,12 @@ export const getCheckinDateForPeriod = (checkins, reportDate) => {
  * @param {Date} reportDate - The date of the report.
  * @returns {SchedulingStatus} The status of the check-ins.
  */
-export const statusForPeriodByMemberScheduling = (
-  checkin,
-  reportDate
-) => {
+export const statusForPeriodByMemberScheduling = (checkin, reportDate) => {
   if (!checkin) return 'Not Scheduled';
   const { startOfQuarter, endOfQuarter } = getQuarterBeginEnd(reportDate);
   const checkinDate = getCheckinDate(checkin);
-  const scheduled = checkinDate >= startOfQuarter && checkinDate <= endOfQuarter;
+  const scheduled =
+    checkinDate >= startOfQuarter && checkinDate <= endOfQuarter;
   if (!scheduled) return 'Not Scheduled';
   if (checkin.completed) return 'Completed';
   return 'Scheduled';
@@ -67,5 +65,5 @@ export const statusForPeriodByMemberScheduling = (
  * @param {Checkin} checkin - A check-in.
  * @returns {bool} Status of boolean check.
  */
-export const isPastCheckin = (checkin) => Date.now() >= getCheckinDate(checkin).getTime();
-
+export const isPastCheckin = checkin =>
+  Date.now() >= getCheckinDate(checkin).getTime();

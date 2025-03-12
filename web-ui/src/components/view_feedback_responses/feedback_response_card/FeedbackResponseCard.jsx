@@ -27,7 +27,11 @@ const FeedbackResponseCard = props => {
     }
 
     // Return fallback if the answer is null, undefined, or empty
-    if (props.answer === null || props.answer === undefined || !props.answer.trim()) {
+    if (
+      props.answer === null ||
+      props.answer === undefined ||
+      !props.answer.trim()
+    ) {
       return '⚠️ No response submitted';
     }
 

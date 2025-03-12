@@ -3,7 +3,11 @@ import PdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Card, CardHeader, List } from '@mui/material';
 
 import { AppContext } from '../../context/AppContext.jsx';
-import {selectCsrfToken, selectCurrentUserRoles, selectRoles} from '../../context/selectors.js';
+import {
+  selectCsrfToken,
+  selectCurrentUserRoles,
+  selectRoles
+} from '../../context/selectors.js';
 import { getDocumentsForRoleId } from '../../api/document.js';
 
 import GuideLink from './GuideLink';
@@ -48,13 +52,14 @@ const GuidesPanel = () => {
   useEffect(() => {
     const getDocuments = async () => {
       const docs = [];
-      if(userRoles) {
+      if (userRoles) {
         for (const roleName of userRoles) {
-          const memberRoleId = allRoles.find(role => role.role === roleName)?.id;
+          const memberRoleId = allRoles.find(
+            role => role.role === roleName
+          )?.id;
           const res = await getDocumentsForRoleId(memberRoleId, csrf);
-          const responseBody = res.payload?.data && !res.error
-              ? res.payload.data
-              : undefined;
+          const responseBody =
+            res.payload?.data && !res.error ? res.payload.data : undefined;
           if (responseBody?.length > 0) {
             docs.push(...responseBody);
           }
@@ -69,15 +74,21 @@ const GuidesPanel = () => {
   }, [allRoles, userRoles, csrf, setDocuments, getDocumentsForRoleId]);
 
   return (
-      <Card>
-        <CardHeader avatar={<PdfIcon />} title={"Check-In Resources"} />
-        <List dense>
-          {documents.map(doc => (
-              <GuideLink key={doc.id} id={doc.id} name={doc.name} description={doc.description} url={doc.url} />
-          ))}
-        </List>
-      </Card>
-  );;
+    <Card>
+      <CardHeader avatar={<PdfIcon />} title={'Check-In Resources'} />
+      <List dense>
+        {documents.map(doc => (
+          <GuideLink
+            key={doc.id}
+            id={doc.id}
+            name={doc.name}
+            description={doc.description}
+            url={doc.url}
+          />
+        ))}
+      </List>
+    </Card>
+  );
 };
 
 export default GuidesPanel;

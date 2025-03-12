@@ -73,25 +73,27 @@ export default function HomePage() {
   };
 
   const checkForImpersonation = () => {
-    return document.cookie.indexOf("OJWT=") != -1;
-  }
+    return document.cookie.indexOf('OJWT=') != -1;
+  };
 
   // This width matches the birthdays-card and anniversaries-card style.
   // However, we do not want to set this width on the PublicKudos css as it is
   // used elsewhere and does not need to have it's width restricted.  This only
   // applies if if we have birthdays or anniversaries to display on this page.
-  const kudosStyle = birthdays.length == 0 &&
-                     anniversaries.length == 0 ? {} : { width: '450px' };
+  const kudosStyle =
+    birthdays.length == 0 && anniversaries.length == 0
+      ? {}
+      : { width: '450px' };
 
   // Determine the X position of the birthday confetti.  If there aren't any
   // anniversaries, it will be the left side.  If there are anniversaries, we
   // need it in the middle.  Confetti X position ranges from 0 to 1.
-  const xPos = anniversaries.length > 0 ? .5 : .25;
+  const xPos = anniversaries.length > 0 ? 0.5 : 0.25;
 
   return (
     <div className="home-page">
       <div className="celebrations">
-        { myBirthday  ? (
+        {myBirthday ? (
           <MyBirthday me={me} hideMyBirthday={hideMyBirthday} />
         ) : myAnniversary ? (
           <MyAnniversary
@@ -100,22 +102,27 @@ export default function HomePage() {
           />
         ) : (
           <Grid container spacing={2} style={{ padding: '0 20px 0 20px' }}>
-            { anniversaries.length > 0 && (
+            {anniversaries.length > 0 && (
               <Grid item>
                 <Anniversaries anniversaries={anniversaries} />
-              </Grid>) }
-            { birthdays.length > 0 && (
+              </Grid>
+            )}
+            {birthdays.length > 0 && (
               <Grid item>
                 <Birthdays birthdays={birthdays} xPos={xPos} />
-              </Grid>) }
+              </Grid>
+            )}
             <Grid item style={kudosStyle}>
               <PublicKudos />
             </Grid>
           </Grid>
         )}
       </div>
-      {checkForImpersonation() &&
-        <a class="bottom-right" href="/impersonation/end"><Button variant="contained">Original User</Button></a>}
+      {checkForImpersonation() && (
+        <a class="bottom-right" href="/impersonation/end">
+          <Button variant="contained">Original User</Button>
+        </a>
+      )}
     </div>
   );
 }

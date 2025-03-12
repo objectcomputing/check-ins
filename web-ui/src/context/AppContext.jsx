@@ -15,16 +15,16 @@ import {
   UPDATE_TEAMS,
   UPDATE_PEOPLE_LOADING,
   UPDATE_TEAMS_LOADING,
-  SET_MEMBER_ROLES,
+  SET_MEMBER_ROLES
 } from './actions';
 import {
   getCurrentUser,
   getAllMembers,
-  getAllTerminatedMembers,
+  getAllTerminatedMembers
 } from '../api/member';
 import {
   selectCanViewCheckinsPermission,
-  selectCanViewTerminatedMembers,
+  selectCanViewTerminatedMembers
 } from './selectors';
 import { getAllRoles, getAllMemberRoles } from '../api/roles';
 import { getMemberSkills } from '../api/memberskill';
@@ -32,7 +32,7 @@ import { BASE_API_URL } from '../api/api';
 import { getAllGuilds } from '../api/guild';
 import { getSkills } from '../api/skill';
 import { getAllTeams } from '../api/team';
-import {getCertifications} from "../api/certification.js";
+import { getCertifications } from '../api/certification.js';
 
 const AppContext = React.createContext();
 
@@ -239,13 +239,13 @@ const AppContextProvider = props => {
     const getAllCertifications = async () => {
       const res = await getCertifications(csrf);
       const data =
-          res &&
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-              ? res.payload.data
-              : null;
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
       if (data && data.length > 0) {
         dispatch({ type: UPDATE_CERTIFICATIONS, payload: data });
       }

@@ -360,6 +360,10 @@ exports[`renders correctly 1`] = `
           <div
             class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
           >
+            <div
+              data-testid="tiny-mce-checkin-notes"
+              style="display: none;"
+            />
             <textarea
               id="tiny-mce-checkin-notes"
               style="visibility: hidden;"

@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useCallback, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   CardHeader,
@@ -17,23 +17,23 @@ import {
   DialogContentText,
   DialogActions,
   TextField,
-  Link,
-} from "@mui/material";
+  Link
+} from '@mui/material';
 import {
   selectCsrfToken,
-  selectActiveOrInactiveProfile,
-} from "../../context/selectors";
-import { AppContext } from "../../context/AppContext";
-import { getAvatarURL } from "../../api/api";
-import DateFnsUtils from "@date-io/date-fns";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import TeamIcon from "@mui/icons-material/Groups";
+  selectActiveOrInactiveProfile
+} from '../../context/selectors';
+import { AppContext } from '../../context/AppContext';
+import { getAvatarURL } from '../../api/api';
+import DateFnsUtils from '@date-io/date-fns';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import TeamIcon from '@mui/icons-material/Groups';
 
-import { approveKudos, deleteKudos } from "../../api/kudos";
-import { UPDATE_TOAST } from "../../context/actions";
+import { approveKudos, deleteKudos } from '../../api/kudos';
+import { UPDATE_TOAST } from '../../context/actions';
 
-import "./PublicKudosCard.css";
+import './PublicKudosCard.css';
 
 const dateUtils = new DateFnsUtils();
 
@@ -45,8 +45,8 @@ const propTypes = {
     recipientTeam: PropTypes.object,
     dateCreated: PropTypes.array.isRequired,
     dateApproved: PropTypes.array,
-    recipientMembers: PropTypes.array,
-  }).isRequired,
+    recipientMembers: PropTypes.array
+  }).isRequired
 };
 
 const KudosCard = ({ kudos }) => {
@@ -64,20 +64,24 @@ const KudosCard = ({ kudos }) => {
     const components = [];
     let index = 0;
     do {
-      index = regexIndexOf(message,
-                           new RegExp('\\b' + name + '\\b', 'i'), index);
+      index = regexIndexOf(
+        message,
+        new RegExp('\\b' + name + '\\b', 'i'),
+        index
+      );
       if (index != -1) {
-        const link = <Link key={`${member.id}-${index}`}
-                           href={`/profile/${member.id}`}>
-                       {name}
-                     </Link>;
+        const link = (
+          <Link key={`${member.id}-${index}`} href={`/profile/${member.id}`}>
+            {name}
+          </Link>
+        );
         if (index > 0) {
           components.push(message.slice(0, index));
         }
         components.push(link);
         message = message.slice(index + name.length);
       }
-    } while(index != -1);
+    } while (index != -1);
     components.push(message);
     return components;
   };
@@ -88,20 +92,31 @@ const KudosCard = ({ kudos }) => {
       names.push(`${member.firstName} ${member.middleName} ${member.lastName}`);
     }
     const firstAndLast = `${member.firstName} ${member.lastName}`;
-    if (!members.some((k) => k.id != member.id &&
-                             firstAndLast == `${k.firstName} ${k.lastName}`)) {
+    if (
+      !members.some(
+        k => k.id != member.id && firstAndLast == `${k.firstName} ${k.lastName}`
+      )
+    ) {
       names.push(firstAndLast);
     }
-    if (!members.some((k) => k.id != member.id &&
-                             (member.lastName == k.lastName ||
-                              member.lastName == k.firstName))) {
+    if (
+      !members.some(
+        k =>
+          k.id != member.id &&
+          (member.lastName == k.lastName || member.lastName == k.firstName)
+      )
+    ) {
       // If there are no other recipients with a name that contains this
       // member's last name, we can replace based on that.
       names.push(member.lastName);
     }
-    if (!members.some((k) => k.id != member.id &&
-                             (member.firstName == k.lastName ||
-                              member.firstName == k.firstName))) {
+    if (
+      !members.some(
+        k =>
+          k.id != member.id &&
+          (member.firstName == k.lastName || member.firstName == k.firstName)
+      )
+    ) {
       // If there are no other recipients with a name that contains this
       // member's first name, we can replace based on that.
       names.push(member.firstName);
@@ -109,17 +124,17 @@ const KudosCard = ({ kudos }) => {
     return names;
   };
 
-  const linkNames = (kudos) => {
+  const linkNames = kudos => {
     const lines = [];
     let index = 0;
     for (let line of kudos.message.split('\n')) {
-      const components = [ line ];
+      const components = [line];
       for (let member of kudos.recipientMembers) {
         const names = searchNames(member, kudos.recipientMembers);
         for (let name of names) {
           for (let i = 0; i < components.length; i++) {
             const component = components[i];
-            if (typeof(component) === "string") {
+            if (typeof component === 'string') {
               const built = linkMember(member, name, component);
               if (built.length > 1) {
                 components.splice(i, 1, ...built);
@@ -129,8 +144,8 @@ const KudosCard = ({ kudos }) => {
         }
       }
       lines.push(
-        <Typography key={kudos.id + "-" + index} variant="body1">
-            {components}
+        <Typography key={kudos.id + '-' + index} variant="body1">
+          {components}
         </Typography>
       );
       index++;
@@ -139,15 +154,17 @@ const KudosCard = ({ kudos }) => {
   };
 
   const multiTooltip = (num, list) => {
-    let tooltip = "";
-    let prefix = "";
+    let tooltip = '';
+    let prefix = '';
     for (let member of list.slice(-num)) {
       tooltip += prefix + `${member.firstName} ${member.lastName}`;
-      prefix = ", ";
+      prefix = ', ';
     }
-    return <Tooltip arrow title={tooltip}>
-             <Typography>{`+${num}`}</Typography>
-           </Tooltip>;
+    return (
+      <Tooltip arrow title={tooltip}>
+        <Typography>{`+${num}`}</Typography>
+      </Tooltip>
+    );
   };
 
   const getRecipientComponent = useCallback(() => {
@@ -166,10 +183,11 @@ const KudosCard = ({ kudos }) => {
     }
 
     return (
-      <AvatarGroup max={4}
-                   renderSurplus={(extra) => multiTooltip(
-                                               extra, kudos.recipientMembers)}>
-        {kudos.recipientMembers.map((member) => (
+      <AvatarGroup
+        max={4}
+        renderSurplus={extra => multiTooltip(extra, kudos.recipientMembers)}
+      >
+        {kudos.recipientMembers.map(member => (
           <Tooltip
             arrow
             key={member.id}
@@ -182,43 +200,53 @@ const KudosCard = ({ kudos }) => {
     );
   }, [kudos]);
 
-  let titleText = kudos?.recipientTeam?.name ? "Kudos, " + kudos?.recipientTeam?.name + "!" : "Kudos!";
-  if(kudos?.recipientMembers?.length === 1 && kudos?.recipientMembers[0]?.firstName) titleText = "Kudos, " + kudos?.recipientMembers[0]?.firstName + "!";
+  let titleText = kudos?.recipientTeam?.name
+    ? 'Kudos, ' + kudos?.recipientTeam?.name + '!'
+    : 'Kudos!';
+  if (
+    kudos?.recipientMembers?.length === 1 &&
+    kudos?.recipientMembers[0]?.firstName
+  )
+    titleText = 'Kudos, ' + kudos?.recipientMembers[0]?.firstName + '!';
 
   return (
-      <Card className="kudos-card">
-        <CardHeader
-          avatar={getRecipientComponent()}
-          title={titleText}
-          titleTypographyProps={{variant:"h5"}}
-          subheader={(<>from <Chip
-            size="small"
-            avatar={<Avatar src={getAvatarURL(sender?.workEmail)} />}
-            label={sender?.name}
-          /></>)}
-          subheaderTypographyProps={{variant:"subtitle1"}}
-        />
-        <CardContent>
+    <Card className="kudos-card">
+      <CardHeader
+        avatar={getRecipientComponent()}
+        title={titleText}
+        titleTypographyProps={{ variant: 'h5' }}
+        subheader={
           <>
-            {linkNames(kudos)}
+            from{' '}
+            <Chip
+              size="small"
+              avatar={<Avatar src={getAvatarURL(sender?.workEmail)} />}
+              label={sender?.name}
+            />
           </>
-          {kudos.recipientTeam && (
-      <AvatarGroup max={12}
-                   renderSurplus={(extra) => multiTooltip(
-                                               extra, kudos.recipientMembers)}>
-        {kudos.recipientMembers.map((member) => (
-          <Tooltip
-            arrow
-            key={member.id}
-            title={`${member.firstName} ${member.lastName}`}
+        }
+        subheaderTypographyProps={{ variant: 'subtitle1' }}
+      />
+      <CardContent>
+        <>{linkNames(kudos)}</>
+        {kudos.recipientTeam && (
+          <AvatarGroup
+            max={12}
+            renderSurplus={extra => multiTooltip(extra, kudos.recipientMembers)}
           >
-            <Avatar src={getAvatarURL(member.workEmail)} />
-          </Tooltip>
-        ))}
-      </AvatarGroup>
-          )}
-        </CardContent>
-      </Card>
+            {kudos.recipientMembers.map(member => (
+              <Tooltip
+                arrow
+                key={member.id}
+                title={`${member.firstName} ${member.lastName}`}
+              >
+                <Avatar src={getAvatarURL(member.workEmail)} />
+              </Tooltip>
+            ))}
+          </AvatarGroup>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

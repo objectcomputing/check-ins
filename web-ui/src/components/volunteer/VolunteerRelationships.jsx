@@ -24,7 +24,7 @@ import {
   selectCurrentUser,
   selectProfileMap,
   selectHasVolunteeringRelationshipsPermission,
-  selectHasVolunteeringOrganizationsPermission,
+  selectHasVolunteeringOrganizationsPermission
 } from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 import { showError } from '../../helpers/toast';
@@ -39,7 +39,11 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [organizations, setOrganizations] = useState([]);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false);
-  const [newOrganization, setNewOrganization] = useState({ name: '', description: '', website: '' });
+  const [newOrganization, setNewOrganization] = useState({
+    name: '',
+    description: '',
+    website: ''
+  });
   const [relationshipMap, setRelationshipMap] = useState({});
   const [relationships, setRelationships] = useState([]);
   const [selectedRelationship, setSelectedRelationship] = useState(null);
@@ -50,7 +54,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
   const profileMap = selectProfileMap(state);
-  const profiles = Object.values(profileMap).filter(profile => profile && profile.name);
+  const profiles = Object.values(profileMap).filter(
+    profile => profile && profile.name
+  );
   profiles.sort((a, b) => a.name.localeCompare(b.name));
 
   const sortableTableColumns = ['Organization', 'Start Date', 'End Date'];
@@ -70,7 +76,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     if (res.error) return;
 
     const organizations = res.payload.data || [];
-    organizations.sort((org1, org2) => (org1.name || '').localeCompare(org2.name || ''));
+    organizations.sort((org1, org2) =>
+      (org1.name || '').localeCompare(org2.name || '')
+    );
     setOrganizations(organizations);
     setOrganizationMap(
       organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
@@ -91,7 +99,7 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       }
     });
     if (res.error) return;
-  
+
     const relationships = res.payload.data || [];
     relationships.sort((rel1, rel2) => {
       const member1 = profileMap[rel1.memberId];
@@ -99,7 +107,9 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       return (member1?.name || '').localeCompare(member2?.name || '');
     });
     setRelationships(relationships);
-    setRelationshipMap(relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {}));
+    setRelationshipMap(
+      relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {})
+    );
   }, [currentUser.id, onlyMe, profileMap, csrf]);
 
   useEffect(() => {
@@ -138,52 +148,58 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
     setConfirmDeleteOpen(true);
   }, []);
 
-  const deleteRelationship = useCallback(async relationship => {
-    if (!relationship) return;
-    const res = await resolve({
-      method: 'PUT',
-      url: relationshipBaseUrl + '/' + relationship.id,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: { ...relationship, active: false }
-    });
-    if (res.error) return;
+  const deleteRelationship = useCallback(
+    async relationship => {
+      if (!relationship) return;
+      const res = await resolve({
+        method: 'PUT',
+        url: relationshipBaseUrl + '/' + relationship.id,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: { ...relationship, active: false }
+      });
+      if (res.error) return;
 
-    // Refresh the relationships list after deletion
-    await refreshRelationships();
-    setConfirmDeleteOpen(false);
-  }, [csrf, refreshRelationships]);
+      // Refresh the relationships list after deletion
+      await refreshRelationships();
+      setConfirmDeleteOpen(false);
+    },
+    [csrf, refreshRelationships]
+  );
 
   const saveRelationship = useCallback(async () => {
     const { id, organizationId, startDate, endDate } = selectedRelationship;
-  
+
     // Restrict adding duplicate active relationships only for new ones, exclude current relationship being edited
     const existingRelationship = relationships.find(
-      (rel) => rel.organizationId === organizationId && !rel.endDate && rel.id !== id
+      rel =>
+        rel.organizationId === organizationId && !rel.endDate && rel.id !== id
     );
     if (existingRelationship) {
-      showError("Cannot add duplicate active relationships.");
+      showError('Cannot add duplicate active relationships.');
       return;
     }
-  
+
     // Ensure start date is before or equal to the current date
     if (new Date(startDate) > new Date()) {
-      showError("Start date cannot be in the future.");
+      showError('Start date cannot be in the future.');
       return;
     }
 
     // Ensure end date is after the start date
     if (endDate && new Date(endDate) <= new Date(startDate)) {
-      showError("End date must be after the start date.");
+      showError('End date must be after the start date.');
       return;
     }
-  
-    const formattedStartDate = startDate ? formatDate(new Date(startDate)) : null;
+
+    const formattedStartDate = startDate
+      ? formatDate(new Date(startDate))
+      : null;
     const formattedEndDate = endDate ? formatDate(new Date(endDate)) : null;
- 
+
     const data = {
       ...selectedRelationship,
       startDate: formattedStartDate,
@@ -200,13 +216,13 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
       headers: {
         'X-CSRF-Header': csrf,
         Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
+        'Content-Type': 'application/json;charset=UTF-8'
       },
-      data: data,
+      data: data
     });
-    
+
     if (res.error) return;
-  
+
     await refreshRelationships();
     setSelectedRelationship(null);
     setRelationshipDialogOpen(false);
@@ -318,49 +334,55 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
                 {!onlyMe && (
                   <td>{profileMap[relationship.memberId]?.name ?? ''}</td>
                 )}
-                <td>{organizationMap[relationship.organizationId]?.name ?? 'N/A'}</td>
+                <td>
+                  {organizationMap[relationship.organizationId]?.name ?? 'N/A'}
+                </td>
                 <td>{relationship.startDate}</td>
                 <td>{relationship.endDate}</td>
                 <td>
                   {(relationship.memberId == currentUser.id ||
-                    selectHasVolunteeringRelationshipsPermission(state)) &&
-                  <>
-                  <Tooltip title="Edit">
-                    <IconButton
-                      aria-label="Edit"
-                      onClick={() => {
-                        setSelectedRelationship(relationship);
-                        setRelationshipDialogOpen(true);
-                      }}
-                    >
-                      <Edit />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete">
-                    <IconButton
-                      aria-label="Delete"
-                      onClick={() => confirmDelete(relationship)}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </Tooltip>
-                  </>}
+                    selectHasVolunteeringRelationshipsPermission(state)) && (
+                    <>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          aria-label="Edit"
+                          onClick={() => {
+                            setSelectedRelationship(relationship);
+                            setRelationshipDialogOpen(true);
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          aria-label="Delete"
+                          onClick={() => confirmDelete(relationship)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </Tooltip>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {(onlyMe || selectHasVolunteeringRelationshipsPermission(state)) &&
-        <IconButton
-          aria-label="Add Volunteer Relationship"
-          onClick={addRelationship}
-        >
-          <AddCircleOutline />
-        </IconButton>}
+        {(onlyMe || selectHasVolunteeringRelationshipsPermission(state)) && (
+          <IconButton
+            aria-label="Add Volunteer Relationship"
+            onClick={addRelationship}
+          >
+            <AddCircleOutline />
+          </IconButton>
+        )}
       </div>
 
       {/* Message below the table */}
-      <p className="warning">The administrator may edit organizations to ensure accuracy.</p>
+      <p className="warning">
+        The administrator may edit organizations to ensure accuracy.
+      </p>
 
       {/* Dialog for creating/editing a relationship */}
       <Dialog open={relationshipDialogOpen} onClose={cancelRelationship}>
@@ -368,39 +390,57 @@ const VolunteerRelationships = ({ forceUpdate = () => {}, onlyMe = false }) => {
           {selectedRelationship?.id ? 'Edit Relationship' : 'Add Relationship'}
         </DialogTitle>
         <DialogContent>
-        <Autocomplete
-          disableClearable
-          getOptionLabel={(option) => 
-            option === 'new' ? 'Create a New Organization' : organizationMap[option]?.name || option
-          }
-          options={organizationOptions}
-          onChange={(event, value) => {
-            if (value === 'new') {
-              setRelationshipDialogOpen(false); // Close the relationship dialog
-              openCreateOrganizationDialog(); // Open the organization creation dialog
-            } else {
-              setSelectedRelationship({ ...selectedRelationship, organizationId: value });
+          <Autocomplete
+            disableClearable
+            getOptionLabel={option =>
+              option === 'new'
+                ? 'Create a New Organization'
+                : organizationMap[option]?.name || option
             }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Organization" fullWidth />
-          )}
-          value={selectedRelationship?.organizationId || ''}
-        />
+            options={organizationOptions}
+            onChange={(event, value) => {
+              if (value === 'new') {
+                setRelationshipDialogOpen(false); // Close the relationship dialog
+                openCreateOrganizationDialog(); // Open the organization creation dialog
+              } else {
+                setSelectedRelationship({
+                  ...selectedRelationship,
+                  organizationId: value
+                });
+              }
+            }}
+            renderInput={params => (
+              <TextField {...params} label="Organization" fullWidth />
+            )}
+            value={selectedRelationship?.organizationId || ''}
+          />
           <DatePickerField
             date={selectedRelationship?.startDate || null}
             label="Start Date"
-            setDate={date => setSelectedRelationship({ ...selectedRelationship, startDate: date })}
+            setDate={date =>
+              setSelectedRelationship({
+                ...selectedRelationship,
+                startDate: date
+              })
+            }
           />
           <DatePickerField
             date={selectedRelationship?.endDate}
             label="End Date"
-            setDate={date => setSelectedRelationship({ ...selectedRelationship, endDate: date })}
+            setDate={date =>
+              setSelectedRelationship({
+                ...selectedRelationship,
+                endDate: date
+              })
+            }
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelRelationship}>Cancel</Button>
-          <Button onClick={saveRelationship} disabled={!selectedRelationship?.organizationId}>
+          <Button
+            onClick={saveRelationship}
+            disabled={!selectedRelationship?.organizationId}
+          >
             Save
           </Button>
         </DialogActions>

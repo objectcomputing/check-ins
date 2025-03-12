@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppContextProvider } from '../../../context/AppContext';
 import FeedbackRequestSubcard from './FeedbackRequestSubcard';
 
-const defaultTheme = {}
+const defaultTheme = {};
 
 it('renders correctly', () => {
   snapshot(

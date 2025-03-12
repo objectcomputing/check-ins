@@ -16,8 +16,8 @@ const userProfile = {
   location: 'Roseville, Minnesota',
   memberProfile: {
     id: 'member-id',
-    bioText: 'Died too young.',
-  },
+    bioText: 'Died too young.'
+  }
 };
 
 const userStateWithPermission = {
@@ -28,35 +28,37 @@ const userStateWithPermission = {
     memberProfiles: [
       {
         id: 'some-id',
-        name: 'James Johnson',
+        name: 'James Johnson'
       },
-      userProfile,
-    ],
+      userProfile
+    ]
   },
-  dispatch: vi.fn(),
+  dispatch: vi.fn()
 };
 
 const server = setupServer(
-  http.get('http://localhost:8080/services/feedback/requests/request-id', ({ request }) => {
-    return HttpResponse.json(
-      {
-        'id': 'request-id',
-        'status': 'SUBMITTED',
-        'requesteeId': userStateWithPermission.state.memberProfiles[0].id,
-        'recipientId': userStateWithPermission.state.memberProfiles[1].id,
-      },
-    );
-  }),
-  http.get('http://localhost:8080/services/feedback/requests/canceled-request-id', ({ request }) => {
-    return HttpResponse.json(
-      {
-        'id': 'canceled-request-id',
-        'status': 'CANCELED',
-        'requesteeId': userStateWithPermission.state.memberProfiles[0].id,
-        'recipientId': userStateWithPermission.state.memberProfiles[1].id,
-      },
-    );
-  }),
+  http.get(
+    'http://localhost:8080/services/feedback/requests/request-id',
+    ({ request }) => {
+      return HttpResponse.json({
+        id: 'request-id',
+        status: 'SUBMITTED',
+        requesteeId: userStateWithPermission.state.memberProfiles[0].id,
+        recipientId: userStateWithPermission.state.memberProfiles[1].id
+      });
+    }
+  ),
+  http.get(
+    'http://localhost:8080/services/feedback/requests/canceled-request-id',
+    ({ request }) => {
+      return HttpResponse.json({
+        id: 'canceled-request-id',
+        status: 'CANCELED',
+        requesteeId: userStateWithPermission.state.memberProfiles[0].id,
+        recipientId: userStateWithPermission.state.memberProfiles[1].id
+      });
+    }
+  )
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
@@ -67,8 +69,11 @@ it('renders correctly - submitted', async () => {
   await waitForSnapshot(
     'request-id',
     <AppContextProvider value={userStateWithPermission}>
-      <MemoryRouter initialEntries={[{pathname: '/feedback/submit',
-                                      search: '?request=request-id'}]}>
+      <MemoryRouter
+        initialEntries={[
+          { pathname: '/feedback/submit', search: '?request=request-id' }
+        ]}
+      >
         <FeedbackSubmitPage />
       </MemoryRouter>
     </AppContextProvider>
@@ -77,10 +82,16 @@ it('renders correctly - submitted', async () => {
 
 it('renders correctly - canceled', async () => {
   await waitForSnapshot(
-    'canceled-request-id',
+    'canceled-request-id-canceled',
     <AppContextProvider value={userStateWithPermission}>
-      <MemoryRouter initialEntries={[{pathname: '/feedback/submit',
-                                      search: '?request=canceled-request-id'}]}>
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname: '/feedback/submit',
+            search: '?request=canceled-request-id'
+          }
+        ]}
+      >
         <FeedbackSubmitPage />
       </MemoryRouter>
     </AppContextProvider>

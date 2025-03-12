@@ -86,7 +86,8 @@ const FeedbackSubmissionTips = props => {
       </div>
       <Typography className={classes.announcement} variant="h5">
         <b>
-          SBI is a common approach to providing constructive and fair feedback{' '}
+          SBI is a common approach to providing constructive and fair
+          feedback{' '}
         </b>
       </Typography>
       <div className="submission-tips">

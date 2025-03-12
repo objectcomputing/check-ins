@@ -2,8 +2,8 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import GuidesPanel from './GuidesPanel';
 import { AppContextProvider } from '../../context/AppContext.jsx';
-import {setupServer} from "msw/node";
-import {http, HttpResponse} from "msw";
+import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
 
 const initialState = {
   state: {
@@ -47,12 +47,12 @@ const pdlMockuments = [
 ];
 
 const server = setupServer(
-    http.get('http://localhost:8080/services/document/1', () => {
-      return HttpResponse.json(mockuments);
-    }),
-    http.get('http://localhost:8080/services/document/2', () => {
-      return HttpResponse.json(pdlMockuments);
-    })
+  http.get('http://localhost:8080/services/document/1', () => {
+    return HttpResponse.json(mockuments);
+  }),
+  http.get('http://localhost:8080/services/document/2', () => {
+    return HttpResponse.json(pdlMockuments);
+  })
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
@@ -60,7 +60,8 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 it('renders correctly', async () => {
-  await waitForSnapshot('mockument-3',
+  await waitForSnapshot(
+    'mockument-3',
     <MemoryRouter>
       <AppContextProvider value={initialState}>
         <GuidesPanel />

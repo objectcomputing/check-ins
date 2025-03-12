@@ -18,7 +18,7 @@
 
 .kudos-page .kudos-page-header {
   display: flex;
-  gap: .5em;
+  gap: 0.5em;
   justify-content: flex-end;
 }
 

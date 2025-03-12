@@ -8,10 +8,7 @@ import { styled } from '@mui/material/styles';
 
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
-import {
-  createMember,
-  reportSelectedMembersCsv
-} from '../../../api/member';
+import { createMember, reportSelectedMembersCsv } from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
 import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
@@ -19,7 +16,7 @@ import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
   selectHasCreateMembersPermission,
-  selectCanEditAllOrganizationMembers,
+  selectCanEditAllOrganizationMembers
 } from '../../../context/selectors';
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
@@ -109,7 +106,9 @@ const Users = () => {
 
   const downloadMembers = async () => {
     const res = await reportSelectedMembersCsv(
-                        normalizedMembers.map((m) => m.id), csrf);
+      normalizedMembers.map(m => m.id),
+      csrf
+    );
     if (res?.error) {
       dispatch({
         type: UPDATE_TOAST,

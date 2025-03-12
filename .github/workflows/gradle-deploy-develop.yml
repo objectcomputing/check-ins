@@ -4,6 +4,7 @@ on:
     branches:
       - 'develop'
 env:
+  HUSKY: 0
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop

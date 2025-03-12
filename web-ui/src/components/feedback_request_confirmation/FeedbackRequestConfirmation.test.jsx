@@ -8,7 +8,7 @@ const userStateWithPermission = {
     userProfile: {
       name: 'sherlock holmes',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_CREATE_FEEDBACK_REQUEST' }],
+      permissions: [{ permission: 'CAN_CREATE_FEEDBACK_REQUEST' }]
     }
   }
 };
@@ -18,7 +18,7 @@ const userStateWithoutPermission = {
     userProfile: {
       name: 'john watson',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }],
+      permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }]
     }
   }
 };

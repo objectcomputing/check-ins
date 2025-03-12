@@ -29,7 +29,11 @@ const Organizations = ({ onlyMe = false }) => {
   const [organizationDialogOpen, setOrganizationDialogOpen] = useState(false);
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrganization, setSelectedOrganization] = useState(null);
-  const [newOrganization, setNewOrganization] = useState({ name: '', description: '', website: '' }); // Add new state for new organization
+  const [newOrganization, setNewOrganization] = useState({
+    name: '',
+    description: '',
+    website: ''
+  }); // Add new state for new organization
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Name');
 
@@ -108,7 +112,8 @@ const Organizations = ({ onlyMe = false }) => {
 
   // Handle form submission for adding or editing an organization
   const saveOrganization = useCallback(async () => {
-    const { id, name, description, website } = selectedOrganization || newOrganization; // Use selected or new organization
+    const { id, name, description, website } =
+      selectedOrganization || newOrganization; // Use selected or new organization
     const url = id ? `${organizationBaseUrl}/${id}` : organizationBaseUrl;
 
     const res = await resolve({
@@ -143,7 +148,12 @@ const Organizations = ({ onlyMe = false }) => {
         <td>{organization.name}</td>
         <td>{organization.description}</td>
         <td>
-          <a alt="website" href={organization.website} target="_blank" rel="noopener noreferrer">
+          <a
+            alt="website"
+            href={organization.website}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             website
           </a>
         </td>
@@ -263,10 +273,7 @@ const Organizations = ({ onlyMe = false }) => {
     <div id="organizations">
       {organizationsTable()}
       {/* Dialog for adding/editing an organization */}
-      <Dialog
-        open={organizationDialogOpen}
-        onClose={cancelOrganization}
-      >
+      <Dialog open={organizationDialogOpen} onClose={cancelOrganization}>
         <DialogTitle>
           {selectedOrganization?.id ? 'Edit Organization' : 'Add Organization'}
         </DialogTitle>
@@ -277,8 +284,14 @@ const Organizations = ({ onlyMe = false }) => {
             fullWidth
             onChange={e =>
               selectedOrganization
-                ? setSelectedOrganization({ ...selectedOrganization, name: e.target.value })
-                : setNewOrganization({ ...newOrganization, name: e.target.value })
+                ? setSelectedOrganization({
+                    ...selectedOrganization,
+                    name: e.target.value
+                  })
+                : setNewOrganization({
+                    ...newOrganization,
+                    name: e.target.value
+                  })
             }
             value={selectedOrganization?.name ?? newOrganization.name}
           />
@@ -288,18 +301,32 @@ const Organizations = ({ onlyMe = false }) => {
             fullWidth
             onChange={e =>
               selectedOrganization
-                ? setSelectedOrganization({ ...selectedOrganization, description: e.target.value })
-                : setNewOrganization({ ...newOrganization, description: e.target.value })
+                ? setSelectedOrganization({
+                    ...selectedOrganization,
+                    description: e.target.value
+                  })
+                : setNewOrganization({
+                    ...newOrganization,
+                    description: e.target.value
+                  })
             }
-            value={selectedOrganization?.description ?? newOrganization.description}
+            value={
+              selectedOrganization?.description ?? newOrganization.description
+            }
           />
           <TextField
             label="Website URL"
             fullWidth
             onChange={e =>
               selectedOrganization
-                ? setSelectedOrganization({ ...selectedOrganization, website: e.target.value })
-                : setNewOrganization({ ...newOrganization, website: e.target.value })
+                ? setSelectedOrganization({
+                    ...selectedOrganization,
+                    website: e.target.value
+                  })
+                : setNewOrganization({
+                    ...newOrganization,
+                    website: e.target.value
+                  })
             }
             value={selectedOrganization?.website ?? newOrganization.website}
           />

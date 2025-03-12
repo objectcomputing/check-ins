@@ -18,7 +18,14 @@ import ProgressBar from '../components/contribution_hours/ProgressBar';
 import VolunteerTables from '../components/volunteer/VolunteerTables';
 
 import { Info, ManageAccounts } from '@mui/icons-material';
-import { Card, CardContent, CardHeader, Chip, TextField, Avatar } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  TextField,
+  Avatar
+} from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormLabel from '@mui/material/FormLabel';
@@ -38,10 +45,11 @@ const ProfilePage = () => {
   const memberProfile = selectCurrentUser(state);
 
   const { csrf, guilds } = state;
-  const { id, bioText, pdlId, ignoreBirthday, firstName, lastName, name } = memberProfile;
+  const { id, bioText, pdlId, ignoreBirthday, firstName, lastName, name } =
+    memberProfile;
 
   const [bio, setBio] = useState();
-  const [prefs, setPrefs] = useState({ignoreBirthday});
+  const [prefs, setPrefs] = useState({ ignoreBirthday });
   const [myHours, setMyHours] = useState(null);
 
   const myTeams = selectMyTeams(state);
@@ -69,9 +77,9 @@ const ProfilePage = () => {
 
   useEffect(() => {
     async function updatePrefs() {
-      setPrefs({...prefs, ignoreBirthday})
+      setPrefs({ ...prefs, ignoreBirthday });
     }
-    updatePrefs()
+    updatePrefs();
   }, [setPrefs, ignoreBirthday]);
 
   const updateProfile = newProfile => {
@@ -81,27 +89,33 @@ const ProfilePage = () => {
     });
   };
 
-  const handleIgnoreBirthdayChange = useCallback(async e => {
-    if (!csrf) {
-      return;
-    }
-    const { checked } = e.target;
-    setPrefs({ ...prefs, ignoreBirthday: !checked });
-    const newProfile = { ...memberProfile, ignoreBirthday: !checked };
-    const { payload } = await realStoreMember(newProfile, csrf);
-    updateProfile(payload.data);
-  }, [csrf, prefs, setPrefs, memberProfile, realStoreMember, updateProfile]);
+  const handleIgnoreBirthdayChange = useCallback(
+    async e => {
+      if (!csrf) {
+        return;
+      }
+      const { checked } = e.target;
+      setPrefs({ ...prefs, ignoreBirthday: !checked });
+      const newProfile = { ...memberProfile, ignoreBirthday: !checked };
+      const { payload } = await realStoreMember(newProfile, csrf);
+      updateProfile(payload.data);
+    },
+    [csrf, prefs, setPrefs, memberProfile, realStoreMember, updateProfile]
+  );
 
-  const handleBioChange = useCallback(async e => {
-    if (!csrf) {
-      return;
-    }
-    const { value } = e.target;
-    setBio(value);
-    const newProfile = { ...memberProfile, bioText: value };
-    storeMember(newProfile, csrf);
-    updateProfile(newProfile);
-  }, [csrf, setBio, memberProfile, storeMember, updateProfile]);
+  const handleBioChange = useCallback(
+    async e => {
+      if (!csrf) {
+        return;
+      }
+      const { value } = e.target;
+      setBio(value);
+      const newProfile = { ...memberProfile, bioText: value };
+      storeMember(newProfile, csrf);
+      updateProfile(newProfile);
+    },
+    [csrf, setBio, memberProfile, storeMember, updateProfile]
+  );
 
   const addOrDeleteGuildMember = useCallback(
     async newVal => {
@@ -171,7 +185,11 @@ const ProfilePage = () => {
         <div className="profile-page-prefs">
           <Card>
             <CardHeader
-              avatar={<Avatar sx={{ mr: 1 }}><ManageAccounts /></Avatar>}
+              avatar={
+                <Avatar sx={{ mr: 1 }}>
+                  <ManageAccounts />
+                </Avatar>
+              }
               title="Preferences"
               titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
@@ -181,7 +199,11 @@ const ProfilePage = () => {
                 <FormGroup>
                   <FormControlLabel
                     control={
-                      <Switch checked={!!!prefs.ignoreBirthday} onChange={handleIgnoreBirthdayChange} name="birthday" />
+                      <Switch
+                        checked={!!!prefs.ignoreBirthday}
+                        onChange={handleIgnoreBirthdayChange}
+                        name="birthday"
+                      />
                     }
                     label="My Birthday"
                   />
@@ -193,7 +215,11 @@ const ProfilePage = () => {
         <div className="profile-page-bio">
           <Card>
             <CardHeader
-              avatar={<Avatar sx={{ mr: 1 }}><Info /></Avatar>}
+              avatar={
+                <Avatar sx={{ mr: 1 }}>
+                  <Info />
+                </Avatar>
+              }
               title="Bio"
               titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
@@ -215,7 +241,11 @@ const ProfilePage = () => {
             {myHours && (
               <Card>
                 <CardHeader
-                  avatar={<Avatar sx={{ mr: 1 }}><Info /></Avatar>}
+                  avatar={
+                    <Avatar sx={{ mr: 1 }}>
+                      <Info />
+                    </Avatar>
+                  }
                   subheader={`As Of: ${new Date(
                     myHours?.asOfDate
                   ).toLocaleDateString()}`}
@@ -233,7 +263,11 @@ const ProfilePage = () => {
         <div className="profile-guilds">
           <Card style={{ minHeight: 150 }}>
             <CardHeader
-              avatar={<Avatar sx={{ mr: 1 }}><GroupIcon /></Avatar>}
+              avatar={
+                <Avatar sx={{ mr: 1 }}>
+                  <GroupIcon />
+                </Avatar>
+              }
               title="Guilds & Communities"
               titleTypographyProps={{ variant: 'h5', component: 'h2' }}
             />
@@ -262,7 +296,11 @@ const ProfilePage = () => {
         <div className="profile-teams">
           <Card>
             <CardHeader
-              avatar={<Avatar sx={{ mr: 1 }}><GroupIcon /></Avatar>}
+              avatar={
+                <Avatar sx={{ mr: 1 }}>
+                  <GroupIcon />
+                </Avatar>
+              }
               title="Teams"
               titleTypographyProps={{ variant: 'h5', component: 'h1' }}
             />

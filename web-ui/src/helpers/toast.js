@@ -6,7 +6,7 @@ export const showToast = (severity, toast) => {
       type: UPDATE_TOAST,
       payload: {
         severity,
-        toast,
+        toast
       }
     });
   }

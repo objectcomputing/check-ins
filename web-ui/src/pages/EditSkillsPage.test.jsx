@@ -8,7 +8,7 @@ const userStateWithPermission = {
     userProfile: {
       name: 'john watson',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_EDIT_SKILLS' }],
+      permissions: [{ permission: 'CAN_EDIT_SKILLS' }]
     }
   }
 };

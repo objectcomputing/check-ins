@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useCallback, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Paper,
   Collapse,
@@ -18,24 +18,24 @@ import {
   TextField,
   FormGroup,
   FormControlLabel,
-  Checkbox,
-} from "@mui/material";
+  Checkbox
+} from '@mui/material';
 import {
   selectCsrfToken,
-  selectActiveOrInactiveProfile,
-} from "../../context/selectors";
+  selectActiveOrInactiveProfile
+} from '../../context/selectors';
 import MemberSelector from '../member_selector/MemberSelector';
-import { AppContext } from "../../context/AppContext";
-import { getAvatarURL } from "../../api/api";
-import DateFnsUtils from "@date-io/date-fns";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from "@mui/icons-material/Edit";
-import TeamIcon from "@mui/icons-material/Groups";
+import { AppContext } from '../../context/AppContext';
+import { getAvatarURL } from '../../api/api';
+import DateFnsUtils from '@date-io/date-fns';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import TeamIcon from '@mui/icons-material/Groups';
 
-import "./KudosCard.css";
-import { approveKudos, deleteKudos, updateKudos } from "../../api/kudos";
-import { UPDATE_TOAST } from "../../context/actions";
+import './KudosCard.css';
+import { approveKudos, deleteKudos, updateKudos } from '../../api/kudos';
+import { UPDATE_TOAST } from '../../context/actions';
 
 const dateUtils = new DateFnsUtils();
 
@@ -47,11 +47,11 @@ const propTypes = {
     recipientTeam: PropTypes.object,
     dateCreated: PropTypes.array.isRequired,
     dateApproved: PropTypes.array,
-    recipientMembers: PropTypes.array,
+    recipientMembers: PropTypes.array
   }).isRequired,
   includeActions: PropTypes.bool,
   includeEdit: PropTypes.bool,
-  onKudosAction: PropTypes.func,
+  onKudosAction: PropTypes.func
 };
 
 const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
@@ -64,7 +64,9 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
   const [kudosPublic, setKudosPublic] = useState(kudos.publiclyVisible);
   const [kudosMessage, setKudosMessage] = useState(kudos.message);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
-  const [kudosRecipientMembers, setKudosRecipientMembers] = useState(kudos.recipientMembers);
+  const [kudosRecipientMembers, setKudosRecipientMembers] = useState(
+    kudos.recipientMembers
+  );
 
   const sender = selectActiveOrInactiveProfile(state, kudos.senderId);
 
@@ -92,7 +94,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
 
     return (
       <AvatarGroup max={16}>
-        {kudos.recipientMembers.map((member) => (
+        {kudos.recipientMembers.map(member => (
           <Tooltip
             arrow
             key={member.id}
@@ -106,25 +108,25 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
   }, [kudos]);
 
   const approveKudosCallback = useCallback(
-    async (event) => {
+    async event => {
       event.stopPropagation();
       const res = await approveKudos(kudos, csrf);
       if (res?.payload?.data && !res.error) {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "success",
-            toast: "Kudos approved",
-          },
+            severity: 'success',
+            toast: 'Kudos approved'
+          }
         });
         onKudosAction && onKudosAction();
       } else {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
-            severity: "error",
-            toast: "Failed to approve kudos",
-          },
+            severity: 'error',
+            toast: 'Failed to approve kudos'
+          }
         });
       }
     },
@@ -138,18 +140,18 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "success",
-          toast: "Kudos deleted",
-        },
+          severity: 'success',
+          toast: 'Kudos deleted'
+        }
       });
       onKudosAction && onKudosAction();
     } else {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "Failed to delete kudos",
-        },
+          severity: 'error',
+          toast: 'Failed to delete kudos'
+        }
       });
     }
   }, [kudos, csrf, dispatch, onKudosAction]);
@@ -163,7 +165,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
       id: kudos.id,
       message: kudosMessage,
       publiclyVisible: kudosPublic,
-      recipientMembers: kudosRecipientMembers,
+      recipientMembers: kudosRecipientMembers
     };
 
     // Update on the server.
@@ -172,25 +174,33 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "error",
-          toast: "Failed to update kudos",
-        },
+          severity: 'error',
+          toast: 'Failed to update kudos'
+        }
       });
     } else {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "success",
-          toast: "Kudos Updated",
-        },
+          severity: 'success',
+          toast: 'Kudos Updated'
+        }
       });
       onKudosAction && onKudosAction();
     }
-  }, [kudos, kudosMessage, kudosPublic, kudosRecipientMembers, csrf, dispatch, onKudosAction]);
+  }, [
+    kudos,
+    kudosMessage,
+    kudosPublic,
+    kudosRecipientMembers,
+    csrf,
+    dispatch,
+    onKudosAction
+  ]);
 
   const getStatusComponent = useCallback(() => {
     const dateApproved = kudos.dateApproved
-      ? new Date(kudos.dateApproved.join("/"))
+      ? new Date(kudos.dateApproved.join('/'))
       : null;
 
     const info = [];
@@ -211,12 +221,12 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
     } else if (dateApproved) {
       info.push(
         <Typography key="received" color="green" variant="body2">
-          Received{" "}
-          {dateApproved ? dateUtils.format(dateApproved, "MM/dd/yyyy") : ""}
+          Received{' '}
+          {dateApproved ? dateUtils.format(dateApproved, 'MM/dd/yyyy') : ''}
         </Typography>
       );
     } else {
-      const dateCreated = new Date(kudos.dateCreated.join("/"));
+      const dateCreated = new Date(kudos.dateCreated.join('/'));
       if (kudos.publiclyVisible) {
         info.push(
           <Typography key="pending" color="orange" variant="body2">
@@ -226,7 +236,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
       }
       info.push(
         <Typography key="created" variant="body2" color="gray" fontSize="10px">
-          Created {dateUtils.format(dateCreated, "MM/dd/yyyy")}
+          Created {dateUtils.format(dateCreated, 'MM/dd/yyyy')}
         </Typography>
       );
     }
@@ -236,7 +246,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
           <Button
             variant="outlined"
             size="small"
-            onClick={(event) => {
+            onClick={event => {
               event.stopPropagation();
               reloadKudosValues();
               setEditDialogOpen(true);
@@ -254,7 +264,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
             variant="outlined"
             color="error"
             size="small"
-            onClick={(event) => {
+            onClick={event => {
               event.stopPropagation();
               setDeleteDialogOpen(true);
             }}
@@ -264,14 +274,14 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
         </Tooltip>
       );
     }
-    return <>
-             {info.length > 0 && <div>
-               {info}
-             </div>}
-             {actions.length > 0 && <div className="kudos-action-buttons">
-               {actions}
-             </div>}
-           </>;
+    return (
+      <>
+        {info.length > 0 && <div>{info}</div>}
+        {actions.length > 0 && (
+          <div className="kudos-action-buttons">{actions}</div>
+        )}
+      </>
+    );
   }, [kudos, includeActions, includeEdit, approveKudosCallback]);
 
   const reloadKudosValues = () => {
@@ -281,7 +291,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
   };
 
   const dateApproved = kudos.dateApproved
-    ? new Date(kudos.dateApproved.join("/"))
+    ? new Date(kudos.dateApproved.join('/'))
     : null;
 
   return (
@@ -290,14 +300,14 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
         <DialogTitle>Delete Kudos</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to complete this action? The kudos
-            will be deleted.
+            Are you sure you want to complete this action? The kudos will be
+            deleted.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => setDeleteDialogOpen(false)}
-            style={{ color: "gray" }}
+            style={{ color: 'gray' }}
           >
             Cancel
           </Button>
@@ -306,7 +316,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={editDialogOpen}  maxWidth="sm" fullWidth>
+      <Dialog open={editDialogOpen} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Kudos</DialogTitle>
         <DialogContent>
           <MemberSelector
@@ -327,22 +337,24 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
             fullWidth
             multiline
             defaultValue={kudosMessage}
-            onChange={(event) => {
+            onChange={event => {
               setKudosMessage(event.target.value);
             }}
             rows={5}
-            style={{ marginTop: "2rem" }}
+            style={{ marginTop: '2rem' }}
             variant="outlined"
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={updateKudosCallback}
-                  disabled={kudosMessage.trim().length == 0 ||
-                            kudosRecipientMembers.length == 0}
-                  autoFocus>
+          <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={updateKudosCallback}
+            disabled={
+              kudosMessage.trim().length == 0 ||
+              kudosRecipientMembers.length == 0
+            }
+            autoFocus
+          >
             Save
           </Button>
         </DialogActions>
@@ -369,9 +381,9 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
             {kudos.recipientMembers?.length > 1 && (
               <div className="kudos-recipient-list">
                 <Typography variant="body2">
-                  {kudos.recipientTeam ? "Team Members:" : "Members:"}
+                  {kudos.recipientTeam ? 'Team Members:' : 'Members:'}
                 </Typography>
-                {kudos.recipientMembers.map((recipient) => (
+                {kudos.recipientMembers.map(recipient => (
                   <Chip
                     key={recipient.id}
                     avatar={<Avatar src={getAvatarURL(recipient?.workEmail)} />}
