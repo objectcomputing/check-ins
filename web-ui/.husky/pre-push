@@ -1,2 +1,1 @@
-cd web-ui
-CI=true yarn test
+./gradlew check
