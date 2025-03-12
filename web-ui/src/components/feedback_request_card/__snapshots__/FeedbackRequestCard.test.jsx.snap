@@ -75,7 +75,7 @@ exports[`renders correctly 1`] = `
         <button
           aria-expanded="false"
           aria-label="show more"
-          class="MuiButtonBase-root MuiIconButton-root expand-more MuiIconButton-sizeLarge css-1sc1h0x-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root expand-more MuiIconButton-sizeLarge css-3d7xw8-MuiButtonBase-root-MuiIconButton-root"
           tabindex="0"
           type="button"
         >

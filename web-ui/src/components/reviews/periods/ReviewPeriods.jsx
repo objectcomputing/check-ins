@@ -512,8 +512,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     </Root>
   );
 };
-
 ReviewPeriods.propTypes = propTypes;
 ReviewPeriods.displayName = displayName;
-
 export default ReviewPeriods;

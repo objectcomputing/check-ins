@@ -31,7 +31,7 @@ body.open {
   min-width: 450px;
 }
 .anniversaries-card span {
-  color: var(--checkins-palette-primary-light);
+  color: var(--mui-palette-primary-light);
   font-weight: bold;
 }
 .anniversary-gift {

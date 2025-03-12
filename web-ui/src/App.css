@@ -7,11 +7,11 @@
 
   a,
   a:visited {
-    color: var(--checkins-palette-primary-link);
+    color: var(--mui-palette-primary-link);
   }
 
   a:hover {
-    color: var(--checkins-palette-primary-link-hover);
+    color: var(--mui-palette-primary-link-hover);
   }
 }
 

@@ -94,8 +94,8 @@ const CheckinsHistory = () => {
               fontSize: '1.2em',
               fill:
                 index <= 0
-                  ? 'var(--checkins-palette-action-disabled)'
-                  : 'var(--checkins-palette-action)'
+                  ? 'var(--mui-palette-action-disabled)'
+                  : 'var(--mui-palette-action)'
             }}
           />
         </IconButton>
@@ -120,8 +120,8 @@ const CheckinsHistory = () => {
               fontSize: '1.2em',
               fill:
                 index <= 0
-                  ? 'var(--checkins-palette-action-disabled)'
-                  : 'var(--checkins-palette-action)'
+                  ? 'var(--mui-palette-action-disabled)'
+                  : 'var(--mui-palette-action)'
             }}
           />
         </IconButton>

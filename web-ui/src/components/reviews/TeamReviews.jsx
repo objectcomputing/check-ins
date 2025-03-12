@@ -795,10 +795,10 @@ const TeamReviews = ({ onBack, periodId }) => {
   const renderReviewer = (member, reviewer) => {
     const hasReviewer = !!reviewer.name;
     const backgroundColor = reviewer.approved
-      ? 'var(--checkins-palette-action-green)'
+      ? 'var(--mui-palette-action-green)'
       : hasReviewer
-        ? 'var(--checkins-palette-action-yellow)'
-        : 'var(--checkins-palette-action-red)';
+        ? 'var(--mui-palette-action-yellow)'
+        : 'var(--mui-palette-action-red)';
     const request = getReviewRequest(member, reviewer);
     const selfReviewRequest = getSelfReviewRequest(member);
     const variant = 'outlined';

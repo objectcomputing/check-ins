@@ -11,7 +11,7 @@ exports[`renders correctly 1`] = `
     >
       <a
         href="/profile/2o34i2j34"
-        style="color: var(--checkins-palette-content-color); text-decoration: none;"
+        style="color: var(--mui-palette-content-color); text-decoration: none;"
       >
         <div
           class="MuiCardHeader-root MemberSummaryCard-header css-149tc0y-MuiCardHeader-root"

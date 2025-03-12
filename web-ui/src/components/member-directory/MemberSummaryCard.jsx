@@ -56,7 +56,7 @@ const MemberSummaryCard = ({ member }) => {
       <Card className={'member-card'}>
         <Link
           style={{
-            color: 'var(--checkins-palette-content-color)',
+            color: 'var(--mui-palette-content-color)',
             textDecoration: 'none'
           }}
           to={`/profile/${member.id}`}

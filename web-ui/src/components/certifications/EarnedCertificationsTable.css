@@ -21,7 +21,7 @@
   td,
   th {
     padding: 0.5rem;
-    color: var(--checkins-palette-text-primary);
+    color: var(--mui-palette-text-primary);
   }
 
   th {
@@ -34,12 +34,12 @@
   }
 
   tr:nth-child(even) {
-    background-color: var(--checkins-palette-background-default);
-    background-image: var(--checkins-palette-alternate-row-overlay);
+    background-color: var(--mui-palette-background-default);
+    background-image: var(--mui-palette-alternate-row-overlay);
   }
 
   tr:nth-child(odd) {
-    background-color: var(--checkins-palette-background-default);
+    background-color: var(--mui-palette-background-default);
   }
 
   .actions-th {

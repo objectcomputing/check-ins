@@ -143,7 +143,9 @@ const Notes = props => {
                 'undo redo | blocks | ' +
                 'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
                 'alignright alignjustify | bullist numlist outdent indent | ' +
-                'removeformat | help'
+                'removeformat | help',
+              skin: document.querySelector('[data-dark]') ? 'oxide-dark' : 'oxide',
+              content_css: document.querySelector('[data-dark]') ? 'dark' : 'default'
             }}
             tinymceScriptSrc={
               import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'

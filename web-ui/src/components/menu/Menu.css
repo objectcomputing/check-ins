@@ -22,8 +22,8 @@
 }
 
 .hours-upload-modal {
-  background-color: var(--checkins-palette-background-paper);
-  border: 2px solid var(--checkins-palette-background-paper);
+  background-color: var(--mui-palette-background-paper);
+  border: 2px solid var(--mui-palette-background-paper);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -90,10 +90,10 @@
   .Menu-listItem,
   .Menu-subListItem,
   .MuiListItem-root {
-    color: var(--checkins-palette-primary-menuItem);
+    color: var(--mui-palette-primary-menuItem);
 
     &:hover {
-      background-color: var(--checkins-palette-action-selectedOpacity);
+      background-color: var(--mui-palette-action-selectedOpacity);
     }
   }
 
@@ -106,9 +106,9 @@
 
   .Menu-modeToggle {
     aspect-ratio: 1;
-    background: var(--checkins-palette-primary-main);
+    background: var(--mui-palette-primary-main);
     border-radius: 30px;
-    color: var(--checkins-palette-primary-contrastText);
+    color: var(--mui-palette-primary-contrastText);
     cursor: pointer;
     display: grid;
     margin: 1.5rem auto;
