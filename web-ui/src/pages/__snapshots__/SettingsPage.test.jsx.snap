@@ -15,7 +15,7 @@ exports[`SettingsPage > renders correctly 1`] = `
   >
     <div>
       <h4
-        class="MuiTypography-root MuiTypography-h4 css-13d5t77-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h4 css-191scow-MuiTypography-root"
         data-testid="INTEGRATIONS"
       >
         Integrations
@@ -27,7 +27,7 @@ exports[`SettingsPage > renders correctly 1`] = `
           for="another-setting"
         >
           <h5
-            class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1f9xtph-MuiTypography-root"
           >
             Another Setting
           </h5>
@@ -36,29 +36,29 @@ exports[`SettingsPage > renders correctly 1`] = `
           The description
         </p>
         <span
-          class="MuiSwitch-root MuiSwitch-sizeMedium settings-control css-julti5-MuiSwitch-root"
+          class="MuiSwitch-root MuiSwitch-sizeMedium settings-control css-rehya9-MuiSwitch-root"
         >
           <span
-            class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-byenzh-MuiButtonBase-root-MuiSwitch-switchBase"
+            class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
           >
             <input
-              class="PrivateSwitchBase-input MuiSwitch-input css-1m9pwf3"
+              class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
               id="another-setting"
               type="checkbox"
             />
             <span
-              class="MuiSwitch-thumb css-jsexje-MuiSwitch-thumb"
+              class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
             />
           </span>
           <span
-            class="MuiSwitch-track css-1yjjitx-MuiSwitch-track"
+            class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
           />
         </span>
       </div>
     </div>
     <div>
       <h4
-        class="MuiTypography-root MuiTypography-h4 css-13d5t77-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h4 css-191scow-MuiTypography-root"
         data-testid="THEME"
       >
         Theme
@@ -70,7 +70,7 @@ exports[`SettingsPage > renders correctly 1`] = `
           for="other-setting"
         >
           <h5
-            class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1f9xtph-MuiTypography-root"
           >
             Other Setting
           </h5>
@@ -79,10 +79,10 @@ exports[`SettingsPage > renders correctly 1`] = `
           The description
         </p>
         <div
-          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary settings-control css-bz5ng3-MuiInputBase-root-MuiInput-root"
+          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary settings-control css-1cmet5c-MuiInputBase-root-MuiInput-root"
         >
           <input
-            class="MuiInputBase-input MuiInput-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+            class="MuiInputBase-input MuiInput-input css-1yrc8ca-MuiInputBase-input-MuiInput-input"
             id="other-setting"
             type="number"
             value="42"
@@ -97,7 +97,7 @@ exports[`SettingsPage > renders correctly 1`] = `
         for="string-setting"
       >
         <h5
-          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-h93ljk-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom css-1f9xtph-MuiTypography-root"
         >
           String Setting
         </h5>
@@ -106,10 +106,10 @@ exports[`SettingsPage > renders correctly 1`] = `
         The description
       </p>
       <div
-        class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary settings-control css-bz5ng3-MuiInputBase-root-MuiInput-root"
+        class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary settings-control css-1cmet5c-MuiInputBase-root-MuiInput-root"
       >
         <input
-          class="MuiInputBase-input MuiInput-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+          class="MuiInputBase-input MuiInput-input css-1yrc8ca-MuiInputBase-input-MuiInput-input"
           id="string-setting"
           placeholder="Enter String Setting"
           type="text"
@@ -121,7 +121,7 @@ exports[`SettingsPage > renders correctly 1`] = `
       class="buttons"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1uent87-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >

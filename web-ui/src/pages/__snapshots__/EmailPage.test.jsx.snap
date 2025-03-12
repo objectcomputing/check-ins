@@ -11,23 +11,23 @@ exports[`renders an error if user does not have appropriate permission 1`] = `
 exports[`renders correctly 1`] = `
 <div>
   <div
-    class="email-page css-175t7kh"
+    class="email-page css-qx8xr0"
   >
     <div
-      class="MuiStepper-root MuiStepper-horizontal css-m5vj9m-MuiStepper-root"
+      class="MuiStepper-root MuiStepper-horizontal css-ibtndc-MuiStepper-root"
     >
       <div
-        class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+        class="MuiStep-root MuiStep-horizontal css-mlh15c-MuiStep-root"
       >
         <span
-          class="MuiStepLabel-root MuiStepLabel-horizontal css-ascpo7-MuiStepLabel-root"
+          class="MuiStepLabel-root MuiStepLabel-horizontal css-3yr9gi-MuiStepLabel-root"
         >
           <span
-            class="MuiStepLabel-iconContainer Mui-active css-vnkopk-MuiStepLabel-iconContainer"
+            class="MuiStepLabel-iconContainer Mui-active css-1b2ju2j-MuiStepLabel-iconContainer"
           >
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-active css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-active css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -37,7 +37,7 @@ exports[`renders correctly 1`] = `
                 r="12"
               />
               <text
-                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                class="MuiStepIcon-text css-1g86afo-MuiStepIcon-text"
                 dominant-baseline="central"
                 text-anchor="middle"
                 x="12"
@@ -48,10 +48,10 @@ exports[`renders correctly 1`] = `
             </svg>
           </span>
           <span
-            class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+            class="MuiStepLabel-labelContainer css-p8xe3-MuiStepLabel-labelContainer"
           >
             <span
-              class="MuiStepLabel-label Mui-active css-1hv8oq8-MuiStepLabel-label"
+              class="MuiStepLabel-label Mui-active css-12eb3rq-MuiStepLabel-label"
             >
               Choose Email Format
             </span>
@@ -59,24 +59,24 @@ exports[`renders correctly 1`] = `
         </span>
       </div>
       <div
-        class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-j5w0w9-MuiStepConnector-root"
+        class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-9ydz1a-MuiStepConnector-root"
       >
         <span
-          class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+          class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-14ncu80-MuiStepConnector-line"
         />
       </div>
       <div
-        class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+        class="MuiStep-root MuiStep-horizontal css-mlh15c-MuiStep-root"
       >
         <span
-          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-ascpo7-MuiStepLabel-root"
+          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-3yr9gi-MuiStepLabel-root"
         >
           <span
-            class="MuiStepLabel-iconContainer Mui-disabled css-vnkopk-MuiStepLabel-iconContainer"
+            class="MuiStepLabel-iconContainer Mui-disabled css-1b2ju2j-MuiStepLabel-iconContainer"
           >
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -86,7 +86,7 @@ exports[`renders correctly 1`] = `
                 r="12"
               />
               <text
-                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                class="MuiStepIcon-text css-1g86afo-MuiStepIcon-text"
                 dominant-baseline="central"
                 text-anchor="middle"
                 x="12"
@@ -97,10 +97,10 @@ exports[`renders correctly 1`] = `
             </svg>
           </span>
           <span
-            class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+            class="MuiStepLabel-labelContainer css-p8xe3-MuiStepLabel-labelContainer"
           >
             <span
-              class="MuiStepLabel-label Mui-disabled css-1hv8oq8-MuiStepLabel-label"
+              class="MuiStepLabel-label Mui-disabled css-12eb3rq-MuiStepLabel-label"
             >
               Compose Email
             </span>
@@ -108,24 +108,24 @@ exports[`renders correctly 1`] = `
         </span>
       </div>
       <div
-        class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-j5w0w9-MuiStepConnector-root"
+        class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-9ydz1a-MuiStepConnector-root"
       >
         <span
-          class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+          class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-14ncu80-MuiStepConnector-line"
         />
       </div>
       <div
-        class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+        class="MuiStep-root MuiStep-horizontal css-mlh15c-MuiStep-root"
       >
         <span
-          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-ascpo7-MuiStepLabel-root"
+          class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-3yr9gi-MuiStepLabel-root"
         >
           <span
-            class="MuiStepLabel-iconContainer Mui-disabled css-vnkopk-MuiStepLabel-iconContainer"
+            class="MuiStepLabel-iconContainer Mui-disabled css-1b2ju2j-MuiStepLabel-iconContainer"
           >
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -135,7 +135,7 @@ exports[`renders correctly 1`] = `
                 r="12"
               />
               <text
-                class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                class="MuiStepIcon-text css-1g86afo-MuiStepIcon-text"
                 dominant-baseline="central"
                 text-anchor="middle"
                 x="12"
@@ -146,10 +146,10 @@ exports[`renders correctly 1`] = `
             </svg>
           </span>
           <span
-            class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+            class="MuiStepLabel-labelContainer css-p8xe3-MuiStepLabel-labelContainer"
           >
             <span
-              class="MuiStepLabel-label Mui-disabled css-1hv8oq8-MuiStepLabel-label"
+              class="MuiStepLabel-label Mui-disabled css-12eb3rq-MuiStepLabel-label"
             >
               Select Recipients
             </span>
@@ -158,29 +158,30 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <div
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root current-step-content-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root current-step-content-card css-1j74uew-MuiPaper-root-MuiCard-root"
+      style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
     >
       <div
-        class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+        class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
       >
         <div
-          class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+          class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
         >
           <span
-            class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
           >
             Choose Email Format
           </span>
         </div>
       </div>
       <div
-        class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+        class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
       >
         <div
           class="email-format-container"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary email-format-button css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary email-format-button css-1uent87-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
@@ -189,7 +190,7 @@ exports[`renders correctly 1`] = `
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1pui-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1xbfcok-MuiSvgIcon-root"
                 data-testid="UploadFileIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -199,22 +200,19 @@ exports[`renders correctly 1`] = `
                 />
               </svg>
               <h6
-                class="MuiTypography-root MuiTypography-h6 css-tjvwag-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h6 css-h9fkkg-MuiTypography-root"
               >
                 MJML File
               </h6>
               <p
-                class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-body2 css-7ctihp-MuiTypography-root"
               >
                 Create an email with a custom format using MJML
               </p>
             </div>
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary email-format-button css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary email-format-button css-1uent87-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
@@ -223,29 +221,26 @@ exports[`renders correctly 1`] = `
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1pui-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1xbfcok-MuiSvgIcon-root"
                 data-testid="EditIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
               >
                 <path
-                  d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
+                  d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
                 />
               </svg>
               <h6
-                class="MuiTypography-root MuiTypography-h6 css-tjvwag-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h6 css-h9fkkg-MuiTypography-root"
               >
                 Text
               </h6>
               <p
-                class="MuiTypography-root MuiTypography-body2 css-e784if-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-body2 css-7ctihp-MuiTypography-root"
               >
                 Write a simple email with no formatting
               </p>
             </div>
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
           </button>
         </div>
       </div>
@@ -254,17 +249,17 @@ exports[`renders correctly 1`] = `
       class="stepper-button-container"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary stepper-button css-1rwt2y5-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary stepper-button css-1blvszr-MuiButtonBase-root-MuiButton-root"
         disabled=""
         tabindex="-1"
         type="button"
       >
         <span
-          class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1d6wzja-MuiButton-startIcon"
+          class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1sh91j5-MuiButton-startIcon"
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
             data-testid="KeyboardArrowLeftIcon"
             focusable="false"
             viewBox="0 0 24 24"
@@ -277,18 +272,18 @@ exports[`renders correctly 1`] = `
         Back
       </button>
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary stepper-button css-sghohy-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary stepper-button css-74d805-MuiButtonBase-root-MuiButton-root"
         disabled=""
         tabindex="-1"
         type="button"
       >
         Next
         <span
-          class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-9tj150-MuiButton-endIcon"
+          class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-1gulhci-MuiButton-endIcon"
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
             data-testid="KeyboardArrowRightIcon"
             focusable="false"
             viewBox="0 0 24 24"

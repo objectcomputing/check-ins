@@ -6,7 +6,7 @@ exports[`renders correctly 1`] = `
     class="CheckinsPage-root css-1t4lvfp"
   >
     <div
-      class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-zow5z4-MuiGrid-root"
+      class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1qw2a80-MuiGrid-root"
     >
       <div
         class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-9 css-173qa7i-MuiGrid-root"
@@ -15,11 +15,11 @@ exports[`renders correctly 1`] = `
           class="Profile-flexRow css-ypn952"
         >
           <div
-            class="MuiAvatar-root MuiAvatar-circular Profile-profileImage css-14nt8uv-MuiAvatar-root"
+            class="MuiAvatar-root MuiAvatar-circular Profile-profileImage css-j9vwjf-MuiAvatar-root"
           >
             <img
               alt="Profile"
-              class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+              class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
               src="http://localhost:8080/services/member-profiles/member-photos/undefined"
             />
           </div>
@@ -31,10 +31,10 @@ exports[`renders correctly 1`] = `
                 class="Profile-header"
               >
                 <div
-                  class="MuiAvatar-root MuiAvatar-circular Profile-smallAvatar css-178q4vp-MuiAvatar-root"
+                  class="MuiAvatar-root MuiAvatar-circular Profile-smallAvatar css-kuw0mo-MuiAvatar-root"
                 >
                   <img
-                    class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                    class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
                     src="http://localhost:8080/services/member-profiles/member-photos/undefined"
                   />
                 </div>
@@ -42,17 +42,17 @@ exports[`renders correctly 1`] = `
                   class="Profile-title"
                 >
                   <h2
-                    class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-h5 css-16xl4zq-MuiTypography-root"
                   >
                     holmes
                   </h2>
                   <h3
-                    class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-1ro85z9-MuiTypography-root"
                   />
                 </div>
               </div>
               <p
-                class="MuiTypography-root MuiTypography-body2 css-r40f8v-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-body2 css-1a1whku-MuiTypography-root"
               >
                 <a
                   href="mailto:undefined"
@@ -78,14 +78,14 @@ exports[`renders correctly 1`] = `
           >
             <button
               aria-label="Previous Check-in\`"
-              class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+              class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge css-154kngp-MuiButtonBase-root-MuiIconButton-root"
               disabled=""
               tabindex="-1"
               type="button"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium arrow disabled css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium arrow disabled css-1umw9bq-MuiSvgIcon-root"
                 data-testid="ArrowBackIcon"
                 focusable="false"
                 style="font-size: 1.2em; fill: var(--checkins-palette-action-disabled);"
@@ -97,27 +97,27 @@ exports[`renders correctly 1`] = `
               </svg>
             </button>
             <div
-              class="MuiFormControl-root MuiTextField-root css-z3c6am-MuiFormControl-root-MuiTextField-root"
+              class="MuiFormControl-root MuiTextField-root css-1b1fjlj-MuiFormControl-root-MuiTextField-root"
               style="width: 18em;"
             >
               <label
-                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary Mui-disabled MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary Mui-disabled MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-113d811-MuiFormLabel-root-MuiInputLabel-root"
                 data-shrink="true"
-                for=":r1:"
-                id=":r1:-label"
+                for=":r2:"
+                id=":r2:-label"
               >
                 Check-In Date
               </label>
               <div
-                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-disabled MuiInputBase-formControl MuiInputBase-adornedEnd Mui-readOnly MuiInputBase-readOnly css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root"
+                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-disabled MuiInputBase-formControl MuiInputBase-adornedEnd Mui-readOnly MuiInputBase-readOnly css-jupps9-MuiInputBase-root-MuiOutlinedInput-root"
               >
                 <input
                   aria-invalid="false"
                   aria-label="Choose date, selected date is Oct 21, 2020"
                   autocomplete="off"
-                  class="MuiInputBase-input MuiOutlinedInput-input Mui-disabled MuiInputBase-inputAdornedEnd Mui-readOnly MuiInputBase-readOnly css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
+                  class="MuiInputBase-input MuiOutlinedInput-input Mui-disabled MuiInputBase-inputAdornedEnd Mui-readOnly MuiInputBase-readOnly css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
                   disabled=""
-                  id=":r1:"
+                  id=":r2:"
                   inputmode="text"
                   placeholder="MMMM DD, YYYY @hh:mm aa"
                   readonly=""
@@ -126,10 +126,10 @@ exports[`renders correctly 1`] = `
                 />
                 <fieldset
                   aria-hidden="true"
-                  class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                  class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
                 >
                   <legend
-                    class="css-14lo706"
+                    class="css-w1u3ce"
                   >
                     <span>
                       Check-In Date
@@ -140,14 +140,14 @@ exports[`renders correctly 1`] = `
             </div>
             <button
               aria-label="Next Check-in\`"
-              class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+              class="MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-sizeLarge css-154kngp-MuiButtonBase-root-MuiIconButton-root"
               disabled=""
               tabindex="-1"
               type="button"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium arrow disabled css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium arrow disabled css-1umw9bq-MuiSvgIcon-root"
                 data-testid="ArrowForwardIcon"
                 focusable="false"
                 style="font-size: 1.2em; fill: var(--checkins-palette-action-disabled);"
@@ -166,16 +166,16 @@ exports[`renders correctly 1`] = `
             data-mui-internal-clone-element="true"
           >
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary CheckinsPage-addButton css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary CheckinsPage-addButton css-1uent87-MuiButtonBase-root-MuiButton-root"
               tabindex="0"
               type="button"
             >
               <span
-                class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1d6wzja-MuiButton-startIcon"
+                class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1sh91j5-MuiButton-startIcon"
               >
                 <svg
                   aria-hidden="true"
-                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                   data-testid="CheckCircleIcon"
                   focusable="false"
                   viewBox="0 0 24 24"
@@ -186,24 +186,22 @@ exports[`renders correctly 1`] = `
                 </svg>
               </span>
               Create Check-In
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </button>
           </div>
         </div>
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root agenda-items css-bhp9pd-MuiPaper-root-MuiCard-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root agenda-items css-1j74uew-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
         >
           <div
-            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+            class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
           >
             <div
-              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+              class="MuiCardHeader-avatar css-1r9wl67-MuiCardHeader-avatar"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="AdjustIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -214,17 +212,17 @@ exports[`renders correctly 1`] = `
               </svg>
             </div>
             <div
-              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+              class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
             >
               <h2
-                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
               >
                 Agenda Items
               </h2>
             </div>
           </div>
           <div
-            class="MuiCardContent-root agenda-items-container css-46bh2p-MuiCardContent-root"
+            class="MuiCardContent-root agenda-items-container css-1lt5qva-MuiCardContent-root"
           >
             <div
               data-rbd-droppable-context-id="0"
@@ -240,13 +238,13 @@ exports[`renders correctly 1`] = `
               />
               <button
                 aria-label="create"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge edit-icon css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge edit-icon css-154kngp-MuiButtonBase-root-MuiIconButton-root"
                 tabindex="0"
                 type="button"
               >
                 <svg
                   aria-hidden="true"
-                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                   data-testid="DoneIcon"
                   focusable="false"
                   viewBox="0 0 24 24"
@@ -255,25 +253,23 @@ exports[`renders correctly 1`] = `
                     d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"
                   />
                 </svg>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </button>
             </div>
           </div>
         </div>
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root action-items css-bhp9pd-MuiPaper-root-MuiCard-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root action-items css-1j74uew-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
         >
           <div
-            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+            class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
           >
             <div
-              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+              class="MuiCardHeader-avatar css-1r9wl67-MuiCardHeader-avatar"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="ArrowForwardIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -284,17 +280,17 @@ exports[`renders correctly 1`] = `
               </svg>
             </div>
             <div
-              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+              class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
             >
               <h2
-                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
               >
                 Action Items
               </h2>
             </div>
           </div>
           <div
-            class="MuiCardContent-root action-items-container css-46bh2p-MuiCardContent-root"
+            class="MuiCardContent-root action-items-container css-1lt5qva-MuiCardContent-root"
           >
             <div
               data-rbd-droppable-context-id="1"
@@ -310,13 +306,13 @@ exports[`renders correctly 1`] = `
               />
               <button
                 aria-label="create"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge edit-icon css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge edit-icon css-154kngp-MuiButtonBase-root-MuiIconButton-root"
                 tabindex="0"
                 type="button"
               >
                 <svg
                   aria-hidden="true"
-                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                   data-testid="DoneIcon"
                   focusable="false"
                   viewBox="0 0 24 24"
@@ -325,25 +321,23 @@ exports[`renders correctly 1`] = `
                     d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"
                   />
                 </svg>
-                <span
-                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                />
               </button>
             </div>
           </div>
         </div>
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root note css-bhp9pd-MuiPaper-root-MuiCard-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root note css-1j74uew-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
         >
           <div
-            class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+            class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
           >
             <div
-              class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+              class="MuiCardHeader-avatar css-1r9wl67-MuiCardHeader-avatar"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="NotesIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -354,17 +348,17 @@ exports[`renders correctly 1`] = `
               </svg>
             </div>
             <div
-              class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+              class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
             >
               <h2
-                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
               >
                 Notes for holmes
               </h2>
             </div>
           </div>
           <div
-            class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+            class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
           >
             <textarea
               id="tiny-mce-checkin-notes"
@@ -380,17 +374,18 @@ exports[`renders correctly 1`] = `
           class="right-sidebar"
         >
           <div
-            class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+            class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-1j74uew-MuiPaper-root-MuiCard-root"
+            style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
           >
             <div
-              class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+              class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
             >
               <div
-                class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+                class="MuiCardHeader-avatar css-1r9wl67-MuiCardHeader-avatar"
               >
                 <svg
                   aria-hidden="true"
-                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                   data-testid="PictureAsPdfIcon"
                   focusable="false"
                   viewBox="0 0 24 24"
@@ -401,55 +396,55 @@ exports[`renders correctly 1`] = `
                 </svg>
               </div>
               <div
-                class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+                class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
               >
                 <span
-                  class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-et1ao3-MuiTypography-root"
+                  class="MuiTypography-root MuiTypography-body2 MuiCardHeader-title css-7ctihp-MuiTypography-root"
                 >
                   Check-In Resources
                 </span>
               </div>
             </div>
             <ul
-              class="MuiList-root MuiList-padding MuiList-dense css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding MuiList-dense css-b7dj7n-MuiList-root"
             >
               <a
-                class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-qyw6ft-MuiListItem-root"
                 data-testid="mockument-1"
                 href="/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf"
                 target="_blank"
               >
                 <div
-                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
                 >
                   <span
-                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-7ctihp-MuiTypography-root"
                   >
                     Expectations Discussion Guide for Team Members
                   </span>
                   <p
-                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-1a1whku-MuiTypography-root"
                   >
                     My description
                   </p>
                 </div>
               </a>
               <a
-                class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-6lnq02-MuiListItem-root"
+                class="MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-padding css-qyw6ft-MuiListItem-root"
                 data-testid="mockument-2"
                 href="/pdfs/Expectations_Worksheet.pdf"
                 target="_blank"
               >
                 <div
-                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
                 >
                   <span
-                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-et1ao3-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary css-7ctihp-MuiTypography-root"
                   >
                     Expectations Worksheet
                   </span>
                   <p
-                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-1a1whku-MuiTypography-root"
                   >
                     My worksheet
                   </p>

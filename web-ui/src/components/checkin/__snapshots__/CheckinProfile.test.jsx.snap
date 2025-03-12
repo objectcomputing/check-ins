@@ -6,11 +6,11 @@ exports[`renders correctly 1`] = `
     class="profile-section"
   >
     <div
-      class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+      class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
       style="height: 120px; width: 120px;"
     >
       <img
-        class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+        class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
         src="http://localhost:8080/services/member-profiles/member-photos/undefined"
       />
     </div>

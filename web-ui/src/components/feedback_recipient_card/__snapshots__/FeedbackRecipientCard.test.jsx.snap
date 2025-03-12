@@ -3,45 +3,46 @@
 exports[`renders the recipient card 1`] = `
 <div>
   <div
-    class="MuiBox-root css-5zw0i8"
+    class="MuiBox-root css-151g2tu"
   >
     <div
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root member-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root member-card css-1j74uew-MuiPaper-root-MuiCard-root"
+      style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
     >
       <div
-        class="MuiCardHeader-root FeedbackRecipientCard-header css-185gdzj-MuiCardHeader-root"
+        class="MuiCardHeader-root FeedbackRecipientCard-header css-149tc0y-MuiCardHeader-root"
       >
         <div
-          class="MuiCardHeader-avatar css-1ssile9-MuiCardHeader-avatar"
+          class="MuiCardHeader-avatar css-1r9wl67-MuiCardHeader-avatar"
         >
           <div
-            class="MuiAvatar-root MuiAvatar-circular large css-1wlk0hk-MuiAvatar-root"
+            class="MuiAvatar-root MuiAvatar-circular large css-fmeqll-MuiAvatar-root"
           >
             <img
-              class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+              class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
               src="http://localhost:8080/services/member-profiles/member-photos/undefined"
             />
           </div>
         </div>
         <div
-          class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+          class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h5 css-16xl4zq-MuiTypography-root"
           />
           <h3
-            class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body1 css-1ro85z9-MuiTypography-root"
           />
         </div>
       </div>
       <div
-        class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+        class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
       >
         <div
-          class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-fixed info-container css-1ss2ei0-MuiContainer-root"
+          class="MuiContainer-root MuiContainer-maxWidthLg MuiContainer-fixed info-container css-1dgpa8w-MuiContainer-root"
         >
           <p
-            class="MuiTypography-root MuiTypography-body2 css-r40f8v-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body2 css-1a1whku-MuiTypography-root"
           >
             <a
               href="mailto:undefined"

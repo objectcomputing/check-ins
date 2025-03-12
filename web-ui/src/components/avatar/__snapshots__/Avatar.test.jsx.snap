@@ -3,11 +3,11 @@
 exports[`AvatarComponent > renders correctly 1`] = `
 <div>
   <div
-    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault avatar css-17o22dy-MuiAvatar-root"
+    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault avatar css-18k2bs-MuiAvatar-root"
   >
     <svg
       aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiAvatar-fallback css-10mi8st-MuiSvgIcon-root-MuiAvatar-fallback"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiAvatar-fallback css-1mo2pzk-MuiSvgIcon-root-MuiAvatar-fallback"
       data-testid="PersonIcon"
       focusable="false"
       viewBox="0 0 24 24"

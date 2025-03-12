@@ -17,14 +17,14 @@ exports[`renders correctly 1`] = `
       class="header-container"
     >
       <h4
-        class="MuiTypography-root MuiTypography-h4 FeedbackRequestPage-requestHeader css-5lbw0b-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h4 FeedbackRequestPage-requestHeader css-f84ov1-MuiTypography-root"
       >
         Feedback Request for 
         <b />
       </h4>
       <div>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary FeedbackRequestPage-backButton FeedbackRequestPage-actionButtons css-sghohy-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary FeedbackRequestPage-backButton FeedbackRequestPage-actionButtons css-74d805-MuiButtonBase-root-MuiButton-root"
           disabled=""
           tabindex="-1"
           type="button"
@@ -32,7 +32,7 @@ exports[`renders correctly 1`] = `
           Back
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary FeedbackRequestPage-actionButtons css-sghohy-MuiButtonBase-root-MuiButton-root"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary FeedbackRequestPage-actionButtons css-74d805-MuiButtonBase-root-MuiButton-root"
           disabled=""
           tabindex="-1"
           type="button"
@@ -45,21 +45,21 @@ exports[`renders correctly 1`] = `
       class="FeedbackRequestPage-stepContainer"
     >
       <div
-        class="MuiStepper-root MuiStepper-horizontal FeedbackRequestPage-root css-m5vj9m-MuiStepper-root"
+        class="MuiStepper-root MuiStepper-horizontal FeedbackRequestPage-root css-ibtndc-MuiStepper-root"
         style="padding: 24px;"
       >
         <div
-          class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+          class="MuiStep-root MuiStep-horizontal css-mlh15c-MuiStep-root"
         >
           <span
-            class="MuiStepLabel-root MuiStepLabel-horizontal css-ascpo7-MuiStepLabel-root"
+            class="MuiStepLabel-root MuiStepLabel-horizontal css-3yr9gi-MuiStepLabel-root"
           >
             <span
-              class="MuiStepLabel-iconContainer Mui-active css-vnkopk-MuiStepLabel-iconContainer"
+              class="MuiStepLabel-iconContainer Mui-active css-1b2ju2j-MuiStepLabel-iconContainer"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-active css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root Mui-active css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root"
                 focusable="false"
                 viewBox="0 0 24 24"
               >
@@ -69,7 +69,7 @@ exports[`renders correctly 1`] = `
                   r="12"
                 />
                 <text
-                  class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                  class="MuiStepIcon-text css-1g86afo-MuiStepIcon-text"
                   dominant-baseline="central"
                   text-anchor="middle"
                   x="12"
@@ -80,10 +80,10 @@ exports[`renders correctly 1`] = `
               </svg>
             </span>
             <span
-              class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+              class="MuiStepLabel-labelContainer css-p8xe3-MuiStepLabel-labelContainer"
             >
               <span
-                class="MuiStepLabel-label Mui-active css-1hv8oq8-MuiStepLabel-label"
+                class="MuiStepLabel-label Mui-active css-12eb3rq-MuiStepLabel-label"
               >
                 Select template
               </span>
@@ -91,24 +91,24 @@ exports[`renders correctly 1`] = `
           </span>
         </div>
         <div
-          class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-j5w0w9-MuiStepConnector-root"
+          class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-9ydz1a-MuiStepConnector-root"
         >
           <span
-            class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+            class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-14ncu80-MuiStepConnector-line"
           />
         </div>
         <div
-          class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+          class="MuiStep-root MuiStep-horizontal css-mlh15c-MuiStep-root"
         >
           <span
-            class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-ascpo7-MuiStepLabel-root"
+            class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-3yr9gi-MuiStepLabel-root"
           >
             <span
-              class="MuiStepLabel-iconContainer Mui-disabled css-vnkopk-MuiStepLabel-iconContainer"
+              class="MuiStepLabel-iconContainer Mui-disabled css-1b2ju2j-MuiStepLabel-iconContainer"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root"
                 focusable="false"
                 viewBox="0 0 24 24"
               >
@@ -118,7 +118,7 @@ exports[`renders correctly 1`] = `
                   r="12"
                 />
                 <text
-                  class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                  class="MuiStepIcon-text css-1g86afo-MuiStepIcon-text"
                   dominant-baseline="central"
                   text-anchor="middle"
                   x="12"
@@ -129,10 +129,10 @@ exports[`renders correctly 1`] = `
               </svg>
             </span>
             <span
-              class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+              class="MuiStepLabel-labelContainer css-p8xe3-MuiStepLabel-labelContainer"
             >
               <span
-                class="MuiStepLabel-label Mui-disabled css-1hv8oq8-MuiStepLabel-label"
+                class="MuiStepLabel-label Mui-disabled css-12eb3rq-MuiStepLabel-label"
               >
                 Select recipients
               </span>
@@ -140,24 +140,24 @@ exports[`renders correctly 1`] = `
           </span>
         </div>
         <div
-          class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-j5w0w9-MuiStepConnector-root"
+          class="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled css-9ydz1a-MuiStepConnector-root"
         >
           <span
-            class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-z7uhs0-MuiStepConnector-line"
+            class="MuiStepConnector-line MuiStepConnector-lineHorizontal css-14ncu80-MuiStepConnector-line"
           />
         </div>
         <div
-          class="MuiStep-root MuiStep-horizontal css-1bw0nnu-MuiStep-root"
+          class="MuiStep-root MuiStep-horizontal css-mlh15c-MuiStep-root"
         >
           <span
-            class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-ascpo7-MuiStepLabel-root"
+            class="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled css-3yr9gi-MuiStepLabel-root"
           >
             <span
-              class="MuiStepLabel-iconContainer Mui-disabled css-vnkopk-MuiStepLabel-iconContainer"
+              class="MuiStepLabel-iconContainer Mui-disabled css-1b2ju2j-MuiStepLabel-iconContainer"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiStepIcon-root css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root"
                 focusable="false"
                 viewBox="0 0 24 24"
               >
@@ -167,7 +167,7 @@ exports[`renders correctly 1`] = `
                   r="12"
                 />
                 <text
-                  class="MuiStepIcon-text css-117w1su-MuiStepIcon-text"
+                  class="MuiStepIcon-text css-1g86afo-MuiStepIcon-text"
                   dominant-baseline="central"
                   text-anchor="middle"
                   x="12"
@@ -178,10 +178,10 @@ exports[`renders correctly 1`] = `
               </svg>
             </span>
             <span
-              class="MuiStepLabel-labelContainer css-1vyamtt-MuiStepLabel-labelContainer"
+              class="MuiStepLabel-labelContainer css-p8xe3-MuiStepLabel-labelContainer"
             >
               <span
-                class="MuiStepLabel-label Mui-disabled css-1hv8oq8-MuiStepLabel-label"
+                class="MuiStepLabel-label Mui-disabled css-12eb3rq-MuiStepLabel-label"
               >
                 Set dates
               </span>
@@ -197,34 +197,34 @@ exports[`renders correctly 1`] = `
         class="feedback-template-actions"
       >
         <div
-          class="MuiFormControl-root MuiTextField-root feedback-template-search css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+          class="MuiFormControl-root MuiTextField-root feedback-template-search css-1xp5r68-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
             data-shrink="false"
-            for=":r1:"
-            id=":r1:-label"
+            for=":r3:"
+            id=":r3:-label"
           >
             Search Templates...
           </label>
           <div
-            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root"
+            class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd css-jupps9-MuiInputBase-root-MuiOutlinedInput-root"
           >
             <input
               aria-invalid="false"
-              class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
-              id=":r1:"
+              class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
+              id=":r3:"
               placeholder="Template 1"
               type="text"
               value=""
             />
             <div
-              class="MuiInputAdornment-root MuiInputAdornment-positionEnd MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-1laqsz7-MuiInputAdornment-root"
+              class="MuiInputAdornment-root MuiInputAdornment-positionEnd MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-elo8k2-MuiInputAdornment-root"
               style="color: gray;"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="SearchIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -236,10 +236,10 @@ exports[`renders correctly 1`] = `
             </div>
             <fieldset
               aria-hidden="true"
-              class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-yjsfm1"
+                class="css-81qg8w"
               >
                 <span>
                   Search Templates...
@@ -252,19 +252,16 @@ exports[`renders correctly 1`] = `
           class="ad-hoc-button"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             New Ad-Hoc Template
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
           </button>
           <svg
             aria-hidden="true"
             aria-label="An ad-hoc template allows you to ask a single question"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
             data-mui-internal-clone-element="true"
             data-testid="HelpOutlineIcon"
             focusable="false"

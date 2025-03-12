@@ -3,16 +3,16 @@
 exports[`renders correctly 1`] = `
 <div>
   <a
-    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-cfd5wn-MuiListItem-root"
     data-testid="some-id"
     href="/pdfs/myFileName.pdf"
     target="_blank"
   >
     <div
-      class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+      class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
     >
       <span
-        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
       >
         myFileName
       </span>
@@ -24,21 +24,21 @@ exports[`renders correctly 1`] = `
 exports[`renders descriptions 1`] = `
 <div>
   <a
-    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-cfd5wn-MuiListItem-root"
     data-testid="some-id"
     href="/pdfs/myFileName.pdf"
     target="_blank"
   >
     <div
-      class="MuiListItemText-root MuiListItemText-multiline css-konndc-MuiListItemText-root"
+      class="MuiListItemText-root MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
     >
       <span
-        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
       >
         myFileName
       </span>
       <p
-        class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-83ijpv-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body2 MuiListItemText-secondary css-1a1whku-MuiTypography-root"
       >
         My description
       </p>
