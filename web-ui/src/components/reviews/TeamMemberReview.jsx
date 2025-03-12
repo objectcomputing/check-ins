@@ -1,6 +1,5 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken, selectCurrentUser, selectProfile } from '../../context/selectors';
@@ -9,12 +8,6 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import {
   AppBar,
   Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Modal,
   Tab,
   Tabs,
   Typography
@@ -103,10 +96,6 @@ const TeamMemberReview = ({
     setValue(newValue);
   };
 
-  const handleChangeIndex = index => {
-    setValue(index);
-  };
-
   let selfReviewIcon = <HourglassEmptyIcon />;
   if (selfReview && selfReview.status?.toUpperCase() === 'SUBMITTED') {
     selfReviewIcon = <CheckCircleIcon />;
@@ -157,11 +146,6 @@ const TeamMemberReview = ({
               })}
           </Tabs>
         </AppBar>
-        <SwipeableViews
-          axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-          index={value}
-          onChangeIndex={handleChangeIndex}
-        >
           <TabPanel key={0} value={value} index={0} dir={theme.direction}>
             {selfReview?.id ? (
               <FeedbackSubmitForm
@@ -196,7 +180,6 @@ const TeamMemberReview = ({
                 </TabPanel>
               );
             })}
-        </SwipeableViews>
       </Box>
     </Root>
   );

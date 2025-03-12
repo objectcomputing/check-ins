@@ -94,47 +94,39 @@ exports[`renders correctly - submitted 1`] = `
           </div>
         </header>
         <div
-          style="overflow-x: hidden;"
+          aria-labelledby="full-width-tab-0"
+          dir="ltr"
+          hidden=""
+          id="full-width-tabpanel-0"
+          role="tabpanel"
+        />
+        <div
+          aria-labelledby="full-width-tab-1"
+          dir="ltr"
+          id="full-width-tabpanel-1"
+          role="tabpanel"
         >
           <div
-            class="react-swipeable-view-container"
-            style="flex-direction: row; transition: all 0s ease 0s; direction: ltr; display: flex; will-change: transform;"
+            class="MuiBox-root css-19kzrtu"
           >
-            <div
-              aria-hidden="false"
-              data-swipeable="true"
-              style="width: 100%; flex-shrink: 0; overflow: auto;"
+            <p
+              class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
             >
               <div
-                aria-labelledby="full-width-tab-1"
-                dir="ltr"
-                id="full-width-tabpanel-1"
-                role="tabpanel"
+                class="submit-form css-1799q8o"
               >
-                <div
-                  class="MuiBox-root css-19kzrtu"
+                <span
+                  class="MuiTypography-root MuiTypography-h3 FeedbackSubmitForm-announcement css-13msox4-MuiTypography-root"
                 >
-                  <p
-                    class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
-                  >
-                    <div
-                      class="submit-form css-1799q8o"
-                    >
-                      <span
-                        class="MuiTypography-root MuiTypography-h3 FeedbackSubmitForm-announcement css-13msox4-MuiTypography-root"
-                      >
-                        Reviewing
-                         Feedback on
-                         
-                        <b>
-                          James Johnson
-                        </b>
-                      </span>
-                    </div>
-                  </p>
-                </div>
+                  Reviewing
+                   Feedback on
+                   
+                  <b>
+                    James Johnson
+                  </b>
+                </span>
               </div>
-            </div>
+            </p>
           </div>
         </div>
       </div>
