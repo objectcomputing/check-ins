@@ -20,7 +20,7 @@ const guilds = [
         lead: true
       }
     ],
-    active: true,
+    active: true
   }
 ];
 
@@ -34,12 +34,14 @@ const initialState = {
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
     guilds,
-    memberProfiles: [{
-      id: '3fa4-5717-4562-b3fc-2c963f66afa9',
-      pdlId: '',
-      title: 'Tester',
-      workEmail: 'test@tester.com'
-    }]
+    memberProfiles: [
+      {
+        id: '3fa4-5717-4562-b3fc-2c963f66afa9',
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
+      }
+    ]
   }
 };
 
@@ -72,7 +74,7 @@ it('renders correctly for guild lead', () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <BrowserRouter>
-        <GuildSummaryCard guild={guilds[1]} isOpen={false}/>
+        <GuildSummaryCard guild={guilds[1]} isOpen={false} />
       </BrowserRouter>
     </AppContextProvider>
   );

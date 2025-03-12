@@ -8,9 +8,9 @@ const userStateWithPermission = {
     userProfile: {
       name: 'Mitch Hedberg',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_VIEW_CHECKINS_REPORT' }],
+      permissions: [{ permission: 'CAN_VIEW_CHECKINS_REPORT' }]
     },
-    terminatedMembers: [],
+    terminatedMembers: []
   }
 };
 

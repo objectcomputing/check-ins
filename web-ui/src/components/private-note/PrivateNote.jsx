@@ -15,7 +15,7 @@ import {
   selectCanViewPrivateNotesPermission,
   selectCanCreatePrivateNotesPermission,
   selectCanUpdatePrivateNotesPermission,
-  selectCanAdministerCheckinDocuments,
+  selectCanAdministerCheckinDocuments
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import { debounce } from 'lodash/function';
@@ -65,8 +65,10 @@ const PrivateNote = () => {
           if (currentNote) {
             setNote(currentNote);
           } else if (currentUserId === pdlId) {
-            if (!noteRef.current.some(id => id === checkinId) &&
-                selectCanCreatePrivateNotesPermission(state)) {
+            if (
+              !noteRef.current.some(id => id === checkinId) &&
+              selectCanCreatePrivateNotesPermission(state)
+            ) {
               noteRef.current.push(checkinId);
               res = await createPrivateNote(
                 {
@@ -97,7 +99,7 @@ const PrivateNote = () => {
             }
           }
         } catch (e) {
-          console.error("getPrivateNotes: " + e);
+          console.error('getPrivateNotes: ' + e);
         }
         setIsLoading(false);
       }

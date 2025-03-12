@@ -9,22 +9,22 @@ const initialState = {
   state: {
     userProfile: {
       name: 'Mitch Hedberg',
-      role: ['MEMBER'],
+      role: ['MEMBER']
     },
     // Review Period 2 should be listed before Review Period 1 because it's OPEN
     reviewPeriods: [
       {
         id: 'a44fc66a-86b0-4f15-8459-e7d4b4ecc330',
         name: 'Review Period 1',
-        reviewStatus: 'CLOSED',
+        reviewStatus: 'CLOSED'
       },
       {
         id: 'a44fc66a-86b0-4f15-8459-e7d4b4ecc331',
         name: 'Review Period 2',
-        reviewStatus: 'OPEN',
-      },
-    ],
-  },
+        reviewStatus: 'OPEN'
+      }
+    ]
+  }
 };
 
 it('renders correctly', () => {

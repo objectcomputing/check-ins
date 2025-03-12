@@ -8,7 +8,7 @@ import {
   selectProfile,
   selectSupervisorHierarchyIds,
   selectTerminatedMembers,
-  selectCanAdministerFeedbackRequests,
+  selectCanAdministerFeedbackRequests
 } from '../context/selectors';
 import { AppContext } from '../context/AppContext';
 import { getSelectedMemberSkills } from '../api/memberskill';
@@ -20,7 +20,7 @@ import VolunteerBadges from '../components/volunteer/VolunteerBadges';
 import { levelList } from '../context/util';
 import StarIcon from '@mui/icons-material/Star';
 import KudosDialog from '../components/kudos_dialog/KudosDialog';
-import EarnedCertificationBadges from "../components/earned-certifications/EarnedCertificationBadges.jsx";
+import EarnedCertificationBadges from '../components/earned-certifications/EarnedCertificationBadges.jsx';
 
 import {
   Avatar,
@@ -71,7 +71,7 @@ const MemberProfilePage = () => {
     if (member) {
       setSelectedMember(member);
       const { lastSeen } = member;
-      if(lastSeen && Array.isArray(lastSeen)) {
+      if (lastSeen && Array.isArray(lastSeen)) {
         setLastSeen(`${lastSeen[1]}/${lastSeen[2]}/${lastSeen[0]}`);
       }
     } else if (terminatedMember) {
@@ -100,11 +100,12 @@ const MemberProfilePage = () => {
           guildRes.payload && guildRes.payload.status === 200
             ? guildRes.payload.data
             : null;
-        const memberGuilds = guildData && !guildRes.error ?
-          guildData.filter((guild) =>
-            guild.guildMembers.some((member) => member.memberId == memberId)
-          )
-          : [];
+        const memberGuilds =
+          guildData && !guildRes.error
+            ? guildData.filter(guild =>
+                guild.guildMembers.some(member => member.memberId == memberId)
+              )
+            : [];
         setGuilds(memberGuilds.sort((a, b) => a.name.localeCompare(b.name)));
       }
     }
@@ -188,7 +189,7 @@ const MemberProfilePage = () => {
                         <h4>Bio: {selectedMember.bioText || ''}</h4>
                         <h4>
                           {(supervisorInfo &&
-                              'Supervisor: ' +
+                            'Supervisor: ' +
                               supervisorInfo.firstName +
                               ' ' +
                               supervisorInfo.lastName) ||
@@ -196,7 +197,7 @@ const MemberProfilePage = () => {
                         </h4>
                         <h4>
                           {(pdlInfo &&
-                              'PDL: ' +
+                            'PDL: ' +
                               pdlInfo.firstName +
                               ' ' +
                               pdlInfo.lastName) ||
@@ -332,7 +333,10 @@ const MemberProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
-            <EarnedCertificationBadges memberId={memberId} certifications={certifications} />
+            <EarnedCertificationBadges
+              memberId={memberId}
+              certifications={certifications}
+            />
             <VolunteerBadges memberId={memberId} />
           </Grid>
         </Grid>

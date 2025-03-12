@@ -70,7 +70,8 @@ exports[`renders correctly 1`] = `
         <span
           class="MuiTypography-root MuiTypography-subtitle1 MuiCardHeader-subheader css-12ky0r8-MuiTypography-root"
         >
-          from 
+          from
+           
           <div
             class="MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-filledDefault css-8aqjdy-MuiChip-root"
           >

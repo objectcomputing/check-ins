@@ -10,9 +10,9 @@ const userStateWithPermission = {
     userProfile: {
       name: 'Mitch Hedberg',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_SEND_EMAIL' }],
+      permissions: [{ permission: 'CAN_SEND_EMAIL' }]
     },
-    terminatedMembers: [],
+    terminatedMembers: []
   }
 };
 

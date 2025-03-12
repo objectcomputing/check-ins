@@ -14,7 +14,7 @@ import {
   selectCsrfToken,
   selectCurrentMemberIds,
   selectHasSkillsReportPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 
 import { useQueryParameters } from '../helpers/query-parameters';
@@ -75,7 +75,6 @@ const SkillReportPage = props => {
 
     handleSearch();
   }, [searchSkills]);
-
 
   function skillsToSkillLevelDTO(skills) {
     return skills.map((skill, index) => {

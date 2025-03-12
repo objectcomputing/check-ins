@@ -97,7 +97,7 @@ const FeedbackTemplateSelector = ({ query, changeQuery }) => {
         active: true,
         isAdHoc: true,
         isPublic: false,
-        isReview: false,
+        isReview: false
       };
 
       const newTemplateQuestion = {

@@ -48,7 +48,11 @@ const Pulse = ({
   <div className="pulse">
     <div className="title-row">
       <Typography variant="h6">{title}</Typography>
-      {iconRequired && <Typography variant="h6" color="red">*</Typography>}
+      {iconRequired && (
+        <Typography variant="h6" color="red">
+          *
+        </Typography>
+      )}
     </div>
     <div className="icon-row">
       {icons.map((sentiment, index) => (

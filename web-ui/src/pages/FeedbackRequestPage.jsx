@@ -25,10 +25,13 @@ import {
   selectCurrentUser,
   selectCurrentMemberIds,
   selectHasCreateFeedbackPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
-import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
+import {
+  getFeedbackTemplate,
+  softDeleteAdHocTemplates
+} from '../api/feedbacktemplate';
 
 import './FeedbackRequestPage.css';
 

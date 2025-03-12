@@ -4,7 +4,7 @@ import { AppContext } from '../context/AppContext';
 import {
   selectNormalizedMembers,
   selectHasCheckinsReportPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 
 import {
@@ -48,18 +48,22 @@ const CheckinsReportPage = () => {
     /** @type {HTMLButtonElement} */
     const button = evt.currentTarget;
     const isNextButton = button.attributes
-                               .getNamedItem('aria-label')
-                               .value.includes('Next');
-    setReportDate(new Date(reportDate.setMonth(reportDate.getMonth() +
-                                               (isNextButton ? 3 : -3))));
+      .getNamedItem('aria-label')
+      .value.includes('Next');
+    setReportDate(
+      new Date(
+        reportDate.setMonth(reportDate.getMonth() + (isNextButton ? 3 : -3))
+      )
+    );
   };
 
   // Keyboard navigation for changing quarters.
   useEffect(() => {
     const handleKeyDown = evt => {
       if (evt.key === 'ArrowLeft') {
-        document.querySelector('button[aria-label="Previous quarter`"]')
-                .click();
+        document
+          .querySelector('button[aria-label="Previous quarter`"]')
+          .click();
       } else if (evt.key === 'ArrowRight') {
         document.querySelector('button[aria-label="Next quarter`"]').click();
       }
@@ -117,15 +121,16 @@ const CheckinsReportPage = () => {
         </Grid>
       </Box>
       <div className="checkins-report-page-reports">
-        {members
-          ? <TeamMemberMap
-              members={members}
-              closed={closed}
-              planned={planned}
-              reportDate={reportDate}
-            />
-          : <></>
-        }
+        {members ? (
+          <TeamMemberMap
+            members={members}
+            closed={closed}
+            planned={planned}
+            reportDate={reportDate}
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   ) : (

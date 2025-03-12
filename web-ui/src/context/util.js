@@ -19,14 +19,16 @@ export const sortAnniversaries = anniversaryData => {
   return anniversaryData.sort((a, b) => b.yearsOfService - a.yearsOfService);
 };
 
-export const sortKudos = (kudos, order = "ASC") => {
-  if (order === "DESC") {
+export const sortKudos = (kudos, order = 'ASC') => {
+  if (order === 'DESC') {
     return kudos?.sort(
-      (a, b) => new Date(a.dateCreated.join("/")) - new Date(b.dateCreated.join("/"))
+      (a, b) =>
+        new Date(a.dateCreated.join('/')) - new Date(b.dateCreated.join('/'))
     );
-  } else if (order === "ASC") {
+  } else if (order === 'ASC') {
     return kudos?.sort(
-      (a, b) => new Date(b.dateCreated.join("/")) - new Date(a.dateCreated.join("/"))
+      (a, b) =>
+        new Date(b.dateCreated.join('/')) - new Date(a.dateCreated.join('/'))
     );
   }
 };

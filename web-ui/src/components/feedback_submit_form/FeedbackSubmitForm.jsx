@@ -188,7 +188,11 @@ const FeedbackSubmitForm = ({
     <SkeletonLoader type="feedback_requests" />
   ) : (
     <Root className="submit-form">
-      <Typography component={'span'} className={classes.announcement} variant="h3">
+      <Typography
+        component={'span'}
+        className={classes.announcement}
+        variant="h3"
+      >
         {isReviewing ? 'Reviewing' : 'Submitting'} Feedback on{' '}
         <b>{requesteeName}</b>
       </Typography>

@@ -32,7 +32,7 @@ import {
   selectCsrfToken,
   selectOrderedSkills,
   selectHasSkillsReportPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 

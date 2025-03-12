@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import {
   selectProfileMap,
-  selectCanEditAllOrganizationMembers,
+  selectCanEditAllOrganizationMembers
 } from '../../context/selectors';
 import { getAvatarURL } from '../../api/api.js';
 

@@ -13,7 +13,9 @@ const CheckinProfile = () => {
   const { state } = useContext(AppContext);
   const { csrf, selectedProfile, userProfile } = state;
   const currentUserProfile = selectCurrentUser(state);
-  const { name, pdlId, title, workEmail } = selectedProfile ? selectedProfile : currentUserProfile;
+  const { name, pdlId, title, workEmail } = selectedProfile
+    ? selectedProfile
+    : currentUserProfile;
   const [pdl, setPDL] = useState();
 
   // Get PDL's name

@@ -62,7 +62,7 @@ const initialState = {
       role: ['MEMBER'],
       id: currentUserProfile.id,
       imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
     checkins: [],
     guilds: [],

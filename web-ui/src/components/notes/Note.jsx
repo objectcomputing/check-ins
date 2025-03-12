@@ -85,7 +85,7 @@ const Notes = props => {
           }
         }
       } catch (e) {
-        console.error("getNotes: " + e);
+        console.error('getNotes: ' + e);
       }
       setIsLoading(false);
     }

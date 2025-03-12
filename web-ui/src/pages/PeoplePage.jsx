@@ -86,7 +86,7 @@ const PeoplePage = () => {
           <Button
             className="kudos-dialog-open"
             variant="outlined"
-            startIcon={<StarIcon/>}
+            startIcon={<StarIcon />}
             onClick={() => setKudosDialogOpen(true)}
           >
             Give Kudos

@@ -4,9 +4,9 @@ import { AppContextProvider } from '../context/AppContext';
 import { Router } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import {setupServer} from "msw/node";
-import {http, HttpResponse} from "msw";
-import {createMemoryHistory} from "history";
+import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
+import { createMemoryHistory } from 'history';
 
 const mockMemberId = 'bf9975f8-a5b2-4551-b729-afd56b49e2cc';
 const mockCheckinId = '3a1906df-d45c-4ff5-a6f8-7dacba97ff1a';
@@ -43,7 +43,7 @@ const initialState = {
         id: mockMemberId,
         name: 'holmes',
         imageUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
+          'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
       }
     ],
     roles: [
@@ -71,9 +71,9 @@ const mockuments = [
 ];
 
 const server = setupServer(
-    http.get('http://localhost:8080/services/document/1', () => {
-      return HttpResponse.json(mockuments);
-    })
+  http.get('http://localhost:8080/services/document/1', () => {
+    return HttpResponse.json(mockuments);
+  })
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
@@ -81,7 +81,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 const history = createMemoryHistory(
-    `/checkins/${mockMemberId}/${mockCheckinId}`
+  `/checkins/${mockMemberId}/${mockCheckinId}`
 );
 
 vi.mock('react-router-dom', async () => ({
@@ -98,7 +98,8 @@ global.requestAnimationFrame = function (callback) {
 };
 
 it('renders correctly', async () => {
-  await waitForSnapshot('mockument-2',
+  await waitForSnapshot(
+    'mockument-2',
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Router history={history}>
         <AppContextProvider value={initialState}>

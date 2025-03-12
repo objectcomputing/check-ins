@@ -38,7 +38,13 @@ const initialState = {
         workEmail: 'test@tester.com'
       },
       role: ['MEMBER'],
-      permissions: [{id:1, permission: 'CAN_ADMINISTER_CHECKIN_DOCUMENTS', description: ''}],
+      permissions: [
+        {
+          id: 1,
+          permission: 'CAN_ADMINISTER_CHECKIN_DOCUMENTS',
+          description: ''
+        }
+      ],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },

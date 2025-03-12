@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 
 export default function SkeletonLoader({ type, delay = 300 }) {
   const additionalClasses = useStyles();
-  
+
   const [showSkeleton, setShowSkeleton] = useState(false);
 
   // Introduce a delay before showing the skeleton loader
@@ -191,18 +191,21 @@ export default function SkeletonLoader({ type, delay = 300 }) {
             <Box
               display="flex"
               flexDirection="column"
-              width={"100%"}
+              width={'100%'}
               justifyContent="center"
             >
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                <Skeleton variant="h1" width={"30%"}/>
-                <Skeleton variant="h1" width={"20%"}/>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <Skeleton variant="h1" width={'30%'} />
+                <Skeleton variant="h1" width={'20%'} />
               </div>
-              <Skeleton
-                variant="text"
-                height={"6rem"}
-                width={"100%"}
-              />
+              <Skeleton variant="text" height={'6rem'} width={'100%'} />
             </Box>
           </CardContent>
         </StyledCard>

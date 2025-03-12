@@ -59,7 +59,7 @@
     "test": "vitest",
     "update-test": "vitest -u",
     "postinstall": "husky init",
-    "prepare": "husky"
+    "prepare": "cd .. && husky web-ui/.husky"
   },
   "eslintConfig": {
     "extends": "react-app"

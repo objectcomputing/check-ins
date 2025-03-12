@@ -7,7 +7,7 @@ import {
   selectCurrentUser,
   selectProfile,
   selectHasCreateFeedbackPermission,
-  noPermission,
+  noPermission
 } from '../../context/selectors';
 import { AppContext } from '../../context/AppContext';
 import { useLocation } from 'react-router-dom';

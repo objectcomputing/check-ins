@@ -14,7 +14,11 @@ import {
 } from '../../../api/roles';
 import {
   selectCanEditMemberRolesPermission,
-  noPermission, selectMemberRoles, selectCsrfToken, selectRoles, selectMemberProfiles,
+  noPermission,
+  selectMemberRoles,
+  selectCsrfToken,
+  selectRoles,
+  selectMemberProfiles
 } from '../../../context/selectors';
 import RoleUserCards from './RoleUserCards';
 

@@ -45,7 +45,7 @@ const ErrorFallback = ({ error }) => {
         type: UPDATE_TOAST,
         payload: {
           severity: 'error',
-          toast: res.error.message,
+          toast: res.error.message
         }
       });
     } else if (res?.payload?.data) {
@@ -54,7 +54,7 @@ const ErrorFallback = ({ error }) => {
         type: UPDATE_TOAST,
         payload: {
           severity: 'success',
-          toast: `New issue ${title} created! Gratzie &#128512`,
+          toast: `New issue ${title} created! Gratzie &#128512`
         }
       });
     }

@@ -11,7 +11,7 @@ const initialState = {
     ],
     memberRoles: [
       { memberRoleId: { roleId: 1, memberId: 1 } },
-      { memberRoleId: { roleId: 2, memberId: 2 } },
+      { memberRoleId: { roleId: 2, memberId: 2 } }
     ],
     roles: [
       { id: 1, role: 'ADMIN', description: 'Administrator' },
@@ -22,8 +22,8 @@ const initialState = {
       name: 'Current User',
       role: ['MEMBER'],
       id: 1,
-      permissions: [{ permission: 'CAN_EDIT_MEMBER_ROLES' }],
-    },
+      permissions: [{ permission: 'CAN_EDIT_MEMBER_ROLES' }]
+    }
   }
 };
 
@@ -36,7 +36,7 @@ const noPermState = {
     ],
     memberRoles: [
       { memberRoleId: { roleId: 1, memberId: 1 } },
-      { memberRoleId: { roleId: 2, memberId: 2 } },
+      { memberRoleId: { roleId: 2, memberId: 2 } }
     ],
     roles: [
       { id: 1, role: 'ADMIN', description: 'Administrator' },
@@ -47,8 +47,8 @@ const noPermState = {
       name: 'Current User',
       role: ['MEMBER'],
       id: 1,
-      permissions: [],
-    },
+      permissions: []
+    }
   }
 };
 

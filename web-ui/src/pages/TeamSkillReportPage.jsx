@@ -12,7 +12,7 @@ import {
   selectOrderedSkills,
   selectSkill,
   selectHasTeamSkillsReportPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 import { levelMap } from '../context/util';
 import { sortMembersBySkill } from '../helpers/checks.js';

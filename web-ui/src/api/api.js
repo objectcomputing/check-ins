@@ -61,7 +61,7 @@ export const getMyFetch = async () => {
 function windowLogin() {
   return new Promise((resolve, reject) => {
     const authUrl = `${BASE_API_URL}/login?close=true`;
-    const loginWindow = window.open(authUrl, "Login", "width=500,height=600");
+    const loginWindow = window.open(authUrl, 'Login', 'width=500,height=600');
 
     const interval = setInterval(() => {
       try {
