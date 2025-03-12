@@ -170,7 +170,7 @@ export const reducer = (state, action) => {
       state.teams = action.payload;
       //sort by name
       state.teams.sort((a, b) => a.name.localeCompare(b.name));
-      breadk;
+      break;
     case UPDATE_TEAMS_LOADING:
       state.loading = { ...state.loading, teams: !state?.loading?.teams };
       break;
