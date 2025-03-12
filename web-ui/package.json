@@ -58,7 +58,6 @@
     "start": "vite",
     "test": "vitest",
     "update-test": "vitest -u",
-    "postinstall": "husky init",
     "prepare": "husky"
   },
   "eslintConfig": {
