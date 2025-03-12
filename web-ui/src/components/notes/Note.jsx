@@ -51,8 +51,6 @@ const Notes = props => {
           res.payload && res.payload.data && res.payload.data.length > 0
             ? res.payload.data[0]
             : null;
-        console.log(JSON.stringify(res));
-        console.log(currentNote);
         if (currentNote) {
           setNote(currentNote);
         } else if (currentUserId === pdlId) {
