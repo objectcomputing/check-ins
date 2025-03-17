@@ -4,6 +4,8 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Property(name = "replace.settingsservicesimpl", value = StringUtils.TRUE)
 class TodayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject

@@ -47,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.fileservicesimpl", value = StringUtils.TRUE)
+@Property(name = "replace.settingsservicesimpl", value = StringUtils.TRUE)
 class ReportDataControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, KudosFixture, ReviewPeriodFixture, FeedbackTemplateFixture, FeedbackRequestFixture, TemplateQuestionFixture, FeedbackAnswerFixture, EmployeeHoursFixture {
 
   @Inject

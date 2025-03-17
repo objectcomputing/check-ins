@@ -48,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Property(name = "replace.slacksearch", value = StringUtils.TRUE)
 @Property(name = "replace.slackreader", value = StringUtils.TRUE)
 @Property(name = "replace.slacksender", value = StringUtils.TRUE)
+@Property(name = "replace.settingsservicesimpl", value = StringUtils.TRUE)
 class SlackKudosTest extends TestContainersSuite implements MemberProfileFixture, AutomatedKudosFixture, RoleFixture {
     @Inject
     private SlackReaderReplacement slackReader;
