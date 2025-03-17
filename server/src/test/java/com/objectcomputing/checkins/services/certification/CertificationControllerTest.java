@@ -48,11 +48,12 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     @Test
     void canCreateCertification() {
         createDefaultCertification();
-        CertificationDTO newCertification = new CertificationDTO("New Certification", "https://badge.url");
+        CertificationDTO newCertification = new CertificationDTO("New Certification", "Description", "https://badge.url");
         Certification createdCertification = create(newCertification);
 
         assertNotNull(createdCertification.getId());
         assertEquals(newCertification.getName(), createdCertification.getName());
+        assertEquals(newCertification.getDescription(), createdCertification.getDescription());
         assertEquals(newCertification.getBadgeUrl(), createdCertification.getBadgeUrl());
 
         List<Certification> retrieve = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
@@ -61,8 +62,8 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
 
     @Test
     void inactiveCerificatesAreHidden() {
-        createCertification("Certificate");
-        createCertification("Another Certificate", "https://badge.url", false);
+        createCertification("Certificate", "Description");
+        createCertification("Another Certificate", "Description", "https://badge.url", false);
 
         List<Certification> list = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
         assertEquals(List.of("Certificate"), list.stream().map(Certification::getName).toList());
@@ -75,11 +76,12 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     void canCreateCertificationWithoutThePermission() {
         MemberProfile tim = createASecondDefaultMemberProfile();
         createDefaultCertification();
-        CertificationDTO newCertification = new CertificationDTO("New Certification", "https://badge.url");
+        CertificationDTO newCertification = new CertificationDTO("New Certification", "Description", "https://badge.url");
         Certification createdCertification = create(newCertification, tim.getWorkEmail(), MEMBER_ROLE);
 
         assertNotNull(createdCertification.getId());
         assertEquals(newCertification.getName(), createdCertification.getName());
+        assertEquals(newCertification.getDescription(), createdCertification.getDescription());
         assertEquals(newCertification.getBadgeUrl(), createdCertification.getBadgeUrl());
 
         List<Certification> retrieve = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(Certification.class));
@@ -88,26 +90,28 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
 
     @Test
     void listIsOrdered() {
-        createCertification("Donkey husbandry");
-        createCertification("Aardvark upkeep");
-        createCertification("Zebu and you", "https://badge.url");
+        createCertification("Donkey husbandry", "Description 1");
+        createCertification("Aardvark upkeep", "Description 2");
+        createCertification("Zebu and you", "Description 3", "https://badge.url");
 
         List<Certification> list = list();
 
         assertEquals(3, list.size());
         assertEquals(List.of("Aardvark upkeep", "Donkey husbandry", "Zebu and you"), list.stream().map(Certification::getName).toList());
+        assertEquals(List.of("Description 2", "Description 1", "Description 3"), list.stream().map(Certification::getDescription).toList());
     }
 
     @Test
     void canUpdate() {
-        Certification certification = createCertification("To update");
+        Certification certification = createCertification("To update", "To describe");
 
-        CertificationDTO update = new CertificationDTO("Updated", "https://badge.url");
+        CertificationDTO update = new CertificationDTO("Updated", "Description", "https://badge.url");
 
         Certification updated = update(certification.getId(), update);
 
         assertEquals(certification.getId(), updated.getId());
         assertEquals(update.getName(), updated.getName());
+        assertEquals(update.getDescription(), updated.getDescription());
         assertEquals(update.getBadgeUrl(), updated.getBadgeUrl());
 
         List<Certification> list = list();
@@ -117,9 +121,9 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     @Test
     void cannotUpdateWithoutThePermission() {
         MemberProfile tim = createASecondDefaultMemberProfile();
-        Certification certification = createCertification("To update");
+        Certification certification = createCertification("To update", "Description");
 
-        CertificationDTO update = new CertificationDTO("Updated", "https://badge.url");
+        CertificationDTO update = new CertificationDTO("Updated", "Description", "https://badge.url");
 
         HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> update(certification.getId(), update, tim.getWorkEmail(), MEMBER_ROLE));
         assertEquals(HttpStatus.FORBIDDEN, e.getStatus());
@@ -128,7 +132,7 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
     @Test
     void certificationNameRequired() {
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> create("""
-                {"badgeUrl":"badge"}"""));
+                {"description":"description","badgeUrl":"badge"}"""));
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getResponse().status());
         assertTrue(exception.getResponse().getBody(String.class).get().contains("certification.name: must not be null"), "Validation message is as expected");
@@ -136,18 +140,18 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
 
     @Test
     void certificationNameUniquenessTest() {
-        Certification original = createCertification("Default");
+        Certification original = createCertification("Default", "Description");
 
         // Cannot create a certification with the same name
         String postBody = """
-                {"name":"%s"}""".formatted(original.getName());
+                {"name":"%s","description":"description"}""".formatted(original.getName());
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> create(postBody));
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getResponse().status());
         assertEquals("Certification with name Default already exists", exception.getMessage());
 
         // Cannot update a certification to have the same name as another
-        Certification other = createCertification("Other");
+        Certification other = createCertification("Other", "Description");
         UUID otherId = other.getId();
         HttpClientResponseException exception2 = assertThrows(HttpClientResponseException.class, () -> update(otherId, postBody));
 
@@ -156,53 +160,59 @@ class CertificationControllerTest extends TestContainersSuite implements RoleFix
 
         // But we can successfully rename the certification
         update(other.getId(), """
-                {"name":"Updated"}""");
+                {"name":"Updated","description":"d"}""");
 
         // and we can update to keep the same name
         update(other.getId(), """
-                {"name":"Updated","badgeUrl":"woo"}""");
+                {"name":"Updated","description":"desc","badgeUrl":"woo"}""");
 
         // Check the list of exceptions are as we expect
         List<Certification> list = list();
         assertEquals(2, list.size());
         assertEquals(List.of("Default", "Updated"), list.stream().map(Certification::getName).toList());
+        assertEquals(List.of("Description", "desc"), list.stream().map(Certification::getDescription).toList());
         assertEquals(Arrays.asList(null, "woo"), list.stream().map(Certification::getBadgeUrl).toList());
     }
 
     @Test
     void certificationsDefaultToEnabled() {
         Certification nameAndUrlActive = create("""
-                {"name":"a","badgeUrl":"badge"}""");
+                {"name":"a","description":"da","badgeUrl":"badge"}""");
 
         assertEquals("a", nameAndUrlActive.getName());
+        assertEquals("da", nameAndUrlActive.getDescription());
         assertEquals("badge", nameAndUrlActive.getBadgeUrl());
         assertTrue(nameAndUrlActive.isActive());
 
         Certification nameNoUrlActive = create("""
-                {"name":"b"}""");
+                {"name":"b","description":"db"}""");
 
         assertEquals("b", nameNoUrlActive.getName());
+        assertEquals("db", nameNoUrlActive.getDescription());
         assertNull(nameNoUrlActive.getBadgeUrl());
         assertTrue(nameNoUrlActive.isActive());
 
         Certification nameNoUrlInactive = create("""
-                {"name":"c","active":"false"}""");
+                {"name":"c","description":"dc","active":"false"}""");
 
         assertEquals("c", nameNoUrlInactive.getName());
+        assertEquals("dc", nameNoUrlInactive.getDescription());
         assertNull(nameNoUrlInactive.getBadgeUrl());
         assertFalse(nameNoUrlInactive.isActive());
 
         Certification nameNoUrlInactiveBool = create("""
-                {"name":"d","active":false}""");
+                {"name":"d","description":"dd","active":false}""");
 
         assertEquals("d", nameNoUrlInactiveBool.getName());
+        assertEquals("dd", nameNoUrlInactiveBool.getDescription());
         assertNull(nameNoUrlInactiveBool.getBadgeUrl());
         assertFalse(nameNoUrlInactiveBool.isActive());
 
         Certification nameUrlSetActive = create("""
-                {"name":"e","badgeUrl":"badge2","active":true}""");
+                {"name":"e","description":"de","badgeUrl":"badge2","active":true}""");
 
         assertEquals("e", nameUrlSetActive.getName());
+        assertEquals("de", nameUrlSetActive.getDescription());
         assertEquals("badge2", nameUrlSetActive.getBadgeUrl());
         assertTrue(nameUrlSetActive.isActive());
     }

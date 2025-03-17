@@ -34,14 +34,18 @@ const propTypes = {
   billableHours: PropTypes.number,
   contributionHours: PropTypes.number.isRequired,
   targetHours: PropTypes.number.isRequired,
-  ptoHours: PropTypes.number
+  ptoHours: PropTypes.number,
+  billableUtilization: PropTypes.number,
+  overtimeWorked: PropTypes.number
 };
 
 const LinearBuffer = ({
   billableHours,
   contributionHours = 925,
   targetHours = 1850,
-  ptoHours = 0
+  ptoHours = 0,
+  billableUtilization,
+  overtimeWorked
 }) => {
   return (
     <Root className={classes.root}>
@@ -64,7 +68,9 @@ const LinearBuffer = ({
       >
         Billable Hours: {billableHours} - Contribution Hours:{' '}
         {contributionHours} - Target Hours: {targetHours} - PTO Hours:{' '}
-        {ptoHours}
+        {ptoHours} - Billable Utilization:{' '}
+        {billableUtilization ? billableUtilization : '(none)'} - Overtime
+        Worked: {overtimeWorked ? overtimeWorked : '(none)'}
       </Typography>
     </Root>
   );

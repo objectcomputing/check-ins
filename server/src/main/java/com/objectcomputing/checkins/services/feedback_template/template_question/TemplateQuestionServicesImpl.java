@@ -1,5 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
-
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -139,9 +139,8 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
     // only admins or the creator of the template can add questions to it
     public boolean createIsPermitted(UUID templateCreatorId) {
-        boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return currentUserId != null && (isAdmin || currentUserId.equals(templateCreatorId));
+        return currentUserId != null && (currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_TEMPLATES) || currentUserId.equals(templateCreatorId));
     }
 
     public boolean updateIsPermitted(UUID templateCreatorId) {

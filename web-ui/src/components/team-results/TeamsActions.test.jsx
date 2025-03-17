@@ -33,7 +33,7 @@ const initialState = {
 it('renders correctly', () => {
   snapshot(
     <AppContextProvider value={initialState}>
-      <TeamsActions />
+      <TeamsActions isOpen={false} />
     </AppContextProvider>
   );
 });

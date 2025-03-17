@@ -3,12 +3,24 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
+import jnr.constants.platform.Local;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
+import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTemplateFixture {
+
+    static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestFixture.class);
 
     /**
      * Creates a sample feedback request
@@ -50,6 +62,17 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
         return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, null));
     }
 
+    default LocalDate getRandomLocalDateTime(LocalDateTime start, LocalDateTime end) {
+        if(start.isEqual(end)) return end.toLocalDate();
+
+        LocalDate startDate = start.toLocalDate();
+        long daysBetween = ChronoUnit.DAYS.between(startDate, end.toLocalDate());
+        Random random = new Random();
+        long randomDays = daysBetween > 0 ? random.nextLong(daysBetween) : 0;
+
+        return startDate.plusDays(randomDays);
+    }
+
     /**
      * Saves a sample feedback request
      * @param creator The {@link MemberProfile} of the creator of the feedback request
@@ -59,8 +82,15 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
      * @return The saved {@link FeedbackRequest}
      */
     default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod) {
-        LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null, reviewPeriod.getId()));
+        return saveSampleFeedbackRequest(creator, requestee, recipient, templateId, reviewPeriod, "pending");
+    }
+
+    default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, ReviewPeriod reviewPeriod, String status) {
+        LocalDate submitDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), reviewPeriod.getCloseDate());
+        LOG.info("Period start date: {} Generated Submit Date: {}", reviewPeriod.getPeriodStartDate(), submitDate.atStartOfDay());
+        if(submitDate.atStartOfDay().isAfter(LocalDateTime.now())) submitDate = LocalDateTime.now().toLocalDate();
+        LocalDate sendDate = getRandomLocalDateTime(reviewPeriod.getPeriodStartDate(), submitDate.atStartOfDay());
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, sendDate, null, status, submitDate, reviewPeriod.getId()));
     }
 
     default FeedbackRequest saveSampleFeedbackRequestWithStatus(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId, String status) {
@@ -73,7 +103,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
                 null, "Parks Director", null, "Pawnee, Indiana",
                 "ron@objectcomputing.com", "mr-ron-swanson",
                 LocalDate.now(), "enjoys woodworking, breakfast meats, and saxophone jazz",
-                null, null, null, false, false, null));
+                null, null, null, false, false, null, false));
     }
 
     default MemberProfile createASecondDefaultRecipient() {
@@ -81,7 +111,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
                 null, "Parks Deputy Director", null, "Pawnee, Indiana",
                 "leslie@objectcomputing.com", "ms-leslie-knope",
                 LocalDate.now(), "proud member of numerous action committees",
-                null, null, null, false, false, null));
+                null, null, null, false, false, null, false));
     }
 
     default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
@@ -110,5 +140,10 @@ public interface FeedbackRequestFixture extends RepositoryFixture, FeedbackTempl
         final FeedbackRequest feedbackRequest = createFeedbackRequest(creator, requestee, recipient);
         feedbackRequest.setSendDate(sendDate);
         return getFeedbackRequestRepository().save(feedbackRequest);
+    }
+
+    default List<FeedbackRequest> getFeedbackRequests(MemberProfile recipient) {
+        return getFeedbackRequestRepository()
+                 .findByValues(null, null, recipient.getId().toString(), null, null, null);
     }
 }

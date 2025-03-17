@@ -49,14 +49,19 @@ public class Team {
     @Schema(description = "description of the team", nullable = true)
     private String description;
 
+    @Column(name = "is_active")
+    @Schema(description = "whether the team is active")
+    private boolean active = true;
+
     public Team(String name, @Nullable String description) {
-        this(null, name, description);
+        this(null, name, description, true);
     }
 
-    public Team(UUID id, String name, @Nullable String description) {
+    public Team(UUID id, String name, @Nullable String description, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.active = active;
     }
 
     @Override

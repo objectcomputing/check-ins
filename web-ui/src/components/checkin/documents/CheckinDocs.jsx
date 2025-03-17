@@ -8,8 +8,8 @@ import {
   selectCsrfToken,
   selectCurrentUser,
   selectIsPDL,
-  selectIsAdmin,
-  selectCheckin
+  selectCheckin,
+  selectCanAdministerCheckinDocuments
 } from '../../../context/selectors';
 import DescriptionIcon from '@mui/icons-material/Description';
 import IconButton from '@mui/material/IconButton';
@@ -34,7 +34,8 @@ const UploadDocs = () => {
   const [files, setFiles] = useState([]);
   const [fileColors, setFileColors] = useState({});
 
-  const pdlorAdmin = selectIsPDL(state) || selectIsAdmin(state);
+  const pdlorAdmin =
+    selectIsPDL(state) || selectCanAdministerCheckinDocuments(state);
   const canView = pdlorAdmin && currentUserId !== memberId;
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const UploadDocs = () => {
           });
         }
       } catch (e) {
-        console.log(e);
+        console.error('getCheckinFiles: ' + e);
       }
     }
     if (csrf) {
@@ -98,7 +99,7 @@ const UploadDocs = () => {
       setFiles([...files, data]);
     } catch (e) {
       setFileColors(fileColors => ({ ...fileColors, [file.name]: 'red' }));
-      console.log({ e });
+      console.error('addFiles: ' + e);
     } finally {
       setLoading(false);
     }

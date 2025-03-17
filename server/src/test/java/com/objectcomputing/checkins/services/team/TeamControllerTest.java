@@ -250,7 +250,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     void testUpdateTeamNullName() {
         Team teamEntity = createDefaultTeam();
 
-        TeamUpdateDTO requestBody = new TeamUpdateDTO(teamEntity.getId(), null, null);
+        TeamUpdateDTO requestBody = new TeamUpdateDTO(teamEntity.getId(), null, null, true);
         requestBody.setTeamMembers(new ArrayList<>());
 
         final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", requestBody)
@@ -288,7 +288,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         Team teamEntity = createDefaultTeam();
         UUID requestId = UUID.randomUUID();
-        TeamUpdateDTO requestBody = new TeamUpdateDTO(requestId.toString(), teamEntity.getName(), teamEntity.getDescription());
+        TeamUpdateDTO requestBody = new TeamUpdateDTO(requestId.toString(), teamEntity.getName(), teamEntity.getDescription(), teamEntity.isActive());
         requestBody.setTeamMembers(new ArrayList<>());
 
         final MutableHttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", requestBody)

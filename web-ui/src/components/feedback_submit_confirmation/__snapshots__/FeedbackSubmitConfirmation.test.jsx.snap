@@ -1,13 +1,21 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`renders an error if user does not have appropriate permission 1`] = `
+<div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
+</div>
+`;
+
 exports[`renders the confirmation message 1`] = `
 <div>
   <div
-    class="submit-confirmation css-7zlo4e"
+    class="submit-confirmation css-1mowdr2"
   >
     <svg
       aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
       data-testid="CheckCircleIcon"
       focusable="false"
       style="color: rgb(76, 175, 80); font-size: 40vh;"
@@ -18,7 +26,7 @@ exports[`renders the confirmation message 1`] = `
       />
     </svg>
     <h3
-      class="MuiTypography-root MuiTypography-h3 FeedbackSubmitConfirmation-announcement css-gepadz-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-h3 FeedbackSubmitConfirmation-announcement css-13msox4-MuiTypography-root"
     >
       Thank you for your feedback on 
       <b />

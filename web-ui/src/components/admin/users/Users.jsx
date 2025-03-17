@@ -8,16 +8,15 @@ import { styled } from '@mui/material/styles';
 
 import AdminMemberCard from '../../member-directory/AdminMemberCard';
 import MemberModal from '../../member-directory/MemberModal';
-import {
-  createMember,
-  reportAllMembersCsv
-} from '../../../api/member';
+import { createMember, reportSelectedMembersCsv } from '../../../api/member';
 import { AppContext } from '../../../context/AppContext';
 import { UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../../context/actions';
 import {
   selectHasProfileReportPermission,
   selectNormalizedMembers,
-  selectNormalizedMembersAdmin
+  selectNormalizedMembersAdmin,
+  selectHasCreateMembersPermission,
+  selectCanEditAllOrganizationMembers
 } from '../../../context/selectors';
 import { useQueryParameters } from '../../../helpers/query-parameters';
 
@@ -65,11 +64,8 @@ const Users = () => {
     setIncludeTerminated(!includeTerminated);
   };
 
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
-
   const normalizedMembers =
-    isAdmin && includeTerminated
+    includeTerminated && selectCanEditAllOrganizationMembers(state)
       ? selectNormalizedMembersAdmin(state, searchText)
       : selectNormalizedMembers(state, searchText);
 
@@ -109,7 +105,10 @@ const Users = () => {
   });
 
   const downloadMembers = async () => {
-    let res = await reportAllMembersCsv(csrf);
+    const res = await reportSelectedMembersCsv(
+      normalizedMembers.map(m => m.id),
+      csrf
+    );
     if (res?.error) {
       dispatch({
         type: UPDATE_TOAST,
@@ -145,7 +144,7 @@ const Users = () => {
                 setSearchText(e.target.value);
               }}
             />
-            {isAdmin && (
+            {selectHasCreateMembersPermission(state) && (
               <div className="add-member">
                 <Button startIcon={<PersonIcon />} onClick={handleOpen}>
                   Add Member

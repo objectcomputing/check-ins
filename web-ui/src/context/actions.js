@@ -11,7 +11,7 @@ export const DELETE_ROLE = '@@check-ins/delete-role';
 export const MY_PROFILE_UPDATE = '@@check-ins/update_profile';
 export const SET_CSRF = '@@check-ins/update_csrf';
 export const SET_ROLES = '@@check-ins/set_roles';
-export const SET_USER_ROLES = '@@check-ins/set_user_roles';
+export const SET_MEMBER_ROLES = '@@check-ins/set_member_roles';
 export const UPDATE_GUILD = '@@check-ins/update_guild';
 export const UPDATE_GUILDS = '@@check-ins/update_guilds';
 export const UPDATE_GUILD_MEMBERS = '@@check-ins/update_guild_members';
@@ -22,11 +22,14 @@ export const UPDATE_MEMBER_SKILLS = '@@check-ins/update_member_skills';
 export const ADD_ROLE = '@@check-ins/add_role';
 export const UPDATE_SKILL = '@@check-ins/update_skill';
 export const UPDATE_SKILLS = '@@check-ins/update_skills';
+export const UPDATE_CERTIFICATIONS = '@@check-ins/update_certifications';
 export const UPDATE_TEAM_MEMBERS = '@@check-ins/update_team_members';
 export const UPDATE_TEAMS = '@@check-ins/update_teams';
 export const UPDATE_TERMINATED_MEMBERS =
   '@@check-ins/update_terminated_members';
 export const UPDATE_TOAST = '@@check-ins/update_toast';
+export const UPDATE_CURRENT_USER_PROFILE =
+  '@@check-ins/update_current_user_profile';
 export const UPDATE_USER_BIO = '@@check-ins/update_bio';
 export const UPDATE_FEEEDBACK_SUGGESTIONS =
   '@@check-ins/update_feedback_suggestions';

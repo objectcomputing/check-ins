@@ -8,11 +8,11 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.directory.Directory;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
-import io.micronaut.context.annotation.Property;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
-
 import jakarta.inject.Singleton;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -25,16 +25,15 @@ public class GoogleAccessor {
 
     private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    private final String applicationName;
     private final GoogleAuthenticator authenticator;
-    private final Environment environment;
+    private final CheckInsConfiguration checkInsConfiguration;
 
-    public GoogleAccessor(@Property(name = "check-ins.application.name") String applicationName,
-                          GoogleAuthenticator authenticator,
-                          Environment environment) throws GeneralSecurityException, IOException {
-        this.applicationName = applicationName;
+    public GoogleAccessor(
+            GoogleAuthenticator authenticator,
+            CheckInsConfiguration checkInsConfiguration
+    ) throws GeneralSecurityException, IOException {
+        this.checkInsConfiguration = checkInsConfiguration;
         this.authenticator = authenticator;
-        this.environment = environment;
     }
 
     /**
@@ -45,13 +44,13 @@ public class GoogleAccessor {
      */
     public Drive accessGoogleDrive() throws IOException {
 
-        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForDriveApi", String.class).orElse("");
+        String apiScope = checkInsConfiguration.getApplication().getGoogleApi().getScopes().getScopeForDriveApi();
         List<String> scope = Collections.singletonList(apiScope);
 
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));
         return new Drive
                 .Builder(httpTransport, JSON_FACTORY, requestInitializer)
-                .setApplicationName(applicationName)
+                .setApplicationName(checkInsConfiguration.getApplication().getName())
                 .build();
     }
 
@@ -63,8 +62,8 @@ public class GoogleAccessor {
      */
     public Directory accessGoogleDirectory() throws IOException {
 
-        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForDirectoryApi", String.class).orElse("");
-        String delegatedUser = environment.getProperty("check-ins.application.google-api.delegated-user", String.class).orElse("");
+        String apiScope = checkInsConfiguration.getApplication().getGoogleApi().getScopes().getScopeForDirectoryApi();
+        String delegatedUser = checkInsConfiguration.getApplication().getGoogleApi().getDelegatedUser();
         List<String> scope = Arrays.asList(apiScope.split(","));
 
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
@@ -72,7 +71,7 @@ public class GoogleAccessor {
 
         return new Directory
                 .Builder(httpTransport, JSON_FACTORY, requestInitializer)
-                .setApplicationName(applicationName)
+                .setApplicationName(checkInsConfiguration.getApplication().getName())
                 .build();
     }
 }

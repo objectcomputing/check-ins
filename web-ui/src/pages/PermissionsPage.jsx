@@ -17,7 +17,9 @@ import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import {
   selectRoles,
-  selectHasPermissionAssignmentPermission
+  selectHasPermissionAssignmentPermission,
+  selectHasViewPermissionPermission,
+  noPermission
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 
@@ -90,10 +92,12 @@ const EditPermissionsPage = () => {
 
   useEffect(() => {
     const getRolePermissions = async () => {
-      const res = await getRolePermissionsList(csrf);
-      const data = res.payload?.data && !res.error ? res.payload.data : null;
-      if (data) {
-        setRolePermissionsList(data);
+      if (selectHasViewPermissionPermission(state)) {
+        const res = await getRolePermissionsList(csrf);
+        const data = res.payload?.data && !res.error ? res.payload.data : null;
+        if (data) {
+          setRolePermissionsList(data);
+        }
       }
     };
     const getPermissions = async () => {
@@ -214,7 +218,7 @@ const EditPermissionsPage = () => {
             ))}
         </>
       ) : (
-        <h3>You do not have permission to view this page.</h3>
+        <h3>{noPermission}</h3>
       )}
     </div>
   );

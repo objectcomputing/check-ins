@@ -37,14 +37,14 @@ import { AppContext } from '../../../context/AppContext';
 import {
   selectCsrfToken,
   selectCurrentMembers,
-  selectGuilds,
-  selectMappedUserRoles,
+  selectActiveGuilds,
+  selectMappedMemberRoles,
   selectRoles,
   selectSkills,
   selectSubordinates,
   selectSupervisors,
   selectTeamMembersBySupervisorId,
-  selectTeams
+  selectActiveTeams
 } from '../../../context/selectors';
 import { UPDATE_TOAST } from '../../../context/actions';
 import { getMembersByTeam } from '../../../api/team';
@@ -172,14 +172,14 @@ const MemberSelectorDialog = ({
     const getFilterOptions = () => {
       switch (filterType) {
         case FilterType.TEAM:
-          const teams = selectTeams(state);
+          const teams = selectActiveTeams(state);
           return {
             options: teams,
             label: team => team.name,
             equals: (team1, team2) => team1.id === team2.id
           };
         case FilterType.GUILD:
-          const guilds = selectGuilds(state);
+          const guilds = selectActiveGuilds(state);
           return {
             options: guilds,
             label: guild => guild.name,
@@ -320,11 +320,11 @@ const MemberSelectorDialog = ({
             );
             break;
           case FilterType.ROLE:
-            const mappedUserRoles = selectMappedUserRoles(state);
+            const mappedMemberRoles = selectMappedMemberRoles(state);
             filteredMemberList = filteredMemberList.filter(
               member =>
-                member.id in mappedUserRoles &&
-                mappedUserRoles[member.id].has(filter.role)
+                member.id in mappedMemberRoles &&
+                mappedMemberRoles[member.id].has(filter.role)
             );
             break;
           case FilterType.SKILL:

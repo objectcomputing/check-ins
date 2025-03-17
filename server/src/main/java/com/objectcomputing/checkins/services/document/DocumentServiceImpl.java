@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.document;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.core.annotation.Nullable;
@@ -36,6 +38,7 @@ class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     public DocumentResponseDTO create(Document document) {
         if (document.getId() != null) {
             return update(document);
@@ -52,6 +55,7 @@ class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     public DocumentResponseDTO update(Document document) {
         Optional<Document> documentByName = documentRepo.findByName(document.getName());
         Optional<Document> documentByUrl = documentRepo.findByUrl(document.getUrl());
@@ -65,6 +69,7 @@ class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     public void deleteDocument(UUID documentId) {
         if (roleDocumentationRepo.documentIsStillReferenced(documentId)) {
             throw new BadArgException("Document is still referenced by a role");
@@ -87,6 +92,7 @@ class DocumentServiceImpl implements DocumentService {
 
     @Override
     @Transactional
+    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     public List<DocumentResponseDTO> saveDocumentsToRoles(UUID roleId, SequencedSet<UUID> documentIds) {
         // Check the Role exists
         if (!roleRepo.existsById(roleId)) {

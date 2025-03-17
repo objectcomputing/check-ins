@@ -13,7 +13,22 @@ import {
   selectHasSkillsReportPermission,
   selectHasTeamSkillsReportPermission,
   selectHasViewPulseReportPermission,
-  selectIsAdmin
+  selectHasEarnedCertificationsPermission,
+  selectHasMeritReportPermission,
+  selectHasVolunteeringEventsPermission,
+  selectHasVolunteeringRelationshipsPermission,
+  selectHasAdministerKudosPermission,
+  selectCanEditMemberRolesPermission,
+  selectHasSendEmailPermission,
+  selectHasViewSettingsPermission,
+  selectCanEditSkills,
+  selectHasCreateMembersPermission,
+  selectHasDeleteMembersPermission,
+  selectHasImpersonateMembersPermission,
+  selectCanEditAllOrganizationMembers,
+  selectHasUploadHoursPermission,
+  selectHasPermissionAssignmentPermission,
+  selectCurrentUser
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 
@@ -39,6 +54,7 @@ import {
 } from '@mui/material';
 import './Menu.css';
 
+const drawerWidth = 150;
 const PREFIX = 'Menu';
 const classes = {
   root: `${PREFIX}-root`,
@@ -52,15 +68,6 @@ const classes = {
   nested: `${PREFIX}-nested`,
   subListItem: `${PREFIX}-subListItem`
 };
-
-const adminLinks = [
-  ['/admin/permissions', 'Permissions'],
-  ['/admin/roles', 'Roles'],
-  ['/admin/users', 'Users'],
-  ['/admin/email', 'Send Email'],
-  ['/admin/edit-skills', 'Skills'],
-  ['/admin/settings', 'Settings']
-];
 
 const checkInLinks = [
   ['/pulse', 'Pulse'],
@@ -79,6 +86,7 @@ const getFeedbackLinks = (
   canViewReviewPeriod
 ) => {
   const links = [];
+  links.push(['/kudos', 'Kudos']);
   if (canViewFeedbackAnswer) links.push(['/feedback/view', 'View Feedback']);
   if (canViewFeedbackRequest)
     links.push(['/feedback/received-requests', 'Received Requests']);
@@ -101,9 +109,7 @@ function Menu({ children }) {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const csrf = selectCsrfToken(state);
-  const { id, workEmail } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
-  const isAdmin = selectIsAdmin(state);
+  const { id, workEmail } = selectCurrentUser(state);
   const hasReportPermission = selectHasReportPermission(state);
   const canViewFeedbackAnswer = selectCanViewFeedbackAnswerPermission(state);
   const canViewFeedbackRequest = selectCanViewFeedbackRequestPermission(state);
@@ -122,6 +128,50 @@ function Menu({ children }) {
     canViewReviewPeriod
   );
 
+  const closeHoursUpload = () => {
+    setShowHoursUpload(false);
+    setSelectedFile(null);
+  };
+
+  const openHoursUpload = () => {
+    setShowHoursUpload(true);
+  };
+
+  const adminLinks = [
+    [
+      '/admin/manage-kudos',
+      'Manage Kudos',
+      () => selectHasAdministerKudosPermission(state)
+    ],
+    [
+      '/admin/permissions',
+      'Permissions',
+      () => selectHasPermissionAssignmentPermission(state)
+    ],
+    ['/admin/roles', 'Roles', () => selectCanEditMemberRolesPermission(state)],
+    [
+      '/admin/users',
+      'Users',
+      () =>
+        selectHasCreateMembersPermission(state) ||
+        selectHasDeleteMembersPermission(state) ||
+        selectCanEditAllOrganizationMembers(state) ||
+        selectHasImpersonateMembersPermission(state)
+    ],
+    ['/admin/email', 'Send Email', () => selectHasSendEmailPermission(state)],
+    ['/admin/edit-skills', 'Skills', () => selectCanEditSkills(state)],
+    [
+      '/admin/settings',
+      'Settings',
+      () => selectHasViewSettingsPermission(state)
+    ],
+    [
+      openHoursUpload,
+      'Upload Hours',
+      () => selectHasUploadHoursPermission(state)
+    ]
+  ];
+
   const getReportLinks = () => {
     const links = [];
 
@@ -133,7 +183,9 @@ function Menu({ children }) {
       links.push(['/birthday-reports', 'Birthdays']);
     }
 
-    links.push(['/certification-reports', 'Certifications']);
+    if (selectHasEarnedCertificationsPermission(state)) {
+      links.push(['/certification-reports', 'Certifications']);
+    }
 
     if (selectHasCheckinsReportPermission(state)) {
       links.push(['/checkins-reports', 'Check-ins']);
@@ -151,7 +203,16 @@ function Menu({ children }) {
       links.push(['/team-skills-reports', 'Team Skills']);
     }
 
-    links.push(['/volunteer-reports', 'Volunteering']);
+    if (selectHasMeritReportPermission(state)) {
+      links.push(['/merit-reports', 'Merit Report']);
+    }
+
+    if (
+      selectHasVolunteeringEventsPermission(state) ||
+      selectHasVolunteeringRelationshipsPermission(state)
+    ) {
+      links.push(['/volunteer-reports', 'Volunteering']);
+    }
 
     return links;
   };
@@ -257,15 +318,6 @@ function Menu({ children }) {
     setFeedbackOpen(false);
   };
 
-  const closeHoursUpload = () => {
-    setShowHoursUpload(false);
-    setSelectedFile(null);
-  };
-
-  const openHoursUpload = () => {
-    setShowHoursUpload(true);
-  };
-
   const isLinkSelected = path => {
     // /checkins route is special case as additional info is added to url
     if (path === '/checkins' && location.pathname.includes(`${path}/`))
@@ -274,38 +326,68 @@ function Menu({ children }) {
   };
 
   const createLinkJsx = (path, name, isSubLink) => {
-    return (
-      <ListItemButton
-        key={path}
-        component={Link}
-        to={path}
-        className={isSubLink ? classes.nested : null}
-        onClick={
-          isSubLink
-            ? undefined
-            : () => {
-                closeSubMenus();
-              }
-        }
-        selected={isLinkSelected(path)}
-      >
-        <ListItemText
-          classes={isSubLink ? { primary: classes.subListItem } : null}
-          primary={name}
-        />
-      </ListItemButton>
-    );
+    if (typeof path === 'function') {
+      return (
+        <ListItemButton
+          key={`$name$path`}
+          component={Link}
+          className={isSubLink ? classes.nested : null}
+          onClick={path}
+        >
+          <ListItemText
+            classes={isSubLink ? { primary: classes.subListItem } : null}
+            primary={name}
+          />
+        </ListItemButton>
+      );
+    } else {
+      return (
+        <ListItemButton
+          key={path}
+          component={Link}
+          to={path}
+          className={isSubLink ? classes.nested : null}
+          onClick={
+            isSubLink
+              ? undefined
+              : () => {
+                  closeSubMenus();
+                }
+          }
+          selected={isLinkSelected(path)}
+        >
+          <ListItemText
+            classes={isSubLink ? { primary: classes.subListItem } : null}
+            primary={name}
+          />
+        </ListItemButton>
+      );
+    }
   };
 
   const onFileSelected = e => {
     setSelectedFile(e.target.files[0]);
   };
 
-  const createListJsx = (listArr, isSublink) => {
-    return listArr.map(listItem => {
-      const [path, name] = listItem;
-      return createLinkJsx(path, name, isSublink);
-    });
+  const hasAtLeastOnePermission = listArr => {
+    for (let listItem of listArr) {
+      const [path, name, permFunc] = listItem;
+      if (!permFunc || permFunc()) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const createListJsx = (listArr, checkPermissions) => {
+    return listArr
+      .map(listItem => {
+        const [path, name, permFunc] = listItem;
+        if (!checkPermissions || !permFunc || permFunc()) {
+          return createLinkJsx(path, name, true);
+        }
+      })
+      .filter(e => !!e);
   };
 
   const drawer = (
@@ -325,7 +407,7 @@ function Menu({ children }) {
             {createLinkJsx('/', 'HOME', false)}
           </span>
 
-          {isAdmin && (
+          {hasAtLeastOnePermission(adminLinks) && (
             <>
               <ListItemButton
                 onClick={toggleAdmin}
@@ -335,15 +417,6 @@ function Menu({ children }) {
               </ListItemButton>
               <Collapse in={adminOpen} timeout="auto" unmountOnExit>
                 {createListJsx(adminLinks, true)}
-                {isAdmin && (
-                  <ListItemButton
-                    sx={{ pl: 4, py: 1.5 }}
-                    className={classes.listItem}
-                    onClick={openHoursUpload}
-                  >
-                    Upload Hours
-                  </ListItemButton>
-                )}
               </Collapse>
             </>
           )}
@@ -352,7 +425,7 @@ function Menu({ children }) {
             <ListItemText primary="CHECK-IN" />
           </ListItemButton>
           <Collapse in={checkInOpen} timeout="auto" unmountOnExit>
-            {createListJsx(checkInLinks, true)}
+            {createListJsx(checkInLinks)}
           </Collapse>
 
           <ListItemButton
@@ -362,14 +435,14 @@ function Menu({ children }) {
             <ListItemText primary="DIRECTORY" />
           </ListItemButton>
           <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-            {createListJsx(directoryLinks, true)}
+            {createListJsx(directoryLinks)}
           </Collapse>
 
           <ListItemButton onClick={toggleFeedback} className={classes.listItem}>
             <ListItemText primary="FEEDBACK" />
           </ListItemButton>
           <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
-            {createListJsx(feedbackLinks, true)}
+            {createListJsx(feedbackLinks)}
           </Collapse>
 
           {hasReportPermission && (
@@ -381,7 +454,7 @@ function Menu({ children }) {
                 <ListItemText primary="REPORTS" />
               </ListItemButton>
               <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-                {createListJsx(getReportLinks(), true)}
+                {createListJsx(getReportLinks())}
               </Collapse>
             </React.Fragment>
           )}

@@ -1,9 +1,11 @@
 package com.objectcomputing.checkins.services.role.role_permissions;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.PermissionDTO;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.CacheInvalidate;
@@ -70,6 +72,13 @@ public class RolePermissionServicesImpl implements RolePermissionServices {
     @CacheInvalidate(all = true)
     @Override
     public void delete(UUID roleId, Permission permissionId) {
+        // Disallow removal of Assign Role Permissions from ADMIN
+        if (permissionId == Permission.CAN_ASSIGN_ROLE_PERMISSIONS) {
+          Role role = roleServices.read(roleId);
+          if (role.getRole().equals(RoleType.Constants.ADMIN_ROLE)) {
+              throw new BadArgException("Cannot remove Assign Role Permissions from ADMIN");
+          }
+        }
         rolePermissionRepository.deleteByIds(roleId.toString(), permissionId);
     }
 

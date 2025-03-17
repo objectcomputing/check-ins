@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -50,7 +51,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
     public TeamMember save(@Valid @NotNull TeamMember teamMember) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
         final UUID teamId = teamMember.getTeamId();
         final UUID memberId = teamMember.getMemberId();
 
@@ -67,7 +68,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
-        } else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+        } else if (!canAdminister && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
 
@@ -83,7 +84,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     public TeamMember update(@NotNull @Valid TeamMember teamMember) {
 
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
         final UUID id = teamMember.getId();
         final UUID teamId = teamMember.getTeamId();
@@ -102,7 +103,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
-        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+        } else if (!canAdminister && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
 
@@ -130,13 +131,13 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
     public void delete(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
         TeamMember teamMember = teamMemberRepo.findById(id).orElse(null);
         if (teamMember != null) {
             Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamId(), null, true);
 
-            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+            if (!canAdminister && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             } else {
                 teamMemberRepo.deleteById(id);
@@ -151,13 +152,13 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
     public void deleteByTeam(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
         List<TeamMember> teamMembers = teamMemberRepo.findByTeamId(id);
         if (teamMembers != null) {
             List<TeamMember> teamLeads = teamMembers.stream().filter(TeamMember::isLead).toList();
 
-            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+            if (!canAdminister && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException(NOT_AUTHORIZED_MSG);
             } else {
                 teamMembers.forEach(member -> {
@@ -168,5 +169,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         } else {
             throw new NotFoundException(String.format("Unable to locate team with id %s", id));
         }
+    }
+
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_TEAMS);
     }
 }

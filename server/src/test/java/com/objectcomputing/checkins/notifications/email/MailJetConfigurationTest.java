@@ -15,7 +15,7 @@ class MailJetConfigurationTest {
         String name = "Tim";
 
         try (var ctx = ApplicationContext.run(Map.of(
-                "datasources.enabled", false,
+                "datasources.default.enabled", false,
                 "mail-jet.from-address", email,
                 "mail-jet.from-name", name
         ))) {
@@ -25,7 +25,7 @@ class MailJetConfigurationTest {
         }
 
         try (var ctx = ApplicationContext.run(Map.of(
-                "datasources.enabled", false,
+                "datasources.default.enabled", false,
                 "mail-jet.fromAddress", email,
                 "mail-jet.fromName", name
         ))) {
@@ -35,7 +35,7 @@ class MailJetConfigurationTest {
         }
 
         try (var ctx = ApplicationContext.run(Map.of(
-                "datasources.enabled", false,
+                "datasources.default.enabled", false,
                 "mailJet.fromAddress", email,
                 "mailJet.fromName", name
         ))) {
@@ -45,7 +45,7 @@ class MailJetConfigurationTest {
         }
 
         try (var ctx = ApplicationContext.run(Map.of(
-                "datasources.enabled", false,
+                "datasources.default.enabled", false,
                 "mailJet.from_address", email,
                 "mailJet.from_name", name
         ))) {

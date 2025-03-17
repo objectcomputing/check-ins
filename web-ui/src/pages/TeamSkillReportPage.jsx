@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 
 import { Autocomplete, Button, TextField, Typography } from '@mui/material';
 
@@ -10,7 +10,9 @@ import {
   selectCsrfToken,
   selectOrderedMemberFirstName,
   selectOrderedSkills,
-  selectSkill
+  selectSkill,
+  selectHasTeamSkillsReportPermission,
+  noPermission
 } from '../context/selectors';
 import { levelMap } from '../context/util';
 import { sortMembersBySkill } from '../helpers/checks.js';
@@ -70,28 +72,33 @@ const TeamSkillReportPage = () => {
     processedQPs
   );
 
-  const handleSearch = async searchRequestDTO => {
-    let res = await reportSkills(searchRequestDTO, csrf);
-    let memberSkillsFound;
-    if (res && res.payload) {
-      memberSkillsFound =
-        res.payload.data.teamMembers && !res.error
-          ? res.payload.data.teamMembers
-          : undefined;
-    }
-    if (memberSkillsFound && memberProfiles) {
-      setAllSearchResults(memberSkillsFound);
-      let membersSelected = memberSkillsFound.filter(mSkill =>
-        selectedMembers.some(member => member.id === mSkill.id)
-      );
-      let newSort = sortMembersBySkill(membersSelected);
-      setSearchResults(newSort);
-    } else {
-      setSearchResults([]);
-      setAllSearchResults([]);
-    }
-    setShowRadar(true);
-  };
+  useEffect(() => {
+    const handleSearch = async () => {
+      if (searchSkills.length > 0) {
+        const searchRequestDTO = createRequest(editedSearchRequest);
+        const res = await reportSkills(searchRequestDTO, csrf);
+        let memberSkillsFound;
+        if (res && res.payload) {
+          memberSkillsFound =
+            !res.error && res.payload.data.teamMembers
+              ? res.payload.data.teamMembers
+              : [];
+        }
+
+        setAllSearchResults(memberSkillsFound);
+        const membersSelected = memberSkillsFound.filter(mSkill =>
+          selectedMembers.some(member => member.id === mSkill.id)
+        );
+        setSearchResults(sortMembersBySkill(membersSelected));
+        setShowRadar(true);
+      } else {
+        setSearchResults([]);
+        setAllSearchResults([]);
+        setShowRadar(false);
+      }
+    };
+    handleSearch();
+  }, [selectedMembers, searchSkills]);
 
   function skillsToSkillLevel(skills) {
     return skills.map(skill => {
@@ -158,7 +165,7 @@ const TeamSkillReportPage = () => {
     }
   }
 
-  return (
+  return selectHasTeamSkillsReportPermission(state) ? (
     <div className="team-skill-report-page">
       <MemberSelector
         className="team-skill-member-selector"
@@ -187,24 +194,6 @@ const TeamSkillReportPage = () => {
             />
           )}
         />
-        <Button
-          onClick={() => {
-            if (!searchSkills.length) {
-              window.snackDispatch({
-                type: UPDATE_TOAST,
-                payload: {
-                  severity: 'error',
-                  toast: 'Must select a skill'
-                }
-              });
-              return;
-            }
-            handleSearch(createRequest(editedSearchRequest));
-          }}
-          color="primary"
-        >
-          Run Search
-        </Button>
       </div>
       {showRadar && (
         <div>
@@ -234,6 +223,8 @@ const TeamSkillReportPage = () => {
         </div>
       )}
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

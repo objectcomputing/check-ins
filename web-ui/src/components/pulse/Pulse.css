@@ -20,9 +20,13 @@
     margin-bottom: 1rem;
     padding: 1rem;
   }
+
+  .title-row {
+    display: flex;
+  }
 }
 
-:root[data-mui-color-scheme='dark'] {
+:root[data-dark] {
   .pulse {
     .icon-row {
       background-color: transparent;

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -32,11 +31,9 @@ import java.util.UUID;
 public class GuildController {
 
     private final GuildServices guildService;
-    private final MemberProfileServices profileServices;
 
-    public GuildController(GuildServices guildService, MemberProfileServices profileServices) {
+    public GuildController(GuildServices guildService) {
         this.guildService = guildService;
-        this.profileServices = profileServices;
     }
 
     /**

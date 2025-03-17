@@ -22,7 +22,7 @@ Then run the application:
 
 This step requires your environment to be set. Reach out to the team for the `run.sh` file which, in addition to setting your environment, will execute the `:server:run` gradle task.
 
-You can access the application by navigating to [http://localhost:8080](http://localhost:8080) in your browser.
+You can access the application by navigating to [http://localhost:8080/login](http://localhost:8080/login) in your browser.
 
 Next login to the application with:
 
@@ -30,6 +30,28 @@ Next login to the application with:
 - **Password**: SUPER
 
 You can use any email that the system has in its loaded test data. The "password" is actually a role name. Most of the time you will want to use `SUPER` which is just an alias for all the roles.
+
+## Using the Native Executable
+
+If you wish to use the native executables built with GraalVM, you will need to switch over to that Java compiler using the following command:
+
+```shell
+nvm use java 21.0.2-graalce
+```
+
+21.0.2-graalce is the most recent version of GraalVM Community Edition, as of the time this was written. You can replace that version with a different Graal distribution as appropriate.
+
+You can then run a native build using:
+
+```shell
+./gradlew nativeCompile
+```
+
+Then replace the `./gradlew :server:run` command used above with:
+
+```shell
+./server/build/native/nativeCompile/check-ins
+```
 
 # API Documentation
 
@@ -75,6 +97,20 @@ yarn --cwd web-ui test -u # or simply `yarn test` followed by `u`
 ```
 
 Testing Library is installed in the UI project. You can find more information about Testing Library [here](https://testing-library.com/docs/react-testing-library/intro/).
+
+## Testing the Native Executable
+
+If you wish to test the native executables built with GraalVM, you will need to switch over to that Java compiler using the following command:
+
+```shell
+nvm use java 21.0.2-graalce
+```
+
+You can then run the native tests like so:
+
+```shell
+./gradlew nativeTest
+```
 
 # Running the Server
 

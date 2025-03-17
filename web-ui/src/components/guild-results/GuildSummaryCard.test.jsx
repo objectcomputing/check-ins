@@ -19,7 +19,8 @@ const guilds = [
         name: 'testname',
         lead: true
       }
-    ]
+    ],
+    active: true
   }
 ];
 
@@ -27,17 +28,20 @@ const initialState = {
   state: {
     userProfile: {
       name: 'holmes',
-      memberProfile: {
-        id: '3fa4-5717-4562-b3fc-2c963f66afa9',
-        pdlId: '',
-        title: 'Tester',
-        workEmail: 'test@tester.com'
-      },
+      id: '3fa4-5717-4562-b3fc-2c963f66afa9',
       role: ['MEMBER'],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
-    guilds
+    guilds,
+    memberProfiles: [
+      {
+        id: '3fa4-5717-4562-b3fc-2c963f66afa9',
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
+      }
+    ]
   }
 };
 
@@ -50,7 +54,7 @@ it('renders correctly', () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <BrowserRouter>
-        <GuildSummaryCard guild={guilds[0]} />
+        <GuildSummaryCard guild={guilds[0]} isOpen={false} />
       </BrowserRouter>
     </AppContextProvider>
   );
@@ -60,7 +64,7 @@ it('renders correctly for ADMIN', () => {
   snapshot(
     <AppContextProvider value={adminState}>
       <BrowserRouter>
-        <GuildSummaryCard guild={guilds[0]} />
+        <GuildSummaryCard guild={guilds[0]} isOpen={false} />
       </BrowserRouter>
     </AppContextProvider>
   );
@@ -70,7 +74,7 @@ it('renders correctly for guild lead', () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <BrowserRouter>
-        <GuildSummaryCard guild={guilds[1]} />
+        <GuildSummaryCard guild={guilds[1]} isOpen={false} />
       </BrowserRouter>
     </AppContextProvider>
   );

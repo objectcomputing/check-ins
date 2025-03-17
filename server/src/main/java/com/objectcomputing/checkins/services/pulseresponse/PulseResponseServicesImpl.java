@@ -48,22 +48,61 @@ public class PulseResponseServicesImpl implements PulseResponseService {
 
     @Override
     public PulseResponse save(PulseResponse pulseResponse) {
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (pulseResponse != null) {
+            verifyPulseData(pulseResponse);
+            final UUID memberId = pulseResponse.getTeamMemberId();
+            UUID currentUserId = currentUserServices.getCurrentUser().getId();
+            if (memberId != null &&
+                !currentUserId.equals(memberId) &&
+                !isSubordinateTo(memberId, currentUserId)) {
+                throw new BadArgException(
+                    String.format("User %s does not have permission to create pulse response for user %s",
+                                  currentUserId, memberId));
+            }
+            return saveCommon(pulseResponse);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public PulseResponse unsecureSave(PulseResponse pulseResponse) {
         PulseResponse pulseResponseRet = null;
         if (pulseResponse != null) {
+            // External users could submit a pulse resonse multiple times.  We
+            // need to check to see if this user has already submitted one
+            // today.
+            boolean submitted = false;
             final UUID memberId = pulseResponse.getTeamMemberId();
-            LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
-            if (pulseResponse.getId() != null) {
-                throw new BadArgException(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()));
-            } else if (memberRepo.findById(memberId).isEmpty()) {
-                throw new BadArgException(String.format("Member %s doesn't exists", memberId));
-            } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
-            } else if (!currentUserId.equals(memberId) && !isSubordinateTo(memberId, currentUserId)) {
-                throw new BadArgException(String.format("User %s does not have permission to create pulse response for user %s", currentUserId, memberId));
+            if (memberId != null) {
+                Optional<PulseResponse> existing =
+                    pulseResponseRepo.getByTeamMemberIdAndSubmissionDate(
+                        memberId, pulseResponse.getSubmissionDate());
+                submitted = existing.isPresent();
             }
-            pulseResponseRet = pulseResponseRepo.save(pulseResponse);
+            if (!submitted) {
+                verifyPulseData(pulseResponse);
+                return saveCommon(pulseResponse);
+            }
         }
+        return null;
+    }
+
+    private void verifyPulseData(PulseResponse pulseResponse) {
+        final UUID memberId = pulseResponse.getTeamMemberId();
+        LocalDate pulseSubDate = pulseResponse.getSubmissionDate();
+        if (pulseResponse.getId() != null) {
+            throw new BadArgException(String.format("Found unexpected id for pulseresponse %s", pulseResponse.getId()));
+        } else if (memberId != null &&
+                   memberRepo.findById(memberId).isEmpty()) {
+            throw new BadArgException(String.format("Member %s doesn't exists", memberId));
+        } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
+            throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
+        }
+    }
+
+    private PulseResponse saveCommon(PulseResponse pulseResponse) {
+        PulseResponse pulseResponseRet = pulseResponseRepo.save(pulseResponse);
 
         // Send low pulse survey score if appropriate
         sendPulseLowScoreEmail(pulseResponseRet);
@@ -94,7 +133,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
             } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new BadArgException(String.format("Member %s doesn't exist", memberId));
             } else if (memberId == null) {
-                throw new BadArgException(String.format("Invalid pulseresponse %s", pulseResponse));
+                throw new BadArgException("Cannot update anonymous pulse response");
             } else if (pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for pulseresponse submission date %s", memberId));
             } else if (!currentUserId.equals(memberId) && !isSubordinateTo(memberId, currentUserId)) {
@@ -130,8 +169,9 @@ public class PulseResponseServicesImpl implements PulseResponseService {
     // The current user can view the pulse response if they are the team member who submitted the pulse response
     // or if they are the supervisor of the team member who submitted the pulse response
     private boolean canViewDueToReportingHierarchy(PulseResponse pulse, UUID currentUserId) {
-        return pulse.getTeamMemberId().equals(currentUserId) ||
-                isSubordinateTo(pulse.getTeamMemberId(), currentUserId);
+        UUID id = pulse.getTeamMemberId();
+        return id != null &&
+               (id.equals(currentUserId) || isSubordinateTo(id, currentUserId));
     }
 
     private boolean isSubordinateTo(UUID reportMember, UUID currentUserId) {

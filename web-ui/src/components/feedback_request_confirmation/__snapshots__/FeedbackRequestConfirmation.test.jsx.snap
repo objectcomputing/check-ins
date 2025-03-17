@@ -1,13 +1,21 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`renders an error if the user does not have appropriate permission 1`] = `
+<div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
+</div>
+`;
+
 exports[`renders the confirmation message 1`] = `
 <div>
   <div
-    class="request-confirmation css-1to9pmo"
+    class="request-confirmation css-153nomq"
   >
     <svg
       aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
       data-testid="CheckCircleIcon"
       focusable="false"
       style="color: rgb(76, 175, 80); font-size: 40vh;"
@@ -18,7 +26,7 @@ exports[`renders the confirmation message 1`] = `
       />
     </svg>
     <h3
-      class="MuiTypography-root MuiTypography-h3 FeedbackRequestConfirmation-announcement css-gepadz-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-h3 FeedbackRequestConfirmation-announcement css-13msox4-MuiTypography-root"
     >
       <b>
         Feedback request
@@ -30,7 +38,7 @@ exports[`renders the confirmation message 1`] = `
       </b>
     </h3>
     <h6
-      class="MuiTypography-root MuiTypography-h6 recipients-list css-2ulfj5-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-h6 recipients-list css-1miy0lu-MuiTypography-root"
     >
       <b>
         Sent to: 
@@ -41,14 +49,11 @@ exports[`renders the confirmation message 1`] = `
       style="margin-top: 4em; text-decoration: none;"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1rwt2y5-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1blvszr-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >
         Return home
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
       </button>
     </a>
   </div>

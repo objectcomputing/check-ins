@@ -35,7 +35,7 @@ class PulseResponseCreateDTOTest extends TestContainersSuite {
         PulseResponseCreateDTO dto = new PulseResponseCreateDTO();
 
         Set<ConstraintViolation<PulseResponseCreateDTO>> violations = validator.validate(dto);
-        assertEquals(3, violations.size());
+        assertEquals(2, violations.size());
         for (ConstraintViolation<PulseResponseCreateDTO> violation : violations) {
             assertEquals("must not be null", violation.getMessage());
         }

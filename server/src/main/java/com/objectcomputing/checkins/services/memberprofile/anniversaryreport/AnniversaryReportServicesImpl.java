@@ -1,13 +1,12 @@
 package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -18,22 +17,16 @@ import java.util.Set;
 
 @Singleton
 public class AnniversaryReportServicesImpl implements AnniversaryServices {
-    private static final Logger LOG = LoggerFactory.getLogger(AnniversaryReportServicesImpl.class);
-    private final MemberProfileServices memberProfileServices;
-    private final CurrentUserServices currentUserServices;
 
-    public AnniversaryReportServicesImpl(MemberProfileServices memberProfileServices,
-            CurrentUserServices currentUserServices) {
+    private final MemberProfileServices memberProfileServices;
+
+    public AnniversaryReportServicesImpl(MemberProfileServices memberProfileServices) {
         this.memberProfileServices = memberProfileServices;
-        this.currentUserServices = currentUserServices;
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_ANNIVERSARY_REPORT)
     public List<AnniversaryReportResponseDTO> findByValue(@Nullable String[] months) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource.");
-        }
-
         List<MemberProfile> memberProfileAll = new ArrayList<>();
         Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, null, null,
                 false);

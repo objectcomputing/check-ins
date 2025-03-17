@@ -2,12 +2,14 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
+import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 import jakarta.inject.Singleton;
@@ -15,6 +17,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
@@ -23,14 +26,18 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     private final SecurityService securityService;
     private final RoleServices roleServices;
     private final MemberRoleServices memberRoleServices;
+    private final RolePermissionServices rolePermissionServices;
 
     public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
                                    RoleServices roleServices,
-                                   SecurityService securityService, MemberRoleServices memberRoleServices) {
+                                   SecurityService securityService,
+                                   MemberRoleServices memberRoleServices,
+                                   RolePermissionServices rolePermissionServices) {
         this.memberProfileRepo = memberProfileRepository;
         this.roleServices = roleServices;
         this.securityService = securityService;
         this.memberRoleServices = memberRoleServices;
+        this.rolePermissionServices = rolePermissionServices;
     }
 
     @Override
@@ -49,11 +56,23 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     }
 
     @Override
+    public boolean hasPermission(Permission permission) {
+        MemberProfile currentUser = getCurrentUserImpl();
+        if (currentUser == null) {
+            return false;
+        }
+        List<Permission> userPermissions =
+            rolePermissionServices.findUserPermissions(currentUser.getId());
+        return userPermissions.stream().map(Permission::name)
+                              .anyMatch(str -> str.equals(permission.name()));
+    }
+
+    @Override
     public boolean isAdmin() {
         return hasRole(RoleType.ADMIN);
     }
 
-    public MemberProfile getCurrentUser() {
+    private MemberProfile getCurrentUserImpl() {
         if (securityService != null) {
             Optional<Authentication> auth = securityService.getAuthentication();
             if (auth.isPresent() && auth.get().getAttributes().get("email") != null) {
@@ -61,8 +80,15 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
                 return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
             }
         }
+        return null;
+    }
 
-        throw new NotFoundException("No active members in the system");
+    public MemberProfile getCurrentUser() {
+        MemberProfile profile = getCurrentUserImpl();
+        if (profile == null) {
+            throw new NotFoundException("No active members in the system");
+        }
+        return profile;
     }
 
     private MemberProfile saveNewUser(String firstName, String lastName, String workEmail) {
@@ -72,7 +98,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         }
         LocalDate lastSeen = LocalDate.now();
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
-                "", workEmail, "", null, "", null, null, null, null, null, lastSeen));
+                "", workEmail, "", null, "", null, null, null, null, null, lastSeen, false));
 
         Optional<Role> role = roleServices.findByRole("MEMBER");
         if(role.isPresent()){

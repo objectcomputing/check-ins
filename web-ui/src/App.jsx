@@ -14,8 +14,8 @@ import { DarkMode, LightMode } from '@mui/icons-material';
 
 import {
   useColorScheme,
-  experimental_extendTheme as extendTheme,
-  Experimental_CssVarsProvider as CssVarsProvider
+  createTheme,
+  ThemeProvider
 } from '@mui/material/styles';
 
 import './App.css';
@@ -44,8 +44,10 @@ function SchemeToggle() {
   );
 }
 
-const theme = extendTheme({
-  cssVarPrefix: 'checkins',
+const theme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: 'data',
+  },
   colorSchemes: {
     light: {
       palette: {
@@ -63,6 +65,12 @@ const theme = extendTheme({
     }
   },
   components: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple:
+          typeof process !== 'undefined' && !!process.env.VITEST_WORKER_ID // No more ripple...only when testing.
+      }
+    },
     MuiCssBaseline: {
       styleOverrides: {
         secondary: {
@@ -84,7 +92,7 @@ getUserColorScheme();
 
 function App() {
   return (
-    <CssVarsProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Router history={customHistory}>
           <AppContextProvider>
@@ -102,7 +110,7 @@ function App() {
           </AppContextProvider>
         </Router>
       </LocalizationProvider>
-    </CssVarsProvider>
+    </ThemeProvider>
   );
 }
 

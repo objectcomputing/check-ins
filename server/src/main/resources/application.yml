@@ -28,7 +28,7 @@ micronaut:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:public" 
+          - "classpath:public"
 
   executors:
     io:
@@ -37,7 +37,7 @@ micronaut:
 
   security:
     enabled: true
-    authentication: cookie
+    authentication: idtoken
     token:
       jwt:
         enabled: true
@@ -92,13 +92,16 @@ check-ins:
     google-api:
       delegated-user: ${ GSUITE_SUPER_ADMIN }
       scopes:
-        scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
-        scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
+        scope-for-drive-api: "https://www.googleapis.com/auth/drive.file"
+        scope-for-directory-api: "https://www.googleapis.com/auth/admin.directory.user.readonly"
     feedback:
       max-suggestions: 6
-      notifications:
-        subject: "Feedback request"
-        content: "You have received a feedback request. Please go to the "
+      request-subject: "Feedback request"
+    slack:
+      webhook-url: ${ SLACK_WEBHOOK_URL }
+      bot-token: ${ SLACK_BOT_TOKEN }
+      signing-secret: ${ SLACK_SIGNING_SECRET }
+      kudos-channel: ${ SLACK_KUDOS_CHANNEL_ID }
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:
@@ -114,7 +117,8 @@ service-account-credentials:
   encoded-value: ${SERVICE_ACCOUNT_CREDENTIALS}
 ---
 github-credentials:
-  github_token: ${ GITHUB_TOKEN }
+  github-token: ${ GITHUB_TOKEN }
+  github-url: "https://api.github.com/"
 ---
 jackson:
   serialization-inclusion: ALWAYS

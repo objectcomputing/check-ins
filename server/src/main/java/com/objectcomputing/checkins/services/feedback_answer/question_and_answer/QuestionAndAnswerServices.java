@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_answer.question_and_answe
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ public interface QuestionAndAnswerServices {
 
     @Setter
     @Getter
+    @Introspected
     class Tuple {
         private TemplateQuestion question;
         private FeedbackAnswer answer;

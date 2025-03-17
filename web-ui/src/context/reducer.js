@@ -12,7 +12,7 @@ import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
   SET_ROLES,
-  SET_USER_ROLES,
+  SET_MEMBER_ROLES,
   UPDATE_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
@@ -20,13 +20,14 @@ import {
   UPDATE_MEMBER_SKILLS,
   UPDATE_SKILL,
   UPDATE_SKILLS,
+  UPDATE_CERTIFICATIONS,
   UPDATE_GUILD,
   UPDATE_GUILDS,
   ADD_ROLE,
   UPDATE_TEAMS,
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
-  UPDATE_USER_BIO,
+  UPDATE_CURRENT_USER_PROFILE,
   UPDATE_PEOPLE_LOADING,
   UPDATE_TEAMS_LOADING,
   UPDATE_REVIEW_PERIOD,
@@ -46,7 +47,7 @@ export const initialState = {
   terminatedMembers: [],
   memberSkills: null,
   roles: null,
-  userRoles: null,
+  memberRoles: null,
   skills: null,
   teams: null,
   guilds: null,
@@ -58,16 +59,54 @@ export const initialState = {
   reviewPeriods: []
 };
 
+// Converts member dates *in place*, I don't love this. I'll be back, convertMemberDates...don't get comfortable.
+const convertMemberDates = member => {
+  member.birthDay = Array.isArray(member.birthDay)
+    ? new Date(member.birthDay.join('/'))
+    : member && member.birthDay
+      ? member.birthDay
+      : null;
+  member.startDate = Array.isArray(member.startDate)
+    ? new Date(member.startDate.join('/'))
+    : member && member.startDate
+      ? member.startDate
+      : new Date();
+  member.terminationDate = Array.isArray(member.terminationDate)
+    ? new Date(member.terminationDate.join('/'))
+    : member && member.terminationDate
+      ? member.terminationDate
+      : null;
+};
+
 export const reducer = (state, action) => {
   switch (action.type) {
     case MY_PROFILE_UPDATE:
-      state.userProfile = action.payload;
+      state.userProfile = {
+        id: action.payload.memberProfile.id,
+        role: action.payload.role,
+        permissions: action.payload.permissions
+      };
       break;
-    case UPDATE_USER_BIO:
-      state.userProfile.memberProfile.bioText = action.payload;
+    case UPDATE_CURRENT_USER_PROFILE:
+      convertMemberDates(action.payload);
+      const profileId = action.payload.id;
+      const memberProfiles = state.memberProfiles.reduce(
+        (acc, current) => {
+          if (current.id !== profileId) {
+            acc.push({ ...current });
+          }
+          return acc;
+        },
+        [{ ...action.payload }]
+      );
+      state.memberProfiles = memberProfiles;
       break;
     case ADD_CHECKIN:
-      state.checkins = [...state.checkins, action.payload];
+      if (state?.checkins?.length > 0) {
+        state.checkins = [...state.checkins, action.payload];
+      } else {
+        state.checkins = [action.payload];
+      }
       break;
     case UPDATE_CHECKINS:
       if (state?.checkins?.length > 0) {
@@ -113,6 +152,9 @@ export const reducer = (state, action) => {
     case UPDATE_SKILLS:
       state.skills = action.payload;
       break;
+    case UPDATE_CERTIFICATIONS:
+      state.certifications = action.payload;
+      break;
     case SET_CSRF:
       state.csrf = action.payload;
       break;
@@ -130,49 +172,26 @@ export const reducer = (state, action) => {
       state.teams.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case UPDATE_TEAMS_LOADING:
-      state.loading = { ...state.loading, teams: !state.loading.teams };
+      state.loading = { ...state.loading, teams: !state?.loading?.teams };
       break;
     case UPDATE_PEOPLE_LOADING:
       state.loading = { ...state.loading, memberProfiles: action.payload };
       break;
     case UPDATE_MEMBER_PROFILES:
-      action.payload.forEach(member => {
-        member.birthDay = Array.isArray(member.birthDay)
-          ? new Date(member.birthDay.join('/'))
-          : member && member.birthDay
-            ? member.birthDay
-            : null;
-        member.startDate = Array.isArray(member.startDate)
-          ? new Date(member.startDate.join('/'))
-          : member && member.startDate
-            ? member.startDate
-            : new Date();
-        member.terminationDate = Array.isArray(member.terminationDate)
-          ? new Date(member.terminationDate.join('/'))
-          : member && member.terminationDate
-            ? member.terminationDate
-            : null;
+      action.payload.forEach(convertMemberDates);
+      const currentProfileId = state?.userProfile?.id;
+      const currentProfile = action.payload.find(current => {
+        if (currentProfileId && current.id === currentProfileId) {
+          return current;
+        }
       });
+      if (currentProfile) {
+        state.userProfile.memberProfile = { ...currentProfile };
+      }
       state.memberProfiles = action.payload;
       break;
     case UPDATE_TERMINATED_MEMBERS:
-      action.payload.forEach(member => {
-        member.birthDay = Array.isArray(member.birthDay)
-          ? new Date(member.birthDay.join('/'))
-          : member && member.birthDay
-            ? member.birthDay
-            : null;
-        member.startDate = Array.isArray(member.startDate)
-          ? new Date(member.startDate.join('/'))
-          : member && member.startDate
-            ? member.startDate
-            : new Date();
-        member.terminationDate = Array.isArray(member.terminationDate)
-          ? new Date(member.terminationDate.join('/'))
-          : member && member.terminationDate
-            ? member.terminationDate
-            : null;
-      });
+      action.payload.forEach(convertMemberDates);
       state.terminatedMembers = action.payload;
       break;
     case UPDATE_TEAM_MEMBERS:
@@ -201,8 +220,8 @@ export const reducer = (state, action) => {
     case SET_ROLES:
       state.roles = action.payload;
       break;
-    case SET_USER_ROLES:
-      state.userRoles = action.payload;
+    case SET_MEMBER_ROLES:
+      state.memberRoles = action.payload;
       break;
     case DELETE_ROLE:
       state.roles = state.roles.filter(role => role.id !== action.payload);

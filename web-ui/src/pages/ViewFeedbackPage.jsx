@@ -25,11 +25,13 @@ import {
   selectCsrfToken,
   selectCurrentUserId,
   selectProfile,
-  selectIsAdmin,
   selectIsSupervisor,
   selectMyTeam,
   selectCurrentMembers,
-  selectSubordinates
+  selectSubordinates,
+  selectCanViewFeedbackRequestPermission,
+  noPermission,
+  selectCanAdministerFeedbackRequests
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
@@ -96,7 +98,7 @@ const ViewFeedbackPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUserId = selectCurrentUserId(state);
-  const isAdmin = selectIsAdmin(state);
+  const isAdmin = selectCanAdministerFeedbackRequests(state);
   const isSupervisor = selectIsSupervisor(state);
   const currentMembers = selectCurrentMembers(state);
   const subordinates = selectSubordinates(state, currentUserId);
@@ -232,10 +234,12 @@ const ViewFeedbackPage = () => {
       //and associated template info together
       const templateReqs = [];
       const templateIds = [];
-      for (let i = 0; i < feedbackRequests.length; i++) {
-        if (!templateIds.includes(feedbackRequests[i].templateId)) {
-          templateIds.push(feedbackRequests[i].templateId);
-          templateReqs.push(getTemplateInfo(feedbackRequests[i].templateId));
+      if (feedbackRequests) {
+        for (let i = 0; i < feedbackRequests.length; i++) {
+          if (!templateIds.includes(feedbackRequests[i].templateId)) {
+            templateIds.push(feedbackRequests[i].templateId);
+            templateReqs.push(getTemplateInfo(feedbackRequests[i].templateId));
+          }
         }
       }
       let templates = await Promise.all(templateReqs);
@@ -243,7 +247,7 @@ const ViewFeedbackPage = () => {
         map[template.id] = template;
         return map;
       }, {});
-      feedbackRequests.forEach(request => {
+      feedbackRequests?.forEach(request => {
         request.templateInfo = templates[request.templateId];
       });
       return feedbackRequests;
@@ -379,7 +383,7 @@ const ViewFeedbackPage = () => {
     }, []);
   }, [searchText, sortValue, dateRange, feedbackRequests]);
 
-  return (
+  return selectCanViewFeedbackRequestPermission(state) ? (
     <Root className="view-feedback-page">
       <div className="view-feedback-header-container">
         <Typography className={classes.pageTitle} variant="h4">
@@ -462,6 +466,8 @@ const ViewFeedbackPage = () => {
             ))}
       </div>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

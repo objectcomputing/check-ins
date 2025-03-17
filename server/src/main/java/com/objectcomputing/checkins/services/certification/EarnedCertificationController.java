@@ -63,10 +63,9 @@ class EarnedCertificationController {
                 new EarnedCertification(
                         certification.getMemberId(),
                         certification.getCertificationId(),
-                        certification.getDescription(),
                         certification.getEarnedDate(),
                         certification.getExpirationDate(),
-                        certification.getCertificateImageUrl()
+                        certification.getValidationUrl()
                 )
         );
     }
@@ -86,10 +85,9 @@ class EarnedCertificationController {
                         id,
                         certification.getMemberId(),
                         certification.getCertificationId(),
-                        certification.getDescription(),
                         certification.getEarnedDate(),
                         certification.getExpirationDate(),
-                        certification.getCertificateImageUrl()
+                        certification.getValidationUrl()
                 )
         );
     }

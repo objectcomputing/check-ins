@@ -41,8 +41,8 @@
 }
 
 .received-requests-page .no-requests-message {
-  background-color: var(--checkins-palette-gray-light);
-  color: var(--checkins-palette-gray-dark);
+  background-color: var(--mui-palette-gray-light);
+  color: var(--mui-palette-gray-dark);
   border-radius: 4px;
   padding: 10px;
   text-align: center;
@@ -69,7 +69,7 @@
   padding: 5px 30px 5px 10px;
   margin: 10px;
   border-radius: 40px;
-  background-color: var(--checkins-palette-gray-light);
+  background-color: var(--mui-palette-gray-light);
 }
 
 .received-requests-page .card-content-grid .request-details-container {

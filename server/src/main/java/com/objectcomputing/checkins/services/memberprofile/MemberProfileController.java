@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -20,8 +18,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
@@ -33,7 +29,6 @@ import java.util.UUID;
 @Tag(name = "member profiles")
 public class MemberProfileController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MemberProfileController.class);
     private final MemberProfileServices memberProfileServices;
 
     public MemberProfileController(MemberProfileServices memberProfileServices) {
@@ -63,7 +58,7 @@ public class MemberProfileController {
     public List<MemberProfileResponseDTO> getSupervisorsForId(UUID id) {
         return memberProfileServices.getSupervisorsForId(id)
                 .stream()
-                .map(this::fromEntity)
+                .map(MemberProfileController::fromEntity)
                 .toList();
     }
 
@@ -88,7 +83,7 @@ public class MemberProfileController {
                                                       @QueryValue(value = "terminated", defaultValue = "false") Boolean terminated) {
         return memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId, terminated)
                 .stream()
-                .map(this::fromEntity)
+                .map(MemberProfileController::fromEntity)
                 .toList();
     }
 
@@ -99,7 +94,6 @@ public class MemberProfileController {
      * @return {@link MemberProfileResponseDTO} The created member profile
      */
     @Post
-    @RequiredPermission(Permission.CAN_CREATE_ORGANIZATION_MEMBERS)
     public HttpResponse<MemberProfileResponseDTO> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
         MemberProfile savedProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
         return HttpResponse.created(fromEntity(savedProfile))
@@ -114,7 +108,7 @@ public class MemberProfileController {
      */
     @Put
     public HttpResponse<MemberProfileResponseDTO> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
-        MemberProfile savedProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
+        MemberProfile savedProfile = memberProfileServices.updateProfile(fromDTO(memberProfile));
         return HttpResponse.ok(fromEntity(savedProfile))
                 .headers(headers -> headers.location(location(savedProfile.getId())));
     }
@@ -125,7 +119,6 @@ public class MemberProfileController {
      * @param id {@link UUID} Member unique id
      */
     @Delete("/{id}")
-    @RequiredPermission(Permission.CAN_DELETE_ORGANIZATION_MEMBERS)
     @Status(HttpStatus.OK)
     public void delete(@NotNull UUID id) {
         memberProfileServices.deleteProfile(id);
@@ -135,7 +128,7 @@ public class MemberProfileController {
         return URI.create("/member-profiles/" + id);
     }
 
-    private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
+    public static MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
         dto.setFirstName(entity.getFirstName());
@@ -154,6 +147,7 @@ public class MemberProfileController {
         dto.setTerminationDate(entity.getTerminationDate());
         dto.setBirthDay(entity.getBirthDate());
         dto.setLastSeen(entity.getLastSeen());
+        dto.setIgnoreBirthday(entity.getIgnoreBirthday());
         return dto;
     }
 
@@ -161,13 +155,13 @@ public class MemberProfileController {
         return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
                 dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
-                dto.getTerminationDate(), dto.getBirthDay(), dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
+                dto.getTerminationDate(), dto.getBirthDay(), dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen(), dto.getIgnoreBirthday());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
                 dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
                 dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate(), dto.getBirthDay(),
-                dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen());
+                dto.getVoluntary(), dto.getExcluded(), dto.getLastSeen(), dto.getIgnoreBirthday());
     }
 }

@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+
 import jakarta.inject.Singleton;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -25,6 +28,7 @@ public class MemberProfileReportServicesImpl implements MemberProfileReportServi
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_PROFILE_REPORT)
     public File generateFile(MemberProfileReportQueryDTO queryDTO) throws IOException {
         List<MemberProfileRecord> memberRecords = new ArrayList<>();
         if (queryDTO == null || queryDTO.getMemberIds() == null) {

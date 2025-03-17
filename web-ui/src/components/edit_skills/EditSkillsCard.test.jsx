@@ -22,6 +22,7 @@ const initialState = {
       firstName: 'Current',
       lastName: 'User',
       role: ['MEMBER'],
+      permissions: [{ permission: 'CAN_EDIT_SKILLS' }],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
       memberProfile: currentUserProfile
@@ -34,7 +35,7 @@ const initialState = {
     guilds: [],
     teams: [],
     roles: [],
-    userRoles: [],
+    memberRoles: [],
     memberSkills: [],
     index: 0,
     memberProfiles: [
@@ -71,7 +72,7 @@ const server = setupServer(
   })
 );
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -90,6 +91,16 @@ describe('EditSkillsCard', () => {
   it('renders correctly', () => {
     snapshot(
       <AppContextProvider value={initialState}>
+        <BrowserRouter>
+          <EditSkillsPage />
+        </BrowserRouter>
+      </AppContextProvider>
+    );
+  });
+
+  it('renders an error if user does not have appropriate permission', () => {
+    snapshot(
+      <AppContextProvider>
         <BrowserRouter>
           <EditSkillsPage />
         </BrowserRouter>

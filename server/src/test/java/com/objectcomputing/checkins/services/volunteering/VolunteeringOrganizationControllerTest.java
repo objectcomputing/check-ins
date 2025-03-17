@@ -148,16 +148,4 @@ class VolunteeringOrganizationControllerTest extends TestContainersSuite impleme
         String body = e.getResponse().getBody(String.class).get();
         assertTrue(body.contains("organization.description: must not be blank"), body + " should contain 'organization.description: must not be blank'");
     }
-
-    @Test
-    void testCreateOrganizationWithoutWebsite() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        String adminAuth = auth(memberProfile.getWorkEmail(), ADMIN_ROLE);
-        VolunteeringOrganizationDTO org = new VolunteeringOrganizationDTO("name", "description", null);
-
-        HttpClientResponseException e = assertThrows(HttpClientResponseException.class, () -> organizationClient.createOrganization(adminAuth, org));
-        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
-        String body = e.getResponse().getBody(String.class).get();
-        assertTrue(body.contains("organization.website: must not be blank"), body + " should contain 'organization.website: must not be blank'");
-    }
 }

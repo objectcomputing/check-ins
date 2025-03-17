@@ -1,12 +1,13 @@
 package com.objectcomputing.checkins.services.checkins;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import com.objectcomputing.checkins.util.Util;
 import jakarta.inject.Singleton;
@@ -32,17 +33,15 @@ public class CheckInServicesImpl implements CheckInServices {
     private final CheckInRepository checkinRepo;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
-    private final RoleServices roleServices;
     private final RolePermissionServices rolePermissionServices;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
                                MemberProfileRepository memberRepo,
                                CurrentUserServices currentUserServices,
-                               RoleServices roleServices, RolePermissionServices rolePermissionServices) {
+                               RolePermissionServices rolePermissionServices) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
-        this.roleServices = roleServices;
         this.rolePermissionServices = rolePermissionServices;
     }
 
@@ -93,6 +92,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public CheckIn save(@NotNull CheckIn checkIn) {
         validate(checkIn.getId() != null, "Found unexpected id for checkin %s", checkIn.getId());
 
@@ -119,6 +119,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public CheckIn read(@NotNull UUID checkinId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
@@ -128,6 +129,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public CheckIn update(@NotNull CheckIn checkIn) {
         final UUID id = checkIn.getId();
         validate(id == null, "Unable to find checkin record with id %s", checkIn.getId());
@@ -160,6 +162,7 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         final UUID currentUserId = currentUser.getId();

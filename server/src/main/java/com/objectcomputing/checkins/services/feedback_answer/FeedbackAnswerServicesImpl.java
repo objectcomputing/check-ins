@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -43,7 +45,6 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
     @Override
     public FeedbackAnswer save(FeedbackAnswer feedbackAnswer) {
-
         // Ensure that related question exists
         templateQuestionServices.getById(feedbackAnswer.getQuestionId());
 
@@ -82,6 +83,10 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     @Override
+    // This method cannot have
+    // @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER) because regular
+    // members need to be able to find their answers.  This permission is
+    // manually checked inside getIsPermitted().
     public FeedbackAnswer getById(UUID id) {
         final Optional<FeedbackAnswer> feedbackAnswer = feedbackAnswerRepository.findById(id);
         if (feedbackAnswer.isEmpty()) {
@@ -98,6 +103,10 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     @Override
+    // This method cannot have
+    // @RequiredPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER) because regular
+    // members need to be able to find their answers.  This permission is
+    // manually checked below.
     public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         List<FeedbackAnswer> response = new ArrayList<>();
         FeedbackRequest feedbackRequest;
@@ -110,10 +119,15 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         final UUID requestCreatorId = feedbackRequest.getCreatorId();
         final UUID requesteeId = feedbackRequest.getRequesteeId();
         final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
+        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId())) : false;
         MemberProfile requestee = memberProfileServices.getById(requesteeId);
         final UUID requesteePDL = requestee.getPdlId();
-        if (currentUserServices.isAdmin() || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId)) {
+        if (currentUserServices.hasPermission(Permission.CAN_VIEW_FEEDBACK_ANSWER) ||
+            currentUserId.equals(requesteePDL) || isRequesteesSupervisor ||
+            requestCreatorId.equals(currentUserId) ||
+            recipientId.equals(currentUserId) ||
+            feedbackRequestServices.selfRevieweeIsCurrentUserReviewee(feedbackRequest, currentUserId)) {
+            // All checks passed...
             response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
             return response;
         }
@@ -145,15 +159,37 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     public boolean getIsPermitted(FeedbackRequest feedbackRequest) {
-        final boolean isAdmin = currentUserServices.isAdmin();
-        final UUID requestCreatorId = feedbackRequest.getCreatorId();
-        UUID requesteeId = feedbackRequest.getRequesteeId();
-        MemberProfile requestee = memberProfileServices.getById(requesteeId);
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final UUID recipientId = feedbackRequest.getRecipientId();
-        boolean isRequesteesSupervisor = requesteeId != null ? memberProfileServices.getSupervisorsForId(requesteeId).stream().filter(profile -> currentUserId.equals(profile.getId())).findAny().isPresent() : false;
-        final UUID requesteePDL = requestee.getPdlId();
+        // Users with the CAN_ADMINISTER_FEEDBACK_ANSWER permission can always
+        // get questions and answers.
+        if (currentUserServices.hasPermission(Permission.CAN_ADMINISTER_FEEDBACK_ANSWER)) {
+            return true;
+        }
 
-        return isAdmin || currentUserId.equals(requesteePDL) || isRequesteesSupervisor || requestCreatorId.equals(currentUserId) || recipientId.equals(currentUserId);
+        // See if the current user is the requestee's supervisor.
+        final UUID requesteeId = feedbackRequest.getRequesteeId();
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (requesteeId != null &&
+            memberProfileServices.getSupervisorsForId(requesteeId).stream().anyMatch(profile -> currentUserId.equals(profile.getId()))) {
+            return true;
+        }
+
+        // See if the current user is the requestee's PDL.
+        final MemberProfile requestee = memberProfileServices.getById(requesteeId);
+        if (currentUserId.equals(requestee.getPdlId())) {
+            return true;
+        }
+
+        // See if the current user is the request creator or the recipient of
+        // the request.
+        final UUID requestCreatorId = feedbackRequest.getCreatorId();
+        final UUID recipientId = feedbackRequest.getRecipientId();
+        if (requestCreatorId.equals(currentUserId) ||
+            recipientId.equals(currentUserId)) {
+            return true;
+        }
+
+
+        return feedbackRequestServices.selfRevieweeIsCurrentUserReviewee(
+                   feedbackRequest, currentUserId);
     }
 }

@@ -1,8 +1,9 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public class SkillServicesImpl implements SkillServices {
         this.currentUserServices = currentUserServices;
     }
 
+    @Override
     public Skill save(Skill skill) {
         Skill newSkill = null;
         if (skill != null) {
@@ -41,10 +43,12 @@ public class SkillServicesImpl implements SkillServices {
         return newSkill;
     }
 
+    @Override
     public Skill readSkill(@NotNull UUID id) {
         return skillRepository.findById(id).orElse(null);
     }
 
+    @Override
     public Set<Skill> findByValue(String name, Boolean pending) {
         Set<Skill> skillList = new HashSet<>();
 
@@ -62,10 +66,9 @@ public class SkillServicesImpl implements SkillServices {
         return skillList;
     }
 
+    @Override
+    @RequiredPermission(Permission.CAN_EDIT_SKILLS)
     public void delete(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
         skillRepository.deleteById(id);
     }
 
@@ -74,11 +77,9 @@ public class SkillServicesImpl implements SkillServices {
         return skillRepository.findByNameIlike(wildcard);
     }
 
+    @Override
+    @RequiredPermission(Permission.CAN_EDIT_SKILLS)
     public Skill update(@NotNull Skill skill) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
-
         if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
             return skillRepository.update(skill);
         } else {

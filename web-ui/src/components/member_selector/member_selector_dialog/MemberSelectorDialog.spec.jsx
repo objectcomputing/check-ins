@@ -39,7 +39,8 @@ const testGuild = {
   name: 'Test Guild',
   description: 'A guild used for testing.',
   guildLeads: [{ id: 124, name: managerProfile.name }],
-  guildMembers: []
+  guildMembers: [],
+  active: true
 };
 
 const initialState = {
@@ -62,7 +63,7 @@ const initialState = {
   guilds: [testGuild],
   teams: [],
   roles: [],
-  userRoles: [],
+  memberRoles: [],
   memberSkills: [],
   index: 0
 };
@@ -77,7 +78,7 @@ const server = setupServer(
   )
 );
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

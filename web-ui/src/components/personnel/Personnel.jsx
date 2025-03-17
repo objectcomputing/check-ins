@@ -7,7 +7,8 @@ import { UPDATE_CHECKINS } from '../../context/actions';
 import {
   selectCurrentUserId,
   selectMostRecentCheckin,
-  selectCsrfToken
+  selectCsrfToken,
+  selectCanViewCheckinsPermission
 } from '../../context/selectors';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -53,7 +54,7 @@ const Personnel = () => {
   // Get checkins per personnel
   useEffect(() => {
     async function updateCheckins() {
-      if (personnel) {
+      if (personnel && selectCanViewCheckinsPermission(state)) {
         for (const person of personnel) {
           let res = await getCheckinByMemberId(person.id, csrf);
           let data =
@@ -123,7 +124,16 @@ const Personnel = () => {
         createEntry(person, selectMostRecentCheckin(state, person.id), null)
       );
     } else {
-      return [];
+      // If no personnel, show the filler message
+      return (
+        <ListItem>
+          <ListItemText
+            primary={
+              <em>Your assigned development partners are shown here.</em>
+            }
+          />
+        </ListItem>
+      );
     }
   };
 

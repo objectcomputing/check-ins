@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
@@ -45,6 +46,6 @@ public class CurrentUserDTO {
 
     @NotNull
     @Schema(implementation = MemberProfile.class)
-    private MemberProfile memberProfile;
+    private MemberProfileResponseDTO memberProfile;
 
 }

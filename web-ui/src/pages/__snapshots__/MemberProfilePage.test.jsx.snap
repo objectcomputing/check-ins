@@ -20,23 +20,24 @@ exports[`renders correctly 1`] = `
       class="MuiGrid-root MuiGrid-item MuiGrid-grid-md-7 right css-3vt552-MuiGrid-root"
     >
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-1j74uew-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
       >
         <div
-          class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
         >
           <div
-            class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
           >
             <h1
-              class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
             >
               Skills
             </h1>
           </div>
         </div>
         <div
-          class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+          class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
         >
           <div
             class="profile-skills"
@@ -52,23 +53,24 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-1j74uew-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
       >
         <div
-          class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
         >
           <div
-            class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
           >
             <h1
-              class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
             >
               Teams
             </h1>
           </div>
         </div>
         <div
-          class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+          class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
         >
           <div
             class="profile-teams"
@@ -84,23 +86,24 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-1j74uew-MuiPaper-root-MuiCard-root"
+        style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
       >
         <div
-          class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+          class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
         >
           <div
-            class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
+            class="MuiCardHeader-content css-1jkp9bu-MuiCardHeader-content"
           >
             <h1
-              class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-16xl4zq-MuiTypography-root"
             >
-              Guilds
+              Guilds & Communities
             </h1>
           </div>
         </div>
         <div
-          class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+          class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
         >
           <div
             class="profile-guilds"

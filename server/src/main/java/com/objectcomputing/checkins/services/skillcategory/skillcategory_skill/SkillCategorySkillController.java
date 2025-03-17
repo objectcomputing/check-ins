@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.skillcategory.skillcategory_skill;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -32,7 +30,6 @@ public class SkillCategorySkillController {
     }
 
     @Post
-    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     public HttpResponse<SkillCategorySkill> create(@Body @Valid SkillCategorySkillId dto, HttpRequest<?> request) {
         SkillCategorySkill skillCategorySkill = skillCategorySkillServices.save(dto);
         return HttpResponse.created(skillCategorySkill)
@@ -40,7 +37,6 @@ public class SkillCategorySkillController {
     }
 
     @Delete
-    @RequiredPermission(Permission.CAN_EDIT_SKILL_CATEGORIES)
     @Status(HttpStatus.OK)
     public void delete(@Body @Valid SkillCategorySkillId dto) {
         skillCategorySkillServices.delete(dto);

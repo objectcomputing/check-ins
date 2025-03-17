@@ -40,19 +40,6 @@ public class EmployeeHoursController {
 
 
     /**
-     * @param id
-     * @return
-     */
-    @Get("/{id}")
-    public EmployeeHours readEmployeeHours(@NotNull UUID id) {
-        EmployeeHours result = employeeHoursServices.read(id);
-        if (result == null) {
-            throw new NotFoundException("No employee hours for employee id");
-        }
-        return result;
-    }
-
-    /**
      * Parse the CSV file and store it to employee hours table
      * @param file
      * @{@link HttpResponse<EmployeeHoursResponseDTO>}

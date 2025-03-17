@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.reviews;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.core.annotation.Nullable;
@@ -25,6 +27,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
     public ReviewAssignment save(ReviewAssignment reviewAssignment) {
         ReviewAssignment newAssignment = null;
         if (reviewAssignment != null) {
@@ -43,11 +46,16 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         return newAssignment;
     }
 
+    // Now that uniqueness constraints have been placed on the
+    // reviewee-reviewer-reviewPeriod, this method needs to be synchronized
+    // to avoid multiple calls from the client-side overlapping and attempting
+    // to create the same review assignments multiple times.
     @Override
-    public List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, boolean deleteExisting) {
+    @RequiredPermission(Permission.CAN_CREATE_REVIEW_ASSIGNMENTS)
+    public synchronized List<ReviewAssignment> saveAll(UUID reviewPeriodId, List<ReviewAssignment> reviewAssignments, boolean deleteExisting) {
 
         if(deleteExisting) {
-            LOG.warn(String.format("Deleting all review assignments for review period %s", reviewPeriodId));
+            LOG.warn("Deleting all review assignments for review period {}", reviewPeriodId);
             reviewAssignmentRepository.deleteByReviewPeriodId(reviewPeriodId);
         }
 
@@ -67,12 +75,14 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
     public ReviewAssignment findById(@NotNull UUID id) {
         return reviewAssignmentRepository.findById(id).orElse(null);
     }
 
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_REVIEW_ASSIGNMENTS)
     public Set<ReviewAssignment> findAllByReviewPeriodIdAndReviewerId(UUID reviewPeriodId, @Nullable UUID reviewerId) {
 
         Set<ReviewAssignment> reviewAssignments;
@@ -82,17 +92,14 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         } else {
             reviewAssignments = reviewAssignmentRepository.findByReviewPeriodIdAndReviewerId(reviewPeriodId, reviewerId);
         }
-        if (reviewAssignments.isEmpty()) {
-            //If no assignments exist for the review period, then a set of default review assignments should be returned
-            reviewAssignments = defaultReviewAssignments(reviewPeriodId);
-        }
 
         return reviewAssignments;
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_UPDATE_REVIEW_ASSIGNMENTS)
     public ReviewAssignment update(ReviewAssignment reviewAssignment) {
-        LOG.info(String.format("Updating entity %s", reviewAssignment));
+        LOG.info("Updating entity {}", reviewAssignment);
         if (reviewAssignment.getId() != null && reviewAssignmentRepository.findById(reviewAssignment.getId()).isPresent()) {
             return reviewAssignmentRepository.update(reviewAssignment);
         } else {
@@ -101,6 +108,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_DELETE_REVIEW_ASSIGNMENTS)
     public void delete(UUID id) {
         if (id != null && reviewAssignmentRepository.findById(id).isPresent()) {
             reviewAssignmentRepository.deleteById(id);
@@ -109,7 +117,7 @@ public class ReviewAssignmentServicesImpl implements ReviewAssignmentServices {
         }
     }
 
-    private Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
+    public Set<ReviewAssignment> defaultReviewAssignments(UUID reviewPeriodId) {
         Set<ReviewAssignment> reviewAssignments = new HashSet<>();
 
         memberProfileRepository.findAll().forEach(memberProfile -> {

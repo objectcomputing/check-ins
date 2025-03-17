@@ -78,6 +78,7 @@ const FeedbackSubmitForm = ({
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReviewing, setIsReviewing] = useState(reviewOnly);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([]);
@@ -117,6 +118,7 @@ const FeedbackSubmitForm = ({
   }
 
   const onSubmitHandler = () => {
+    setIsSubmitting(true);
     updateAllAnswersSubmit()
       .then(res => {
         for (let i = 0; i < res.length; ++i) {
@@ -135,9 +137,11 @@ const FeedbackSubmitForm = ({
       })
       .then(resTwo => {
         if (resTwo === false) {
+          setIsSubmitting(false);
           return;
         }
         updateRequestSubmit().then(res => {
+          setIsSubmitting(false);
           if (res && res.payload && res.payload.data && !res.error) {
             history.push(`/feedback/submit/confirmation/?request=${requestId}`);
           } else {
@@ -171,7 +175,7 @@ const FeedbackSubmitForm = ({
             type: UPDATE_TOAST,
             payload: {
               severity: 'error',
-              toast: res.error
+              toast: res?.error ?? 'Unknown Error'
             }
           });
         }
@@ -184,22 +188,15 @@ const FeedbackSubmitForm = ({
     <SkeletonLoader type="feedback_requests" />
   ) : (
     <Root className="submit-form">
-      <Typography className={classes.announcement} variant="h3">
+      <Typography
+        component={'span'}
+        className={classes.announcement}
+        variant="h3"
+      >
         {isReviewing ? 'Reviewing' : 'Submitting'} Feedback on{' '}
         <b>{requesteeName}</b>
       </Typography>
       {!isReviewing && (
-        <div className="wrapper">
-          <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>
-            info-icon
-          </InfoIcon>
-          <Typography className={classes.tip}>
-            <b>Tip of the day: </b>
-            {tip}
-          </Typography>
-        </div>
-      )}
-      {isReviewing && (
         <Alert className={classes.warning} severity="warning">
           <AlertTitle>Notice!</AlertTitle>
           Feedback is not anonymous, and can be seen by more than just the
@@ -225,7 +222,7 @@ const FeedbackSubmitForm = ({
             <React.Fragment>
               <Button
                 className={classes.coloredButton}
-                disabled={isLoading}
+                disabled={isLoading || isSubmitting}
                 onClick={() => setIsReviewing(false)}
                 variant="contained"
                 color="secondary"
@@ -234,7 +231,7 @@ const FeedbackSubmitForm = ({
               </Button>
               <Button
                 className={classes.button}
-                disabled={isLoading}
+                disabled={isLoading || isSubmitting}
                 onClick={onSubmitHandler}
                 variant="contained"
                 color="primary"

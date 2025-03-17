@@ -25,14 +25,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/CheckCircle';
 import { AppContext } from '../context/AppContext';
 import mjml2html from 'mjml-browser';
-import ReactHtmlParser from 'react-html-parser';
+import parse from 'html-react-parser';
 import { UPDATE_TOAST } from '../context/actions';
 import { sendEmail } from '../api/notifications';
 
 import './EmailPage.css';
 import { getAvatarURL } from '../api/api';
 import MemberSelector from '../components/member_selector/MemberSelector.jsx';
-import { selectCsrfToken } from '../context/selectors.js';
+import {
+  selectCsrfToken,
+  selectHasSendEmailPermission,
+  noPermission
+} from '../context/selectors';
 
 const Root = styled('div')({
   margin: '2rem'
@@ -67,12 +71,7 @@ const ChooseEmailFormatStep = ({
     <>
       <div className="email-format-container">
         <Button
-          className="email-format-button"
-          style={
-            emailFormat === 'file'
-              ? { borderColor: 'green', backgroundColor: '#f7fff7' }
-              : {}
-          }
+          className={emailFormat === 'file' ? "email-format-button-selected" : "email-format-button"}
           disabled={emailSent}
           onClick={() => handleFormatButtonClick('file')}
         >
@@ -97,12 +96,7 @@ const ChooseEmailFormatStep = ({
           </div>
         </Button>
         <Button
-          className="email-format-button"
-          style={
-            emailFormat === 'text'
-              ? { borderColor: 'green', backgroundColor: '#f7fff7' }
-              : {}
-          }
+          className={emailFormat === 'text' ? "email-format-button-selected" : "email-format-button"}
           disabled={emailSent}
           onClick={() => handleFormatButtonClick('text')}
         >
@@ -181,8 +175,18 @@ const ComposeEmailStep = ({
       const fileReader = new FileReader();
       fileReader.onload = e => {
         const mjmlContent = e.target.result.toString();
-        const { html } = mjml2html(mjmlContent);
-        onEmailContentsChange(html);
+        try {
+          const result = mjml2html(mjmlContent);
+          onEmailContentsChange(result.html);
+        } catch (e) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast: e.message
+            }
+          });
+        }
       };
 
       const file = event.target.files[0];
@@ -192,7 +196,7 @@ const ComposeEmailStep = ({
 
   useEffect(() => {
     if (emailContents && emailFormat === 'file') {
-      const preview = ReactHtmlParser(emailContents);
+      const preview = parse(emailContents);
       setEmailPreview(preview);
     }
   }, [emailFormat, emailContents]);
@@ -488,7 +492,7 @@ const EmailPage = () => {
     return false;
   };
 
-  return (
+  return selectHasSendEmailPermission(state) ? (
     <Root className="email-page">
       <Stepper activeStep={currentStep}>
         {steps.map((step, index) => (
@@ -610,6 +614,8 @@ const EmailPage = () => {
         </Card>
       </Modal>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

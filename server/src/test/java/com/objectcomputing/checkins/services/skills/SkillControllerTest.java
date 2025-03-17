@@ -13,6 +13,7 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.net.URLEncoder;
@@ -31,6 +32,17 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
     @Client("/services/skills")
     private HttpClient client;
 
+    private MemberProfile member;
+    private MemberProfile admin;
+
+    @BeforeEach
+    void makeRoles() {
+        createAndAssignRoles();
+        member = createADefaultMemberProfile();
+        admin = createASecondDefaultMemberProfile();
+        assignAdminRole(admin);
+    }
+
     private String encodeValue(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
@@ -40,7 +52,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc")
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+                    .basicAuth(member.getWorkEmail(), MEMBER_ROLE));
         });
 
         assertNotNull(thrown.getResponse());
@@ -51,7 +63,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
     void testGETFindByNameReturnsEmptyBody() {
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
 
         final HttpResponse<Set<Skill>> response = client.toBlocking().exchange(request, Argument.setOf(Skill.class));
 
@@ -64,7 +76,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
 
         Skill skill = createADefaultSkill();
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?name=%s", encodeValue(skill.getName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?name=%s", encodeValue(skill.getName()))).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
 
         final HttpResponse<Set<Skill>> response = client.toBlocking().exchange(request, Argument.setOf(Skill.class));
 
@@ -78,7 +90,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
 
         Skill skill = createADefaultSkill();
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?pending=%s", encodeValue(String.valueOf(skill.isPending())))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?pending=%s", encodeValue(String.valueOf(skill.isPending())))).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
 
         final HttpResponse<Set<Skill>> response = client.toBlocking().exchange(request, Argument.setOf(Skill.class));
 
@@ -93,7 +105,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/%s", skill.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/%s", skill.getId())).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
 
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
@@ -106,7 +118,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
     void testGETGetByIdNotFound() {
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -126,7 +138,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
         skillCreateDTO.setDescription("Bring back from the dead");
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
-                POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                POST("/", skillCreateDTO).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
         assertNotNull(response);
@@ -146,7 +158,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
         skillCreateDTO.setPending(skill.isPending());
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
-                POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                POST("/", skillCreateDTO).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -164,7 +176,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
         skillCreateDTO.setPending(false);
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
-                POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                POST("/", skillCreateDTO).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -179,7 +191,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
-                POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                POST("/", skillCreateDTO).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -191,13 +203,10 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
     @Test
     void testUpdateSkillAsAdmin() {
 
-        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
-
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Skill> request = HttpRequest.
-                PUT("/", skill).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+                PUT("/", skill).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
@@ -212,7 +221,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Skill> request = HttpRequest.PUT("/", skill)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -223,15 +232,12 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
     @Test
     void testPUTUpdateNonexistentSkill() {
 
-        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
-
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
         skillCreateDTO.setName("reincarnation");
         skillCreateDTO.setPending(true);
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
-                PUT("/", skillCreateDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+                PUT("/", skillCreateDTO).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -255,13 +261,10 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
     @Test
     void deleteSkillAsAdmin() {
 
-        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createAndAssignAdminRole(memberProfileOfAdmin);
-
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", skill.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+                DELETE(String.format("/%s", skill.getId())).basicAuth(admin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
@@ -275,7 +278,7 @@ class SkillControllerTest extends TestContainersSuite implements SkillFixture, M
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", skill.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                DELETE(String.format("/%s", skill.getId())).basicAuth(member.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 

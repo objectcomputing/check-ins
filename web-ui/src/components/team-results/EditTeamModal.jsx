@@ -9,10 +9,17 @@ import {
 import { Button } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
 import './EditTeamModal.css';
 
-const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
+const EditTeamModal = ({
+  team = { active: true },
+  open,
+  onSave,
+  onClose,
+  headerText
+}) => {
   const { state } = useContext(AppContext);
   const currentMembers = selectCurrentMembers(state);
   const currentUser = selectCurrentUser(state);
@@ -157,7 +164,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
 
   const close = () => {
     onClose();
-    setTeam({});
+    setTeam({ active: true });
   };
 
   return (
@@ -173,6 +180,15 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           value={editedTeam.name ? editedTeam.name : ''}
           onChange={e => setTeam({ ...editedTeam, name: e.target.value })}
         />
+        <Checkbox
+          id="team-active-input"
+          label="Active"
+          variant="outlined"
+          className="halfWidth"
+          checked={editedTeam.active}
+          onChange={e => setTeam({ ...editedTeam, active: e.target.checked })}
+        />{' '}
+        Active
         <TextField
           id="team-description-input"
           label="Description"
@@ -186,6 +202,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         <Autocomplete
           id="teamLeadSelect"
           multiple
+          freeSolo={true}
           isOptionEqualToValue={(option, value) => {
             return value ? value.memberId === option.memberId : false;
           }}
@@ -209,6 +226,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         />
         <Autocomplete
           multiple
+          freeSolo={true}
           isOptionEqualToValue={(option, value) => {
             return value ? value.memberId === option.memberId : false;
           }}

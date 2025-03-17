@@ -1,33 +1,51 @@
 import React, { useEffect, useReducer, useMemo } from 'react';
 import { reducer, initialState } from './reducer';
+import { selectCurrentUser } from './selectors';
 import { getCheckins, getAllCheckinsForAdmin } from './thunks';
 import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
   SET_ROLES,
-  SET_USER_ROLES,
   UPDATE_GUILDS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
   UPDATE_TERMINATED_MEMBERS,
   UPDATE_SKILLS,
+  UPDATE_CERTIFICATIONS,
   UPDATE_TEAMS,
   UPDATE_PEOPLE_LOADING,
-  UPDATE_TEAMS_LOADING
+  UPDATE_TEAMS_LOADING,
+  SET_MEMBER_ROLES
 } from './actions';
 import {
   getCurrentUser,
   getAllMembers,
   getAllTerminatedMembers
 } from '../api/member';
-import { getAllRoles, getAllUserRoles } from '../api/roles';
+import {
+  selectCanViewCheckinsPermission,
+  selectCanViewTerminatedMembers
+} from './selectors';
+import { getAllRoles, getAllMemberRoles } from '../api/roles';
 import { getMemberSkills } from '../api/memberskill';
 import { BASE_API_URL } from '../api/api';
 import { getAllGuilds } from '../api/guild';
 import { getSkills } from '../api/skill';
 import { getAllTeams } from '../api/team';
+import { getCertifications } from '../api/certification.js';
 
 const AppContext = React.createContext();
+
+function getSessionCookieValue(name) {
+  const cookies = document?.cookie?.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(name + '=')) {
+      return decodeURIComponent(cookie.substring(name.length + 1));
+    }
+  }
+  return null;
+}
 
 const AppContextProvider = props => {
   const [state, dispatch] = useReducer(
@@ -36,13 +54,10 @@ const AppContextProvider = props => {
   );
   const userProfile =
     state && state.userProfile ? state.userProfile : undefined;
-  const memberProfile =
-    userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile
-      : undefined;
 
-  const id = memberProfile ? memberProfile.id : undefined;
-  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
+  const id = userProfile ? userProfile.id : undefined;
+  const currentUser = selectCurrentUser(state);
+  const pdlId = currentUser ? currentUser.pdlId : undefined;
   const {
     csrf,
     guilds,
@@ -51,19 +66,25 @@ const AppContextProvider = props => {
     memberProfiles,
     checkins,
     skills,
+    certifications,
     roles,
-    userRoles
+    memberRoles
   } = state;
   const url = `${BASE_API_URL}/csrf/cookie`;
   useEffect(() => {
     const getCsrf = async () => {
       if (!csrf) {
-        const res = await fetch(url, {
-          responseType: 'text',
-          credentials: 'include'
-        });
-        if (res && res.ok) {
-          dispatch({ type: SET_CSRF, payload: await res.text() });
+        const payload = getSessionCookieValue('_csrf');
+        if (payload) {
+          dispatch({ type: SET_CSRF, payload });
+        } else {
+          const res = await fetch(url, {
+            responseType: 'text',
+            credentials: 'include'
+          });
+          if (res && res.ok) {
+            dispatch({ type: SET_CSRF, payload: await res.text() });
+          }
         }
       }
     };
@@ -168,7 +189,7 @@ const AppContextProvider = props => {
     if (csrf && userProfile && !memberProfiles) {
       dispatch({ type: UPDATE_PEOPLE_LOADING, payload: true });
       getMemberProfiles();
-      if (userProfile.role?.includes('ADMIN')) {
+      if (selectCanViewTerminatedMembers(state)) {
         getTerminatedMembers();
       }
     }
@@ -185,7 +206,7 @@ const AppContextProvider = props => {
         csrf
       ) {
         getAllCheckinsForAdmin(dispatch, csrf);
-      } else if (id && csrf) {
+      } else if (id && csrf && selectCanViewCheckinsPermission(state)) {
         getCheckins(id, pdlId, dispatch, csrf);
       }
     }
@@ -215,6 +236,26 @@ const AppContextProvider = props => {
   }, [csrf, skills]);
 
   useEffect(() => {
+    const getAllCertifications = async () => {
+      const res = await getCertifications(csrf);
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data && data.length > 0) {
+        dispatch({ type: UPDATE_CERTIFICATIONS, payload: data });
+      }
+    };
+    if (csrf && !certifications) {
+      getAllCertifications();
+    }
+  }, [csrf, certifications]);
+
+  useEffect(() => {
     const getRoles = async () => {
       const res = await getAllRoles(csrf);
       const data =
@@ -235,9 +276,9 @@ const AppContextProvider = props => {
   }, [csrf, roles]);
 
   useEffect(() => {
-    const getUserRoles = async () => {
+    const getMemberRoles = async () => {
       // make call to the API
-      let res = await getAllUserRoles(csrf);
+      let res = await getAllMemberRoles(csrf);
       return res.payload &&
         res.payload.data &&
         res.payload.status === 200 &&
@@ -246,12 +287,12 @@ const AppContextProvider = props => {
         : null;
     };
 
-    if (csrf && !userRoles) {
-      getUserRoles().then(userRoles => {
-        dispatch({ type: SET_USER_ROLES, payload: userRoles });
+    if (csrf && !memberRoles) {
+      getMemberRoles().then(memberRoles => {
+        dispatch({ type: SET_MEMBER_ROLES, payload: memberRoles });
       });
     }
-  }, [csrf, userRoles]);
+  }, [csrf, memberRoles]);
 
   const value = useMemo(() => {
     return { state, dispatch };

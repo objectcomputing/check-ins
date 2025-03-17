@@ -7,7 +7,13 @@ import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.Util;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+import com.objectcomputing.checkins.services.SlackSearchReplacement;
+import com.objectcomputing.checkins.services.slack.SlackSignature;
+
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.core.type.Argument;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -27,6 +33,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.time.Instant;
+import java.net.URLEncoder;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -34,11 +42,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.slacksearch", value = StringUtils.TRUE)
 class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
 
     @Inject
     @Client("/services/pulse-responses")
     protected HttpClient client;
+
+    @Inject
+    private CheckInsConfiguration configuration;
+
+    @Inject
+    private SlackSearchReplacement slackSearch;
+
+    @Inject
+    private SlackSignature slackSignature;
 
     private Map<String, MemberProfile> hierarchy;
 
@@ -76,8 +94,12 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = Stream.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText(), errors.get(2).get("message").asText()).sorted().collect(Collectors.toList());
-        assertEquals(3, errorList.size());
+        List<String> errorList = Stream.of(
+          errors.get(0).get("message").asText(),
+          errors.get(1).get("message").asText()
+        ).sorted().collect(Collectors.toList());
+
+        assertEquals(2, errorList.size());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -276,6 +298,22 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         LocalDate testDateTo = Util.MAX.toLocalDate();
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Set.of(pulseResponse), response.body());
+    }
+
+    @Test
+    void testAnonymousGetFindByfindBySubmissionDateBetween() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        PulseResponse pulseResponse = createADefaultAnonymousPulseResponse();
+
+        LocalDate testDateFrom = LocalDate.of(2019, 1, 1);
+        LocalDate testDateTo = Util.MAX.toLocalDate();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -496,6 +534,27 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
         assertEquals(request.getPath(), href);
     }
 
+    @Test
+    void testCreateAPulseResponseFromSlack() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        String slackId = "SLACK_ID_HI";
+        slackSearch.users.put(slackId, memberProfile.getWorkEmail());
+
+        final String rawBody = getSlackPulsePayload(slackId);
+
+        long currentTime = Instant.now().getEpochSecond();
+        String timestamp = String.valueOf(currentTime);
+
+        final HttpRequest request = HttpRequest.POST("/external", rawBody)
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .header("X-Slack-Signature", slackSignature.generate(timestamp, rawBody))
+        .header("X-Slack-Request-Timestamp", timestamp);
+
+        final HttpResponse response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
     private static PulseResponseCreateDTO createPulseResponseCreateDTO() {
         return createPulseResponseCreateDTO(UUID.randomUUID());
     }
@@ -522,5 +581,54 @@ class PulseResponseControllerTest extends TestContainersSuite implements MemberP
 
     private UUID id(String key) {
         return profile(key).getId();
+    }
+
+    private String getSlackPulsePayload(String slackId) {
+        return "payload=" +
+               URLEncoder.encode(String.format("""
+{
+  "type": "view_submission",
+  "user": {
+    "id": "%s"
+  },
+  "view": {
+    "id": "VNHU13V36",
+    "type": "modal",
+    "callback_id": "pulseSubmission",
+    "state": {
+      "values": {
+        "internalNumber": {
+          "internalScore": {
+            "selected_option": {
+              "type": "radio_buttons",
+              "value": "4"
+            }
+          }
+        },
+        "internalText": {
+          "internalFeelings": {
+            "type": "plain_text_input",
+            "value": "I am a robot."
+          }
+        },
+        "externalNumber": {
+          "externalScore": {
+            "selected_option": {
+              "type": "radio_buttons",
+              "value": "5"
+            }
+          }
+        },
+        "externalText": {
+          "externalFeelings": {
+            "type": "plain_text_input",
+            "value": "You are a robot."
+          }
+        }
+      }
+    }
+  }
+}
+""", slackId));
     }
 }

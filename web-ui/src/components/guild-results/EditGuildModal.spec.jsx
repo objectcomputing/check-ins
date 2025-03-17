@@ -20,7 +20,7 @@ const server = setupServer(
   })
 );
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -34,12 +34,14 @@ const testGuild = {
   guildMembers: [
     { id: 125, name: 'Guild Member' },
     { id: 126, name: 'Other Member' }
-  ]
+  ],
+  active: true
 };
 
 const emptyGuild = {
   name: 'Test Guild',
-  description: 'A guild used for testing.'
+  description: 'A guild used for testing.',
+  active: true
 };
 
 const currentUserProfile = {
@@ -57,17 +59,17 @@ const initialState = {
       name: 'Current User',
       firstName: 'Current',
       lastName: 'User',
+      id: currentUserProfile.id,
       role: ['MEMBER'],
       imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
-      memberProfile: currentUserProfile
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
     checkins: [],
     guilds: [testGuild, emptyGuild],
     teams: [],
     skills: [],
     roles: [],
-    userRoles: [],
+    memberRoles: [],
     memberSkills: [],
     index: 0,
     memberProfiles: [

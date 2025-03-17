@@ -3,9 +3,12 @@ import PrivateNote from './PrivateNote';
 import { AppContextProvider } from '../../context/AppContext';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
+import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
 
 const mockMemberId = '912834091823';
 const mockCheckinId = '837465917381';
+const mockUserId = '8714123864231';
 
 const history = createMemoryHistory(
   `/checkins/${mockMemberId}/${mockCheckinId}`
@@ -29,15 +32,18 @@ const checkin = {
 
 const initialState = {
   state: {
+    csrf: 'fake-csrf',
     userProfile: {
-      name: 'holmes',
-      memberProfile: {
-        id: mockMemberId,
-        pdlId: '',
-        title: 'Tester',
-        workEmail: 'test@tester.com'
-      },
-      role: ['MEMBER'],
+      name: 'joe pdl',
+      id: mockUserId,
+      role: ['PDL'],
+      permissions: [
+        {
+          id: 1,
+          permission: 'CAN_VIEW_PRIVATE_NOTE',
+          description: ''
+        }
+      ],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
@@ -45,17 +51,41 @@ const initialState = {
       {
         name: 'holmes',
         id: mockMemberId,
-        pdlId: '',
+        pdlId: mockUserId,
         title: 'Tester',
         workEmail: 'test@tester.com'
+      },
+      {
+        name: 'joe pdl',
+        id: mockUserId,
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'joepdl@tester.com'
       }
     ],
     checkins: [checkin]
   }
 };
 
-it('renders correctly', () => {
-  snapshot(
+const notes = [
+  {
+    id: 'note-1',
+    description: 'Some kind of note...'
+  }
+];
+
+const server = setupServer(
+  http.get(`http://localhost:8080/services/private-notes?checkinid=${checkin.id}`, () => {
+    return HttpResponse.json(notes);
+  }),
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+it('renders correctly', async () => {
+  await waitForSnapshot('tiny-mce-checkin-private-notes',
     <Router history={history}>
       <AppContextProvider value={initialState}>
         <PrivateNote

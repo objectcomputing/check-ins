@@ -15,6 +15,7 @@ public class MemberProfileTestUtil {
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
         dto.setEmployeeId("TestEmployeeId");
+        dto.setWorkEmail("testemployee@example.com");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
         dto.setLastSeen(LocalDate.now());
@@ -30,6 +31,7 @@ public class MemberProfileTestUtil {
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
         dto.setEmployeeId("TestEmployeeId");
+        dto.setWorkEmail("testemployee@example.com");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
         dto.setLastSeen(LocalDate.now());
@@ -49,7 +51,7 @@ public class MemberProfileTestUtil {
                 LocalDate.of(2019, 1, 1),
                 "TestBio" + seed,
                 null,
-                null,null, null, null, LocalDate.now());
+                null,null, null, null, LocalDate.now(), false);
     }
 
     public static MemberProfile mkMemberProfile() {

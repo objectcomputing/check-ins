@@ -1,99 +1,101 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
+import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
+import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.reviews.ReviewAssignment;
+import com.objectcomputing.checkins.services.reviews.ReviewAssignmentRepository;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriod;
 import com.objectcomputing.checkins.services.reviews.ReviewPeriodRepository;
+import com.objectcomputing.checkins.services.EmailHelper;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
+import io.micronaut.runtime.server.EmbeddedServer;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.LocalDate;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FeedbackRequestTest extends TestContainersSuite {
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
+class FeedbackRequestTest extends TestContainersSuite
+                          implements FeedbackRequestFixture, MemberProfileFixture, ReviewPeriodFixture, ReviewAssignmentFixture, RoleFixture {
+    @Inject
+    private CurrentUserServicesReplacement currentUserServices;
 
-    private FeedbackRequestRepository feedbackReqRepository;
-
-    private CurrentUserServices currentUserServices;
-
-    private MemberProfileServices memberProfileServices;
-
-    private ReviewPeriodRepository reviewPeriodRepository;
-
-    private EmailSender emailSender;
-
+    @Inject
     private FeedbackRequestServicesImpl feedbackRequestServices;
 
+    @Inject
+    @Named(MailJetFactory.MJML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
+
+    @Inject
+    CheckInsConfiguration checkInsConfiguration;
+
     @BeforeEach
-    @Tag("mocked")
     void setUp() {
-
-        feedbackReqRepository = Mockito.mock(FeedbackRequestRepository.class);
-        currentUserServices = Mockito.mock(CurrentUserServices.class);
-        memberProfileServices = Mockito.mock(MemberProfileServices.class);
-        reviewPeriodRepository = Mockito.mock(ReviewPeriodRepository.class);
-        emailSender = Mockito.mock(EmailSender.class);
-
-
-        feedbackRequestServices = new FeedbackRequestServicesImpl(feedbackReqRepository, currentUserServices,
-                memberProfileServices, reviewPeriodRepository, emailSender, "DNC", "http://localhost:8080");
+        createAndAssignRoles();
+        emailSender.reset();
     }
 
     @Test
-    @Tag("mocked")
     void testUpdateFeedbackRequest() {
+        MemberProfile creator = createADefaultMemberProfile();
+        MemberProfile recipient = createASecondDefaultMemberProfile();
+        MemberProfile requestee = createAThirdDefaultMemberProfile();
+        FeedbackRequest feedbackRequest =
+            saveFeedbackRequest(creator, requestee, recipient);
+
         UUID feedbackRequestId = UUID.randomUUID();
         UUID creatorId = UUID.randomUUID();
         UUID recipientId = UUID.randomUUID();
         UUID requesteeId = UUID.randomUUID();
 
-        FeedbackRequest feedbackRequest = new FeedbackRequest();
-        feedbackRequest.setId(feedbackRequestId);
-        feedbackRequest.setCreatorId(creatorId);
-        feedbackRequest.setRecipientId(recipientId);
-        feedbackRequest.setRequesteeId(requesteeId);
-        feedbackRequest.setSendDate(LocalDate.now());
-        feedbackRequest.setStatus("sent");
+        // We need the current user to be logged in and admin.
+        currentUserServices.currentUser = creator;
+        assignAdminRole(creator);
 
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
         FeedbackRequestUpdateDTO updateDTO = new FeedbackRequestUpdateDTO();
         updateDTO.setId(feedbackRequest.getId());
         updateDTO.setDueDate(LocalDate.now().plusDays(7));
         updateDTO.setStatus("submitted");
         updateDTO.setRecipientId(feedbackRequest.getRecipientId());
-
-        when(feedbackReqRepository.findById(feedbackRequest.getId())).thenReturn(Optional.of(feedbackRequest));
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
-        when(currentUserServices.isAdmin()).thenReturn(true);
-        when(feedbackReqRepository.update(any(FeedbackRequest.class))).thenReturn(feedbackRequest);
-        when(memberProfileServices.getById(any(UUID.class))).thenReturn(new MemberProfile());
 
         FeedbackRequest updatedFeedbackRequest = feedbackRequestServices.update(updateDTO);
 
         assertNotNull(updatedFeedbackRequest);
         assertEquals("submitted", updatedFeedbackRequest.getStatus());
-        verify(feedbackReqRepository, times(1)).update(any(FeedbackRequest.class));
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
-    @Tag("mocked")
     void testUpdateFeedbackRequest_NotFound() {
+        MemberProfile creator = createADefaultMemberProfile();
         UUID feedbackRequestId = UUID.randomUUID();
-        UUID creatorId = UUID.randomUUID();
+        UUID creatorId = creator.getId();
         UUID recipientId = UUID.randomUUID();
         UUID requesteeId = UUID.randomUUID();
 
@@ -108,28 +110,29 @@ class FeedbackRequestTest extends TestContainersSuite {
         FeedbackRequestUpdateDTO updateDTO = new FeedbackRequestUpdateDTO();
         updateDTO.setId(feedbackRequest.getId());
 
-        when(feedbackReqRepository.findById(feedbackRequest.getId())).thenReturn(Optional.empty());
+        // We need the creator to be logged in.
+        currentUserServices.currentUser = creator;
+        assignMemberRole(creator);
 
         assertThrows(NotFoundException.class, () -> feedbackRequestServices.update(updateDTO));
-        verify(feedbackReqRepository, never()).update(any(FeedbackRequest.class));
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
-    @Tag("mocked")
     void testUpdateFeedbackRequest_Unauthorized() {
+        MemberProfile creator = createADefaultMemberProfile();
+        MemberProfile recipient = createASecondDefaultMemberProfile();
+        MemberProfile requestee = createAThirdDefaultMemberProfile();
+        FeedbackRequest feedbackRequest =
+            saveFeedbackRequest(creator, requestee, recipient);
+
         UUID feedbackRequestId = UUID.randomUUID();
         UUID creatorId = UUID.randomUUID();
         UUID recipientId = UUID.randomUUID();
         UUID requesteeId = UUID.randomUUID();
 
-        FeedbackRequest feedbackRequest = new FeedbackRequest();
-        feedbackRequest.setId(feedbackRequestId);
-        feedbackRequest.setCreatorId(creatorId);
-        feedbackRequest.setRecipientId(recipientId);
-        feedbackRequest.setRequesteeId(requesteeId);
-        feedbackRequest.setSendDate(LocalDate.now());
-        feedbackRequest.setStatus("sent");
+        // We need the current user to be logged in and *not* admin.
+        currentUserServices.currentUser = creator;
 
         FeedbackRequestUpdateDTO updateDTO = new FeedbackRequestUpdateDTO();
         updateDTO.setId(feedbackRequest.getId());
@@ -137,186 +140,112 @@ class FeedbackRequestTest extends TestContainersSuite {
         updateDTO.setStatus("submitted");
         updateDTO.setRecipientId(feedbackRequest.getRecipientId());
 
-        MemberProfile requestee = new MemberProfile();
-        requestee.setId(requesteeId);
-
-        MemberProfile currentMemberProfile = new MemberProfile();
-        currentMemberProfile.setId(UUID.randomUUID());
-        when(feedbackReqRepository.findById(feedbackRequest.getId())).thenReturn(Optional.of(feedbackRequest));
-        when(currentUserServices.getCurrentUser()).thenReturn(currentMemberProfile);
-        when(currentUserServices.isAdmin()).thenReturn(false);
-        when(memberProfileServices.getById(requesteeId)).thenReturn(requestee);
-
         assertThrows(PermissionException.class, () -> feedbackRequestServices.update(updateDTO));
-        verify(feedbackReqRepository, never()).update(any(FeedbackRequest.class));
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
-    @Tag("mocked")
-    void testSendSelfReviewCompletionEmail() {
-        UUID creatorId = UUID.randomUUID();
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
+    void testSendSelfReviewCompletionEmailToReviewers() {
+        MemberProfile pdlProfile = createASecondDefaultMemberProfile();
+        MemberProfile supervisorProfile = createAThirdDefaultMemberProfile();
+        MemberProfile currentUser =
+            createAProfileWithSupervisorAndPDL(supervisorProfile, pdlProfile);
 
-        MemberProfile pdlProfile = new MemberProfile();
-        pdlProfile.setId(UUID.randomUUID());
-        pdlProfile.setFirstName("PDL");
-        pdlProfile.setLastName("Profile");
-        pdlProfile.setWorkEmail("pdl@example.com");
+        MemberProfile reviewer01 = createADefaultMemberProfile();
+        MemberProfile reviewer02 = createAnUnrelatedUser();
 
-        MemberProfile supervisorProfile = new MemberProfile();
-        supervisorProfile.setId(UUID.randomUUID());
-        supervisorProfile.setFirstName("Supervisor");
-        supervisorProfile.setLastName("Profile");
-        supervisorProfile.setWorkEmail("supervisor@example.com");
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
 
-        currentUser.setPdlId(pdlProfile.getId());
-        currentUser.setSupervisorid(supervisorProfile.getId());
+        FeedbackRequest feedbackRequest =
+            saveFeedbackRequest(supervisorProfile, currentUser,
+                                pdlProfile, reviewPeriod);
 
-        ReviewPeriod reviewPeriod = new ReviewPeriod();
-        reviewPeriod.setName("Self-Review Test");
+        currentUserServices.currentUser = currentUser;
 
-        String firstName = "firstName";
-        String lastName = "lastName";
+        Set<ReviewAssignment> reviewAssignmentsSet = new HashSet<ReviewAssignment>();
+        reviewAssignmentsSet.add(
+            createAReviewAssignmentBetweenMembers(currentUser, reviewer01, reviewPeriod, true));
+        reviewAssignmentsSet.add(
+            createAReviewAssignmentBetweenMembers(currentUser, reviewer02, reviewPeriod, true));
 
-        currentUser.setFirstName(firstName);
-        currentUser.setLastName(lastName);
+        feedbackRequestServices.sendSelfReviewCompletionEmailToReviewers(feedbackRequest, reviewAssignmentsSet);
 
-        UUID reviewPeriodId = UUID.randomUUID();
-        FeedbackRequest feedbackRequest = new FeedbackRequest();
-        feedbackRequest.setReviewPeriodId(reviewPeriodId);
-
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
-        when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
-        when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
-        when(reviewPeriodRepository.findById(reviewPeriodId)).thenReturn(Optional.of(reviewPeriod));
-
-        feedbackRequestServices.sendSelfReviewCompletionEmail(feedbackRequest);
-
-        verify(emailSender, times(1)).sendEmail(any(), any(),
-                eq("firstName lastName has finished their self-review for Self-Review Test."),
-                eq("Self-review has been completed by firstName lastName for Self-Review Test.<br>PDL: PDL Profile<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner."),
-                eq("supervisor@example.com"), eq("pdl@example.com"));
+        // This should equal the number of review assignments.
+        // The order in which emails are sent is random.  We will not be
+        // checking the recipient.
+        assertEquals(2, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  String.format("%s %s has finished their self-review for %s.", currentUser.getFirstName(), currentUser.getLastName(), reviewPeriod.getName()),
+                                  String.format("%s %s has completed their self-review", currentUser.getFirstName(), currentUser.getLastName()),
+                                  null, emailSender.events.getFirst());
     }
 
     @Test
-    @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_MissingPdl() {
-        UUID creatorId = UUID.randomUUID();
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
+    void testSendSelfReviewCompletionEmailToSupervisor() {
+        MemberProfile pdlProfile = createASecondDefaultMemberProfile();
+        MemberProfile supervisorProfile = createAThirdDefaultMemberProfile();
+        MemberProfile currentUser =
+            createAProfileWithSupervisorAndPDL(supervisorProfile, pdlProfile);
 
-        MemberProfile supervisorProfile = new MemberProfile();
-        supervisorProfile.setId(UUID.randomUUID());
-        supervisorProfile.setFirstName("Supervisor");
-        supervisorProfile.setLastName("Profile");
-        supervisorProfile.setWorkEmail("supervisor@example.com");
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
 
-        currentUser.setSupervisorid(supervisorProfile.getId());
+        FeedbackRequest feedbackRequest =
+            saveFeedbackRequest(supervisorProfile, currentUser,
+                                pdlProfile, reviewPeriod);
 
-        String firstName = "firstName";
-        String lastName = "lastName";
+        currentUserServices.currentUser = currentUser;
 
-        currentUser.setFirstName(firstName);
-        currentUser.setLastName(lastName);
+        feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
 
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
-        when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
-
-        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
-
-        verify(emailSender, times(1)).sendEmail(any(), any(),
-                eq("firstName lastName has finished their self-review."),
-                eq("Self-review has been completed by firstName lastName.<br>Supervisor: Supervisor Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner."),
-                eq("supervisor@example.com"));
+        assertEquals(1, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  String.format("%s %s has finished their self-review for %s.", currentUser.getFirstName(), currentUser.getLastName(), reviewPeriod.getName()),
+                                  String.format("%s %s has completed their self-review", currentUser.getFirstName(), currentUser.getLastName()),
+                                  supervisorProfile.getWorkEmail(),
+                                  emailSender.events.getFirst());
     }
 
     @Test
-    @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_MissingSupervisor() {
-        UUID creatorId = UUID.randomUUID();
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
+    void testSendSelfReviewCompletionEmailToSupervisor_MissingSupervisor() {
+        MemberProfile pdlProfile = createASecondDefaultMemberProfile();
+        MemberProfile otherProfile = createAThirdDefaultMemberProfile();
+        MemberProfile currentUser = createADefaultMemberProfile();
 
-        MemberProfile pdlProfile = new MemberProfile();
-        pdlProfile.setId(UUID.randomUUID());
-        pdlProfile.setFirstName("PDL");
-        pdlProfile.setLastName("Profile");
-        pdlProfile.setWorkEmail("pdl@example.com");
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
 
-        currentUser.setPdlId(pdlProfile.getId());
+        FeedbackRequest feedbackRequest =
+            saveFeedbackRequest(otherProfile, currentUser,
+                                pdlProfile, reviewPeriod);
 
-        String firstName = "firstName";
-        String lastName = "lastName";
+        currentUserServices.currentUser = currentUser;
 
-        currentUser.setFirstName(firstName);
-        currentUser.setLastName(lastName);
-
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
-        when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
-
-        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
-
-        verify(emailSender, times(1)).sendEmail(any(), any(),
-                eq("firstName lastName has finished their self-review."),
-                eq("Self-review has been completed by firstName lastName.<br>PDL: PDL Profile<br><br>It is now your turn in their review process. Please complete your portion in a timely manner."),
-                eq("pdl@example.com"));
+        feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(feedbackRequest);
+        assertEquals(0, emailSender.events.size());
     }
 
     @Test
-    @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_MissingPdlAndSupervisor() {
-        UUID creatorId = UUID.randomUUID();
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
+    void testSendSelfReviewCompletionEmailToSupervisor_EmailSenderException() {
+        MemberProfile pdlProfile = createASecondDefaultMemberProfile();
+        MemberProfile supervisorProfile = createAThirdDefaultMemberProfile();
+        MemberProfile currentUser =
+            createAProfileWithSupervisorAndPDL(supervisorProfile, pdlProfile);
 
-        String firstName = "firstName";
-        String lastName = "lastName";
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod();
 
-        currentUser.setFirstName(firstName);
-        currentUser.setLastName(lastName);
+        FeedbackRequest feedbackRequest =
+            saveFeedbackRequest(supervisorProfile, currentUser,
+                                pdlProfile, reviewPeriod);
 
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
+        currentUserServices.currentUser = currentUser;
 
-        feedbackRequestServices.sendSelfReviewCompletionEmail(new FeedbackRequest());
+        emailSender.setException(new RuntimeException("Email sending failed"));
 
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
-    }
-
-    @Test
-    @Tag("mocked")
-    void testSendSelfReviewCompletionEmail_EmailSenderException() {
-        UUID creatorId = UUID.randomUUID();
-        MemberProfile currentUser = new MemberProfile();
-        currentUser.setId(creatorId);
-
-        MemberProfile pdlProfile = new MemberProfile();
-        pdlProfile.setId(UUID.randomUUID());
-        pdlProfile.setFirstName("PDL");
-        pdlProfile.setLastName("Profile");
-        pdlProfile.setWorkEmail("pdl@example.com");
-
-        MemberProfile supervisorProfile = new MemberProfile();
-        supervisorProfile.setId(UUID.randomUUID());
-        supervisorProfile.setFirstName("Supervisor");
-        supervisorProfile.setLastName("Profile");
-        supervisorProfile.setWorkEmail("supervisor@example.com");
-
-        currentUser.setPdlId(pdlProfile.getId());
-        currentUser.setSupervisorid(supervisorProfile.getId());
-
-        String firstName = "firstName";
-        String lastName = "lastName";
-
-        currentUser.setFirstName(firstName);
-        currentUser.setLastName(lastName);
-
-        when(currentUserServices.getCurrentUser()).thenReturn(currentUser);
-        when(memberProfileServices.getById(pdlProfile.getId())).thenReturn(pdlProfile);
-        when(memberProfileServices.getById(supervisorProfile.getId())).thenReturn(supervisorProfile);
-        doThrow(new RuntimeException("Email sending failed")).when(emailSender).sendEmail(any(), any(), any(), any(), any(), any());
-
-        verify(emailSender, never()).sendEmail(any(), any(), any(), any(), any());
+        assertDoesNotThrow(() -> feedbackRequestServices.sendSelfReviewCompletionEmailToSupervisor(feedbackRequest));
+        assertEquals(1, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  String.format("%s %s has finished their self-review for %s.", currentUser.getFirstName(), currentUser.getLastName(), reviewPeriod.getName()),
+                                  String.format("%s %s has completed their self-review", currentUser.getFirstName(), currentUser.getLastName()),
+                                  supervisorProfile.getWorkEmail(),
+                                  emailSender.events.getFirst());
     }
 }

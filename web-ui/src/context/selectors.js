@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 export const selectMemberProfiles = state => state.memberProfiles || [];
-export const selectTerminatedMembers = state => state.terminatedMembers;
+export const selectTerminatedMembers = state => state.terminatedMembers || [];
 export const selectMemberSkills = state => state.memberSkills || [];
 export const selectSkills = state => state.skills || [];
 export const selectTeamMembers = state => state.teamMembers;
@@ -9,19 +9,21 @@ export const selectUserProfile = state => state.userProfile || {};
 export const selectCheckins = state => state.checkins || [];
 export const selectCsrfToken = state => state.csrf;
 export const selectRoles = state => state.roles || [];
-export const selectUserRoles = state => state.userRoles || [];
+export const selectMemberRoles = state => state.memberRoles || [];
 export const selectTeams = state => state.teams || [];
 export const selectGuilds = state => state.guilds || [];
 export const selectLoading = state => state.loading;
 export const selectReviewPeriods = state => state.reviewPeriods;
 export const selectPermissions = state => state.permissions;
 
+export const noPermission = 'You do not have permission to view this page.';
+
 const hasPermission = permissionName =>
   createSelector(
     selectUserProfile,
     userProfile =>
       userProfile &&
-      userProfile.role &&
+      userProfile.permissions &&
       userProfile.permissions.some(p => p?.permission?.includes(permissionName))
   );
 
@@ -36,8 +38,9 @@ export const selectMemberProfilesLoading = createSelector(
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
-  userProfile =>
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {}
+  selectMemberProfiles,
+  (userProfile, memberProfiles) =>
+    memberProfiles.find(current => current?.id === userProfile?.id) || {}
 );
 
 export const selectIsAdmin = createSelector(
@@ -46,8 +49,17 @@ export const selectIsAdmin = createSelector(
     userProfile && userProfile.role && userProfile.role.includes('ADMIN')
 );
 
+export const selectCurrentUserRoles = createSelector(
+  selectUserProfile,
+  userProfile => userProfile.role || []
+);
+
 export const selectHasPermissionAssignmentPermission = hasPermission(
   'CAN_ASSIGN_ROLE_PERMISSIONS'
+);
+
+export const selectHasViewPermissionPermission = hasPermission(
+  'CAN_VIEW_ROLE_PERMISSIONS'
 );
 
 export const selectHasReportPermission = hasPermission('REPORT');
@@ -128,6 +140,110 @@ export const selectHasUpdateReviewPeriodPermission = hasPermission(
   'CAN_UPDATE_REVIEW_PERIOD'
 );
 
+export const selectHasMeritReportPermission = hasPermission(
+  'CAN_CREATE_MERIT_REPORT'
+);
+
+export const selectHasUploadHoursPermission = hasPermission('CAN_UPLOAD_HOURS');
+
+export const selectHasEarnedCertificationsPermission = hasPermission(
+  'CAN_MANAGE_EARNED_CERTIFICATIONS'
+);
+
+export const selectHasVolunteeringEventsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_EVENTS'
+);
+
+export const selectHasVolunteeringOrganizationsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS'
+);
+
+export const selectHasVolunteeringRelationshipsPermission = hasPermission(
+  'CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS'
+);
+
+export const selectCanEditMemberRolesPermission = hasPermission(
+  'CAN_EDIT_MEMBER_ROLES'
+);
+
+export const selectHasCreateFeedbackPermission = hasPermission(
+  'CAN_CREATE_FEEDBACK_REQUEST'
+);
+
+export const selectHasAdministerKudosPermission = hasPermission(
+  'CAN_ADMINISTER_KUDOS'
+);
+
+export const selectHasCreateKudosPermission = hasPermission('CAN_CREATE_KUDOS');
+
+export const selectHasDeleteMembersPermission = hasPermission(
+  'CAN_DELETE_ORGANIZATION_MEMBERS'
+);
+
+export const selectHasCreateMembersPermission = hasPermission(
+  'CAN_CREATE_ORGANIZATION_MEMBERS'
+);
+
+export const selectHasImpersonateMembersPermission = hasPermission(
+  'CAN_IMPERSONATE_MEMBERS'
+);
+
+export const selectHasViewSettingsPermission =
+  hasPermission('CAN_VIEW_SETTINGS');
+
+export const selectHasAdministerSettingsPermission = hasPermission(
+  'CAN_ADMINISTER_SETTINGS'
+);
+
+export const selectHasSendEmailPermission = hasPermission('CAN_SEND_EMAIL');
+
+export const selectCanViewCheckinsPermission =
+  hasPermission('CAN_VIEW_CHECKINS');
+
+export const selectCanUpdateCheckinsPermission = hasPermission(
+  'CAN_UPDATE_CHECKINS'
+);
+
+export const selectCanCreateCheckinsPermission = hasPermission(
+  'CAN_CREATE_CHECKINS'
+);
+
+export const selectCanUpdateAllCheckinsPermission = hasPermission(
+  'CAN_UPDATE_ALL_CHECKINS'
+);
+
+export const selectCanEditSkills = hasPermission('CAN_EDIT_SKILLS');
+
+export const selectCanViewPrivateNotesPermission = hasPermission(
+  'CAN_VIEW_PRIVATE_NOTE'
+);
+
+export const selectCanCreatePrivateNotesPermission = hasPermission(
+  'CAN_CREATE_PRIVATE_NOTE'
+);
+
+export const selectCanUpdatePrivateNotesPermission = hasPermission(
+  'CAN_UPDATE_PRIVATE_NOTE'
+);
+
+export const selectCanAdministerCheckinDocuments = hasPermission(
+  'CAN_ADMINISTER_CHECKIN_DOCUMENTS'
+);
+
+export const selectCanAdministerFeedbackRequests = hasPermission(
+  'CAN_ADMINISTER_FEEDBACK_REQUEST'
+);
+
+export const selectCanEditAllOrganizationMembers = hasPermission(
+  'CAN_EDIT_ALL_ORGANIZATION_MEMBERS'
+);
+
+export const selectCanViewTerminatedMembers = createSelector(
+  selectCanEditAllOrganizationMembers,
+  hasPermission('CAN_VIEW_TERMINATED_MEMBERS'),
+  (canEdit, canView) => canEdit || canView
+);
+
 export const selectIsPDL = createSelector(
   selectUserProfile,
   userProfile =>
@@ -136,7 +252,7 @@ export const selectIsPDL = createSelector(
 
 export const selectCurrentUserId = createSelector(
   selectCurrentUser,
-  profile => profile.id
+  profile => profile?.id
 );
 
 export const selectOrderedSkills = createSelector(selectSkills, skills =>
@@ -213,6 +329,14 @@ export const selectProfile = createSelector(
   (profileMap, profileId) => profileMap[profileId]
 );
 
+export const selectActiveOrInactiveProfile = createSelector(
+  selectProfileMap,
+  selectProfileMapForTerminatedMembers,
+  (state, profileId) => profileId,
+  (profileMap, termedProfileMap, profileId) =>
+    profileMap[profileId] || termedProfileMap[profileId]
+);
+
 export const selectSkill = createSelector(
   selectSkills,
   (state, skillId) => skillId,
@@ -233,12 +357,12 @@ export const selectPdlRoles = createSelector(selectRoles, roles =>
   roles?.filter(role => role.role?.includes('PDL'))
 );
 
-export const selectTerminatedUserRoles = createSelector(
-  selectUserRoles,
+export const selectTerminatedMemberRoles = createSelector(
+  selectMemberRoles,
   selectTerminatedMemberIds,
-  (userRoles, memberIds) => {
-    return userRoles?.filter(userRole =>
-      memberIds.includes(userRole.memberRoleId.memberId)
+  (memberRoles, memberIds) => {
+    return memberRoles?.filter(memberRole =>
+      memberIds.includes(memberRole.memberRoleId.memberId)
     );
   }
 );
@@ -253,16 +377,17 @@ export const selectTerminatedMembersAsOfDate = createSelector(
 );
 
 export const selectTerminatedMembersWithPDLRole = createSelector(
-  selectTerminatedUserRoles,
+  selectTerminatedMemberRoles,
   selectPdlRoles,
   selectProfileMapForTerminatedMembers,
-  (userRoles, pdlRoles, terminatedMembersProfileMap) => {
-    const terminatedPDLs = userRoles?.filter(userRole =>
-      pdlRoles.find(role => role.id === userRole?.memberRoleId?.roleId)
+  (memberRoles, pdlRoles, terminatedMembersProfileMap) => {
+    const terminatedPDLs = memberRoles?.filter(memberRole =>
+      pdlRoles.find(role => role.id === memberRole?.memberRoleId?.roleId)
     );
     /** @type {MemberProfile[]} */
     const terminatedMembersWithPDLRole = terminatedPDLs?.map(
-      userRole => terminatedMembersProfileMap[userRole?.memberRoleId?.memberId]
+      memberRole =>
+        terminatedMembersProfileMap[memberRole?.memberRoleId?.memberId]
     );
     return terminatedMembersWithPDLRole;
   }
@@ -280,48 +405,56 @@ export const selectTerminatedMembersAsOfDateWithPDLRole = createSelector(
   }
 );
 
-export const selectCurrentUserRoles = createSelector(
-  selectUserRoles,
+export const selectActiveMemberRoles = createSelector(
+  selectMemberRoles,
   selectCurrentMemberIds,
-  (userRoles, memberIds) =>
-    userRoles?.filter(userRole =>
-      memberIds.includes(userRole.memberRoleId.memberId)
+  (memberRoles, memberIds) =>
+    memberRoles?.filter(memberRole =>
+      memberIds.includes(memberRole.memberRoleId.memberId)
     )
 );
 
-export const selectMappedUserRoles = createSelector(
-  selectUserRoles,
+export const selectMappedMemberRoles = createSelector(
+  selectMemberRoles,
   selectRoles,
-  (userRoles, roles) => {
-    const mappedUserRoles = {};
-    userRoles.forEach(userRole => {
-      const memberId = userRole.memberRoleId.memberId;
-      const role = roles.find(role => role.id === userRole.memberRoleId.roleId);
-      if (!(memberId in mappedUserRoles)) {
-        mappedUserRoles[memberId] = new Set();
+  (memberRoles, roles) => {
+    const mappedMemberRoles = {};
+    memberRoles.forEach(memberRole => {
+      const memberId = memberRole.memberRoleId.memberId;
+      const role = roles.find(
+        role => role.id === memberRole.memberRoleId.roleId
+      );
+      if (!(memberId in mappedMemberRoles)) {
+        mappedMemberRoles[memberId] = new Set();
       }
-      mappedUserRoles[memberId].add(role.role);
+      mappedMemberRoles[memberId].add(role.role);
     });
-    return mappedUserRoles;
+    return mappedMemberRoles;
   }
 );
 
 export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
-  selectCurrentUserRoles,
-  (memberProfileMap, roles, userRoles) =>
-    userRoles
+  selectActiveMemberRoles,
+  (memberProfileMap, roles, memberRoles) =>
+    memberRoles
       ?.filter(
-        userRole =>
-          roles.find(role => role.id === userRole?.memberRoleId?.roleId) !==
+        memberRole =>
+          roles.find(role => role.id === memberRole?.memberRoleId?.roleId) !==
           undefined
       )
-      ?.map(userRole =>
-        userRole?.memberRoleId?.memberId in memberProfileMap
-          ? memberProfileMap[userRole?.memberRoleId?.memberId]
+      ?.map(memberRole =>
+        memberRole?.memberRoleId?.memberId in memberProfileMap
+          ? memberProfileMap[memberRole?.memberRoleId?.memberId]
           : {}
       )
+);
+
+export const selectOrderedCurrentMemberProfiles = createSelector(
+  selectCurrentMembers,
+  mappedMemberProfiles =>
+    mappedMemberProfiles?.sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectOrderedPdls = createSelector(selectMappedPdls, mappedPdls =>
@@ -618,12 +751,24 @@ export const selectNormalizedTeams = createSelector(
     })
 );
 
+export const selectActiveTeams = createSelector(
+  selectTeams,
+  (teams, searchText) => teams?.filter(team => team.active)
+);
+
+export const selectActiveGuilds = createSelector(
+  selectGuilds,
+  (guilds, searchText) => guilds?.filter(guild => guild.active)
+);
+
 export const selectMyGuilds = createSelector(
   selectCurrentUserId,
   selectGuilds,
   (id, guilds) =>
-    guilds?.filter(guild =>
-      guild.guildMembers?.some(member => member.memberId === id)
+    guilds?.filter(
+      guild =>
+        guild.active &&
+        guild.guildMembers?.some(member => member.memberId === id)
     )
 );
 
@@ -631,8 +776,9 @@ export const selectMyTeams = createSelector(
   selectCurrentUserId,
   selectTeams,
   (id, teams) =>
-    teams?.filter(team =>
-      team.teamMembers?.some(member => member.memberId === id)
+    teams?.filter(
+      team =>
+        team.active && team.teamMembers?.some(member => member.memberId === id)
     )
 );
 

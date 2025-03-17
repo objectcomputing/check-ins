@@ -1,11 +1,17 @@
 package com.objectcomputing.checkins.services.settings;
 
-import com.objectcomputing.checkins.logging.RequestLoggingInterceptor;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
@@ -15,8 +21,6 @@ import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
@@ -28,7 +32,6 @@ import java.util.UUID;
 @Tag(name = "settings")
 @Validated
 public class SettingsController {
-    private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
     public static final String PATH = "/services/settings";
 
     private final SettingsServices settingsServices;
@@ -46,7 +49,6 @@ public class SettingsController {
     @Get("/")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingsResponseDTO> findAllSettings() {
-        LOG.info("In SettingsController.findAllSettings");
         return settingsServices.findAllSettings().stream()
                 .map(this::fromEntity).toList();
     }
@@ -72,8 +74,6 @@ public class SettingsController {
     @Get("/options")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<SettingOption> getOptions() {
-
-        LOG.info("In SettingsController.getOptions()");
         return SettingOption.getOptions();
     }
 
@@ -134,6 +134,7 @@ public class SettingsController {
         dto.setDescription(option.getDescription());
         dto.setCategory(option.getCategory());
         dto.setType(option.getType());
+        dto.setValues(option.getValues());
         dto.setValue(entity.getValue());
         return dto;
     }

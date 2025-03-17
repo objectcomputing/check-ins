@@ -1,7 +1,8 @@
 package com.objectcomputing.checkins.services.guild.member;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
@@ -9,7 +10,9 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -18,37 +21,39 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class GuildMemberControllerTest extends TestContainersSuite implements GuildFixture, MemberProfileFixture, RoleFixture, GuildMemberFixture {
 
     @Inject
     @Client("/services/guilds/members")
     HttpClient client;
 
-    @Mock
-    private EmailSender emailSender = mock(EmailSender.class);
-
     @Inject
-    private GuildMemberServicesImpl guildMemberServices;
+    @Named(MailJetFactory.HTML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(emailSender);
-        guildMemberServices.setEmailSender(emailSender);
+        emailSender.reset();
     }
 
     @Test
@@ -65,10 +70,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         client.toBlocking().exchange(request, GuildMember.class);
 
-        verify(emailSender).sendEmail(null, null,
-                "Membership Changes have been made to the " +guild.getName()+" guild",
-                "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
-                "nobody@objectcomputing.com"
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the " + guild.getName() +" guild", "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", "nobody@objectcomputing.com"),
+                emailSender.events.getFirst()
         );
     }
 
@@ -85,10 +90,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         client.toBlocking().exchange(request, GuildMember.class);
 
-        verify(emailSender).sendEmail(null, null,
-                "Membership changes have been made to the " +guild.getName()+" guild",
-                "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
-                "nobody@objectcomputing.com"
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Membership changes have been made to the " + guild.getName() +" guild", "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", "nobody@objectcomputing.com"),
+                emailSender.events.getFirst()
         );
     }
 
@@ -107,11 +112,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         client.toBlocking().exchange(request, GuildMember.class);
 
-        verify(emailSender).sendEmail(null, null,
-                "Membership changes have been made to the " +guild.getName()+" guild",
-                "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
-                "nobody@objectcomputing.com",
-                "billm@objectcomputing.com"
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Membership changes have been made to the " + guild.getName() +" guild", "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", "nobody@objectcomputing.com,billm@objectcomputing.com"),
+                emailSender.events.getFirst()
         );
     }
 
@@ -129,11 +133,11 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
                 DELETE(String.format("/%s", leavingGuildMember.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
 
         client.toBlocking().exchange(request, GuildMember.class);
-        // only sends email to the guild lead that is still in the guild
-        verify(emailSender).sendEmail(null, null,
-                "Membership Changes have been made to the " +guild.getName()+" guild",
-                "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
-                "nobody@objectcomputing.com"
+
+        assertEquals(1, emailSender.events.size());
+        assertEquals(
+                List.of("SEND_EMAIL", "null", "null", "Membership Changes have been made to the " + guild.getName() +" guild", "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.", "nobody@objectcomputing.com"),
+                emailSender.events.getFirst()
         );
     }
 

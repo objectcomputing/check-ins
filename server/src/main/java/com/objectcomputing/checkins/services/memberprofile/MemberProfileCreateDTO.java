@@ -85,6 +85,10 @@ public class MemberProfileCreateDTO {
     @Schema(description = "Last date employee logged in")
     private LocalDate lastSeen;
 
+    @Nullable
+    @Schema(description = "The employee would like their birthday to not be celebrated", nullable = true)
+    private Boolean ignoreBirthday;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -106,7 +110,8 @@ public class MemberProfileCreateDTO {
                 Objects.equals(birthDay, that.birthDay) &&
                 Objects.equals(voluntary, that.voluntary) &&
                 Objects.equals(excluded, that.excluded) &&
-                Objects.equals(lastSeen, that.lastSeen);
+                Objects.equals(lastSeen, that.lastSeen) &&
+                Objects.equals(ignoreBirthday, that.ignoreBirthday);
 
     }
 
@@ -114,6 +119,6 @@ public class MemberProfileCreateDTO {
     public int hashCode() {
         return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
                 workEmail, employeeId, startDate, bioText, supervisorid, terminationDate, birthDay,
-                voluntary, excluded, lastSeen);
+                voluntary, excluded, lastSeen, ignoreBirthday);
     }
 }

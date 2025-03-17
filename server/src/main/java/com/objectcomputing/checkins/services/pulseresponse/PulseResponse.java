@@ -52,7 +52,7 @@ public class PulseResponse {
 
     @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
-    @NotNull
+    @Nullable
     @Schema(description = "id of the teamMember this entry is associated with")
     private UUID teamMemberId;
 
@@ -77,7 +77,7 @@ public class PulseResponse {
     protected PulseResponse() {
     }
 
-    public PulseResponse(UUID id, Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+    public PulseResponse(UUID id, Integer internalScore, @Nullable Integer externalScore, LocalDate submissionDate, @Nullable UUID teamMemberId, @Nullable String internalFeelings, @Nullable String externalFeelings) {
         this.id = id;
         this.internalScore = internalScore;
         this.externalScore = externalScore;
@@ -88,63 +88,7 @@ public class PulseResponse {
     }
 
     public PulseResponse(Integer internalScore, Integer externalScore, LocalDate submissionDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
-        this(null,internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
-    }
-
-    public UUID getId() {
-        return this.id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Integer getInternalScore() {
-        return internalScore;
-    }
-
-    public void setInternalScore(Integer internalScore) {
-        this.internalScore = internalScore;
-    }
-
-    public Integer getExternalScore() {
-        return externalScore;
-    }
-
-    public void setExternalScore(Integer externalScore) {
-        this.externalScore = externalScore;
-    }
-
-    public LocalDate getSubmissionDate() {
-        return submissionDate;
-    }
-
-    public void setSubmissionDate(LocalDate submissionDate) {
-        this.submissionDate = submissionDate;
-    }
-
-    public UUID getTeamMemberId() {
-        return this.teamMemberId;
-    }
-
-    public void setTeamMemberId(UUID teamMemberId) {
-        this.teamMemberId = teamMemberId;
-    }
-
-    public String getInternalFeelings() {
-        return internalFeelings;
-    }
-
-    public void setInternalFeelings(String internalFeelings) {
-        this.internalFeelings = internalFeelings;
-    }
-
-    public String getExternalFeelings() {
-        return externalFeelings;
-    }
-
-    public void setExternalFeelings(String externalFeelings) {
-        this.externalFeelings = externalFeelings;
+        this(null, internalScore, externalScore, submissionDate, teamMemberId, internalFeelings, externalFeelings);
     }
 
     @Override

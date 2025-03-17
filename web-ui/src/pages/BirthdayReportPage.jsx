@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { AppContext } from '../context/AppContext';
 
-import { Button, TextField } from '@mui/material';
+import { FormControlLabel, Switch, Button, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import './BirthdayAnniversaryReportPage.css';
@@ -11,8 +11,13 @@ import { getBirthdays } from '../api/birthdayanniversary';
 import { UPDATE_TOAST } from '../context/actions';
 import SearchBirthdayAnniversaryResults from '../components/search-results/SearchBirthdayAnniversaryResults';
 import { sortBirthdays } from '../context/util';
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 
-import { selectCsrfToken } from '../context/selectors';
+import {
+  selectCsrfToken,
+  selectHasBirthdayReportPermission,
+  noPermission
+} from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 
 const months = [
@@ -39,6 +44,8 @@ const BirthdayReportPage = () => {
   const [searchBirthdayResults, setSearchBirthdayResults] = useState([]);
   const [selectedMonths, setSelectedMonths] = useState(defaultMonths);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [noBirthday, setNoBirthday] = useState(false);
 
   useQueryParameters([
     {
@@ -53,16 +60,31 @@ const BirthdayReportPage = () => {
   ]);
 
   const handleSearch = async monthsToSearch => {
-    const birthdayResults = await getBirthdays(monthsToSearch, csrf);
-    setSearchBirthdayResults(sortBirthdays(birthdayResults));
-    setHasSearched(true);
+    setLoading(true);
+    try {
+      const birthdayResults = await getBirthdays(
+        noBirthday ? null : monthsToSearch,
+        csrf
+      );
+      setSearchBirthdayResults(sortBirthdays(birthdayResults));
+      setHasSearched(true);
+    } catch (e) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: e
+        }
+      });
+    }
+    setLoading(false);
   };
 
   function onMonthChange(event, newValue) {
     setSelectedMonths(newValue);
   }
 
-  return (
+  return selectHasBirthdayReportPermission(state) ? (
     <div>
       <div className="select-month">
         <Autocomplete
@@ -83,12 +105,25 @@ const BirthdayReportPage = () => {
               placeholder="Choose a month"
             />
           )}
+          disabled={noBirthday}
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={noBirthday}
+              onChange={event => {
+                const { checked } = event.target;
+                setNoBirthday(checked);
+              }}
+            />
+          }
+          label="No Birthday Registered"
         />
       </div>
       <div className="birthday-anniversary-search halfWidth">
         <Button
           onClick={() => {
-            if (!selectedMonths) {
+            if (!noBirthday && selectedMonths.length == 0) {
               window.snackDispatch({
                 type: UPDATE_TOAST,
                 payload: {
@@ -106,7 +141,11 @@ const BirthdayReportPage = () => {
         </Button>
       </div>
       <div>
-        {
+        {loading ? (
+          Array.from({ length: 10 }).map((_, index) => (
+            <SkeletonLoader key={index} type="feedback_requests" />
+          ))
+        ) : (
           <div className="search-results">
             <SearchBirthdayAnniversaryResults
               hasSearched={hasSearched}
@@ -114,9 +153,11 @@ const BirthdayReportPage = () => {
               results={searchBirthdayResults}
             />
           </div>
-        }
+        )}
       </div>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

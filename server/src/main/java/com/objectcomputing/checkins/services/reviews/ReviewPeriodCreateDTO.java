@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.reviews;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.objectcomputing.checkins.util.serialize.LocalDateTimeSerializer;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,8 +49,19 @@ public class ReviewPeriodCreateDTO {
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime closeDate;
 
+    @Nullable
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime periodStartDate;
+
+    @Nullable
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime periodEndDate;
+
     public ReviewPeriod convertToEntity(){
         return new ReviewPeriod(this.name, this.reviewStatus, this.reviewTemplateId,
-                this.selfReviewTemplateId, this.launchDate, this.selfReviewCloseDate, this.closeDate);
+                this.selfReviewTemplateId, this.launchDate, this.selfReviewCloseDate, this.closeDate,
+                this.periodStartDate, this.periodEndDate);
     }
 }

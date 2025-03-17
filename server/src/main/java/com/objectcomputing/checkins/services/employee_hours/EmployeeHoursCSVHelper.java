@@ -31,11 +31,22 @@ public class EmployeeHoursCSVHelper {
                     .parse(input);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
             for (CSVRecord csvRecord : csvParser) {
-                EmployeeHours employeeHours = new EmployeeHours(csvRecord.get("employeeId"),
-                        Float.parseFloat(csvRecord.get("contributionHours")),
-                        Float.parseFloat(csvRecord.get("billableHours")),
-                        Float.parseFloat(csvRecord.get("ptoHours")), LocalDate.now(), Float.parseFloat(csvRecord.get("targetHours")),
-                        LocalDate.parse(csvRecord.get("asOfDate"), formatter));
+                String billableUtilizationString = csvRecord.get("billableUtilization");
+                Float billableUtilization = (billableUtilizationString == null) ? null : Float.parseFloat(billableUtilizationString);
+                String overtimeWorkedString = csvRecord.get("overtimeWorked");
+                Float overtimeWorked = (overtimeWorkedString == null) ? null : Float.parseFloat(overtimeWorkedString);
+                EmployeeHours employeeHours = new EmployeeHours
+                        (
+                            csvRecord.get("employeeId"),
+                            Float.parseFloat(csvRecord.get("contributionHours")),
+                            Float.parseFloat(csvRecord.get("billableHours")),
+                            Float.parseFloat(csvRecord.get("ptoHours")),
+                            LocalDate.now(),
+                            Float.parseFloat(csvRecord.get("targetHours")),
+                            LocalDate.parse(csvRecord.get("asOfDate"), formatter),
+                            billableUtilization,
+                            overtimeWorked
+                        );
                 employeeHoursList.add(employeeHours);
             }
             return employeeHoursList;

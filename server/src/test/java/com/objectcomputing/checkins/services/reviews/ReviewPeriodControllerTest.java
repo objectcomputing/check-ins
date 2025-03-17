@@ -2,15 +2,24 @@ package com.objectcomputing.checkins.services.reviews;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetFactory;
+import com.objectcomputing.checkins.services.MailJetFactoryReplacement;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
+import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewAssignmentFixture;
 import com.objectcomputing.checkins.services.fixture.ReviewPeriodFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.EmailHelper;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -18,19 +27,22 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -42,28 +54,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
+@Property(name = "replace.mailjet.factory", value = StringUtils.TRUE)
 class ReviewPeriodControllerTest
         extends TestContainersSuite
-        implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture {
+        implements ReviewAssignmentFixture, ReviewPeriodFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackTemplateFixture {
+
+    public static final Logger LOG = LoggerFactory.getLogger(ReviewPeriodControllerTest.class);
 
     @Inject
     @Client("/services/review-periods")
     private HttpClient client;
 
-    @Mock
-    private EmailSender emailSender = mock(EmailSender.class);
+    @Inject
+    @Named(MailJetFactory.MJML_FORMAT)
+    private MailJetFactoryReplacement.MockEmailSender emailSender;
 
     @Inject
     private ReviewPeriodServicesImpl reviewPeriodServices;
-
-    @BeforeEach
-    void resetMocks() {
-        Mockito.reset(emailSender);
-        reviewPeriodServices.setEmailSender(emailSender);
-    }
 
     private String encodeValue(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
@@ -72,6 +80,7 @@ class ReviewPeriodControllerTest
     @BeforeEach
     void createRolesAndPermissions() {
         createAndAssignRoles();
+        emailSender.reset();
     }
 
     @Test
@@ -184,12 +193,27 @@ class ReviewPeriodControllerTest
 
     @Test
     void testReviewPeriodCreateDTOSerialization() throws JsonProcessingException {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
         reviewPeriodCreateDTO.setReviewStatus(ReviewStatus.OPEN);
-        reviewPeriodCreateDTO.setLaunchDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setSelfReviewCloseDate(LocalDateTime.now());
-        reviewPeriodCreateDTO.setCloseDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setLaunchDate(launchDate);
+        reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
+        reviewPeriodCreateDTO.setCloseDate(closeDate);
+        reviewPeriodCreateDTO.setPeriodStartDate(startDate);
+        reviewPeriodCreateDTO.setPeriodEndDate(endDate);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String expectedLaunchDateFormat = formatter.format(reviewPeriodCreateDTO.getLaunchDate());
+        String expectedSelfReviewCloseDateFormat = formatter.format(reviewPeriodCreateDTO.getSelfReviewCloseDate());
+        String expectedCloseDateFormat = formatter.format(reviewPeriodCreateDTO.getCloseDate());
+        String expectedPeriodStartDateFormat = formatter.format(reviewPeriodCreateDTO.getPeriodStartDate());
+        String expectedPeriodEndDateFormat = formatter.format(reviewPeriodCreateDTO.getPeriodEndDate());
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -201,19 +225,20 @@ class ReviewPeriodControllerTest
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String expectedJson = objectMapper.writeValueAsString(reviewPeriodCreateDTO);
-
-        String expectedLaunchDateFormat = objectMapper.readTree(expectedJson).get("launchDate").asText();
         String actualLaunchDateFormat = objectMapper.readTree(actualJson).get("launchDate").asText();
         assertEquals(expectedLaunchDateFormat, actualLaunchDateFormat);
 
-        String expectedSelfReviewCloseDateFormat = objectMapper.readTree(expectedJson).get("selfReviewCloseDate").asText();
         String actualSelfReviewCloseDateFormat = objectMapper.readTree(actualJson).get("selfReviewCloseDate").asText();
         assertEquals(expectedSelfReviewCloseDateFormat, actualSelfReviewCloseDateFormat);
 
-        String expectedCloseDateFormat = objectMapper.readTree(expectedJson).get("closeDate").asText();
         String actualCloseDateFormat = objectMapper.readTree(actualJson).get("closeDate").asText();
         assertEquals(expectedCloseDateFormat, actualCloseDateFormat);
+
+        String actualPeriodStartDateFormat = objectMapper.readTree(actualJson).get("periodStartDate").asText();
+        assertEquals(expectedPeriodStartDateFormat, actualPeriodStartDateFormat);
+
+        String actualPeriodEndDateFormat = objectMapper.readTree(actualJson).get("periodEndDate").asText();
+        assertEquals(expectedPeriodEndDateFormat, actualPeriodEndDateFormat);
     }
 
     @Test
@@ -224,6 +249,8 @@ class ReviewPeriodControllerTest
         reviewPeriodCreateDTO.setLaunchDate(LocalDateTime.now());
         reviewPeriodCreateDTO.setSelfReviewCloseDate(LocalDateTime.now());
         reviewPeriodCreateDTO.setCloseDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setPeriodStartDate(LocalDateTime.now());
+        reviewPeriodCreateDTO.setPeriodEndDate(LocalDateTime.now());
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -239,6 +266,8 @@ class ReviewPeriodControllerTest
         LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS);
         LocalDateTime closeDate = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodStartDate = LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodEndDate = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS);
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
@@ -246,6 +275,8 @@ class ReviewPeriodControllerTest
         reviewPeriodCreateDTO.setLaunchDate(launchDate);
         reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
         reviewPeriodCreateDTO.setCloseDate(closeDate);
+        reviewPeriodCreateDTO.setPeriodStartDate(periodStartDate);
+        reviewPeriodCreateDTO.setPeriodEndDate(periodEndDate);
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -261,6 +292,8 @@ class ReviewPeriodControllerTest
         assertEquals(reviewPeriodCreateDTO.getLaunchDate(), body.getLaunchDate());
         assertEquals(reviewPeriodCreateDTO.getSelfReviewCloseDate(), body.getSelfReviewCloseDate());
         assertEquals(reviewPeriodCreateDTO.getCloseDate(), body.getCloseDate());
+        assertEquals(reviewPeriodCreateDTO.getPeriodStartDate(), body.getPeriodStartDate());
+        assertEquals(reviewPeriodCreateDTO.getPeriodEndDate(), body.getPeriodEndDate());
     }
 
     @Test
@@ -268,6 +301,8 @@ class ReviewPeriodControllerTest
         LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         LocalDateTime selfReviewCloseDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MILLIS);
         LocalDateTime closeDate = LocalDateTime.now().plusDays(2).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodStartDate = LocalDateTime.now().minusDays(30).truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime periodEndDate = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MILLIS);
 
         ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
         reviewPeriodCreateDTO.setName("reincarnation");
@@ -275,6 +310,8 @@ class ReviewPeriodControllerTest
         reviewPeriodCreateDTO.setLaunchDate(launchDate);
         reviewPeriodCreateDTO.setSelfReviewCloseDate(selfReviewCloseDate);
         reviewPeriodCreateDTO.setCloseDate(closeDate);
+        reviewPeriodCreateDTO.setPeriodStartDate(periodStartDate);
+        reviewPeriodCreateDTO.setPeriodEndDate(periodEndDate);
 
         final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
                 POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -360,19 +397,6 @@ class ReviewPeriodControllerTest
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-    }
-
-    @Test
-    void testPOSTCreateANullReviewPeriodForbiddenWithoutPermission() {
-        ReviewPeriodCreateDTO reviewPeriodCreateDTO = new ReviewPeriodCreateDTO();
-
-        final HttpRequest<ReviewPeriodCreateDTO> request = HttpRequest.
-                POST("/", reviewPeriodCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -476,11 +500,48 @@ class ReviewPeriodControllerTest
         assertEquals(HttpStatus.OK, response.getStatus());
 
         // expect email has been sent
-        verify(emailSender).sendEmail(null, null,
-                "Review Assignments Awaiting Approval",
-                "<h3>Review Assignments for Review Period '" + reviewPeriod.getName() + "' are ready for your approval.</h3>" +
-                "<a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">Click here</a> to review and approve reviewer assignments in the Check-Ins app.",
-                supervisor.getWorkEmail()
+        assertEquals(1, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  "Review Assignments Awaiting Approval",
+                                  "Click <a href=\"https://checkins.objectcomputing.com/feedback/reviews?period=" + reviewPeriod.getId() + "\">here</a> to review and approve reviewer assignments in the Check-Ins app.",
+                                  supervisor.getWorkEmail(),
+                                  emailSender.events.getFirst()
+        );
+    }
+
+    @Test
+    void testPUTReviewPeriodOpen() {
+        MemberProfile supervisor = createADefaultSupervisor();
+        FeedbackTemplate template = saveReviewFeedbackTemplate(supervisor.getId());
+        ReviewPeriod reviewPeriod = createADefaultReviewPeriod(ReviewStatus.AWAITING_APPROVAL, template.getId());
+        MemberProfile member = createAProfileWithSupervisorAndPDL(supervisor, supervisor);
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, reviewPeriod, false);
+
+        reviewPeriod.setReviewStatus(ReviewStatus.OPEN);
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+                PUT("/", reviewPeriod).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+
+        final HttpResponse<ReviewPeriod> response = client.toBlocking().exchange(request, ReviewPeriod.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(reviewPeriod, response.body());
+
+        // Check for the feedback request.  There should only be one because
+        // there was a review template, but no self-review template.
+        List<FeedbackRequest> requests = getFeedbackRequests(supervisor);
+        assertEquals(1, requests.size());
+
+        FeedbackRequest feedbackRequest = requests.get(0);
+        assertEquals(member.getId(), feedbackRequest.getRequesteeId());
+        assertEquals(reviewPeriod.getId(), feedbackRequest.getReviewPeriodId());
+
+        assertEquals(2, emailSender.events.size());
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  "It's time for performance reviews!",
+                                  "Your feedback helps us improve as a team!",
+                                  member.getWorkEmail() + "," + supervisor.getWorkEmail(),
+                                  emailSender.events.get(1)
         );
     }
 
@@ -514,6 +575,14 @@ class ReviewPeriodControllerTest
         String expectedCloseDateFormat = objectMapper.readTree(expectedJson).get("closeDate").asText();
         String actualCloseDateFormat = objectMapper.readTree(actualJson).get("closeDate").asText();
         assertEquals(expectedCloseDateFormat, actualCloseDateFormat);
+
+        String expectedPeriodStartDateFormat = objectMapper.readTree(expectedJson).get("periodStartDate").asText();
+        String actualPeriodStartDateFormat = objectMapper.readTree(actualJson).get("periodStartDate").asText();
+        assertEquals(expectedPeriodStartDateFormat, actualPeriodStartDateFormat);
+
+        String expectedPeriodEndDateFormat = objectMapper.readTree(expectedJson).get("periodEndDate").asText();
+        String actualPeriodEndDateFormat = objectMapper.readTree(actualJson).get("periodEndDate").asText();
+        assertEquals(expectedPeriodEndDateFormat, actualPeriodEndDateFormat);
     }
 
     @Test
@@ -616,4 +685,247 @@ class ReviewPeriodControllerTest
                 responseException.getMessage()
         );
     }
+
+    @Test
+    void testOpenAReviewPeriodWithBadLaunchTime() {
+        LocalDateTime launchDate = LocalDateTime.now().minusDays(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period = getReviewPeriodRepository().save(
+            new ReviewPeriod("Good Times, Bad Times",
+                             ReviewStatus.AWAITING_APPROVAL, null, null,
+                             launchDate, selfReviewCloseDate, closeDate,
+                             startDate, endDate));
+
+        period.setReviewStatus(ReviewStatus.OPEN);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            PUT("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadSelfReviewCloseDate() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.minusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
+        assertTrue(exception.getMessage()
+                            .contains("self-review close date must be after"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadCloseDate() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = launchDate.minusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.minusDays(1);
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate);
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
+        assertTrue(exception.getMessage()
+                            .contains("close date must be after"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadStartDate() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate;
+        LocalDateTime endDate = closeDate.minusDays(1);
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
+        assertTrue(exception.getMessage()
+                            .contains("start date must be before"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadEndDate1() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = startDate;
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
+        assertTrue(exception.getMessage()
+                            .contains("end date must be after"));
+    }
+
+    @Test
+    void testCreateAReviewPeriodWithBadEndDate2() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        LocalDateTime selfReviewCloseDate = launchDate.plusDays(1);
+        LocalDateTime closeDate = selfReviewCloseDate.plusDays(1);
+        LocalDateTime startDate = launchDate.minusDays(30);
+        LocalDateTime endDate = closeDate.plusDays(1);
+
+        MemberProfile supervisor = createADefaultSupervisor();
+        ReviewPeriod period =
+                new ReviewPeriod("Good Times, Bad Times",
+                                 ReviewStatus.AWAITING_APPROVAL, null, null,
+                                 launchDate, selfReviewCloseDate, closeDate,
+                                 startDate, endDate);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+            POST("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException exception =
+            assertThrows(HttpClientResponseException.class,
+                         () -> client.toBlocking().exchange(request));
+        assertTrue(exception.getMessage()
+                            .contains("end date must be on or before"));
+    }
+
+    @Test
+    void testSelfReviewLaunchDateEmail() {
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        checkSelfReviewEmail(launchDate, launchDate,
+                             " has launched!");
+    }
+
+    @Test
+    void testSelfReviewThreeDaysEmail() {
+        // When using the version of createADefaultReviewPeriod that takes a
+        // launch date, the self-review closes 4 days after the launch date.
+        // So, to get the three day email, we just need to add 1 day to the
+        // launch date.
+        LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        checkSelfReviewEmail(launchDate, launchDate.plusDays(1),
+                             " closes in three days!");
+    }
+
+    @Test
+    void testSelfReviewOneDayEmail() {
+        // When using the version of createADefaultReviewPeriod that takes a
+        // launch date, the self-review closes 4 days after the launch date.
+        // So, to get the one day email, we just need to add 3 days to the
+        // launch date.
+        LocalDateTime launchDate = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        checkSelfReviewEmail(launchDate, launchDate.plusDays(3),
+                             " closes in one day!");
+    }
+
+    @Test
+    void testSelfReviewNoEmail() {
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createADefaultMemberProfile();
+
+        // Launch date must be in the future.
+        LocalDateTime launchDate = LocalDateTime.now().plusMinutes(1);
+        FeedbackTemplate template =
+                             saveReviewFeedbackTemplate(supervisor.getId());
+        ReviewPeriod period = createADefaultReviewPeriod(
+                                  launchDate, ReviewStatus.AWAITING_APPROVAL,
+                                  null, template.getId());
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, period, true);
+        period.setReviewStatus(ReviewStatus.OPEN);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+              PUT("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<ReviewPeriod> response =
+              client.toBlocking().exchange(request, ReviewPeriod.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        // None of these should send notification.
+        reviewPeriodServices.sendNotifications(
+                                 launchDate.plusDays(2).toLocalDate());
+        reviewPeriodServices.sendNotifications(
+                                 launchDate.plusDays(4).toLocalDate());
+        reviewPeriodServices.sendNotifications(
+                                 launchDate.plusDays(5).toLocalDate());
+
+        // Two due to two reviews.
+        // Only those being reviewed will have a self-review assignment.
+        assertEquals(2, emailSender.events.size());
+    }
+
+    private void checkSelfReviewEmail(LocalDateTime launchDate,
+                                      LocalDateTime checkDate,
+                                      String subjectSuffix) {
+        MemberProfile supervisor = createADefaultSupervisor();
+        MemberProfile member = createADefaultMemberProfile();
+
+        FeedbackTemplate template =
+                             saveReviewFeedbackTemplate(supervisor.getId());
+        ReviewPeriod period = createADefaultReviewPeriod(
+                                  launchDate, ReviewStatus.AWAITING_APPROVAL,
+                                  null, template.getId());
+
+        createAReviewAssignmentBetweenMembers(member, supervisor, period, true);
+        period.setReviewStatus(ReviewStatus.OPEN);
+
+        final HttpRequest<ReviewPeriod> request = HttpRequest.
+              PUT("/", period).basicAuth(supervisor.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<ReviewPeriod> response =
+              client.toBlocking().exchange(request, ReviewPeriod.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        // Send the self-review notification.
+        reviewPeriodServices.sendNotifications(checkDate.toLocalDate());
+
+        // Two due to two reviews and one for launch notification.
+        // Only those being reviewed will have a self-review assignment.
+        assertEquals(3, emailSender.events.size());
+
+        EmailHelper.validateEmail("SEND_EMAIL", "null", "null",
+                                  period.getName() + subjectSuffix,
+                                  "To access your self-review click the button above",
+                                  member.getWorkEmail(),
+                                  emailSender.events.get(2));
+    }
+
 }

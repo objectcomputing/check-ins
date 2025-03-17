@@ -8,6 +8,8 @@ it('renders correctly', () => {
     <BrowserRouter>
       <AppContextProvider>
         <FeedbackRequestCard
+          sortType="sent_date"
+          dateRange="3mo"
           requesteeId="b2d35288-7f1e-4549-aa2b-68396b162490"
           templateName="Sample Template"
           responses={[

@@ -1,5 +1,10 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
+import com.objectcomputing.checkins.services.checkins.CheckIn;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -11,19 +16,24 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
+
 @Singleton
 public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     private final CheckinDocumentRepository checkinDocumentRepo;
     private final CheckInRepository checkinRepo;
+    private final CurrentUserServices currentUserServices;
 
     public CheckinDocumentServicesImpl(CheckinDocumentRepository checkinDocumentRepo,
                                        CheckInRepository checkinRepo,
                                        CurrentUserServices currentUserServices) {
         this.checkinDocumentRepo = checkinDocumentRepo;
         this.checkinRepo = checkinRepo;
+        this.currentUserServices = currentUserServices;
     }
 
+    @RequiredPermission(Permission.CAN_VIEW_CHECKIN_DOCUMENT)
     public Set<CheckinDocument> read(UUID checkinsId) {
 
         Set<CheckinDocument> checkinDocument = new HashSet<>();
@@ -39,9 +49,14 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         if(cd.isEmpty()) {
             throw new BadArgException(String.format("CheckinDocument with document id %s does not exist", uploadDocId));
         }
+
+        checkPermission(Permission.CAN_VIEW_CHECKIN_DOCUMENT,
+                        cd.get().getCheckinsId());
+
         return cd.get();
     }
 
+    @RequiredPermission(Permission.CAN_CREATE_CHECKIN_DOCUMENT)
     public CheckinDocument save(CheckinDocument checkinDocument) {
 
         CheckinDocument newCheckinDocument = null;
@@ -63,6 +78,7 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         return newCheckinDocument;
     }
 
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKIN_DOCUMENT)
     public CheckinDocument update(CheckinDocument checkinDocument) {
 
         CheckinDocument updatedCheckinDocument = null;
@@ -83,6 +99,7 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         return updatedCheckinDocument;
     }
 
+    @RequiredPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT)
     public void deleteByCheckinId(@NotNull UUID checkinsId) {
 
         if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
@@ -97,7 +114,27 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         if(!checkinDocumentRepo.existsByUploadDocId(uploadDocId)) {
             throw new BadArgException(String.format("CheckinDocument with uploadDocId %s does not exist", uploadDocId));
         } else {
+            Optional<CheckinDocument> cd =
+                checkinDocumentRepo.findByUploadDocId(uploadDocId);
+            checkPermission(Permission.CAN_DELETE_CHECKIN_DOCUMENT,
+                            cd.get().getCheckinsId());
+            
             checkinDocumentRepo.deleteByUploadDocId(uploadDocId);
         }
+    }
+
+    private void checkPermission(Permission permission, UUID checkinId) {
+        if (currentUserServices.hasPermission(permission)) {
+            return;
+        }
+
+        Optional<CheckIn> checkIn = checkinRepo.findById(checkinId);
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        if (checkIn.isPresent() && currentUser != null &&
+            checkIn.get().getPdlId().equals(currentUser.getId())) {
+            return;
+        }
+
+        throw new PermissionException(NOT_AUTHORIZED_MSG);
     }
 }

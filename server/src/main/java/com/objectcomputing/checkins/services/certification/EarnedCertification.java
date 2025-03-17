@@ -13,7 +13,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,12 +46,6 @@ public class EarnedCertification {
     @Schema(description = "id of the certification")
     private UUID certificationId;
 
-    @NotBlank
-    @Column(name = "description")
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "description of the certification earned")
-    private String description;
-
     @NotNull
     @Column(name = "earned_date")
     @TypeDef(type = DataType.DATE, converter = LocalDateConverter.class)
@@ -68,26 +61,25 @@ public class EarnedCertification {
     private LocalDate expirationDate;
 
     @Nullable
-    @Column(name = "certificate_image_url")
+    @Column(name = "validation_url")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "optionally the url of the certificate image")
-    private String certificateImageUrl;
+    @Schema(description = "optionally the url of the validation")
+    private String validationUrl;
 
     public EarnedCertification() {
     }
 
-    public EarnedCertification(UUID memberId, UUID certificationId, String description, LocalDate earnedDate, LocalDate expirationDate, String certificateImageUrl) {
-        this(null, memberId, certificationId, description, earnedDate, expirationDate, certificateImageUrl);
+    public EarnedCertification(UUID memberId, UUID certificationId, LocalDate earnedDate, LocalDate expirationDate, String validationUrl) {
+        this(null, memberId, certificationId, earnedDate, expirationDate, validationUrl);
     }
 
-    public EarnedCertification(UUID id, UUID memberId, UUID certificationId, String description, LocalDate earnedDate, LocalDate expirationDate, String certificateImageUrl) {
+    public EarnedCertification(UUID id, UUID memberId, UUID certificationId, LocalDate earnedDate, LocalDate expirationDate, String validationUrl) {
         this.id = id;
         this.memberId = memberId;
         this.certificationId = certificationId;
-        this.description = description;
         this.earnedDate = earnedDate;
         this.expirationDate = expirationDate;
-        this.certificateImageUrl = certificateImageUrl;
+        this.validationUrl = validationUrl;
     }
 
     EarnedCertification withCertification(@NonNull UUID certificationId) {

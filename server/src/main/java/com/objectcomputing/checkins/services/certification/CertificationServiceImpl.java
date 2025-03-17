@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.role.role_permissions.RolePermissionServices;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.transaction.Transactional;
@@ -59,6 +60,7 @@ class CertificationServiceImpl implements CertificationService {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_MANAGE_CERTIFICATIONS)
     public Certification updateCertification(Certification certification) {
         // Fail if a certification with the same name already exists (but it's not this one)
         validate(certificationRepository.getByName(certification.getName())
@@ -109,6 +111,7 @@ class CertificationServiceImpl implements CertificationService {
 
     @Override
     @Transactional
+    @RequiredPermission(Permission.CAN_MANAGE_CERTIFICATIONS)
     public Certification mergeCertifications(UUID sourceId, UUID targetId) {
         Optional<Certification> target = certificationRepository.findById(targetId);
         Optional<Certification> source = certificationRepository.findById(sourceId);

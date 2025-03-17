@@ -3,12 +3,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { getTodaysCelebrations } from '../api/birthdayanniversary';
 import Anniversaries from '../components/celebrations/Anniversaries';
 import Birthdays from '../components/celebrations/Birthdays';
-import DoubleCelebration from '../components/celebrations/DoubleCelebration';
+import PublicKudos from '../components/kudos/PublicKudos';
 import MyAnniversary from '../components/celebrations/MyAnniversary';
 import MyBirthday from '../components/celebrations/MyBirthday';
 import { AppContext } from '../context/AppContext';
 import { selectCsrfToken, selectCurrentUser } from '../context/selectors';
 import { sortAnniversaries, sortBirthdays } from '../context/util';
+import { Button, Grid } from '@mui/material';
 
 import './HomePage.css';
 
@@ -24,8 +25,6 @@ export default function HomePage() {
   const [myAnniversary, setMyAnniversary] = useState(false);
   const [myAnniversaryData, setMyAnniversaryData] = useState([]);
   const [myBirthday, setMyBirthday] = useState(false);
-  const [showMyAnniversary, setShowMyAnniversary] = useState(false);
-  const [showMyBirthday, setShowMyBirthday] = useState(false);
 
   useEffect(() => {
     if (csrf) {
@@ -66,63 +65,64 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [anniversaries, birthdays, me.id]);
 
-  useEffect(() => {
-    myBirthday ? setShowMyBirthday(true) : setShowMyBirthday(false);
-    myAnniversary ? setShowMyAnniversary(true) : setShowMyAnniversary(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myAnniversary, myBirthday]);
-
   const hideMyAnniversary = () => {
-    setShowMyAnniversary(false);
+    setMyAnniversary(false);
   };
   const hideMyBirthday = () => {
-    setShowMyBirthday(false);
+    setMyBirthday(false);
   };
+
+  const checkForImpersonation = () => {
+    return document.cookie.indexOf('OJWT=') != -1;
+  };
+
+  // This width matches the birthdays-card and anniversaries-card style.
+  // However, we do not want to set this width on the PublicKudos css as it is
+  // used elsewhere and does not need to have it's width restricted.  This only
+  // applies if if we have birthdays or anniversaries to display on this page.
+  const kudosStyle =
+    birthdays.length == 0 && anniversaries.length == 0
+      ? {}
+      : { width: '450px' };
+
+  // Determine the X position of the birthday confetti.  If there aren't any
+  // anniversaries, it will be the left side.  If there are anniversaries, we
+  // need it in the middle.  Confetti X position ranges from 0 to 1.
+  const xPos = anniversaries.length > 0 ? 0.5 : 0.25;
 
   return (
     <div className="home-page">
-      <div
-        className={
-          myBirthday &&
-          me &&
-          myAnniversary &&
-          showMyBirthday &&
-          showMyAnniversary
-            ? 'double-celebrations'
-            : 'celebrations'
-        }
-      >
-        {myBirthday &&
-        me &&
-        myAnniversary &&
-        showMyBirthday &&
-        showMyAnniversary ? (
-          <DoubleCelebration
-            me={me}
-            hideMyBirthday={hideMyBirthday}
-            hideMyAnniversary={hideMyAnniversary}
-            myAnniversary={myAnniversaryData}
-          />
-        ) : myBirthday && me && showMyBirthday ? (
+      <div className="celebrations">
+        {myBirthday ? (
           <MyBirthday me={me} hideMyBirthday={hideMyBirthday} />
-        ) : myAnniversary && me && showMyAnniversary ? (
+        ) : myAnniversary ? (
           <MyAnniversary
             hideMyAnniversary={hideMyAnniversary}
             myAnniversary={myAnniversaryData}
           />
-        ) : anniversaries.length && birthdays.length ? (
-          <>
-            <Anniversaries anniversaries={anniversaries} />
-            <Birthdays birthdays={birthdays} />
-          </>
-        ) : birthdays.length ? (
-          <Birthdays birthdays={birthdays} xPos={0.5} />
-        ) : anniversaries.length ? (
-          <Anniversaries anniversaries={anniversaries} />
         ) : (
-          <h1>No events currently available...</h1>
+          <Grid container spacing={2} style={{ padding: '0 20px 0 20px' }}>
+            {anniversaries.length > 0 && (
+              <Grid item>
+                <Anniversaries anniversaries={anniversaries} />
+              </Grid>
+            )}
+            {birthdays.length > 0 && (
+              <Grid item>
+                <Birthdays birthdays={birthdays} xPos={xPos} />
+              </Grid>
+            )}
+            <Grid item style={kudosStyle}>
+              <PublicKudos />
+            </Grid>
+          </Grid>
         )}
       </div>
+      {checkForImpersonation() && (
+        <a class="bottom-right" href="/impersonation/end">
+          <Button variant="contained">Original User</Button>
+        </a>
+      )}
     </div>
   );
 }

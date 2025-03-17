@@ -27,7 +27,7 @@ public class PulseResponseCreateDTO {
     @Schema(description = "date for submissionDate")
     private LocalDate submissionDate;
     
-    @NotNull
+    @Nullable
     @Schema(description = "id of the associated member")
     private UUID teamMemberId;
 

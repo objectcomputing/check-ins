@@ -1,6 +1,15 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
+
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -8,10 +17,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+
+import jakarta.inject.Inject;
 
 import java.io.File;
 import java.io.FileReader;
@@ -21,45 +28,32 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class MemberProfileReportServicesImplTest extends TestContainersSuite {
+@Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
+class MemberProfileReportServicesImplTest extends TestContainersSuite
+                                          implements MemberProfileFixture, RoleFixture {
+    @Inject
+    CurrentUserServicesReplacement currentUserServices;
 
-    @Mock
-    private MemberProfileReportRepository memberProfileReportRepository;
+    @Inject
+    private MemberProfileServices memberProfileServices;
 
-    @Mock
-    private MemberProfileFileProvider memberProfileFileProvider;
-
-    @InjectMocks
+    @Inject
     private MemberProfileReportServicesImpl memberProfileReportServices;
 
-    private AutoCloseable mockFinalizer;
-
-    @BeforeAll
-    void initMocks() {
-        mockFinalizer = MockitoAnnotations.openMocks(this);
-    }
-
     @BeforeEach
-    void resetMocks() {
-        Mockito.reset(memberProfileReportRepository);
-    }
-
-    @AfterAll
-    void close() throws Exception {
-        mockFinalizer.close();
+    void setUp() {
+        createAndAssignRoles();
     }
 
     @Test
     void testGenerateFileWithAllMemberProfiles() throws IOException {
         List<MemberProfileRecord> expectedRecords = createSampleRecords();
-        when(memberProfileReportRepository.findAll()).thenReturn(expectedRecords);
         File tmpFile = File.createTempFile("member",".csv");
         tmpFile.deleteOnExit();
-        when(memberProfileFileProvider.provideFile()).thenReturn(tmpFile);
 
         // Generate a file with all members
         File file = memberProfileReportServices.generateFile(null);
@@ -80,12 +74,9 @@ class MemberProfileReportServicesImplTest extends TestContainersSuite {
     void testGenerateFileWithSelectedMemberProfiles() throws IOException {
         List<MemberProfileRecord> allRecords = createSampleRecords();
         MemberProfileRecord expectedRecord = allRecords.get(1);
-        when(memberProfileReportRepository
-                .findAllByMemberIds(List.of(expectedRecord.getId().toString())))
-                .thenReturn(List.of(expectedRecord));
         File tmpFile = File.createTempFile("member",".csv");
         tmpFile.deleteOnExit();
-        when(memberProfileFileProvider.provideFile()).thenReturn(tmpFile);
+
         // Generate a file with selected members
         MemberProfileReportQueryDTO dto = new MemberProfileReportQueryDTO();
         dto.setMemberIds(List.of(expectedRecord.getId()));
@@ -98,26 +89,6 @@ class MemberProfileReportServicesImplTest extends TestContainersSuite {
         CSVRecord csvRecord1 = records.get(0);
         assertRecordEquals(expectedRecord, csvRecord1);
     }
-
-    @Test
-    void testGenerateFileNotGenerated() throws IOException {
-        List<MemberProfileRecord> allRecords = createSampleRecords();
-        MemberProfileRecord expectedRecord = allRecords.get(1);
-        when(memberProfileReportRepository
-                .findAllByMemberIds(List.of(expectedRecord.getId().toString())))
-                .thenReturn(List.of(expectedRecord));
-
-        when(memberProfileFileProvider.provideFile()).thenThrow(new RuntimeException());
-        // Generate a file with selected members
-        MemberProfileReportQueryDTO dto = new MemberProfileReportQueryDTO();
-        dto.setMemberIds(List.of(expectedRecord.getId()));
-
-        assertThrows(RuntimeException.class, () -> {
-            memberProfileReportServices.generateFile(dto);
-        });
-    }
-
-
 
     private static void assertRecordEquals(MemberProfileRecord record, CSVRecord csvRecord) {
         assertEquals(record.getFirstName(), csvRecord.get("First Name"));
@@ -141,46 +112,47 @@ class MemberProfileReportServicesImplTest extends TestContainersSuite {
         return parser.getRecords();
     }
 
-    private static List<MemberProfileRecord> createSampleRecords() {
+    MemberProfileRecord from(MemberProfile profile) {
         MemberProfileRecord record1 = new MemberProfileRecord();
-        record1.setId(UUID.randomUUID());
-        record1.setFirstName("John");
-        record1.setLastName("Doe");
-        record1.setTitle("Software Engineer");
-        record1.setLocation("St. Louis");
-        record1.setWorkEmail("johndoe@objectcomputing.com");
-        record1.setStartDate(LocalDate.of(2024, 1, 1));
-        record1.setPdlName("Jane Miller");
-        record1.setPdlEmail("janemiller@objectcomputing.com");
-        record1.setSupervisorName("Tom Smith");
-        record1.setSupervisorEmail("tomsmith@objectcomputing.com");
+        record1.setId(profile.getId());
+        record1.setFirstName(profile.getFirstName());
+        record1.setLastName(profile.getLastName());
+        record1.setTitle(profile.getTitle());
+        record1.setLocation(profile.getLocation());
+        record1.setWorkEmail(profile.getWorkEmail());
+        record1.setStartDate(profile.getStartDate());
+        UUID pdlId = profile.getPdlId();
+        if (pdlId != null) {
+            MemberProfile pdl = memberProfileServices.getById(pdlId);
+            if (pdl != null) {
+                record1.setPdlName(pdl.getFirstName() + " " + pdl.getLastName());
+                record1.setPdlEmail(pdl.getWorkEmail());
+            }
+        }
+        UUID supervisorId = profile.getSupervisorid();
+        if (supervisorId != null) {
+            MemberProfile supervisor =
+                memberProfileServices.getById(supervisorId);
+            if (supervisor != null) {
+                record1.setSupervisorName(supervisor.getFirstName() + " " +
+                                          supervisor.getLastName());
+                record1.setSupervisorEmail(supervisor.getWorkEmail());
+            }
+        }
+        return record1;
+    }
 
-        MemberProfileRecord record2 = new MemberProfileRecord();
-        record2.setId(UUID.randomUUID());
-        record2.setFirstName("Jane");
-        record2.setLastName("Miller");
-        record2.setTitle("Principal Software Engineer");
-        record2.setLocation("St. Louis");
-        record2.setWorkEmail("janemiller@objectcomputing.com");
-        record2.setStartDate(LocalDate.of(2023, 1, 1));
-        record2.setPdlName("Eve Williams");
-        record2.setPdlEmail("evewilliams@objectcomputing.com");
-        record2.setSupervisorName("Tom Smith");
-        record2.setSupervisorEmail("tomsmith@objectcomputing.com");
+    private List<MemberProfileRecord> createSampleRecords() {
+        // A user must have the CAN_VIEW_PROFILE_REPORT to create this report.
+        currentUserServices.currentUser = createAThirdDefaultMemberProfile();
+        assignAdminRole(currentUserServices.currentUser);
 
-        MemberProfileRecord record3 = new MemberProfileRecord();
-        record3.setId(UUID.randomUUID());
-        record3.setFirstName("Tom");
-        record3.setLastName("Smith");
-        record3.setTitle("Manager, HR, and Head of Sales");
-        record3.setLocation("New York City, New York");
-        record3.setWorkEmail("tomsmith@objectcomputing.com");
-        record3.setStartDate(LocalDate.of(2022, 1, 1));
-        record3.setPdlName(null);
-        record3.setPdlEmail(null);
-        record3.setSupervisorName(null);
-        record3.setSupervisorEmail(null);
-
+        // The createADefaultMemberProfileForPdl() method actually sets both
+        // the PDL and Supervisor to the id of the member profile passed in.
+        MemberProfileRecord record1 = from(currentUserServices.currentUser);
+        MemberProfile pdl = createADefaultMemberProfile();
+        MemberProfileRecord record2 = from(pdl);
+        MemberProfileRecord record3 = from(createADefaultMemberProfileForPdl(pdl));
         return List.of(record1, record2, record3);
     }
 }

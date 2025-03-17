@@ -65,9 +65,4 @@ public class QuestionServicesImpl implements QuestionServices {
         return returned;
 
     }
-
-    public Set<Question> findByCategoryId(@NotNull UUID categoryId) {
-        return questionRepository.findByCategoryId(categoryId);
-    }
-
 }

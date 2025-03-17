@@ -3,7 +3,7 @@ import MyAnniversary from './MyAnniversary';
 import { AppContextProvider } from '../../context/AppContext';
 import { BrowserRouter } from 'react-router-dom';
 
-const hideMyAnniversary = false;
+const hideMyAnniversary = () => {};
 const myAnniversary = {
   name: 'Suman Maroju',
   anniversary: '12/29/2012',

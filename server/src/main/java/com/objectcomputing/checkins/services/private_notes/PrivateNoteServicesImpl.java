@@ -1,12 +1,12 @@
 package com.objectcomputing.checkins.services.private_notes;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.annotation.Nullable;
@@ -24,21 +24,21 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private final CheckInServices checkinServices;
     private final PrivateNoteRepository privateNoteRepository;
-    private final MemberProfileRepository memberRepo;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
 
-    public PrivateNoteServicesImpl(CheckInServices checkinServices, CheckInRepository checkinRepo, PrivateNoteRepository privateNoteRepository,
-                                   MemberProfileRepository memberRepo, MemberProfileServices memberProfileServices,
+    public PrivateNoteServicesImpl(CheckInServices checkinServices,
+                                   PrivateNoteRepository privateNoteRepository,
+                                   MemberProfileServices memberProfileServices,
                                    CurrentUserServices currentUserServices) {
         this.checkinServices = checkinServices;
         this.privateNoteRepository = privateNoteRepository;
-        this.memberRepo = memberRepo;
         this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_PRIVATE_NOTE)
     public PrivateNote save(@NotNull PrivateNote privateNote) {
         validate(privateNote.getId() != null, "Found unexpected id %s for private note", privateNote.getId());
 
@@ -72,6 +72,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
     public PrivateNote read(@NotNull UUID id) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
@@ -100,6 +101,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_UPDATE_PRIVATE_NOTE)
     public PrivateNote update(@NotNull PrivateNote privateNote) {
         validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
 
@@ -133,6 +135,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_PRIVATE_NOTE)
     public Set<PrivateNote> findByFields(@Nullable UUID checkinId, @Nullable UUID createById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if(!checkinServices.doesUserHaveViewAccess(currentUserId, checkinId, createById)){

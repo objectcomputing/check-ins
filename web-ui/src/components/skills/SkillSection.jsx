@@ -23,9 +23,11 @@ import { getSkill, createSkill } from '../../api/skill.js';
 import SkillSlider from './SkillSlider';
 
 import {
+  Avatar,
   Button,
   Card,
   CardActions,
+  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
@@ -280,41 +282,45 @@ const SkillSection = ({ userId }) => {
       </Modal>
       <Root>
         <Card>
-          <div className="skill-card-header">
-            <div className="skill-card-header-title">
-              <BuildIcon style={{ marginRight: '16px' }} />
-              <Typography variant="h5" component="h2">
-                Skills
-              </Typography>
+          <CardContent>
+            <div className="skill-card-header">
+              <div className="skill-card-header-title">
+                <Avatar sx={{ mr: 1 }}>
+                  <BuildIcon />
+                </Avatar>
+                <Typography variant="h5" component="h2">
+                  Skills
+                </Typography>
+              </div>
+              <SkillSelector />
             </div>
-            <SkillSelector />
-          </div>
-          <List>
-            {mySkills &&
-              mySkills.map(memberSkill => {
-                return (
-                  <ListItem
-                    key={`MemberSkill-${memberSkill.id}`}
-                    className={classes.skillRow}
-                  >
-                    <SkillSlider
-                      description={memberSkill.description}
-                      id={memberSkill.id}
-                      name={memberSkill.name}
-                      startLevel={
-                        memberSkill.skilllevel ? memberSkill.skilllevel : 3
-                      }
-                      lastUsedDate={memberSkill.lastuseddate}
-                      onDelete={id => {
-                        handleOpenDeleteConfirmation();
-                        setSelectedSkillId(id);
-                      }}
-                      onUpdate={handleUpdate}
-                    />
-                  </ListItem>
-                );
-              })}
-          </List>
+            <List>
+              {mySkills &&
+                mySkills.map(memberSkill => {
+                  return (
+                    <ListItem
+                      key={`MemberSkill-${memberSkill.id}`}
+                      className={classes.skillRow}
+                    >
+                      <SkillSlider
+                        description={memberSkill.description}
+                        id={memberSkill.id}
+                        name={memberSkill.name}
+                        startLevel={
+                          memberSkill.skilllevel ? memberSkill.skilllevel : 3
+                        }
+                        lastUsedDate={memberSkill.lastuseddate}
+                        onDelete={id => {
+                          handleOpenDeleteConfirmation();
+                          setSelectedSkillId(id);
+                        }}
+                        onUpdate={handleUpdate}
+                      />
+                    </ListItem>
+                  );
+                })}
+            </List>
+          </CardContent>
           <CardActions>
             <div>
               <Dialog

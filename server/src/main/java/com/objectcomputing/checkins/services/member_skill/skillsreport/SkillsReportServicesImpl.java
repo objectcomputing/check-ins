@@ -1,9 +1,10 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
@@ -11,7 +12,11 @@ import com.objectcomputing.checkins.services.skills.SkillRepository;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Singleton
 public class SkillsReportServicesImpl implements SkillsReportServices {
@@ -30,68 +35,69 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         this.skillRepo = skillRepo;
     }
 
-
+    @Override
+    @RequiredPermission(Permission.CAN_VIEW_SKILLS_REPORT)
     public @NotNull SkillsReportResponseDTO report(@NotNull SkillsReportRequestDTO request) {
-        SkillsReportResponseDTO response = null;
-        if (request != null) {
-            final List<SkillLevelDTO> skills = request.getSkills();
-            final Set<UUID> members = request.getMembers();
-            final Boolean inclusive = request.isInclusive();
+        final List<SkillLevelDTO> skills = request.getSkills();
+        final Set<UUID> members = request.getMembers();
+        final boolean inclusive = Boolean.TRUE.equals(request.isInclusive());
 
-            for (SkillLevelDTO skill : skills) {
-                if (!skillRepo.existsById(skill.getId())) {
-                    throw new BadArgException(String.format("Invalid skill ID %s", skill.getId()));
-                }
-            }
+        validateSkills(skills);
+        validateMembers(members);
 
-            if (members != null) {
-                for (UUID member : members) {
-                    if (!memberProfileRepo.existsById(member)) {
-                        throw new BadArgException(String.format("Invalid member profile ID %s", member));
-                    }
-                }
-            }
+        SkillsReportResponseDTO response = new SkillsReportResponseDTO();
 
-            response = new SkillsReportResponseDTO();
-
-            final List<TeamMemberSkillDTO> potentialMembers = getPotentialQualifyingMembers(skills);
-            if (members == null || members.isEmpty()) {
-                if (inclusive == null || !inclusive) {
-                    response.setTeamMembers(potentialMembers);
-                } else {
-                    final List<TeamMemberSkillDTO> qualifiedMembers = getMembersSatisfyingAllSkills(potentialMembers, skills);
-                    response.setTeamMembers(qualifiedMembers);
-                }
+        final List<TeamMemberSkillDTO> potentialMembers = getPotentialQualifyingMembers(skills);
+        if (members == null || members.isEmpty()) {
+            if (inclusive) {
+                response.setTeamMembers(getMembersSatisfyingAllSkills(potentialMembers, skills));
             } else {
-                final List<TeamMemberSkillDTO> membersInList = removeMembersNotRequested(potentialMembers, members);
-                if (inclusive == null || !inclusive) {
-                    response.setTeamMembers(membersInList);
-                } else {
-                    final List<TeamMemberSkillDTO> qualifiedMembers = getMembersSatisfyingAllSkills(membersInList, skills);
-                    response.setTeamMembers(qualifiedMembers);
+                response.setTeamMembers(potentialMembers);
+            }
+        } else {
+            final List<TeamMemberSkillDTO> membersInList = removeMembersNotRequested(potentialMembers, members);
+            if (inclusive) {
+                response.setTeamMembers(getMembersSatisfyingAllSkills(membersInList, skills));
+            } else {
+                response.setTeamMembers(membersInList);
+            }
+        }
+        return response;
+    }
+
+    private void validateMembers(Set<UUID> members) {
+        if (members != null) {
+            for (UUID member : members) {
+                if (!memberProfileRepo.existsById(member)) {
+                    throw new BadArgException(String.format("Invalid member profile ID %s", member));
                 }
             }
         }
+    }
 
-        return response;
+    private void validateSkills(List<SkillLevelDTO> skills) {
+        for (SkillLevelDTO skill : skills) {
+            if (!skillRepo.existsById(skill.getId())) {
+                throw new BadArgException(String.format("Invalid skill ID %s", skill.getId()));
+            }
+        }
     }
 
     private List<TeamMemberSkillDTO> getPotentialQualifyingMembers(List<SkillLevelDTO> skills) {
         // Get all member_skill entries that satisfy a requested skill
-        final List<MemberSkill> entries = new ArrayList<>();
+        List<MemberSkill> entries = new ArrayList<>();
 
         for (SkillLevelDTO skill : skills) {
             if (skill.getId() == null) {
                 throw new BadArgException("Invalid requested skill ID");
             }
 
-            final List<MemberSkill> temp = memberSkillRepo.findBySkillid(skill.getId());
-            if (skill.getLevel() != null && temp.size() > 0) {
+            final List<MemberSkill> temp =
+                memberSkillRepo.activeMemberSkills(skill.getId().toString());
+            if (skill.getLevel() != null && !temp.isEmpty()) {
                 for (MemberSkill memSkill : temp) {
-                    if (memSkill.getSkilllevel() != null) {
-                        if (isSkillLevelSatisfied(memSkill.getSkilllevel(), skill.getLevel())) {
-                            entries.add(memSkill);
-                        }
+                    if (memSkill.getSkilllevel() != null && isSkillLevelSatisfied(memSkill.getSkilllevel(), skill.getLevel())) {
+                        entries.add(memSkill);
                     }
                 }
             } else {
@@ -101,33 +107,29 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         }
 
         // Collect all entries belong to each team member
-        final HashMap<UUID, TeamMemberSkillDTO> map = new HashMap<>();
-        for (MemberSkill ms : entries) {
-            final UUID memberId = ms.getMemberid();
-            final SkillLevelDTO skill = new SkillLevelDTO();
-            skill.setId(ms.getSkillid());
-            skill.setLevel(SkillLevel.convertFromString(ms.getSkilllevel()));
-
-            if (map.containsKey(memberId)) {
-                final TeamMemberSkillDTO dto = map.get(memberId);
-                dto.getSkills().add(skill);
-            } else {
-                final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
-                dto.setId(memberId);
-
-                final MemberProfile memProfile = memberProfileServices.getById(memberId);
-                final String memberName = MemberProfileUtils.getFullName(memProfile);
-                dto.setName(memberName);
-
-                final List<SkillLevelDTO> memberSkills = new ArrayList<>();
-                memberSkills.add(skill);
-                dto.setSkills(memberSkills);
-
-                map.put(memberId, dto);
-            }
-        }
+        final HashMap<UUID, TeamMemberSkillDTO> map = collectEntries(entries);
 
         return new ArrayList<>(map.values());
+    }
+
+    private HashMap<UUID, TeamMemberSkillDTO> collectEntries(List<MemberSkill> entries) {
+        final HashMap<UUID, TeamMemberSkillDTO> map = new HashMap<>();
+
+        for (MemberSkill ms : entries) {
+            final UUID memberId = ms.getMemberid();
+
+            final SkillLevelDTO skill = new SkillLevelDTO(ms.getSkillid(), SkillLevel.convertFromString(ms.getSkilllevel()));
+
+            var dto = map.computeIfAbsent(memberId, mId ->
+                    new TeamMemberSkillDTO(
+                            mId,
+                            MemberProfileUtils.getFullName(memberProfileServices.getById(mId)),
+                            new ArrayList<>()
+                    )
+            );
+            dto.getSkills().add(skill);
+        }
+        return map;
     }
 
     private List<TeamMemberSkillDTO> getMembersSatisfyingAllSkills(List<TeamMemberSkillDTO> potentialMembers,

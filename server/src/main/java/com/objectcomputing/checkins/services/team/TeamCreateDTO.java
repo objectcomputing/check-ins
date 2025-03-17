@@ -23,12 +23,17 @@ public class TeamCreateDTO {
     @Schema(description = "description of the team")
     private String description;
 
+    @NotNull
+    @Schema(description = "whether the team is active")
+    private boolean active;
+
     @Schema(description = "members of this team")
     private List<TeamMemberCreateDTO> teamMembers;
 
-    public TeamCreateDTO(String name, @Nullable String description) {
+    public TeamCreateDTO(String name, @Nullable String description, boolean active) {
         this.name = name;
         this.description = description;
+        this.active = active;
     }
 
     @Data

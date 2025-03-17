@@ -29,7 +29,7 @@ public class VolunteeringEventDTO {
 
     @NotNull
     @Schema(description = "number of hours spent volunteering")
-    private Integer hours;
+    private Double hours;
 
     @Nullable
     @Schema(description = "notes about the volunteering event")

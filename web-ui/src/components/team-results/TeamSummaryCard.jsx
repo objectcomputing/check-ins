@@ -1,25 +1,22 @@
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useContext, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { AppContext } from '../../context/AppContext';
-import { UPDATE_TEAMS, UPDATE_TOAST } from '../../context/actions';
+import { UPDATE_TEAMS } from '../../context/actions';
 import EditTeamModal from './EditTeamModal';
+import KudosDialog from '../kudos_dialog/KudosDialog';
 import { Link } from 'react-router-dom';
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { deleteTeam, updateTeam } from '../../api/team.js';
+import { updateTeam } from '../../api/team.js';
 import SplitButton from '../split-button/SplitButton';
+import { selectCurrentUser, selectIsAdmin } from '../../context/selectors.js';
 
 const PREFIX = 'TeamSummaryCard';
 const classes = {
@@ -33,7 +30,8 @@ const StyledCard = styled(Card)({
     width: '340px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative'
   },
   [`& .${classes.header}`]: {
     width: '100%'
@@ -44,6 +42,11 @@ const StyledCard = styled(Card)({
     whiteSpace: 'nowrap'
   }
 });
+
+const inactiveStyle = {
+  color: 'var(--action-disabled)',
+  'font-size': '0.75em'
+};
 
 const propTypes = {
   team: PropTypes.shape({
@@ -57,12 +60,13 @@ const displayName = 'TeamSummaryCard';
 
 const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { teams, userProfile, csrf } = state;
-  const [openDelete, setOpenDelete] = useState(false);
+  const { teams, csrf } = state;
+  const [openKudos, setOpenKudos] = useState(false);
+  // const [selectedTeam, setSelectedTeam] = useState(null);
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
+  const isAdmin = selectIsAdmin(state);
+  const currentUser = selectCurrentUser(state);
 
   let leads =
     team.teamMembers == null
@@ -76,43 +80,18 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
   const isTeamLead =
     leads === null
       ? false
-      : leads.some(lead => lead.memberId === userProfile.memberProfile.id);
+      : leads.some(lead => lead.memberId === currentUser.id);
 
-  const handleOpenDeleteConfirmation = () => setOpenDelete(true);
+  const handleOpenKudos = () => setOpenKudos(true);
+  const handleCloseKudos = () => setOpenKudos(false);
 
-  const handleCloseDeleteConfirmation = () => setOpenDelete(false);
-
-  const teamId = team?.id;
-  const deleteATeam = useCallback(async () => {
-    if (teamId && csrf) {
-      const result = await deleteTeam(teamId, csrf);
-      if (result && result.payload && result.payload.status === 200) {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: 'success',
-            toast: 'Team deleted'
-          }
-        });
-        let newTeams = teams.filter(team => {
-          return team.id !== teamId;
-        });
-        dispatch({
-          type: UPDATE_TEAMS,
-          payload: newTeams
-        });
-      }
-    }
-  }, [teamId, csrf, dispatch, teams]);
-
-  const options =
-    isAdmin || isTeamLead ? ['Edit Team', 'Delete Team'] : ['Edit Team'];
+  const options = ['Edit Team', 'Give Kudos'];
 
   const handleAction = (e, index) => {
     if (index === 0) {
       onTeamSelect(team.id);
     } else if (index === 1) {
-      handleOpenDeleteConfirmation();
+      handleOpenKudos();
     }
   };
 
@@ -139,6 +118,13 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
         }
       />
       <CardContent>
+        {!team.active && (
+          <Typography
+            sx={{ position: 'absolute', top: 10, right: 10, ...inactiveStyle }}
+          >
+            Inactive
+          </Typography>
+        )}
         {team.teamMembers == null ? (
           <React.Fragment key={`empty-team-${team.name}`}>
             <strong>Team Leads: </strong>None Assigned
@@ -188,27 +174,11 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
         {(isAdmin || isTeamLead) && (
           <>
             <SplitButton options={options} onClick={handleAction} />
-            <Dialog
-              open={openDelete}
-              onClose={handleCloseDeleteConfirmation}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">Delete team?</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to delete the team?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseDeleteConfirmation} color="primary">
-                  Cancel
-                </Button>
-                <Button onClick={deleteATeam} color="primary" autoFocus>
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
+            <KudosDialog
+              open={openKudos}
+              onClose={handleCloseKudos}
+              teamId={null}
+            />
           </>
         )}
       </CardActions>

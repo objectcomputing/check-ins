@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -42,6 +44,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     // todo remove manual validations throughout class in favor of jakarta validations at api level.
 
     @Override
+    @RequiredPermission(Permission.CAN_CREATE_CHECKINS)
     public CheckinNote save(@NotNull CheckinNote checkinNote) {
         validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
         
@@ -71,6 +74,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public CheckinNote read(@NotNull UUID id) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         CheckinNote checkInNoteResult = checkinNoteRepository.findById(id).orElse(null);
@@ -90,6 +94,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_UPDATE_CHECKINS)
     public CheckinNote update(@NotNull CheckinNote checkinNote) {
         final UUID id = checkinNote.getId();
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
@@ -124,6 +129,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     }
 
     @Override
+    @RequiredPermission(Permission.CAN_VIEW_CHECKINS)
     public Set<CheckinNote> findByFields(@Nullable UUID checkinId, @Nullable UUID createById) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if(!checkinServices.doesUserHaveViewAccess(currentUserId, checkinId, createById)){

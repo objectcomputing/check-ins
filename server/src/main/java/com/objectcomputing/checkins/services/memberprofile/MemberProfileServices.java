@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface MemberProfileServices {
     MemberProfile getById(UUID id);
 
+    MemberProfile findByWorkEmail(@NotNull String workEmail);
+
     Set<MemberProfile> findByValues(String firstName, String lastName, String title,
                                     UUID pdlId, String workEmail, UUID supervisorId, Boolean terminated);
 
@@ -25,4 +27,6 @@ public interface MemberProfileServices {
     List<MemberProfile> getSubordinatesForId(UUID id);
 
     MemberProfile updateProfile(MemberProfile memberProfile);
+
+    void updateLastSeen(UUID id);
 }

@@ -19,9 +19,4 @@ public class QuestionResponseDTO {
     @NotBlank
     @Schema(description = "text of the question being asked")
     private String text;
-
-    @Nullable
-    @Schema(description="id of the category of the question")
-    private UUID categoryId;
-
 }

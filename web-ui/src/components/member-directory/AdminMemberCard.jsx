@@ -4,9 +4,19 @@ import { Link } from 'react-router-dom';
 
 import MemberModal from './MemberModal';
 import { AppContext } from '../../context/AppContext';
-import { DELETE_MEMBER_PROFILE, UPDATE_MEMBER_PROFILES, UPDATE_TOAST } from '../../context/actions';
-import { selectProfileMap } from '../../context/selectors';
-import { getAvatarURL } from '../../api/api.js';
+import {
+  DELETE_MEMBER_PROFILE,
+  UPDATE_MEMBER_PROFILES,
+  UPDATE_TOAST
+} from '../../context/actions';
+import {
+  selectProfileMap,
+  selectHasCreateMembersPermission,
+  selectHasDeleteMembersPermission,
+  selectHasImpersonateMembersPermission,
+  selectCanEditAllOrganizationMembers
+} from '../../context/selectors';
+import { getAvatarURL, resolve } from '../../api/api.js';
 
 import Avatar from '@mui/material/Avatar';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
@@ -48,8 +58,6 @@ const StyledBox = styled(Box)(() => ({
 const AdminMemberCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
   const { memberProfiles, userProfile, csrf } = state;
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes('ADMIN');
   const {
     location,
     name,
@@ -73,14 +81,60 @@ const AdminMemberCard = ({ member, index }) => {
   const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-  const options = isAdmin ? ['Edit', 'Delete'] : ['Edit'];
+  const actionFunctions = [];
+
+  const options = () => {
+    let entries = [];
+    actionFunctions.length = 0;
+
+    // This is "Create" permission because there is no "Edit" permission.  This
+    // is due to the fact that users can edit their own profiles.  But, only
+    // certain users can create new profiles.  So, we associate the edit feature
+    // with profile creation.
+    if (
+      selectHasCreateMembersPermission(state) ||
+      selectCanEditAllOrganizationMembers(state)
+    ) {
+      entries.push('Edit');
+      actionFunctions.push(handleOpen);
+    }
+    if (selectHasDeleteMembersPermission(state)) {
+      entries.push('Delete');
+      actionFunctions.push(handleOpenDeleteConfirmation);
+    }
+    if (selectHasImpersonateMembersPermission(state)) {
+      // If we have not already impersonated a user, we can provide that option.
+      if (document.cookie.indexOf('OJWT=') == -1) {
+        entries.push('Impersonate');
+        actionFunctions.push(handleImpersonate);
+      }
+    }
+    return entries;
+  };
 
   const handleAction = (e, index) => {
-    if (index === 0) {
-      handleOpen();
-    } else if (index === 1) {
-      handleOpenDeleteConfirmation();
+    if (index < actionFunctions.length) {
+      actionFunctions[index]();
+    } else {
+      console.warn(`${index} is out of range for the action functions`);
     }
+  };
+
+  const handleImpersonate = async () => {
+    // "log in" as the chosen user with the default role.
+    const res = await resolve({
+      method: 'POST',
+      url: '/impersonation/begin',
+      headers: {
+        'X-CSRF-Header': csrf,
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: { email: workEmail }
+    });
+
+    // If that was successful, take the user back to the main page.
+    if (!res.error) window.location.href = '/';
   };
 
   const handleDeleteMember = async () => {
@@ -180,13 +234,18 @@ const AdminMemberCard = ({ member, index }) => {
             </Typography>
           </Container>
         </CardContent>
-        {isAdmin && (
+        {(selectHasCreateMembersPermission(state) ||
+          selectHasDeleteMembersPermission(state) ||
+          selectCanEditAllOrganizationMembers(state) ||
+          selectHasImpersonateMembersPermission(state)) && (
           <CardActions>
-            <SplitButton
-              className="split-button"
-              options={options}
-              onClick={handleAction}
-            />
+            {options().length > 0 && (
+              <SplitButton
+                className="split-button"
+                options={options()}
+                onClick={handleAction}
+              />
+            )}
             <Dialog
               open={openDelete}
               onClose={handleCloseDeleteConfirmation}

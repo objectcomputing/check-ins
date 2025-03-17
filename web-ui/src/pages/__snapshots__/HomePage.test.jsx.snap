@@ -8,9 +8,37 @@ exports[`renders correctly 1`] = `
     <div
       class="celebrations"
     >
-      <h1>
-        No events currently available...
-      </h1>
+      <div
+        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-11nsb57-MuiGrid-root"
+        style="padding: 0px 20px 0px 20px;"
+      >
+        <div
+          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+        >
+          <div
+            class="public-kudos"
+          >
+            <div
+              class="kudos-title"
+            >
+              <h1>
+                Kudos
+              </h1>
+            </div>
+            <div
+              class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1qw2a80-MuiGrid-root"
+            >
+              <div
+                class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+              >
+                <div
+                  class="kudos-list"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

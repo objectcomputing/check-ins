@@ -10,4 +10,9 @@ public interface PulseResponseFixture extends RepositoryFixture {
         return getPulseResponseRepository().save(new PulseResponse(0, 0, LocalDate.now(),
                 memberprofile.getId(), "internalfeelings", "externalfeelings"));
     }
+
+    default PulseResponse createADefaultAnonymousPulseResponse() {
+        return getPulseResponseRepository().save(new PulseResponse(0, 0, LocalDate.now(),
+                null, "internalfeelings", "externalfeelings"));
+    }
 }

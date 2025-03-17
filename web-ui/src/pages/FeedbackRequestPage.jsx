@@ -23,10 +23,15 @@ import {
   selectProfile,
   selectCsrfToken,
   selectCurrentUser,
-  selectCurrentMemberIds
+  selectCurrentMemberIds,
+  selectHasCreateFeedbackPermission,
+  noPermission
 } from '../context/selectors';
 import DateFnsUtils from '@date-io/date-fns';
-import { getFeedbackTemplate, softDeleteAdHocTemplates } from '../api/feedbacktemplate';
+import {
+  getFeedbackTemplate,
+  softDeleteAdHocTemplates
+} from '../api/feedbacktemplate';
 
 import './FeedbackRequestPage.css';
 
@@ -189,13 +194,6 @@ const FeedbackRequestPage = () => {
         return hasFor() && templateIsValid && hasFrom();
       } else if (activeStep === 3) {
         const dueQueryValid = query.due ? isValidDate(query.due) : true;
-        console.log({
-          hasFor: hasFor(),
-          templateIsValid,
-          hasFrom: hasFrom(),
-          hasSend: hasSend(),
-          dueQueryValid
-        });
         return (
           hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid
         );
@@ -398,7 +396,7 @@ const FeedbackRequestPage = () => {
     setReadyToProceed(canProceed());
   }, [canProceed]);
 
-  return (
+  return selectHasCreateFeedbackPermission(state) ? (
     <Root className="feedback-request-page">
       <div className="header-container">
         <Typography className={classes.requestHeader} variant="h4">
@@ -472,6 +470,8 @@ const FeedbackRequestPage = () => {
         )}
       </div>
     </Root>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

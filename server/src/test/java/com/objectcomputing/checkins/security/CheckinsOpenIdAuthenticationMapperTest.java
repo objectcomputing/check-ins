@@ -18,7 +18,9 @@ import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,7 +60,7 @@ class CheckinsOpenIdAuthenticationMapperTest extends TestContainersSuite impleme
                     Authentication authentication = auth.getAuthentication().orElse(null);
                     assertNotNull(authentication);
                     assertEquals(MemberProfileUtils.getFullName(memberProfile), authentication.getName());
-                    assertThat(authentication.getRoles(), CoreMatchers.hasItems(RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE));
+                    assertEquals(Set.of(RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE), new HashSet<>(authentication.getRoles()));
                     assertTrue(roles.containsAll(authentication.getRoles()));
                     assertEquals(roles.size(), authentication.getRoles().size());
                 }).verifyComplete();

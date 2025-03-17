@@ -84,8 +84,11 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
 
     @Test
     void testCreateNotAllowed() {
+        SkillCategory defaultSkillCategory = createDefaultSkillCategory();
+        Skill aDefaultSkill = createADefaultSkill();
+        SkillCategorySkill skillCategorySkill = new SkillCategorySkill(defaultSkillCategory.getId(),aDefaultSkill.getId());
         HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
-                .POST("/", new SkillCategorySkillId())
+                .POST("/", skillCategorySkill.getSkillCategorySkillId())
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(httpRequest, Map.class));
@@ -111,7 +114,7 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
 
 
     @Test
-    void testDeleteDontExist() {
+    void testDeleteDoesntExist() {
         SkillCategorySkillId skillCategorySkillId =  new SkillCategorySkillId(UUID.randomUUID(),UUID.randomUUID());
         HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
                 .DELETE("/", skillCategorySkillId)
@@ -123,8 +126,11 @@ class SkillCategorySkillControllerTest extends TestContainersSuite
 
     @Test
     void testDeleteNotAllowed() {
+        SkillCategory defaultSkillCategory = createDefaultSkillCategory();
+        Skill aDefaultSkill = createADefaultSkill();
+        SkillCategorySkill skillCategorySkill = createSkillCategorySkill(defaultSkillCategory.getId(), aDefaultSkill.getId());
         HttpRequest<SkillCategorySkillId> httpRequest = HttpRequest
-                .DELETE("/", new SkillCategorySkillId())
+                .DELETE("/", skillCategorySkill.getSkillCategorySkillId())
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(httpRequest, Map.class));

@@ -17,6 +17,7 @@ const propTypes = {
 const GuideLink = props => {
   return (
     <ListItem
+      data-testid={props.id}
       key={`doc-${props.id}`}
       to={props.url}
       component={Link}

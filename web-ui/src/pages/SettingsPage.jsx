@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { debounce } from 'lodash/function';
+import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
+import { Button, Typography } from '@mui/material';
 import {
   SettingsBoolean,
   SettingsColor,
@@ -8,8 +9,14 @@ import {
   SettingsNumber,
   SettingsString
 } from '../components/settings';
-import {getAllOptions, updateSetting, getAll } from '../api/settings';
-import { selectCsrfToken } from '../context/selectors';
+import { putOption, postOption, getAllOptions } from '../api/settings';
+import {
+  selectCsrfToken,
+  selectHasViewSettingsPermission,
+  selectHasAdministerSettingsPermission,
+  noPermission
+} from '../context/selectors';
+import { titleCase } from '../helpers/strings';
 import './SettingsPage.css';
 
 const displayName = 'SettingsPage';
@@ -24,101 +31,157 @@ const componentMapping = {
 
 const SettingsPage = () => {
   const fileRef = React.useRef(null);
-  const {state} = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const [settingsControls, setSettingsControls] = useState([]);
-  const [settingsDatabaseValues, setSettingsDatabaseValues] = useState([]);
-
-  const realStoreSetting = async (name, value, csrf) => await updateSetting(name, value, csrf);
-
-  const storeSetting = debounce(realStoreSetting, 1500);
+  const [update, setState] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
-      const expectedSettings = (await getAllOptions()).payload.data;
-      const allSettingsValuesFromDB = (await getAll()).payload.data;
-      setSettingsControls(expectedSettings);
-      setSettingsDatabaseValues(allSettingsValuesFromDB);
+      // Get the options from the server
+      const allOptions =
+        selectHasViewSettingsPermission(state) ||
+        selectHasAdministerSettingsPermission(state)
+          ? (await getAllOptions(csrf)).payload.data
+          : [];
 
-    };
-
-    fetchData();
-  }, []);
-
-
-  const mergeControlValues = (originalSettings, newValues) => {
-    console.log("originalSettings:" + originalSettings);
-    console.log("newValues: " + newValues);
-    const mergedSettings = originalSettings.map( originalSetting => {
-      let newValue = newValues?.find((element) => element.name == originalSetting.name);
-      if (newValue) {
-        const combinedObject = {...originalSetting, ...newValue}
-        return combinedObject
+      if (allOptions) {
+        // Sort the options by category, store them, and upate the state.
+        setSettingsControls(
+          allOptions.sort((l, r) => {
+            if (l.category === r.category) {
+              return l.name.localeCompare(r.name);
+            } else {
+              return l.category.localeCompare(r.category);
+            }
+          })
+        );
       }
-      return {...originalSetting, createNew: true};
-    });
+    };
+    if (csrf) {
+      fetchData();
+    }
+  }, [state, csrf]);
 
-    return mergedSettings;
-  }
-
-  const originalSettings = settingsControls
-  const newValues = settingsDatabaseValues
-
-  const mergedSettings = mergeControlValues(originalSettings, newValues)
-
-
-
-  /*
-    for specific settings, add a handleFunction to the settings object
-    format should be handleSetting and then add it to the handlers object
-    with the setting name as the key
-  */
   const handleLogoUrl = file => {
     if (csrf) {
-      console.log("In handleLogoUrl")
-      // TODO: need to have a storage bucket to upload the file to
+      // TODO: Need to upload the file to a storage bucket...
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'warning',
+          toast: 'The Logo URL setting has yet to be implemented.'
+        }
+      });
     }
   };
-//TODO: Maybe remove since it's in string.jsx
-  const handleStringChange = (e) => {
-    if (!csrf) {
-      return;
-    }
-    console.log("In handleStringChange", this)
-    const {value} = e.target;
-    let name = e.target.id.toUpperCase();
 
-    // this.setState({
-    //   stringValue: value
-    // });
-    // storeSetting({...setting, value: settingValue}, csrf);
-    storeSetting(name, value, csrf);
-    // updateSetting(name, value);
+  const keyedHandler = (key, event) => {
+    if (handlers[key]) {
+      handlers[key].setting.value = event.target.value;
+      setState({ update: true });
+    }
+  };
+
+  const handlePulseEmailFrequency = event => {
+    keyedHandler('PULSE_EMAIL_FREQUENCY', event);
   };
 
   const handlers = {
-    LOGO_URL: handleLogoUrl,
-    // FROM_NAME: handleStringChange
+    // File handlers do not modify settings values and, therefore, do not
+    // need to keep a reference to the setting object.  However, they do need
+    // a file reference object.
+    LOGO_URL: {
+      onChange: handleLogoUrl,
+      setting: fileRef
+    },
 
+    // All others need to provide an `onChange` method and a `setting` object.
+    PULSE_EMAIL_FREQUENCY: {
+      onChange: handlePulseEmailFrequency,
+      setting: undefined
+    }
   };
 
   const addHandlersToSettings = settings => {
-    return settings.map(setting => {
-      const handler = handlers[setting.name.toUpperCase()];
-      if (handler && setting.type.toUpperCase() === 'FILE') {
-        return {
-          ...setting,
-          handleFunction: handler,
-          fileRef: fileRef
-        };
-      }
-      if (handler) {
-        return {...setting, handleChange: handler};
-      }
-      return setting;
-    });
+    return settings
+      ? settings.map(setting => {
+          const handler = handlers[setting.name.toUpperCase()];
+          if (handler) {
+            if (setting.type.toUpperCase() === 'FILE') {
+              return {
+                ...setting,
+                handleFunction: handler.onChange,
+                fileRef: handler.setting
+              };
+            }
+
+            handler.setting = setting;
+            return { ...setting, handleChange: handler.onChange };
+          }
+
+          console.warn(`WARNING: No handler for ${setting.name}`);
+          return setting;
+        })
+      : [];
   };
 
+  const save = async () => {
+    let errors;
+    let saved = 0;
+    for (let key of Object.keys(handlers)) {
+      const setting = handlers[key].setting;
+      // The settings controller does not allow blank values.
+      if (setting?.name && `${setting.value}` != '') {
+        let res;
+        if (setting.id) {
+          res = await putOption(
+            { name: setting.name, value: setting.value },
+            csrf
+          );
+        } else {
+          res = await postOption(
+            { name: setting.name, value: setting.value },
+            csrf
+          );
+          if (res?.payload?.data) {
+            setting.id = res.payload.data.id;
+          }
+        }
+        if (res?.error) {
+          const error = res?.error?.message;
+          if (errors) {
+            errors += '\n' + error;
+          } else {
+            errors = error;
+          }
+        }
+        if (res?.payload?.data) {
+          saved++;
+        }
+      } else {
+        console.warn(`WARNING: ${setting.name} not sent to the server`);
+      }
+    }
+
+    if (errors) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: errors
+        }
+      });
+    } else if (saved > 0) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'success',
+          toast: 'Settings have been saved'
+        }
+      });
+    }
+  };
 
   /**
    * @typedef {Object} Controls
@@ -128,18 +191,50 @@ const SettingsPage = () => {
    */
 
   /** @type {Controls[]} */
-  // const updatedValues = addValuesToSettings(settingsControls)
-  const updatedSettingsControls = addHandlersToSettings(mergedSettings);
-  // const updatedValues = addValuesToSettings(updatedSettingsControls)
-  // setFinalControlValues(updatedSettingsControls)
+  const updatedSettingsControls = addHandlersToSettings(settingsControls);
+  const categories = {};
 
-  return (
-      <div className="settings-page">
-        {updatedSettingsControls.map((componentInfo, index) => {
-          const Component = componentMapping[componentInfo.type.toUpperCase()];
-          return <Component key={index} {...componentInfo} />;
-        })}
-      </div>
+  return selectHasViewSettingsPermission(state) ||
+    selectHasAdministerSettingsPermission(state) ? (
+    <div className="settings-page">
+      {updatedSettingsControls.map((componentInfo, index) => {
+        const Component = componentMapping[componentInfo.type.toUpperCase()];
+        const info = { ...componentInfo, name: titleCase(componentInfo.name) };
+        if (categories[info.category]) {
+          return <Component key={index} {...info} />;
+        } else {
+          categories[info.category] = true;
+          return (
+            <div key={index}>
+              <Typography
+                data-testid={info.category}
+                variant="h4"
+                sx={{ textDecoration: 'underline' }}
+                display="inline"
+              >
+                {titleCase(info.category)}
+              </Typography>
+              <Component {...info} />
+            </div>
+          );
+        }
+      })}
+      {
+        // Check length against an explicit value.  If length is zero, it will
+        // be displayed instead of evaluated to false.
+        settingsControls &&
+          settingsControls.length > 0 &&
+          selectHasAdministerSettingsPermission(state) && (
+            <div className="buttons">
+              <Button disableRipple color="primary" onClick={save}>
+                Save
+              </Button>
+            </div>
+          )
+      }
+    </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

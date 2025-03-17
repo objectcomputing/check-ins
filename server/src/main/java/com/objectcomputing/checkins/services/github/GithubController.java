@@ -1,28 +1,24 @@
 package com.objectcomputing.checkins.services.github;
 
-import io.micronaut.http.HttpResponse;
+import io.micronaut.core.async.annotation.SingleResult;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import reactor.core.publisher.Mono;
-
+import org.reactivestreams.Publisher;
 
 @Controller("/services/github-issue")
-@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "github")
-public class GithubController {
+class GithubController {
 
     private final GithubClient githubClient;
 
-    public GithubController(GithubClient githubClient) {
+    GithubController(GithubClient githubClient) {
         this.githubClient = githubClient;
     }
 
@@ -30,11 +26,11 @@ public class GithubController {
      * Create and save a new github issue
      *
      * @param request, {@link IssueCreateDTO}
-     * @return {@link HttpResponse < IssueResponseDTO >}
+     * @return an {@link IssueResponseDTO}
      */
     @Post
-    Mono<IssueResponseDTO> sendIssue(@Body @Valid @NotNull IssueCreateDTO request) {
-        return Mono.from(githubClient.sendIssue(request));
+    @SingleResult
+    Publisher<IssueResponseDTO> sendIssue(@Body @Valid @NotNull IssueCreateDTO request) {
+        return githubClient.sendIssue(request);
     }
-
 }

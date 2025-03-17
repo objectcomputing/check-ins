@@ -9,30 +9,29 @@ import java.time.LocalDate;
 public interface CertificationFixture extends RepositoryFixture {
 
     default Certification createDefaultCertification() {
-        return createCertification("Default", "Default Badge URL");
+        return createCertification("Default", "Description", "Default Badge URL");
     }
 
-    default Certification createCertification(String name) {
-        return createCertification(name, null);
+    default Certification createCertification(String name, String description) {
+        return createCertification(name, description, null);
     }
 
-    default Certification createCertification(String name, String badgeUrl) {
-        return createCertification(name, badgeUrl, true);
+    default Certification createCertification(String name, String description, String badgeUrl) {
+        return createCertification(name, description, badgeUrl, true);
     }
 
-    default Certification createCertification(String name, String badgeUrl, boolean active) {
-        return getCertificationRepository().save(new Certification(name, badgeUrl, active));
+    default Certification createCertification(String name, String description, String badgeUrl, boolean active) {
+        return getCertificationRepository().save(new Certification(name, description, badgeUrl, active));
     }
 
     default EarnedCertification createEarnedCertification(MemberProfile member, Certification certification) {
-        return createEarnedCertification(member, certification, "Default Earned certification", LocalDate.now());
+        return createEarnedCertification(member, certification, LocalDate.now());
     }
 
-    default EarnedCertification createEarnedCertification(MemberProfile member, Certification certification, String description, LocalDate earnedDate) {
+    default EarnedCertification createEarnedCertification(MemberProfile member, Certification certification, LocalDate earnedDate) {
         return getEarnedCertificationRepository().save(new EarnedCertification(
                 member.getId(),
                 certification.getId(),
-                description,
                 earnedDate,
                 null,
                 null

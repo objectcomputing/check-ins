@@ -19,7 +19,8 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_UPDATE_CHECKINS,
         Permission.CAN_ADMINISTER_SETTINGS,
         Permission.CAN_VIEW_SETTINGS,
-        Permission.CAN_VIEW_REVIEW_PERIOD
+        Permission.CAN_VIEW_REVIEW_PERIOD,
+        Permission.CAN_CREATE_KUDOS
     );
 
     // Add PDL Permissions here
@@ -40,15 +41,20 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_UPDATE_CHECKIN_DOCUMENT,
         Permission.CAN_ADMINISTER_SETTINGS,
         Permission.CAN_VIEW_SETTINGS,
-        Permission.CAN_VIEW_REVIEW_PERIOD
+        Permission.CAN_VIEW_REVIEW_PERIOD,
+        Permission.CAN_CREATE_KUDOS
     );
 
     // Add ADMIN Permissions here
     List<Permission> adminPermissions = List.of(
+        Permission.CAN_EDIT_MEMBER_ROLES,
         Permission.CAN_VIEW_FEEDBACK_REQUEST,
         Permission.CAN_CREATE_FEEDBACK_REQUEST,
         Permission.CAN_DELETE_FEEDBACK_REQUEST,
+        Permission.CAN_ADMINISTER_FEEDBACK_REQUEST,
         Permission.CAN_VIEW_FEEDBACK_ANSWER,
+        Permission.CAN_ADMINISTER_FEEDBACK_ANSWER,
+        Permission.CAN_EDIT_ALL_ORGANIZATION_MEMBERS,
         Permission.CAN_DELETE_ORGANIZATION_MEMBERS,
         Permission.CAN_CREATE_ORGANIZATION_MEMBERS,
         Permission.CAN_VIEW_ROLE_PERMISSIONS,
@@ -64,6 +70,7 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_ASSIGN_ROLE_PERMISSIONS,
         Permission.CAN_VIEW_SKILL_CATEGORIES,
         Permission.CAN_EDIT_SKILL_CATEGORIES,
+        Permission.CAN_EDIT_SKILLS,
         Permission.CAN_VIEW_PRIVATE_NOTE,
         Permission.CAN_CREATE_PRIVATE_NOTE,
         Permission.CAN_UPDATE_PRIVATE_NOTE,
@@ -91,7 +98,18 @@ public interface PermissionFixture extends RolePermissionFixture {
         Permission.CAN_ADMINISTER_VOLUNTEERING_ORGANIZATIONS,
         Permission.CAN_ADMINISTER_VOLUNTEERING_RELATIONSHIPS,
         Permission.CAN_ADMINISTER_VOLUNTEERING_EVENTS,
-        Permission.CAN_ADMINISTER_DOCUMENTATION
+        Permission.CAN_ADMINISTER_DOCUMENTATION,
+        Permission.CAN_ADMINISTER_KUDOS,
+        Permission.CAN_CREATE_KUDOS,
+        Permission.CAN_IMPERSONATE_MEMBERS,
+        Permission.CAN_SEND_EMAIL,
+        Permission.CAN_CREATE_MERIT_REPORT,
+        Permission.CAN_UPLOAD_HOURS,
+        Permission.CAN_VIEW_ALL_UPLOADED_HOURS,
+        Permission.CAN_ADMINISTER_FEEDBACK_TEMPLATES,
+        Permission.CAN_ADMINISTER_GUILDS,
+        Permission.CAN_ADMINISTER_TEAMS,
+        Permission.CAN_ADMINISTER_CHECKIN_DOCUMENTS
     );
 
     default void setPermissionsForAdmin(UUID roleID) {

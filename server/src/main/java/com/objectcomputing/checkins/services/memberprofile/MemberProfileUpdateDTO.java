@@ -87,4 +87,8 @@ public class MemberProfileUpdateDTO {
     @Nullable
     @Schema(description = "Last date employee logged in", nullable = true)
     private LocalDate lastSeen;
+
+    @Nullable
+    @Schema(description = "The employee would like their birthday to not be celebrated", nullable = true)
+    private Boolean ignoreBirthday;
 }

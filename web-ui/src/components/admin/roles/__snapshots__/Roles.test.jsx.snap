@@ -1,5 +1,13 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`renders an error if user does not have appropriate permission 1`] = `
+<div>
+  <h3>
+    You do not have permission to view this page.
+  </h3>
+</div>
+`;
+
 exports[`renders correctly 1`] = `
 <div>
   <div
@@ -18,39 +26,38 @@ exports[`renders correctly 1`] = `
             class="roles-top-search-fields"
           >
             <div
-              class="MuiFormControl-root role-select css-1nrlq1o-MuiFormControl-root"
+              class="MuiFormControl-root role-select css-1iw3t7y-MuiFormControl-root"
             >
               <label
-                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-113d811-MuiFormLabel-root-MuiInputLabel-root"
                 data-shrink="true"
                 id="roles-select-label"
               >
                 Roles
               </label>
               <div
-                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiSelect-root css-quhxjy-MuiInputBase-root-MuiOutlinedInput-root"
               >
                 <div
-                  aria-controls=":r0:"
                   aria-expanded="false"
                   aria-haspopup="listbox"
                   aria-labelledby="roles-select-label"
-                  class="MuiSelect-select MuiSelect-outlined MuiSelect-multiple MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                  class="MuiSelect-select MuiSelect-outlined MuiSelect-multiple MuiInputBase-input MuiOutlinedInput-input css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
                   role="combobox"
                   tabindex="0"
                 >
-                  ADMIN, PDL
+                  ADMIN, MEMBER, PDL
                 </div>
                 <input
                   aria-hidden="true"
                   aria-invalid="false"
-                  class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                  class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
                   tabindex="-1"
-                  value="ADMIN,PDL"
+                  value="ADMIN,MEMBER,PDL"
                 />
                 <svg
                   aria-hidden="true"
-                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-lohd6h-MuiSvgIcon-root-MuiSelect-icon"
                   data-testid="ArrowDropDownIcon"
                   focusable="false"
                   viewBox="0 0 24 24"
@@ -61,10 +68,10 @@ exports[`renders correctly 1`] = `
                 </svg>
                 <fieldset
                   aria-hidden="true"
-                  class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                  class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
                 >
                   <legend
-                    class="css-14lo706"
+                    class="css-w1u3ce"
                   >
                     <span>
                       Roles
@@ -73,16 +80,16 @@ exports[`renders correctly 1`] = `
                 </fieldset>
               </div>
               <p
-                class="MuiFormHelperText-root MuiFormHelperText-sizeMedium MuiFormHelperText-contained MuiFormHelperText-filled css-1wc848c-MuiFormHelperText-root"
+                class="MuiFormHelperText-root MuiFormHelperText-sizeMedium MuiFormHelperText-contained MuiFormHelperText-filled css-er619e-MuiFormHelperText-root"
               >
-                Showing 2/2 roles
+                Showing 3/3 roles
               </p>
             </div>
             <div
-              class="MuiFormControl-root MuiTextField-root member-role-search css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+              class="MuiFormControl-root MuiTextField-root member-role-search css-1xp5r68-MuiFormControl-root-MuiTextField-root"
             >
               <label
-                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
                 data-shrink="false"
                 for=":r1:"
                 id=":r1:-label"
@@ -90,23 +97,23 @@ exports[`renders correctly 1`] = `
                 Search members
               </label>
               <div
-                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root"
+                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd css-jupps9-MuiInputBase-root-MuiOutlinedInput-root"
               >
                 <input
                   aria-invalid="false"
-                  class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
+                  class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
                   id=":r1:"
                   placeholder="Member Name"
                   type="text"
                   value=""
                 />
                 <div
-                  class="MuiInputAdornment-root MuiInputAdornment-positionEnd MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-1laqsz7-MuiInputAdornment-root"
+                  class="MuiInputAdornment-root MuiInputAdornment-positionEnd MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-elo8k2-MuiInputAdornment-root"
                   color="gray"
                 >
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                     data-testid="SearchIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -118,10 +125,10 @@ exports[`renders correctly 1`] = `
                 </div>
                 <fieldset
                   aria-hidden="true"
-                  class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                  class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
                 >
                   <legend
-                    class="css-yjsfm1"
+                    class="css-81qg8w"
                   >
                     <span>
                       Search members
@@ -136,17 +143,17 @@ exports[`renders correctly 1`] = `
           class="roles-top-right"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1uent87-MuiButtonBase-root-MuiButton-root"
             tabindex="0"
             type="button"
           >
             Add Role
             <span
-              class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-9tj150-MuiButton-endIcon"
+              class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-1gulhci-MuiButton-endIcon"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="AddIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -156,9 +163,6 @@ exports[`renders correctly 1`] = `
                 />
               </svg>
             </span>
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
           </button>
         </div>
       </div>
@@ -166,18 +170,19 @@ exports[`renders correctly 1`] = `
         class="roles-bot"
       >
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root role css-bhp9pd-MuiPaper-root-MuiCard-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root role css-1j74uew-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
         >
           <div
-            class="MuiCardContent-root role-card css-46bh2p-MuiCardContent-root"
+            class="MuiCardContent-root role-card css-1lt5qva-MuiCardContent-root"
           >
             <ul
-              class="MuiList-root MuiList-padding css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding css-b7dj7n-MuiList-root"
               style="padding-top: 0px;"
             >
               <div>
                 <li
-                  class="MuiListSubheader-root MuiListSubheader-gutters MuiListSubheader-sticky css-uob957-MuiListSubheader-root"
+                  class="MuiListSubheader-root MuiListSubheader-gutters MuiListSubheader-sticky css-l328gy-MuiListSubheader-root"
                   style="padding: 0px;"
                 >
                   <div
@@ -187,19 +192,21 @@ exports[`renders correctly 1`] = `
                       class="role-header-title"
                     >
                       <h4
-                        class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-h4 css-f84ov1-MuiTypography-root"
                       >
                         ADMIN
                       </h4>
                       <h6
-                        class="MuiTypography-root MuiTypography-subtitle1 css-10wpov9-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                      />
+                      >
+                        Administrator
+                      </h6>
                       <h6
-                        class="MuiTypography-root MuiTypography-subtitle2 css-ati914-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-subtitle2 css-1ypmsg6-MuiTypography-root"
                         style="font-size: 0.75rem;"
                       >
-                        0
+                        1
                          Users
                       </h6>
                     </div>
@@ -207,13 +214,13 @@ exports[`renders correctly 1`] = `
                       class="role-header-buttons"
                     >
                       <button
-                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1uent87-MuiButtonBase-root-MuiButton-root"
                         tabindex="0"
                         type="button"
                       >
                         <svg
                           aria-hidden="true"
-                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                           data-testid="PersonAddIcon"
                           focusable="false"
                           viewBox="0 0 24 24"
@@ -222,56 +229,103 @@ exports[`renders correctly 1`] = `
                             d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4m-9-2V7H4v3H1v2h3v3h2v-3h3v-2zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4"
                           />
                         </svg>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </button>
                       <button
-                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary role-edit css-1d3f8j8-MuiButtonBase-root-MuiButton-root"
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary role-edit css-1xj59sp-MuiButtonBase-root-MuiButton-root"
                         tabindex="0"
                         type="button"
                       >
                         <svg
                           aria-hidden="true"
-                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                           data-testid="EditIcon"
                           focusable="false"
                           viewBox="0 0 24 24"
                         >
                           <path
-                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
                           />
                         </svg>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </button>
                     </div>
                   </div>
                   <hr
-                    class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
+                    class="MuiDivider-root MuiDivider-fullWidth css-1jpc804-MuiDivider-root"
                   />
                 </li>
+                <div>
+                  <li
+                    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding roles-list-item css-cfd5wn-MuiListItem-root"
+                  >
+                    <div
+                      class="MuiListItemAvatar-root css-1ulznza-MuiListItemAvatar-root"
+                    >
+                      <div
+                        class="MuiAvatar-root MuiAvatar-circular large css-fmeqll-MuiAvatar-root"
+                      >
+                        <img
+                          alt="Señior Test's avatar"
+                          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
+                          src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="MuiListItemText-root MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
+                    >
+                      <h2
+                        class="MuiTypography-root MuiTypography-h5 css-16xl4zq-MuiTypography-root"
+                      >
+                        Señior Test
+                      </h2>
+                      <h3
+                        class="MuiTypography-root MuiTypography-body1 css-1ro85z9-MuiTypography-root"
+                      />
+                    </div>
+                    <div
+                      class="icon"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                        data-testid="DeleteIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+                        />
+                      </svg>
+                    </div>
+                  </li>
+                  <li
+                    aria-orientation="horizontal"
+                    class="MuiDivider-root MuiDivider-inset css-gyhshc-MuiDivider-root"
+                    role="separator"
+                    style="margin-right: 2rem;"
+                  />
+                </div>
               </div>
             </ul>
           </div>
           <div
-            class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+            class="MuiCardActions-root MuiCardActions-spacing css-1q4nm6f-MuiCardActions-root"
           />
         </div>
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root role css-bhp9pd-MuiPaper-root-MuiCard-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root role css-1j74uew-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
         >
           <div
-            class="MuiCardContent-root role-card css-46bh2p-MuiCardContent-root"
+            class="MuiCardContent-root role-card css-1lt5qva-MuiCardContent-root"
           >
             <ul
-              class="MuiList-root MuiList-padding css-h4y409-MuiList-root"
+              class="MuiList-root MuiList-padding css-b7dj7n-MuiList-root"
               style="padding-top: 0px;"
             >
               <div>
                 <li
-                  class="MuiListSubheader-root MuiListSubheader-gutters MuiListSubheader-sticky css-uob957-MuiListSubheader-root"
+                  class="MuiListSubheader-root MuiListSubheader-gutters MuiListSubheader-sticky css-l328gy-MuiListSubheader-root"
                   style="padding: 0px;"
                 >
                   <div
@@ -281,16 +335,161 @@ exports[`renders correctly 1`] = `
                       class="role-header-title"
                     >
                       <h4
-                        class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-h4 css-f84ov1-MuiTypography-root"
                       >
                         PDL
                       </h4>
                       <h6
-                        class="MuiTypography-root MuiTypography-subtitle1 css-10wpov9-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                      />
+                      >
+                        Prof. Dev. Lead
+                      </h6>
                       <h6
-                        class="MuiTypography-root MuiTypography-subtitle2 css-ati914-MuiTypography-root"
+                        class="MuiTypography-root MuiTypography-subtitle2 css-1ypmsg6-MuiTypography-root"
+                        style="font-size: 0.75rem;"
+                      >
+                        1
+                         Users
+                      </h6>
+                    </div>
+                    <div
+                      class="role-header-buttons"
+                    >
+                      <button
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1uent87-MuiButtonBase-root-MuiButton-root"
+                        tabindex="0"
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                          data-testid="PersonAddIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4m-9-2V7H4v3H1v2h3v3h2v-3h3v-2zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary role-edit css-1xj59sp-MuiButtonBase-root-MuiButton-root"
+                        tabindex="0"
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                          data-testid="EditIcon"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <hr
+                    class="MuiDivider-root MuiDivider-fullWidth css-1jpc804-MuiDivider-root"
+                  />
+                </li>
+                <div>
+                  <li
+                    class="MuiListItem-root MuiListItem-gutters MuiListItem-padding roles-list-item css-cfd5wn-MuiListItem-root"
+                  >
+                    <div
+                      class="MuiListItemAvatar-root css-1ulznza-MuiListItemAvatar-root"
+                    >
+                      <div
+                        class="MuiAvatar-root MuiAvatar-circular large css-fmeqll-MuiAvatar-root"
+                      >
+                        <img
+                          alt="Señora Test's avatar"
+                          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
+                          src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="MuiListItemText-root MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
+                    >
+                      <h2
+                        class="MuiTypography-root MuiTypography-h5 css-16xl4zq-MuiTypography-root"
+                      >
+                        Señora Test
+                      </h2>
+                      <h3
+                        class="MuiTypography-root MuiTypography-body1 css-1ro85z9-MuiTypography-root"
+                      />
+                    </div>
+                    <div
+                      class="icon"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                        data-testid="DeleteIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
+                        />
+                      </svg>
+                    </div>
+                  </li>
+                  <li
+                    aria-orientation="horizontal"
+                    class="MuiDivider-root MuiDivider-inset css-gyhshc-MuiDivider-root"
+                    role="separator"
+                    style="margin-right: 2rem;"
+                  />
+                </div>
+              </div>
+            </ul>
+          </div>
+          <div
+            class="MuiCardActions-root MuiCardActions-spacing css-1q4nm6f-MuiCardActions-root"
+          />
+        </div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root role css-1j74uew-MuiPaper-root-MuiCard-root"
+          style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+        >
+          <div
+            class="MuiCardContent-root role-card css-1lt5qva-MuiCardContent-root"
+          >
+            <ul
+              class="MuiList-root MuiList-padding css-b7dj7n-MuiList-root"
+              style="padding-top: 0px;"
+            >
+              <div>
+                <li
+                  class="MuiListSubheader-root MuiListSubheader-gutters MuiListSubheader-sticky css-l328gy-MuiListSubheader-root"
+                  style="padding: 0px;"
+                >
+                  <div
+                    class="role-header"
+                  >
+                    <div
+                      class="role-header-title"
+                    >
+                      <h4
+                        class="MuiTypography-root MuiTypography-h4 css-f84ov1-MuiTypography-root"
+                      >
+                        MEMBER
+                      </h4>
+                      <h6
+                        class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
+                        style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                      >
+                        A member of the org
+                      </h6>
+                      <h6
+                        class="MuiTypography-root MuiTypography-subtitle2 css-1ypmsg6-MuiTypography-root"
                         style="font-size: 0.75rem;"
                       >
                         0
@@ -301,13 +500,13 @@ exports[`renders correctly 1`] = `
                       class="role-header-buttons"
                     >
                       <button
-                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary role-add css-1uent87-MuiButtonBase-root-MuiButton-root"
                         tabindex="0"
                         type="button"
                       >
                         <svg
                           aria-hidden="true"
-                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                           data-testid="PersonAddIcon"
                           focusable="false"
                           viewBox="0 0 24 24"
@@ -316,41 +515,35 @@ exports[`renders correctly 1`] = `
                             d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4m-9-2V7H4v3H1v2h3v3h2v-3h3v-2zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4"
                           />
                         </svg>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </button>
                       <button
-                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary role-edit css-1d3f8j8-MuiButtonBase-root-MuiButton-root"
+                        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorSecondary role-edit css-1xj59sp-MuiButtonBase-root-MuiButton-root"
                         tabindex="0"
                         type="button"
                       >
                         <svg
                           aria-hidden="true"
-                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                           data-testid="EditIcon"
                           focusable="false"
                           viewBox="0 0 24 24"
                         >
                           <path
-                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
                           />
                         </svg>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </button>
                     </div>
                   </div>
                   <hr
-                    class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
+                    class="MuiDivider-root MuiDivider-fullWidth css-1jpc804-MuiDivider-root"
                   />
                 </li>
               </div>
             </ul>
           </div>
           <div
-            class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+            class="MuiCardActions-root MuiCardActions-spacing css-1q4nm6f-MuiCardActions-root"
           />
         </div>
       </div>

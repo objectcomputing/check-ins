@@ -1,10 +1,16 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.slack.SlackSubmissionHandler;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+
+import io.micronaut.http.MediaType;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -14,9 +20,13 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -25,14 +35,20 @@ import java.util.UUID;
 
 @Controller("/services/pulse-responses")
 @ExecuteOn(TaskExecutors.BLOCKING)
-@Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "pulse-responses")
 public class PulseResponseController {
+    private static final Logger LOG = LoggerFactory.getLogger(PulseResponseController.class);
 
     private final PulseResponseService pulseResponseServices;
+    private final MemberProfileServices memberProfileServices;
+    private final SlackSubmissionHandler slackSubmissionHandler;
 
-    public PulseResponseController(PulseResponseService pulseResponseServices) {
+    public PulseResponseController(PulseResponseService pulseResponseServices,
+                                   MemberProfileServices memberProfileServices,
+                                   SlackSubmissionHandler slackSubmissionHandler) {
         this.pulseResponseServices = pulseResponseServices;
+        this.memberProfileServices = memberProfileServices;
+        this.slackSubmissionHandler = slackSubmissionHandler;
     }
 
     /**
@@ -43,6 +59,7 @@ public class PulseResponseController {
      * @param dateTo
      * @return
      */
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Get("/{?teamMemberId,dateFrom,dateTo}")
     public Set<PulseResponse> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom,
                                                  @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,
@@ -56,6 +73,7 @@ public class PulseResponseController {
      * @param pulseResponse, {@link PulseResponseCreateDTO}
      * @return {@link HttpResponse<PulseResponse>}
      */
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Post
     public HttpResponse<PulseResponse> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                            HttpRequest<?> request) {
@@ -70,6 +88,7 @@ public class PulseResponseController {
      * @param pulseResponse, {@link PulseResponse}
      * @return {@link HttpResponse<PulseResponse>}
      */
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Put
     public HttpResponse<PulseResponse> update(@Body @Valid @NotNull PulseResponse pulseResponse,
                                               HttpRequest<?> request) {
@@ -82,12 +101,34 @@ public class PulseResponseController {
      * @param id
      * @return
      */
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Get("/{id}")
-    public PulseResponse readRole(@NotNull UUID id) {
+    public PulseResponse readPulse(@NotNull UUID id) {
         PulseResponse result = pulseResponseServices.read(id);
         if (result == null) {
-            throw new NotFoundException("No role item for UUID");
+            throw new NotFoundException("No pulse item for UUID");
         }
         return result;
+    }
+
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @Post(uri = "/command", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public HttpResponse commandPulseResponse(
+               @Header("X-Slack-Signature") String signature,
+               @Header("X-Slack-Request-Timestamp") String timestamp,
+               @Body String requestBody) {
+        return slackSubmissionHandler.commandResponse(signature,
+                                                      timestamp, requestBody);
+    }
+
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @Post(uri = "/external", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public HttpResponse externalPulseResponse(
+               @Header("X-Slack-Signature") String signature,
+               @Header("X-Slack-Request-Timestamp") String timestamp,
+               @Body String requestBody,
+               HttpRequest<?> request) {
+        return slackSubmissionHandler.externalResponse(signature, timestamp,
+                                                       requestBody, request);
     }
 }

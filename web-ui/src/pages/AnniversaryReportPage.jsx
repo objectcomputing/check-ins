@@ -12,8 +12,13 @@ import { UPDATE_TOAST } from '../context/actions';
 import SearchBirthdayAnniversaryResults from '../components/search-results/SearchBirthdayAnniversaryResults';
 import { sortAnniversaries } from '../context/util';
 
-import { selectCsrfToken } from '../context/selectors';
+import {
+  selectCsrfToken,
+  selectHasAnniversaryReportPermission,
+  noPermission
+} from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 
 const months = [
   'January',
@@ -39,6 +44,7 @@ const AnniversaryReportPage = () => {
   const [searchAnniversaryResults, setSearchAnniversaryResults] = useState([]);
   const [selectedMonths, setSelectedMonths] = useState(defaultMonths);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useQueryParameters([
     {
@@ -53,16 +59,29 @@ const AnniversaryReportPage = () => {
   ]);
 
   const handleSearch = async monthsToSearch => {
-    const anniversaryResults = await getAnniversaries(monthsToSearch, csrf);
-    setSearchAnniversaryResults(sortAnniversaries(anniversaryResults));
-    setHasSearched(true);
+    setLoading(true);
+    try {
+      const anniversaryResults = await getAnniversaries(monthsToSearch, csrf);
+      setSearchAnniversaryResults(sortAnniversaries(anniversaryResults));
+      setHasSearched(true);
+    } catch (e) {
+      console.error(e);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: 'error',
+          toast: e
+        }
+      });
+    }
+    setLoading(false);
   };
 
   function onMonthChange(event, newValue) {
     setSelectedMonths(newValue);
   }
 
-  return (
+  return selectHasAnniversaryReportPermission(state) ? (
     <div>
       <div className="select-month">
         <Autocomplete
@@ -106,7 +125,11 @@ const AnniversaryReportPage = () => {
         </Button>
       </div>
       <div>
-        {
+        {loading ? (
+          Array.from({ length: 10 }).map((_, index) => (
+            <SkeletonLoader key={index} type="feedback_requests" />
+          ))
+        ) : (
           <div className="search-results">
             <SearchBirthdayAnniversaryResults
               hasSearched={hasSearched}
@@ -114,9 +137,11 @@ const AnniversaryReportPage = () => {
               results={searchAnniversaryResults}
             />
           </div>
-        }
+        )}
       </div>
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

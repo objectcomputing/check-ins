@@ -56,16 +56,15 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), "Description", earnedDate);
+        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), earnedDate);
 
         EarnedCertification created = create(newEarnedCertification, member.getWorkEmail(), MEMBER_ROLE);
         assertNotNull(created.getId());
         assertEquals(member.getId(), created.getMemberId());
         assertEquals(certification.getId(), created.getCertificationId());
-        assertEquals("Description", created.getDescription());
         assertEquals(earnedDate, created.getEarnedDate());
         assertNull(created.getExpirationDate());
-        assertNull(created.getCertificateImageUrl());
+        assertNull(created.getValidationUrl());
     }
 
     @Test
@@ -73,16 +72,15 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), "Description", earnedDate);
+        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), earnedDate);
 
         EarnedCertification created = create(newEarnedCertification, ADMIN_ROLE, ADMIN_ROLE);
         assertNotNull(created.getId());
         assertEquals(member.getId(), created.getMemberId());
         assertEquals(certification.getId(), created.getCertificationId());
-        assertEquals("Description", created.getDescription());
         assertEquals(earnedDate, created.getEarnedDate());
         assertNull(created.getExpirationDate());
-        assertNull(created.getCertificateImageUrl());
+        assertNull(created.getValidationUrl());
     }
 
     @Test
@@ -91,7 +89,7 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile tim = memberWithoutBoss("Tim");
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), "Description", earnedDate);
+        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), earnedDate);
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> create(newEarnedCertification, tim.getWorkEmail(), MEMBER_ROLE));
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
@@ -103,12 +101,11 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertification earnedCertification = createEarnedCertification(member, certification, "Description", earnedDate);
+        EarnedCertification earnedCertification = createEarnedCertification(member, certification, earnedDate);
 
         EarnedCertificationDTO update = new EarnedCertificationDTO(
                 member.getId(),
                 certification.getId(),
-                "Updated description",
                 earnedDate.minusDays(1),
                 earnedDate.plusYears(2),
                 "https://certificate.url"
@@ -118,10 +115,9 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         assertEquals(earnedCertification.getId(), updated.getId());
         assertEquals(member.getId(), updated.getMemberId());
         assertEquals(certification.getId(), updated.getCertificationId());
-        assertEquals("Updated description", updated.getDescription());
         assertEquals(earnedDate.minusDays(1), updated.getEarnedDate());
         assertEquals(earnedDate.plusYears(2), updated.getExpirationDate());
-        assertEquals("https://certificate.url", updated.getCertificateImageUrl());
+        assertEquals("https://certificate.url", updated.getValidationUrl());
     }
 
     @Test
@@ -129,12 +125,11 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertification earnedCertification = createEarnedCertification(member, certification, "Description", earnedDate);
+        EarnedCertification earnedCertification = createEarnedCertification(member, certification, earnedDate);
 
         EarnedCertificationDTO update = new EarnedCertificationDTO(
                 member.getId(),
                 certification.getId(),
-                "Updated description",
                 earnedDate.minusDays(1),
                 earnedDate.plusYears(2),
                 "https://certificate.url"
@@ -144,10 +139,9 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         assertEquals(earnedCertification.getId(), updated.getId());
         assertEquals(member.getId(), updated.getMemberId());
         assertEquals(certification.getId(), updated.getCertificationId());
-        assertEquals("Updated description", updated.getDescription());
         assertEquals(earnedDate.minusDays(1), updated.getEarnedDate());
         assertEquals(earnedDate.plusYears(2), updated.getExpirationDate());
-        assertEquals("https://certificate.url", updated.getCertificateImageUrl());
+        assertEquals("https://certificate.url", updated.getValidationUrl());
     }
 
     @Test
@@ -156,12 +150,11 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile tim = memberWithoutBoss("Tim");
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertification earnedCertification = createEarnedCertification(member, certification, "Description", earnedDate);
+        EarnedCertification earnedCertification = createEarnedCertification(member, certification, earnedDate);
 
         EarnedCertificationDTO update = new EarnedCertificationDTO(
                 member.getId(),
                 certification.getId(),
-                "Updated description",
                 earnedDate.minusDays(1),
                 earnedDate.plusYears(2),
                 "https://certificate.url"
@@ -177,13 +170,12 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile sarah = memberWithoutBoss("Sarah");
 
         Certification certification = createDefaultCertification();
-        EarnedCertification sarahsCertification = createEarnedCertification(sarah, certification, "Description", LocalDate.now());
+        EarnedCertification sarahsCertification = createEarnedCertification(sarah, certification, LocalDate.now());
 
         // Try to change the owner to me
         EarnedCertificationDTO update = new EarnedCertificationDTO(
                 tim.getId(),
                 sarahsCertification.getCertificationId(),
-                sarahsCertification.getDescription(),
                 sarahsCertification.getEarnedDate()
         );
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () ->
@@ -201,13 +193,12 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile sarah = memberWithoutBoss("Sarah");
 
         Certification certification = createDefaultCertification();
-        EarnedCertification sarahsCertification = createEarnedCertification(sarah, certification, "Description", LocalDate.now());
+        EarnedCertification sarahsCertification = createEarnedCertification(sarah, certification, LocalDate.now());
 
         // Try to change the owner to me
         EarnedCertificationDTO update = new EarnedCertificationDTO(
                 tim.getId(),
                 sarahsCertification.getCertificationId(),
-                sarahsCertification.getDescription(),
                 sarahsCertification.getEarnedDate()
         );
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () ->
@@ -224,7 +215,7 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertification earnedCertification = createEarnedCertification(member, certification, "Description", earnedDate);
+        EarnedCertification earnedCertification = createEarnedCertification(member, certification, earnedDate);
 
         HttpResponse<Object> exchange = earnedCertificationClient.toBlocking().exchange(HttpRequest.DELETE("/%s".formatted(earnedCertification.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE));
         assertEquals(HttpStatus.OK, exchange.getStatus());
@@ -238,7 +229,7 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertification earnedCertification = createEarnedCertification(member, certification, "Description", earnedDate);
+        EarnedCertification earnedCertification = createEarnedCertification(member, certification, earnedDate);
 
         HttpResponse<Object> exchange = earnedCertificationClient.toBlocking().exchange(HttpRequest.DELETE("/%s".formatted(earnedCertification.getId())).basicAuth(member.getWorkEmail(), MEMBER_ROLE));
         assertEquals(HttpStatus.OK, exchange.getStatus());
@@ -253,7 +244,7 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile tim = memberWithoutBoss("Tim");
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertification earnedCertification = createEarnedCertification(member, certification, "Description", earnedDate);
+        EarnedCertification earnedCertification = createEarnedCertification(member, certification, earnedDate);
 
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> earnedCertificationClient.toBlocking().exchange(HttpRequest.DELETE("/%s".formatted(earnedCertification.getId())).basicAuth(tim.getWorkEmail(), MEMBER_ROLE)));
 
@@ -275,7 +266,7 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         MemberProfile member = createADefaultMemberProfile();
         Certification certification = createDefaultCertification();
         LocalDate earnedDate = LocalDate.now();
-        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), "Description", earnedDate);
+        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certification.getId(), earnedDate);
 
         // No member ID
         newEarnedCertification.setMemberId(null);
@@ -292,23 +283,7 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         body = exception.getResponse().getBody(String.class).get();
         assertTrue(body.contains("certification.certificationId: must not be null"), body + " should contain 'certification.certificationId: must not be null'");
 
-        // Null description
-        newEarnedCertification.setCertificationId(certification.getId());
-        newEarnedCertification.setDescription(null);
-        exception = assertThrows(HttpClientResponseException.class, () -> create(newEarnedCertification, member.getWorkEmail(), MEMBER_ROLE));
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        body = exception.getResponse().getBody(String.class).get();
-        assertTrue(body.contains("certification.description: must not be blank"), body + " should contain 'certification.description: must not be null'");
-
-        // Empty description
-        newEarnedCertification.setDescription("");
-        exception = assertThrows(HttpClientResponseException.class, () -> create(newEarnedCertification, member.getWorkEmail(), MEMBER_ROLE));
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        body = exception.getResponse().getBody(String.class).get();
-        assertTrue(body.contains("certification.description: must not be blank"), body + " should contain 'certification.description: must not be null'");
-
         // No earned date
-        newEarnedCertification.setDescription("Description");
         newEarnedCertification.setEarnedDate(null);
         exception = assertThrows(HttpClientResponseException.class, () -> create(newEarnedCertification, member.getWorkEmail(), MEMBER_ROLE));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
@@ -318,23 +293,22 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
     void canFindAllEarnedCertifications() {
         MemberProfile tim = memberWithoutBoss("Tim");
         MemberProfile sarah = memberWithoutBoss("Sarah");
-        Certification source = createCertification("Source");
-        Certification target = createCertification("Target");
-        createEarnedCertification(tim, source, "Tim's source certification", LocalDate.now().minusDays(1));
-        createEarnedCertification(tim, target, "Tim's target certification", LocalDate.now().minusDays(10));
-        createEarnedCertification(sarah, target, "Sarah's target certification", LocalDate.now());
+        Certification source = createCertification("Source", "Source certification");
+        Certification target = createCertification("Target", "Target certification");
+        createEarnedCertification(tim, source, LocalDate.now().minusDays(1));
+        createEarnedCertification(tim, target, LocalDate.now().minusDays(10));
+        createEarnedCertification(sarah, target, LocalDate.now());
 
         List<EarnedCertification> list = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
 
         assertEquals(3, list.size());
-        assertEquals(List.of("Sarah's target certification", "Tim's source certification", "Tim's target certification"), list.stream().map(EarnedCertification::getDescription).toList());
     }
 
     @Test
     void sensibleOutputForInvalidMemberId() {
         Certification certification = createDefaultCertification();
         UUID memberId = UUID.randomUUID();
-        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(memberId, certification.getId(), "Description", LocalDate.now());
+        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(memberId, certification.getId(), LocalDate.now());
 
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> create(newEarnedCertification, ADMIN_ROLE, ADMIN_ROLE));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
@@ -345,7 +319,7 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
     void sensibleOutputForInvalidCertificateId() {
         MemberProfile member = createADefaultMemberProfile();
         UUID certificationId = UUID.randomUUID();
-        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certificationId, "Description", LocalDate.now());
+        EarnedCertificationDTO newEarnedCertification = new EarnedCertificationDTO(member.getId(), certificationId, LocalDate.now());
 
         HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> create(newEarnedCertification, member.getWorkEmail(), MEMBER_ROLE));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
@@ -356,77 +330,70 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
     void canFindEarnedCertificationsByCertification() {
         MemberProfile tim = memberWithoutBoss("Tim");
         MemberProfile sarah = memberWithoutBoss("Sarah");
-        Certification source = createCertification("Source");
-        Certification target = createCertification("Target");
-        createEarnedCertification(tim, source, "Tim's source certification", LocalDate.now().minusDays(1));
-        createEarnedCertification(tim, target, "Tim's target certification", LocalDate.now().minusDays(10));
-        createEarnedCertification(sarah, target, "Sarah's target certification", LocalDate.now());
+        Certification source = createCertification("Source", "Source certification");
+        Certification target = createCertification("Target", "Target certification");
+        createEarnedCertification(tim, source, LocalDate.now().minusDays(1));
+        createEarnedCertification(tim, target, LocalDate.now().minusDays(10));
+        createEarnedCertification(sarah, target, LocalDate.now());
 
         List<EarnedCertification> sourceCertifications = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/?certificationId=%s".formatted(source.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
         assertEquals(1, sourceCertifications.size());
-        assertEquals("Tim's source certification", sourceCertifications.getFirst().getDescription());
 
         List<EarnedCertification> targetCertifications = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/?certificationId=%s".formatted(target.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
         assertEquals(2, targetCertifications.size());
-        assertEquals(List.of("Sarah's target certification", "Tim's target certification"), targetCertifications.stream().map(EarnedCertification::getDescription).toList());
     }
 
     @Test
     void canFindEarnedCertificationsByMember() {
         MemberProfile tim = memberWithoutBoss("Tim");
         MemberProfile sarah = memberWithoutBoss("Sarah");
-        Certification source = createCertification("Source");
-        Certification target = createCertification("Target");
-        createEarnedCertification(tim, source, "Tim's source certification", LocalDate.now().minusDays(1));
-        createEarnedCertification(tim, target, "Tim's target certification", LocalDate.now().minusDays(10));
-        createEarnedCertification(sarah, target, "Sarah's target certification", LocalDate.now());
+        Certification source = createCertification("Source", "Source certification");
+        Certification target = createCertification("Target", "Target certification");
+        createEarnedCertification(tim, source, LocalDate.now().minusDays(1));
+        createEarnedCertification(tim, target, LocalDate.now().minusDays(10));
+        createEarnedCertification(sarah, target, LocalDate.now());
 
         List<EarnedCertification> timCertifications = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/?memberId=%s".formatted(tim.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
         assertEquals(2, timCertifications.size());
-        assertEquals(List.of("Tim's source certification", "Tim's target certification"), timCertifications.stream().map(EarnedCertification::getDescription).toList());
 
         List<EarnedCertification> sarahCertifications = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/?memberId=%s".formatted(sarah.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
         assertEquals(1, sarahCertifications.size());
-        assertEquals("Sarah's target certification", sarahCertifications.getFirst().getDescription());
     }
 
     @Test
     void canFindEarnedCertificationsByMemberAndCertification() {
         MemberProfile tim = memberWithoutBoss("Tim");
         MemberProfile sarah = memberWithoutBoss("Sarah");
-        Certification source = createCertification("Source");
-        Certification target = createCertification("Target");
-        createEarnedCertification(tim, source, "Tim's source certification", LocalDate.now().minusDays(1));
-        createEarnedCertification(tim, target, "Tim's target certification", LocalDate.now().minusDays(10));
-        createEarnedCertification(sarah, target, "Sarah's target certification", LocalDate.now());
+        Certification source = createCertification("Source", "Source certification");
+        Certification target = createCertification("Target", "Target certification");
+        createEarnedCertification(tim, source, LocalDate.now().minusDays(1));
+        createEarnedCertification(tim, target, LocalDate.now().minusDays(10));
+        createEarnedCertification(sarah, target, LocalDate.now());
 
         List<EarnedCertification> timSource = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/?memberId=%s&certificationId=%s".formatted(tim.getId(), source.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
 
         assertEquals(1, timSource.size());
-        assertEquals("Tim's source certification", timSource.getFirst().getDescription());
 
         List<EarnedCertification> timTarget = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/?memberId=%s&certificationId=%s".formatted(tim.getId(), target.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
 
         assertEquals(1, timTarget.size());
-        assertEquals("Tim's target certification", timTarget.getFirst().getDescription());
     }
 
     @Test
     void canMerge() {
         MemberProfile tim = memberWithoutBoss("Tim");
         MemberProfile sarah = memberWithoutBoss("Sarah");
-        Certification source = createCertification("Source");
-        Certification target = createCertification("Target");
-        createEarnedCertification(tim, source, "Tim's source certification", LocalDate.now().minusDays(1));
-        createEarnedCertification(tim, target, "Tim's target certification", LocalDate.now().minusDays(10));
-        createEarnedCertification(sarah, target, "Sarah's target certification", LocalDate.now());
+        Certification source = createCertification("Source", "Source certification");
+        Certification target = createCertification("Target", "Target certification");
+        createEarnedCertification(tim, source, LocalDate.now().minusDays(1));
+        createEarnedCertification(tim, target, LocalDate.now().minusDays(10));
+        createEarnedCertification(sarah, target, LocalDate.now());
 
         // Tim has one certification assigned from the source certification
         List<EarnedCertification> list = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/?memberId=%s".formatted(tim.getId())).basicAuth(tim.getWorkEmail(), MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
         assertEquals(2, list.size());
         assertEquals(source.getId(), list.getFirst().getCertificationId());
         assertEquals(target.getId(), list.getLast().getCertificationId());
-        assertEquals(List.of("Tim's source certification", "Tim's target certification"), list.stream().map(EarnedCertification::getDescription).toList());
 
         CertificationMergeDTO mergeDTO = new CertificationMergeDTO(source.getId(), target.getId());
 
@@ -443,7 +410,6 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         assertEquals(2, list.size());
         assertEquals(target.getId(), list.getFirst().getCertificationId());
         assertEquals(target.getId(), list.getLast().getCertificationId());
-        assertEquals(List.of("Tim's source certification", "Tim's target certification"), list.stream().map(EarnedCertification::getDescription).toList());
 
         // And when we list all of them, we should see that the source certification is gone
         List<Certification> certificationList = certificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(tim.getWorkEmail(), MEMBER_ROLE), Argument.listOf(Certification.class));
@@ -454,9 +420,6 @@ class EarnedCertificationControllerTest extends TestContainersSuite implements R
         List<EarnedCertification> earnedCertifications = earnedCertificationClient.toBlocking().retrieve(HttpRequest.GET("/").basicAuth(tim.getWorkEmail(), MEMBER_ROLE), Argument.listOf(EarnedCertification.class));
         assertEquals(3, earnedCertifications.size());
         assertAll(earnedCertifications.stream().map(c -> () -> assertEquals(target.getId(), c.getCertificationId())));
-
-        // And they are sorted by earned date descending
-        assertEquals(List.of("Sarah's target certification", "Tim's source certification", "Tim's target certification"), earnedCertifications.stream().map(EarnedCertification::getDescription).toList());
     }
 
     @Test

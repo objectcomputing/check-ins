@@ -6,70 +6,64 @@ title: Project Roadmap
 
 ***This roadmap is subject to change and should not be construed as a commitment to build these features.***
 
-This roadmap prioritizes features focused on enhancing the team member review process, integrating the shelved onboarding process, and incorporating generative AI for mentor support.
+This roadmap prioritizes features focused on enhancing team member and mentor support, white labeling the application,
+and preparing it for deployment into multiple environment types.
 
-## Streamlined and Repeatable Reviews (0.8.0)
+## Release Clean Up (v0.8.x)
 
-1. **Review Planning & Validation:**
-    * Implement a dedicated review planning phase.
-    * Automatically assign reviewers and validate assignments with managers.
-    * Enable multi-layered team review structures:
-        * Managers review planned assignments for subordinate managers.
-        * Subordinate managers incorporate suggestions before final approval.
-    * Integrate timeline creation and review launch functionalities for administrators.
-2. **Review Implementation:**
-    * Streamline self-reviews and manager reviews.
-    * Introduce automated reminders to both managers and team members.
-    * Provide automated status overview emails to administrators.
-    * Provide relevant contextual information during reviews, including:
-        * Current title and job description
-        * Skills listed in user profiles
-        * Feedback received previously
-3. **Reporting:**
-    * Develop review process reports detailing completion rates (breakdowns by department, etc.).
-    * Create manager reports that detail individual and aggregate review outcomes.
+- [x] Documentation Updates
+- [x] Other Dependency Upgrades and Security Alert Remediation
+- [ ] Bug Smooshing and Tech Debt Remediation
 
-### Success Metrics:
+## Configuration UI and Infrastructure Codification (v0.9.0)
 
-* Increased on-time completion rates for employee reviews
-* Increased on-time review period start rates
-* Improved user satisfaction with the review process
+1. **Introduce Infrastructure as Code**
+   - Create Terraform code for
+        - [ ] Local Deployment
+        - [ ] GCP Deployment
+        - [ ] AWS Deployment (stretch-goal)
+   - [ ] Migrate to cloud-based secret management
+2. **Configuration Management UI**
+    - [ ] Implement feature switches
+    - [ ] Move most configuration into the UI and store in the database
 
-## Onboarding and Modernization (0.9.0)
+### Goals (v0.9.0)
 
-1. **Modularize Deployment:**
-   * Upgrade to Micronaut 4.x.
-   * Introduce infrastructure as code.
-      * Codify GCP environments with Terraform.
-      * Migrate to cloud-based secret management.
-   * Segment service deployments.
-2. **Revive Onboarding Application:**
-    * Rebase and refresh the onboarding application.
-3. **Configuration Management UI:**
-    * Integrate configuration into the UI to allow for dynamic configuration.
-
-### Success Metrics:
-
-* Increased completion of onboarding tasks before the new employees’ start dates
-* Increased user satisfaction with the onboarding process
+* Simple and repeatable local environment setup
+* Simple and repeatable cloud environment setup
 * Increased application flexibility
+* Ability to right-size features for different organizations
 
-## Professional Development Support (0.10.0)
+## Professional Development Support (v0.10.0)
 
-1. **Job Library & Assignment:**
-    * Build a comprehensive job library within the platform.
-    * Enable defining and assigning specific job roles.
-2. **Generative AI Integration:**
-    * Develop Google Gemini integration module.
-    * Construct prompts that analyze notes, feedback, job descriptions, and skills
-      data.
-    * Construct prompts to provide personalized suggestions for mentors:
-        * Recommend development goals based on mentee information.
-        * Suggest relevant learning resources or training opportunities.
-        * Generate actionable development suggestions for increasing desired capabilities.
-    * Incorporation of generated suggestions into the check-in planning process.
+1. **Role Library & Assignment**
+   - [ ] Add the ability to create and maintain job roles
+     - [ ] Create a versioning mechanism for roles in order to provide "moment in time" information
+   - [ ] Add the ability to assign and track roles over time
+2. **Generative AI Integration**
+   - [ ] Develop GenAI integration module
+   - [ ] Construct prompts and workflows that analyze notes, feedback, job descriptions, and skills data to provide summarized and actionable growth and performance insights
+   - **Construct prompts and workflows to provide personalized suggestions for mentors**
+     - [ ] Recommend development goals based on mentee information
+     - [ ] Suggest relevant learning resources or training opportunities
+     - [ ] Generate actionable development suggestions for increasing desired capabilities
+     - [ ] Incorporate generated suggestions into the check-in planning process
+3. **Career Timeline**
+   - **Create a timeline component to show important events in an employee's journey, including:**
+     - [ ] Role changes
+     - [ ] Title changes
+     - [ ] Joining/leaving a team
+     - [ ] Getting awarded a certification
+     - [ ] Joining/leaving a guild or community
+     - [ ] Completing a training event (stretch goal)
 
-### Success Metrics:
+### Goals (v0.10.0)
 
-* Higher engagement with the Check-Ins workflows
-* Enhanced employee development and career planning outcomes
+* Higher engagement with the Check-Ins planning workflows
+* Improved employee development and career planning outcomes
+* Provide a view of an employee's career and development journey
+
+## Some day...
+
+1. **Revive Onboarding Application:**
+   * Reintroduce and refresh the onboarding application

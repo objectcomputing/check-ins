@@ -9,14 +9,14 @@ export const getAllRoles = async cookie => {
   });
 };
 
-export const getAllUserRoles = async cookie => {
+export const getAllMemberRoles = async cookie => {
   return resolve({
     url: roleURL + '/members',
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
-export const removeUserFromRole = async (roleId, memberId, cookie) => {
+export const removeMemberFromRole = async (roleId, memberId, cookie) => {
   return resolve({
     method: 'DELETE',
     url: roleURL + `/members/${roleId}/${memberId}`,
@@ -28,7 +28,7 @@ export const removeUserFromRole = async (roleId, memberId, cookie) => {
   });
 };
 
-export const addUserToRole = async (roleId, memberId, cookie) => {
+export const addMemberToRole = async (roleId, memberId, cookie) => {
   return resolve({
     method: 'POST',
     url: roleURL + '/members',

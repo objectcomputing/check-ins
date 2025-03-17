@@ -3,7 +3,10 @@ import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 
 import { AppContext } from '../../context/AppContext';
-import { selectIsAdmin, selectProfileMap } from '../../context/selectors';
+import {
+  selectProfileMap,
+  selectCanEditAllOrganizationMembers
+} from '../../context/selectors';
 import { getAvatarURL } from '../../api/api.js';
 
 import Avatar from '@mui/material/Avatar';
@@ -34,7 +37,7 @@ const StyledBox = styled(Box)(() => ({
 
 const MemberSummaryCard = ({ member }) => {
   const { state } = useContext(AppContext);
-  const isAdmin = selectIsAdmin(state);
+  const isAdmin = selectCanEditAllOrganizationMembers(state);
   const {
     location,
     name,
@@ -53,7 +56,7 @@ const MemberSummaryCard = ({ member }) => {
       <Card className={'member-card'}>
         <Link
           style={{
-            color: 'var(--checkins-palette-content-color)',
+            color: 'var(--mui-palette-content-color)',
             textDecoration: 'none'
           }}
           to={`/profile/${member.id}`}

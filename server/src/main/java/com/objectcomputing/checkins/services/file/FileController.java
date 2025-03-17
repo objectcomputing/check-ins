@@ -82,6 +82,12 @@ public class FileController {
         return fileServices.uploadFile(checkInId, file);
     }
 
+    @Post(consumes = MediaType.MULTIPART_FORM_DATA)
+    @Status(HttpStatus.CREATED)
+    public FileInfoDTO uploadDocument(String directory, String name, String text) {
+        return fileServices.uploadDocument(directory, name, text);
+    }
+
     /**
      * Delete a document from Google Drive
      *

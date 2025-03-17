@@ -26,7 +26,7 @@ public class VolunteeringRelationshipDTO {
     @Schema(description = "id of the organization with the relationship")
     private UUID organizationId;
 
-    @NotNull
+    @Nullable
     @Schema(description = "when the relationship started")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -40,7 +40,7 @@ public class VolunteeringRelationshipDTO {
     @Schema(description = "whether the Volunteering Relationship is active")
     private Boolean active;
 
-    public VolunteeringRelationshipDTO(@NotNull UUID memberId, @NotNull UUID organizationId, @NotNull LocalDate startDate, @Nullable LocalDate endDate) {
+    public VolunteeringRelationshipDTO(@NotNull UUID memberId, @NotNull UUID organizationId, @Nullable LocalDate startDate, @Nullable LocalDate endDate) {
         this(memberId, organizationId, startDate, endDate, true);
     }
 }

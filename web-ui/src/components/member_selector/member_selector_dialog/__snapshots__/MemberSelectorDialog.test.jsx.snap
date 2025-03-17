@@ -8,12 +8,12 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
     aria-hidden="true"
   />
   <div
-    class="MuiDialog-root member-selector-dialog MuiModal-root css-zw3mfo-MuiModal-root-MuiDialog-root"
+    class="MuiDialog-root member-selector-dialog MuiModal-root css-1424xw8-MuiModal-root-MuiDialog-root"
     role="presentation"
   >
     <div
       aria-hidden="true"
-      class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
+      class="MuiBackdrop-root MuiModal-backdrop css-1cennmq-MuiBackdrop-root-MuiDialog-backdrop"
       style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
     />
     <div
@@ -21,31 +21,33 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
       tabindex="0"
     />
     <div
-      class="MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container"
+      class="MuiDialog-container MuiDialog-scrollPaper css-19do60a-MuiDialog-container"
       role="presentation"
       style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
       tabindex="-1"
     >
       <div
         aria-labelledby=":r0:"
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullScreen css-m9glnp-MuiPaper-root-MuiDialog-paper"
+        aria-modal="true"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullScreen css-l09ud3-MuiPaper-root-MuiDialog-paper"
         role="dialog"
+        style="--Paper-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12);"
       >
         <header
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-11b3ww9-MuiPaper-root-MuiAppBar-root"
-          style="padding-right: 1024px;"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-zanzjh-MuiPaper-root-MuiAppBar-root"
+          style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12); padding-right: 1024px;"
         >
           <div
-            class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-hyum1k-MuiToolbar-root"
+            class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1ygil4i-MuiToolbar-root"
           >
             <button
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeMedium css-1d6w9lk-MuiButtonBase-root-MuiIconButton-root"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeMedium css-1fytndg-MuiButtonBase-root-MuiIconButton-root"
               tabindex="0"
               type="button"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="CloseIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -54,76 +56,70 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
                 />
               </svg>
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </button>
             <div
               class="toolbar-title-container"
             >
               <h5
-                class="MuiTypography-root MuiTypography-h5 toolbar-title css-ag7rrr-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-h5 toolbar-title css-16xl4zq-MuiTypography-root"
               >
                 Select 
                 Members
               </h5>
               <p
-                class="MuiTypography-root MuiTypography-body1 selected-count-label css-ahj2mt-MuiTypography-root"
+                class="MuiTypography-root MuiTypography-body1 selected-count-label css-rizt0-MuiTypography-root"
               >
                 3
                  selected
               </p>
             </div>
             <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit css-1y942vo-MuiButtonBase-root-MuiButton-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit MuiButton-root MuiButton-text MuiButton-textInherit MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorInherit css-plnrbk-MuiButtonBase-root-MuiButton-root"
               tabindex="0"
               type="button"
             >
               Save
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </button>
           </div>
         </header>
         <div
-          class="MuiDialogContent-root member-selector-dialog-content css-ypiqx9-MuiDialogContent-root"
+          class="MuiDialogContent-root member-selector-dialog-content css-kw13he-MuiDialogContent-root"
         >
           <div
-            class="MuiFormGroup-root dialog-form-group css-dmmspl-MuiFormGroup-root"
+            class="MuiFormGroup-root dialog-form-group css-1mac7pt-MuiFormGroup-root"
           >
             <div
               class="filter-input-container"
             >
               <div
-                class="MuiFormControl-root MuiTextField-root name-search-field css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+                class="MuiFormControl-root MuiTextField-root name-search-field css-1xp5r68-MuiFormControl-root-MuiTextField-root"
               >
                 <label
-                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="false"
-                  for=":r1:"
-                  id=":r1:-label"
+                  for=":r3:"
+                  id=":r3:-label"
                 >
                   Name
                 </label>
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedEnd css-jupps9-MuiInputBase-root-MuiOutlinedInput-root"
                 >
                   <input
                     aria-invalid="false"
-                    class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
-                    id=":r1:"
+                    class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
+                    id=":r3:"
                     placeholder="Search by member name"
                     type="text"
                     value=""
                   />
                   <div
-                    class="MuiInputAdornment-root MuiInputAdornment-positionEnd MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-1laqsz7-MuiInputAdornment-root"
+                    class="MuiInputAdornment-root MuiInputAdornment-positionEnd MuiInputAdornment-outlined MuiInputAdornment-sizeMedium css-elo8k2-MuiInputAdornment-root"
                     color="gray"
                   >
                     <svg
                       aria-hidden="true"
-                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                       data-testid="SearchIcon"
                       focusable="false"
                       viewBox="0 0 24 24"
@@ -135,10 +131,10 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   </div>
                   <fieldset
                     aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                    class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-yjsfm1"
+                      class="css-81qg8w"
                     >
                       <span>
                         Name
@@ -148,24 +144,23 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiFormControl-root filter-type-select css-1nrlq1o-MuiFormControl-root"
+                class="MuiFormControl-root filter-type-select css-1iw3t7y-MuiFormControl-root"
               >
                 <label
-                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-113d811-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
                   id="filter-type-label"
                 >
                   Filter Type
                 </label>
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiSelect-root css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                 >
                   <div
-                    aria-controls=":r2:"
                     aria-expanded="false"
                     aria-haspopup="listbox"
                     aria-labelledby="filter-type-label"
-                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
                     role="combobox"
                     tabindex="0"
                   >
@@ -174,13 +169,13 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   <input
                     aria-hidden="true"
                     aria-invalid="false"
-                    class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                    class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
                     tabindex="-1"
                     value="Team"
                   />
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-lohd6h-MuiSvgIcon-root-MuiSelect-icon"
                     data-testid="ArrowDropDownIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -191,10 +186,10 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   </svg>
                   <fieldset
                     aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                    class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-14lo706"
+                      class="css-w1u3ce"
                     >
                       <span>
                         Filter Type
@@ -204,21 +199,21 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-input css-1j0qgw8-MuiAutocomplete-root"
+                class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon filter-input css-1tlcqt-MuiAutocomplete-root"
               >
                 <div
-                  class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
+                  class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cmpglg-MuiFormControl-root-MuiTextField-root"
                 >
                   <label
-                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
+                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root"
                     data-shrink="false"
-                    for=":r3:"
-                    id=":r3:-label"
+                    for=":r5:"
+                    id=":r5:-label"
                   >
                     Filter Value
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-1n04w30-MuiInputBase-root-MuiOutlinedInput-root"
                   >
                     <input
                       aria-autocomplete="list"
@@ -226,8 +221,8 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                       aria-invalid="false"
                       autocapitalize="none"
                       autocomplete="off"
-                      class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-nxo287-MuiInputBase-input-MuiOutlinedInput-input"
-                      id=":r3:"
+                      class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
+                      id=":r5:"
                       placeholder="Search for team"
                       role="combobox"
                       spellcheck="false"
@@ -235,18 +230,18 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                       value=""
                     />
                     <div
-                      class="MuiAutocomplete-endAdornment css-p1olib-MuiAutocomplete-endAdornment"
+                      class="MuiAutocomplete-endAdornment css-1uhhrmm-MuiAutocomplete-endAdornment"
                     >
                       <button
                         aria-label="Open"
-                        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-qzbt6i-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator"
+                        class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-2y136s-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator"
                         tabindex="-1"
                         title="Open"
                         type="button"
                       >
                         <svg
                           aria-hidden="true"
-                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                           data-testid="ArrowDropDownIcon"
                           focusable="false"
                           viewBox="0 0 24 24"
@@ -255,17 +250,14 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                             d="M7 10l5 5 5-5z"
                           />
                         </svg>
-                        <span
-                          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                        />
                       </button>
                     </div>
                     <fieldset
                       aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                      class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
                     >
                       <legend
-                        class="css-yjsfm1"
+                        class="css-81qg8w"
                       >
                         <span>
                           Filter Value
@@ -277,16 +269,16 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
               </div>
             </div>
             <span
-              class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium toggle-selectable-members-checkbox css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
+              class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium toggle-selectable-members-checkbox css-imrjgg-MuiButtonBase-root-MuiCheckbox-root"
             >
               <input
-                class="PrivateSwitchBase-input css-1m9pwf3"
+                class="PrivateSwitchBase-input css-j8yymo"
                 data-indeterminate="false"
                 type="checkbox"
               />
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                 data-testid="CheckBoxIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -295,36 +287,32 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
                 />
               </svg>
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </span>
           </div>
           <div
-            class="MuiFormGroup-root dialog-form-group css-dmmspl-MuiFormGroup-root"
+            class="MuiFormGroup-root dialog-form-group css-1mac7pt-MuiFormGroup-root"
           >
             <div
               class="filter-input-container"
             >
               <div
-                class="MuiFormControl-root filter-type-select css-1nrlq1o-MuiFormControl-root"
+                class="MuiFormControl-root filter-type-select css-1iw3t7y-MuiFormControl-root"
               >
                 <label
-                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1jy569b-MuiFormLabel-root-MuiInputLabel-root"
+                  class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-sizeMedium MuiInputLabel-outlined css-113d811-MuiFormLabel-root-MuiInputLabel-root"
                   data-shrink="true"
                   id="member-filter-label"
                 >
                   Required Tenure
                 </label>
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiSelect-root css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                 >
                   <div
-                    aria-controls=":r5:"
                     aria-expanded="false"
                     aria-haspopup="listbox"
                     aria-labelledby="member-filter-label"
-                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                    class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
                     role="combobox"
                     tabindex="0"
                   >
@@ -333,13 +321,13 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   <input
                     aria-hidden="true"
                     aria-invalid="false"
-                    class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                    class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
                     tabindex="-1"
                     value="All"
                   />
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-lohd6h-MuiSvgIcon-root-MuiSelect-icon"
                     data-testid="ArrowDropDownIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -350,10 +338,10 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
                   </svg>
                   <fieldset
                     aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                    class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-14lo706"
+                      class="css-w1u3ce"
                     >
                       <span>
                         Required Tenure
@@ -365,61 +353,61 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
             </div>
           </div>
           <hr
-            class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
+            class="MuiDivider-root MuiDivider-fullWidth css-1jpc804-MuiDivider-root"
           />
           <ul
-            class="MuiList-root MuiList-padding MuiList-dense css-1vjk1cp-MuiList-root"
+            class="MuiList-root MuiList-padding MuiList-dense css-1k474g9-MuiList-root"
             role="list"
           >
             <li
-              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-g28sfz-MuiListItem-root"
+              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-1pzkvtx-MuiListItem-root"
               role="listitem"
             >
               <div
-                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-2knotq-MuiButtonBase-root-MuiListItemButton-root"
                 role="button"
                 tabindex="0"
               >
                 <div
-                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                  class="MuiListItemAvatar-root css-1ulznza-MuiListItemAvatar-root"
                 >
                   <div
-                    class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+                    class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
                   >
                     <img
-                      class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                      class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
                       src="http://localhost:8080/services/member-profiles/member-photos/undefined"
                     />
                   </div>
                 </div>
                 <div
-                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
                 >
                   <p
-                    class="MuiTypography-root MuiTypography-body1 css-ndaqpv-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-lhsbas-MuiTypography-root"
                   >
                     Current User
                   </p>
                   <h6
-                    class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-1ro85z9-MuiTypography-root"
                   />
                 </div>
               </div>
               <div
-                class="MuiListItemSecondaryAction-root css-518kzi-MuiListItemSecondaryAction-root"
+                class="MuiListItemSecondaryAction-root css-zezwi5-MuiListItemSecondaryAction-root"
               >
                 <span
-                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-355xbt-MuiButtonBase-root-MuiCheckbox-root"
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-rji8ye-MuiButtonBase-root-MuiCheckbox-root"
                 >
                   <input
                     checked=""
-                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    class="PrivateSwitchBase-input css-j8yymo"
                     data-indeterminate="false"
                     type="checkbox"
                   />
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                     data-testid="CheckBoxIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -432,56 +420,56 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
               </div>
             </li>
             <li
-              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-g28sfz-MuiListItem-root"
+              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-1pzkvtx-MuiListItem-root"
               role="listitem"
             >
               <div
-                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-2knotq-MuiButtonBase-root-MuiListItemButton-root"
                 role="button"
                 tabindex="0"
               >
                 <div
-                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                  class="MuiListItemAvatar-root css-1ulznza-MuiListItemAvatar-root"
                 >
                   <div
-                    class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+                    class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
                   >
                     <img
-                      class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                      class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
                       src="http://localhost:8080/services/member-profiles/member-photos/bobjones%40objectcomputing.com"
                     />
                   </div>
                 </div>
                 <div
-                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
                 >
                   <p
-                    class="MuiTypography-root MuiTypography-body1 css-ndaqpv-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-lhsbas-MuiTypography-root"
                   >
                     Bob Jones
                   </p>
                   <h6
-                    class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-1ro85z9-MuiTypography-root"
                   >
                     Engineer
                   </h6>
                 </div>
               </div>
               <div
-                class="MuiListItemSecondaryAction-root css-518kzi-MuiListItemSecondaryAction-root"
+                class="MuiListItemSecondaryAction-root css-zezwi5-MuiListItemSecondaryAction-root"
               >
                 <span
-                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-355xbt-MuiButtonBase-root-MuiCheckbox-root"
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-rji8ye-MuiButtonBase-root-MuiCheckbox-root"
                 >
                   <input
                     checked=""
-                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    class="PrivateSwitchBase-input css-j8yymo"
                     data-indeterminate="false"
                     type="checkbox"
                   />
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                     data-testid="CheckBoxIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -494,56 +482,56 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
               </div>
             </li>
             <li
-              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-g28sfz-MuiListItem-root"
+              class="MuiListItem-root MuiListItem-dense MuiListItem-gutters css-1pzkvtx-MuiListItem-root"
               role="listitem"
             >
               <div
-                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-178cqt3-MuiButtonBase-root-MuiListItemButton-root"
+                class="MuiButtonBase-root MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters MuiListItemButton-root MuiListItemButton-dense MuiListItemButton-gutters css-2knotq-MuiButtonBase-root-MuiListItemButton-root"
                 role="button"
                 tabindex="0"
               >
                 <div
-                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                  class="MuiListItemAvatar-root css-1ulznza-MuiListItemAvatar-root"
                 >
                   <div
-                    class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+                    class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
                   >
                     <img
-                      class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+                      class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
                       src="http://localhost:8080/services/member-profiles/member-photos/janedoe%40objectcomputing.com"
                     />
                   </div>
                 </div>
                 <div
-                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-konndc-MuiListItemText-root"
+                  class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline css-14ln1j6-MuiListItemText-root"
                 >
                   <p
-                    class="MuiTypography-root MuiTypography-body1 css-ndaqpv-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-lhsbas-MuiTypography-root"
                   >
                     Jane Doe
                   </p>
                   <h6
-                    class="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 css-1ro85z9-MuiTypography-root"
                   >
                     Manager
                   </h6>
                 </div>
               </div>
               <div
-                class="MuiListItemSecondaryAction-root css-518kzi-MuiListItemSecondaryAction-root"
+                class="MuiListItemSecondaryAction-root css-zezwi5-MuiListItemSecondaryAction-root"
               >
                 <span
-                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-355xbt-MuiButtonBase-root-MuiCheckbox-root"
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-rji8ye-MuiButtonBase-root-MuiCheckbox-root"
                 >
                   <input
                     checked=""
-                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    class="PrivateSwitchBase-input css-j8yymo"
                     data-indeterminate="false"
                     type="checkbox"
                   />
                   <svg
                     aria-hidden="true"
-                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                     data-testid="CheckBoxIcon"
                     focusable="false"
                     viewBox="0 0 24 24"
@@ -557,7 +545,7 @@ exports[`MemberSelectorDialog > renders correctly 1`] = `
             </li>
           </ul>
           <hr
-            class="MuiDivider-root MuiDivider-fullWidth css-9mgopn-MuiDivider-root"
+            class="MuiDivider-root MuiDivider-fullWidth css-1jpc804-MuiDivider-root"
           />
         </div>
       </div>

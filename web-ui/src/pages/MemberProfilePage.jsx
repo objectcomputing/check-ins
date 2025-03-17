@@ -3,12 +3,12 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import {
   selectCurrentUserId,
-  selectIsAdmin,
   selectOrderedMemberFirstName,
   selectOrderedPdls,
   selectProfile,
+  selectSupervisorHierarchyIds,
   selectTerminatedMembers,
-  selectSupervisorHierarchyIds
+  selectCanAdministerFeedbackRequests
 } from '../context/selectors';
 import { AppContext } from '../context/AppContext';
 import { getSelectedMemberSkills } from '../api/memberskill';
@@ -16,9 +16,11 @@ import { getTeamByMember } from '../api/team';
 import { getGuildsForMember } from '../api/guild';
 import { getAvatarURL } from '../api/api.js';
 import ProfilePage from './ProfilePage';
-import CertificationBadges from '../components/certifications/CertificationBadges';
 import VolunteerBadges from '../components/volunteer/VolunteerBadges';
 import { levelList } from '../context/util';
+import StarIcon from '@mui/icons-material/Star';
+import KudosDialog from '../components/kudos_dialog/KudosDialog';
+import EarnedCertificationBadges from '../components/earned-certifications/EarnedCertificationBadges.jsx';
 
 import {
   Avatar,
@@ -38,13 +40,14 @@ import './MemberProfilePage.css';
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const history = useHistory();
-  const { csrf, skills, userProfile } = state;
+  const { csrf, skills, certifications, userProfile } = state;
   const { memberId } = useParams();
   const [selectedMember, setSelectedMember] = useState(null);
+  const [kudosDialogOpen, setKudosDialogOpen] = useState(false);
   const [lastSeen, setLastSeen] = useState('');
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);
-  const isAdmin = selectIsAdmin(state);
+  const isAdmin = selectCanAdministerFeedbackRequests(state);
   const currentUserId = selectCurrentUserId(state);
   const pdlInfo =
     sortedPdls && sortedPdls.find(pdl => pdl?.id === selectedMember?.pdlId);
@@ -68,7 +71,9 @@ const MemberProfilePage = () => {
     if (member) {
       setSelectedMember(member);
       const { lastSeen } = member;
-      setLastSeen(`${lastSeen[1]}/${lastSeen[2]}/${lastSeen[0]}`);
+      if (lastSeen && Array.isArray(lastSeen)) {
+        setLastSeen(`${lastSeen[1]}/${lastSeen[2]}/${lastSeen[0]}`);
+      }
     } else if (terminatedMember) {
       setSelectedMember(terminatedMember[0]);
     }
@@ -77,30 +82,34 @@ const MemberProfilePage = () => {
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
   const [guilds, setGuilds] = useState([]);
-  const isCurrentUser = userProfile?.memberProfile?.id === memberId;
+  const isCurrentUser = userProfile?.id === memberId;
 
   useEffect(() => {
     async function getTeamsAndGuilds() {
       if (memberId) {
-        let teamRes = await getTeamByMember(memberId, csrf);
-        let teamData =
+        const teamRes = await getTeamByMember(memberId, csrf);
+        const teamData =
           teamRes.payload && teamRes.payload.status === 200
             ? teamRes.payload.data
             : null;
-        let memberTeams = teamData && !teamRes.error ? teamData : [];
-        memberTeams.sort((a, b) => a.name.localeCompare(b.name));
-        setTeams(memberTeams);
+        const memberTeams = teamData && !teamRes.error ? teamData : [];
+        setTeams(memberTeams.sort((a, b) => a.name.localeCompare(b.name)));
 
-        let guildRes = await getGuildsForMember(memberId, csrf);
-        let guildData =
+        const guildRes = await getGuildsForMember(memberId, csrf);
+        const guildData =
           guildRes.payload && guildRes.payload.status === 200
             ? guildRes.payload.data
             : null;
-        let memberGuilds = guildData && !guildRes.error ? guildData : [];
-        memberGuilds.sort((a, b) => a.name.localeCompare(b.name));
-        setGuilds(memberGuilds);
+        const memberGuilds =
+          guildData && !guildRes.error
+            ? guildData.filter(guild =>
+                guild.guildMembers.some(member => member.memberId == memberId)
+              )
+            : [];
+        setGuilds(memberGuilds.sort((a, b) => a.name.localeCompare(b.name)));
       }
     }
+
     if (csrf) {
       getTeamsAndGuilds();
     }
@@ -125,6 +134,7 @@ const MemberProfilePage = () => {
       memberSkills.sort((a, b) => a.name.localeCompare(b.name));
       setSelectedMemberSkills(memberSkills);
     }
+
     if (csrf) {
       getMemberSkills();
     }
@@ -145,74 +155,88 @@ const MemberProfilePage = () => {
               </div>
             )}
             {selectedMember && (
-              <Card className="member-profile-card">
-                <CardHeader
-                  title={
-                    <Typography variant="h5" component="h1">
-                      {selectedMember.name}
-                    </Typography>
-                  }
-                  subheader={
-                    <Typography color="textSecondary" component="h2">
-                      {selectedMember.title}
-                    </Typography>
-                  }
-                  disableTypography
-                  avatar={
-                    <Avatar
-                      className="large"
-                      src={getAvatarURL(selectedMember.workEmail)}
-                    />
-                  }
-                />
-                <CardContent>
-                  <Container fixed className="info-container">
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      component="div"
-                    >
-                      <h4>Last Seen: {lastSeen}</h4>
-                      <h4>Email: {selectedMember.workEmail || ''}</h4>
-                      <h4>Location: {selectedMember.location || ''}</h4>
-                      <h4>Bio: {selectedMember.bioText || ''}</h4>
-                      <h4>
-                        {(supervisorInfo &&
-                          'Supervisor: ' +
-                            supervisorInfo.firstName +
-                            ' ' +
-                            supervisorInfo.lastName) ||
-                          ''}
-                      </h4>
-                      <h4>
-                        {(pdlInfo &&
-                          'PDL: ' +
-                            pdlInfo.firstName +
-                            ' ' +
-                            pdlInfo.lastName) ||
-                          ''}
-                      </h4>
-                    </Typography>
-                  </Container>
-                  {canRequestFeedback && (
-                    <Container
-                      fixed
-                      sx={{ display: 'flex', justifyContent: 'center' }}
-                    >
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={e => {
-                          e.stopPropagation();
-                          history.push(`/feedback/request?for=${memberId}`);
-                        }}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <Card className="member-profile-card">
+                  <CardHeader
+                    title={
+                      <Typography variant="h5" component="h1">
+                        {selectedMember.name}
+                      </Typography>
+                    }
+                    subheader={
+                      <Typography color="textSecondary" component="h2">
+                        {selectedMember.title}
+                      </Typography>
+                    }
+                    disableTypography
+                    avatar={
+                      <Avatar
+                        className="large"
+                        src={getAvatarURL(selectedMember.workEmail)}
+                      />
+                    }
+                  />
+                  <CardContent>
+                    <Container fixed className="info-container">
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="div"
                       >
-                        Request Feedback
-                      </Button>
+                        <h4>Last Seen: {lastSeen}</h4>
+                        <h4>Email: {selectedMember.workEmail || ''}</h4>
+                        <h4>Location: {selectedMember.location || ''}</h4>
+                        <h4>Bio: {selectedMember.bioText || ''}</h4>
+                        <h4>
+                          {(supervisorInfo &&
+                            'Supervisor: ' +
+                              supervisorInfo.firstName +
+                              ' ' +
+                              supervisorInfo.lastName) ||
+                            ''}
+                        </h4>
+                        <h4>
+                          {(pdlInfo &&
+                            'PDL: ' +
+                              pdlInfo.firstName +
+                              ' ' +
+                              pdlInfo.lastName) ||
+                            ''}
+                        </h4>
+                      </Typography>
                     </Container>
-                  )}
-                </CardContent>
-              </Card>
+                    {canRequestFeedback && (
+                      <Container
+                        fixed
+                        sx={{ display: 'flex', justifyContent: 'center' }}
+                      >
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={e => {
+                            e.stopPropagation();
+                            history.push(`/feedback/request?for=${memberId}`);
+                          }}
+                        >
+                          Request Feedback
+                        </Button>
+                      </Container>
+                    )}
+                  </CardContent>
+                </Card>
+                <KudosDialog
+                  open={kudosDialogOpen}
+                  recipient={selectedMember}
+                  onClose={() => setKudosDialogOpen(false)}
+                />
+                <Button
+                  variant="outlined"
+                  startIcon={<StarIcon />}
+                  onClick={() => setKudosDialogOpen(true)}
+                >
+                  Give Kudos
+                </Button>
+              </div>
             )}
           </Grid>
           <Grid item md={7} className="right">
@@ -287,7 +311,7 @@ const MemberProfilePage = () => {
             </Card>
             <Card>
               <CardHeader
-                title="Guilds"
+                title="Guilds & Communities"
                 titleTypographyProps={{ variant: 'h5', component: 'h1' }}
               />
               <CardContent>
@@ -309,7 +333,10 @@ const MemberProfilePage = () => {
                 </div>
               </CardContent>
             </Card>
-            <CertificationBadges memberId={memberId} />
+            <EarnedCertificationBadges
+              memberId={memberId}
+              certifications={certifications}
+            />
             <VolunteerBadges memberId={memberId} />
           </Grid>
         </Grid>

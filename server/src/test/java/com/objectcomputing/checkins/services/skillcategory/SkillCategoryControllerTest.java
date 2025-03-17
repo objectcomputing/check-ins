@@ -69,7 +69,9 @@ class SkillCategoryControllerTest extends TestContainersSuite
 
     @Test
     void testCreateNotAllowed() {
+        SkillCategory existingCategory = createDefaultSkillCategory();
         SkillCategoryCreateDTO createDTO = new SkillCategoryCreateDTO();
+        createDTO.setName(existingCategory.getName());
 
         final HttpRequest<SkillCategoryCreateDTO> request = HttpRequest
                 .POST("/", createDTO)
@@ -99,7 +101,10 @@ class SkillCategoryControllerTest extends TestContainersSuite
 
     @Test
     void testUpdateNotAllowed() {
+        SkillCategory existingCategory = createDefaultSkillCategory();
         SkillCategoryUpdateDTO updateDTO = new SkillCategoryUpdateDTO();
+        updateDTO.setId(existingCategory.getId());
+        updateDTO.setName(existingCategory.getName());
 
         final HttpRequest<SkillCategoryUpdateDTO> request = HttpRequest
                 .PUT("/", updateDTO)

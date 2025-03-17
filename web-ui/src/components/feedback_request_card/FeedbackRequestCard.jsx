@@ -106,9 +106,6 @@ const FeedbackRequestCard = ({
     requestDate => {
       let oldestDate = new Date();
       switch (dateRange) {
-        case DateRange.THREE_MONTHS:
-          oldestDate.setMonth(oldestDate.getMonth() - 3);
-          break;
         case DateRange.SIX_MONTHS:
           oldestDate.setMonth(oldestDate.getMonth() - 6);
           break;
@@ -117,6 +114,7 @@ const FeedbackRequestCard = ({
           break;
         case DateRange.ALL_TIME:
           return true;
+        case DateRange.THREE_MONTHS:
         default:
           oldestDate.setMonth(oldestDate.getMonth() - 3);
       }
@@ -181,10 +179,6 @@ const FeedbackRequestCard = ({
 
     let sortMethod;
     switch (sortType) {
-      case SortOption.SENT_DATE:
-        sortMethod = (a, b) =>
-          new Date(a.sendDate) > new Date(b.sendDate) ? -1 : 1;
-        break;
       case SortOption.SUBMISSION_DATE:
         sortMethod = (a, b) =>
           !a.submitDate || new Date(a.submitDate) > new Date(b.submitDate)
@@ -205,6 +199,7 @@ const FeedbackRequestCard = ({
             ? -1
             : 1;
         break;
+      case SortOption.SENT_DATE:
       default:
         sortMethod = (a, b) =>
           new Date(a.sendDate) > new Date(b.sendDate) ? -1 : 1;

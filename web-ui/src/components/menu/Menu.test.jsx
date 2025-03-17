@@ -10,17 +10,20 @@ const initialState = {
   state: {
     userProfile: {
       name: 'holmes',
-      memberProfile: {
-        id: testId,
-        pdlId: '',
-        title: 'Tester',
-        workEmail: 'test@tester.com'
-      },
+      id: testId,
       role: ['MEMBER'],
       permissions: [],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
-    }
+    },
+    memberProfiles: [
+      {
+        id: testId,
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
+      }
+    ]
   }
 };
 
@@ -28,16 +31,20 @@ const adminState = {
   state: {
     userProfile: {
       name: 'holmes',
-      memberProfile: {
-        pdlId: '',
-        title: 'Tester',
-        workEmail: 'test@tester.com'
-      },
+      id: testId,
       role: ['MEMBER', 'ADMIN'],
       permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
-    }
+    },
+    memberProfiles: [
+      {
+        id: testId,
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
+      }
+    ]
   }
 };
 
@@ -45,16 +52,20 @@ const pdlState = {
   state: {
     userProfile: {
       name: 'holmes',
-      memberProfile: {
-        pdlId: '',
-        title: 'Tester',
-        workEmail: 'test@tester.com'
-      },
+      id: testId,
       role: ['MEMBER', 'PDL'],
       permissions: [],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
-    }
+    },
+    memberProfiles: [
+      {
+        id: testId,
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
+      }
+    ]
   }
 };
 

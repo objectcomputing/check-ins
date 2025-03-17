@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.guild.member;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -10,7 +12,6 @@ import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -28,8 +29,6 @@ import static com.objectcomputing.checkins.services.validate.PermissionsValidati
 @Singleton
 public class GuildMemberServicesImpl implements GuildMemberServices {
 
-    public static final String WEB_ADDRESS = "check-ins.web-address";
-
     private final GuildRepository guildRepo;
     private final GuildMemberRepository guildMemberRepo;
     private final MemberProfileRepository memberRepo;
@@ -44,7 +43,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
                                    CurrentUserServices currentUserServices,
                                    GuildMemberHistoryRepository guildMemberHistoryRepository,
                                    @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
-                                   @Property(name = WEB_ADDRESS) String webAddress
+                                   CheckInsConfiguration checkInsConfiguration
     ) {
         this.guildRepo = guildRepo;
         this.guildMemberRepo = guildMemberRepo;
@@ -52,14 +51,14 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         this.currentUserServices = currentUserServices;
         this.guildMemberHistoryRepository=guildMemberHistoryRepository;
         this.emailSender = emailSender;
-        this.webAddress = webAddress;
+        this.webAddress = checkInsConfiguration.getWebAddress();
     }
 
     public void setEmailSender(EmailSender emailSender) {
         this.emailSender = emailSender;
     }
 
-    public GuildMember save(@Valid @NotNull GuildMember guildMember) {
+    public GuildMember save(@Valid @NotNull GuildMember guildMember, boolean sendEmail) {
         final UUID guildId = guildMember.getGuildId();
         final UUID memberId = guildMember.getMemberId();
         Optional<Guild> guild = guildRepo.findById(guildId);
@@ -78,19 +77,21 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
         }
         // only allow admins to create guild leads
-        else if (!currentUserServices.isAdmin() && Boolean.TRUE.equals(guildMember.getLead())) {
+        else if (!hasAdministerPermission() && Boolean.TRUE.equals(guildMember.getLead())) {
             throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
         // only admins and leads can add members to guilds unless a user adds themself
-        else if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
+        else if (!hasAdministerPermission() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
-        emailSender
-                .sendEmail(null, null, "Membership changes have been made to the " + guild.get().getName() + " guild",
-                        constructEmailContent(guildMember, true),
-                        getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
-                );
+        if (sendEmail) {
+            emailSender
+                    .sendEmail(null, null, "Membership changes have been made to the " + guild.get().getName() + " guild",
+                            constructEmailContent(guildMember, true),
+                            getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
+                    );
+        }
 
         GuildMember guildMemberSaved = guildMemberRepo.save(guildMember);
         guildMemberHistoryRepository.save(buildGuildMemberHistory(guildId,memberId,"Added", LocalDateTime.now()));
@@ -103,7 +104,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     public GuildMember update(@NotNull @Valid GuildMember guildMember) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
         final UUID id = guildMember.getId();
         final UUID guildId = guildMember.getGuildId();
@@ -122,7 +123,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));
-        } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+        } else if (!canAdminister && guildLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException(NOT_AUTHORIZED_MSG);
         }
         GuildMember guildMemberUpdate = guildMemberRepo.update(guildMember);
@@ -147,7 +148,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         return guildMembers;
     }
 
-    public void delete(@NotNull UUID id) {
+    public void delete(@NotNull UUID id, boolean sendEmail) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         GuildMember guildMember = guildMemberRepo.findById(id).orElse(null);
 
@@ -161,18 +162,20 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException("At least one guild lead must be present in the guild at all times");
         }
         // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
-        if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
+        if (!hasAdministerPermission() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
             throw new PermissionException(NOT_AUTHORIZED_MSG);
         }
 
         Guild guild = guildRepo.findById(guildMember.getGuildId())
                 .orElseThrow(() -> new NotFoundException("No Guild found with id " + guildMember.getGuildId()));
 
-        emailSender
-                .sendEmail(null, null, "Membership Changes have been made to the " + guild.getName() + " guild",
-                        constructEmailContent(guildMember, false),
-                        getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
-                );
+        if (sendEmail) {
+            emailSender
+                    .sendEmail(null, null, "Membership Changes have been made to the " + guild.getName() + " guild",
+                            constructEmailContent(guildMember, false),
+                            getGuildLeadsEmails(guildLeads, guildMember).toArray(new String[0])
+                    );
+        }
 
         guildMemberRepo.deleteById(id);
         guildMemberHistoryRepository.save(buildGuildMemberHistory(guildMember.getGuildId(),guildMember.getMemberId(),"Deleted", LocalDateTime.now()));
@@ -208,5 +211,9 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     private static GuildMemberHistory buildGuildMemberHistory(UUID guildId, UUID memberId, String change, LocalDateTime date) {
         return new GuildMemberHistory(guildId,memberId,change,date);
+    }
+
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_GUILDS);
     }
 }

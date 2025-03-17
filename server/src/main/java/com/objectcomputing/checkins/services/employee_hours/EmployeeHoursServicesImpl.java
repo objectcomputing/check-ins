@@ -1,8 +1,9 @@
 package com.objectcomputing.checkins.services.employee_hours;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.memberprofile.memberphoto.MemberPhotoServiceImpl;
 import io.micronaut.http.multipart.CompletedFileUpload;
@@ -24,29 +25,23 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
 
-    private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
     private final EmployeeHoursRepository employeehourRepo;
 
-
-
-    public EmployeeHoursServicesImpl(MemberProfileRepository memberRepo,
-                                     CurrentUserServices currentUserServices,
+    public EmployeeHoursServicesImpl(CurrentUserServices currentUserServices,
                                      EmployeeHoursRepository employeehourRepo) {
-        this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
         this.employeehourRepo = employeehourRepo;
     }
 
 
     @Override
+    @RequiredPermission(Permission.CAN_UPLOAD_HOURS)
     public EmployeeHoursResponseDTO save(CompletedFileUpload file) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
         List<EmployeeHours> employeeHoursList = new ArrayList<>();
         Set<EmployeeHours> employeeHours = new HashSet<>();
         EmployeeHoursResponseDTO responseDTO = new EmployeeHoursResponseDTO();
-        validate(!isAdmin, NOT_AUTHORIZED_MSG);
         responseDTO.setRecordCountDeleted(employeehourRepo.count());
         employeehourRepo.deleteAll();
         try {
@@ -65,24 +60,19 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
 
     @Override
-    public EmployeeHours read(UUID id) {
-        return employeehourRepo.findById(id).orElse(null);
-    }
-
-    @Override
     public Set<EmployeeHours> findByFields(String employeeId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canViewAll = currentUserServices.hasPermission(Permission.CAN_VIEW_ALL_UPLOADED_HOURS);
 
         Set<EmployeeHours> employeeHours = new HashSet<>();
         employeehourRepo.findAll().forEach(employeeHours::add);
 
         if(employeeId !=null) {
-            validate((!isAdmin && currentUser!=null&& !currentUser.getEmployeeId().equals(employeeId)),
+            validate((!canViewAll && currentUser!=null && !currentUser.getEmployeeId().equals(employeeId)),
                        NOT_AUTHORIZED_MSG);
             employeeHours.retainAll(employeehourRepo.findByEmployeeId(employeeId));
         } else {
-            validate(!isAdmin, NOT_AUTHORIZED_MSG);
+            validate(!canViewAll, NOT_AUTHORIZED_MSG);
         }
 
 

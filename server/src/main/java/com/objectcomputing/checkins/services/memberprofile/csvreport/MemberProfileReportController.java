@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.csvreport;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -17,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 @Controller(MemberProfileReportController.PATH)
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -36,14 +35,13 @@ class MemberProfileReportController {
      * @return HTTP response with the CSV file
      */
     @Post(produces = MediaType.TEXT_CSV)
-    @RequiredPermission(Permission.CAN_VIEW_PROFILE_REPORT)
     HttpResponse<File> getCsvFile(@Nullable @Body MemberProfileReportQueryDTO dto) {
         try {
             File file = memberProfileReportServices.generateFile(dto);
             return HttpResponse
                     .ok(file)
                     .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
-        } catch (Exception error) {
+        } catch (IOException error) {
             LOG.error("Something went terribly wrong during export... ", error);
             return HttpResponse.serverError();
         }

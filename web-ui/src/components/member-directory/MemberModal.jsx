@@ -144,7 +144,7 @@ const MemberModal = ({ member, open, onSave, onClose }) => {
       });
     } else if (required && inputsFeasible) {
       onSave(editedMember).then(() => {
-        if (isNewMember.current) {
+        if (isNewMember) {
           setMember({ emptyMember });
           setIsNewMember(true);
         }

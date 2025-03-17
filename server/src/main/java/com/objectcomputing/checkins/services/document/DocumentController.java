@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.document;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -61,7 +59,6 @@ class DocumentController {
      * @return the created document
      */
     @Post
-    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     DocumentResponseDTO createDocument(@Body @Valid DocumentCreateDTO document) {
         return documentService.create(document.toDocument());
     }
@@ -74,7 +71,6 @@ class DocumentController {
      * @return the updated document
      */
     @Put("/{documentId}")
-    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     DocumentResponseDTO updateDocument(UUID documentId, @Body @Valid DocumentCreateDTO document) {
         return documentService.update(document.toDocument(documentId));
     }
@@ -86,7 +82,6 @@ class DocumentController {
      */
     @Delete("/{documentId}")
     @Status(HttpStatus.NO_CONTENT)
-    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     void deleteDocument(UUID documentId) {
         documentService.deleteDocument(documentId);
     }
@@ -101,7 +96,6 @@ class DocumentController {
      * @return The list of documents saved to the role
      */
     @Post("/{roleId}")
-    @RequiredPermission(Permission.CAN_ADMINISTER_DOCUMENTATION)
     List<DocumentResponseDTO> saveDocumentsToRoles(UUID roleId, @Body List<UUID> documentIds) {
         return documentService.saveDocumentsToRoles(roleId, new LinkedHashSet<>(documentIds));
     }

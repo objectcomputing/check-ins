@@ -7,15 +7,9 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
-import {
-  AddCircle,
-  Archive,
-  Delete,
-  Search,
-  Unarchive
-} from '@mui/icons-material';
+import { AddCircle, Archive, Search, Unarchive } from '@mui/icons-material';
 import {
   Alert,
   Button,
@@ -34,9 +28,14 @@ import {
 import { styled } from '@mui/material/styles';
 
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
-import { resolve } from '../../api/api.js';
 import {
-  findReviewRequestsByPeriodAndTeamMembers,
+  getReviewAssignments,
+  createReviewAssignments,
+  updateReviewAssignment,
+  removeReviewAssignment
+} from '../../api/reviewassignments.js';
+import {
+  findReviewRequestsByPeriod,
   findSelfReviewRequestsByPeriodAndTeamMembers
 } from '../../api/feedback.js';
 import {
@@ -45,7 +44,6 @@ import {
   updateReviewPeriod
 } from '../../api/reviewperiods.js';
 import {
-  DELETE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIOD,
   UPDATE_REVIEW_PERIODS,
   UPDATE_TOAST
@@ -56,21 +54,25 @@ import {
   selectCurrentMembers,
   selectCurrentUser,
   selectCurrentUserSubordinates,
-  selectHasDeleteReviewPeriodPermission,
+  selectHasCloseReviewPeriodPermission,
   selectHasLaunchReviewPeriodPermission,
   selectHasUpdateReviewPeriodPermission,
-  selectIsAdmin,
   selectReviewPeriod,
   selectSupervisors,
-  selectTeamMembersBySupervisorId
+  selectProfile,
+  selectTeamMembersBySupervisorId,
+  selectHasCreateReviewAssignmentsPermission,
+  selectHasDeleteReviewAssignmentsPermission,
+  selectHasUpdateReviewAssignmentsPermission,
+  selectCanAdministerFeedbackRequests
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
 import MemberSelectorDialog from '../member_selector/member_selector_dialog/MemberSelectorDialog';
-
 import DatePickerField from '../date-picker-field/DatePickerField.jsx';
 import '../date-picker-field/DatePickerField.css';
 import './TeamReviews.css';
+import ReviewPeriodStepper from './periods/ReviewPeriodStepper.jsx';
 
 const propTypes = {
   onBack: PropTypes.func,
@@ -118,14 +120,16 @@ const ReviewStatus = {
 const TeamReviews = ({ onBack, periodId }) => {
   const { state, dispatch } = useContext(AppContext);
   const location = useLocation();
-
-  const [approvalMode, setApprovalMode] = useState(false);
+  const isAdmin = selectCanAdministerFeedbackRequests(state);
+  const [openMode, setOpenMode] = useState(false);
+  const [approvalState, setApprovalState] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const [canUpdate, setCanUpdate] = useState(false);
+  const [canApprove, setCanApprove] = useState(false);
   const [confirmApproveAllOpen, setConfirmApproveAllOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
   const [memberSelectorOpen, setMemberSelectorOpen] = useState(false);
   const [nameQuery, setNameQuery] = useState('');
   const [query, setQuery] = useState({});
@@ -135,10 +139,19 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selfReviews, setSelfReviews] = useState({});
   const [showAll, setShowAll] = useState(false);
+  const [hasShowAll, setHasShowAll] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [toDelete, setToDelete] = useState(null);
+  const [toClose, setToClose] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
+  const [
+    confirmRevieweesWithNoSupervisorOpen,
+    setConfirmRevieweesWithNoSupervisorOpen
+  ] = useState(false);
+  const [
+    confirmRevieweesWithNoSupervisorQuestion,
+    setConfirmRevieweesWithNoSupervisorQuestionText
+  ] = useState('');
 
   const loadedReviews = useRef(false);
   const loadingReviews = useRef(false);
@@ -150,10 +163,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     return map;
   }, {});
   const currentUser = selectCurrentUser(state);
-  const isAdmin = selectIsAdmin(state);
   const period = selectReviewPeriod(state, periodId);
-
-  const reviewAssignmentsUrl = '/services/review-assignments';
 
   useEffect(() => {
     loadAssignments();
@@ -162,19 +172,24 @@ const TeamReviews = ({ onBack, periodId }) => {
   useEffect(() => {
     const myId = currentUser?.id;
     const supervisors = selectSupervisors(state);
-    const isManager = supervisors.some(s => s.id === myId);
+    const isManager = supervisors.some(s => s?.id === myId);
     const period = selectReviewPeriod(state, periodId);
     if (period) {
-      setApprovalMode(
-        isManager && period.reviewStatus === ReviewStatus.AWAITING_APPROVAL
-      );
+      setApprovalState(period.reviewStatus === ReviewStatus.AWAITING_APPROVAL);
     }
-    setCanUpdate(selectHasUpdateReviewPeriodPermission(state));
+
+    setOpenMode(period?.reviewStatus === ReviewStatus.OPEN);
+    setCanUpdate(!openMode && selectHasUpdateReviewPeriodPermission(state));
+    setCanApprove(
+      approvalState && selectHasUpdateReviewAssignmentsPermission(state)
+    );
+
+    setHasShowAll(isManager || selectHasUpdateReviewPeriodPermission(state));
   }, [state]);
 
   useEffect(() => {
     loadTeamMembers();
-  }, [approvalMode, assignments, showAll]);
+  }, [assignments, showAll]);
 
   const editReviewers = member => {
     setSelectedMember(member);
@@ -184,16 +199,7 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const loadAssignments = async () => {
-    const myId = currentUser?.id;
-    const res = await resolve({
-      method: 'GET',
-      url: `${reviewAssignmentsUrl}/period/${periodId}`,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    const res = await getReviewAssignments(periodId, csrf);
     if (res.error) return;
 
     const assignments = res.payload.data;
@@ -202,79 +208,114 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const loadTeamMembers = () => {
-    let members = [];
-
-    if (!approvalMode || (isAdmin && showAll)) {
-      const memberIds = assignments.map(a => a.revieweeId);
-      members = currentMembers.filter(m => memberIds.includes(m.id));
+    let source;
+    if (selectHasUpdateReviewPeriodPermission(state) && showAll) {
+      source = currentMembers;
     } else {
       // Get the direct reports of the current user who is a manager.
       const myId = currentUser?.id;
-      members = showAll
+      source = showAll
         ? selectCurrentUserSubordinates(state)
         : selectTeamMembersBySupervisorId(state, myId);
+
+      // And others that the current user may be assigned to review.
+      assignments
+        .filter(a => a.reviewerId == currentUser.id)
+        .forEach(a => {
+          if (!source.some(s => s.id == a.revieweeId)) {
+            // Add this user to the list of members to show by default.
+            const member = currentMembers.find(m => m.id == a.revieweeId);
+            if (member) {
+              source.push(member);
+            }
+          }
+        });
     }
 
+    // Always filter the members down to existing selected assignments.
+    // We do not want to add members that were not already selected.
+    const memberIds = assignments.map(a => a.revieweeId);
+    const members = source.filter(m => memberIds.includes(m.id));
     setTeamMembers(members);
   };
 
   const updateTeamMembers = async teamMembers => {
-    const data = teamMembers.map(tm => ({
+    // First, get the list of review assignements.
+    let res = await getReviewAssignments(periodId, csrf);
+    if (res.error) return;
+
+    // Match up the review assignments with the team members.
+    const existing = res.payload.data.filter(a =>
+      teamMembers.find(m => m.id == a.revieweeId)
+    );
+
+    // Create a set of team members that do not yet have review assignments,
+    // each with a default reviewer.
+    const mem = teamMembers.filter(
+      m => !existing.find(a => a.revieweeId == m.id)
+    );
+    const data = mem.map(tm => ({
       revieweeId: tm.id,
       reviewerId: tm.supervisorid,
       reviewPeriodId: periodId,
-      approved: true
+      approved: false
     }));
 
-    const res = await resolve({
-      method: 'POST',
-      url: reviewAssignmentsUrl + '/' + periodId,
-      data,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
+    // Set those on the server as the review assignments.
+    res = await createReviewAssignments(periodId, data, csrf);
     if (res.error) return;
 
+    // Get the list of review assignments from the server to ensure that we are
+    // reflecting what was actually created.
+    res = await getReviewAssignments(periodId, csrf);
+    let assignments = res.error ? [] : res.payload.data;
+
+    // Remove review assignments for members no longer selected.
+    for (let assignment of assignments) {
+      if (!teamMembers.find(m => m.id == assignment.revieweeId)) {
+        // Delete review assignments if we do not have the matching member.
+        await removeReviewAssignment(assignment.id, csrf);
+      }
+    }
+
+    // Get the review assignments from the server one more time.
+    res = await getReviewAssignments(periodId, csrf);
+    assignments = res.error ? [] : res.payload.data;
+
+    // Update our reactive assignment and member lists.
+    setAssignments(assignments);
     setTeamMembers(teamMembers);
   };
 
-  const getReviewStatus = useCallback(
-    teamMemberId => {
-      let reviewStates = { submitted: false, inProgress: false };
-      if (reviews && reviews[teamMemberId]) {
-        reviewStates = reviews[teamMemberId].reduce((states, review) => {
-          switch (review?.status) {
-            case 'submitted':
-              states.submitted = true;
-              break;
-            case 'sent':
-            case 'pending':
-              states.inProgress = true;
-              break;
-            case 'cancelled':
-            case 'canceled':
-            default:
-              break;
-          }
-          return states;
-        }, reviewStates);
-        if (reviewStates.inProgress) {
-          if (reviews[teamMemberId]?.length > 1) {
-            return 'Reviews in progress';
-          }
-          return 'Review in progress';
-        } else if (reviewStates.submitted) {
-          if (reviews[teamMemberId]?.length > 1) {
-            return 'All reviews submitted';
-          }
-          return 'Review submitted';
-        } else return 'No reviews started';
-      } else {
-        return 'No reviews started';
+  const addAssignmentForMemberWithNone = async members => {
+    members.forEach(member => {
+      const exists = assignments.some(a => a.revieweeId === member.id);
+      if (!!!exists && member.supervisorid) {
+        const reviewers = [{ id: member.supervisorid }];
+        updateReviewers(member, reviewers);
+      } else if (!!!exists && !!!member.supervisorid) {
+        const reviewers = [{ id: null }];
+        updateReviewers(member, reviewers);
       }
+    });
+  };
+
+  const getReviewStatus = useCallback(
+    review => {
+      if (review) {
+        switch (review?.status) {
+          case 'submitted':
+            return 'Review submitted';
+          case 'sent':
+          case 'pending':
+            return 'Review in progress';
+          case 'cancelled':
+          case 'canceled':
+          default:
+            break;
+        }
+      }
+      return 'No review started';
     },
     [reviews]
   );
@@ -329,31 +370,29 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
   }, [csrf, dispatch]);
 
-  const confirmDelete = useCallback(() => {
-    setToDelete(period.id);
-    setConfirmDeleteOpen(true);
-  }, [period, setToDelete, setConfirmDeleteOpen]);
+  const confirmClose = useCallback(() => {
+    setToClose(period.id);
+    setConfirmCloseOpen(true);
+  }, [period, setToClose, setConfirmCloseOpen]);
 
-  const handleConfirmDeleteClose = useCallback(() => {
-    setToDelete(null);
-    setConfirmDeleteOpen(false);
-  }, [setToDelete, setConfirmDeleteOpen]);
+  const handleConfirmCloseClose = useCallback(() => {
+    setToClose(null);
+    setConfirmCloseOpen(false);
+  }, [setToClose, setConfirmCloseOpen]);
 
   const handleConfirmApproveAllClose = useCallback(() => {
     setConfirmApproveAllOpen(false);
-  }, [setToDelete, setConfirmApproveAllOpen]);
+  }, [setConfirmApproveAllOpen]);
 
-  const deleteReviewPeriod = useCallback(async () => {
+  const closeReviewPeriod = useCallback(async () => {
     if (!csrf) return;
 
-    await removeReviewPeriod(toDelete, csrf);
-    dispatch({
-      type: DELETE_REVIEW_PERIOD,
-      payload: toDelete
-    });
-    handleConfirmDeleteClose();
+    if (period.reviewStatus === ReviewStatus.OPEN) {
+      updateReviewPeriodStatus(ReviewStatus.CLOSED);
+    }
+    handleConfirmCloseClose();
     onBack();
-  }, [csrf, dispatch, toDelete, handleConfirmDeleteClose]);
+  }, [csrf, dispatch, toClose, handleConfirmCloseClose]);
 
   const getReviewers = useCallback(
     reviewee => {
@@ -413,7 +452,7 @@ const TeamReviews = ({ onBack, periodId }) => {
           type: UPDATE_TOAST,
           payload: {
             severity: 'error',
-            toast: 'Error updating review period'
+            toast: res?.error?.message ?? 'Error updating review period'
           }
         });
       }
@@ -429,8 +468,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Clear dates that are not correctly ordered.
     const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
     const closeDate = new Date(period.closeDate);
+    const periodStartDate = new Date(period.periodStartDate);
     if (selfReviewCloseDate <= newDate) newPeriod.selfReviewCloseDate = null;
     if (closeDate <= newDate) newPeriod.closeDate = null;
+    if (periodStartDate >= newDate) newPeriod.periodStartDate = null;
 
     updateReviewPeriodDates(newPeriod);
   };
@@ -457,8 +498,36 @@ const TeamReviews = ({ onBack, periodId }) => {
     // Clear dates that are not correctly ordered.
     const launchDate = new Date(period.launchDate);
     const selfReviewCloseDate = new Date(period.selfReviewCloseDate);
+    const periodEndDate = new Date(period.periodEndDate);
     if (launchDate >= newDate) newPeriod.launchDate = null;
     if (selfReviewCloseDate >= newDate) newPeriod.selfReviewCloseDate = null;
+    if (periodEndDate > newDate) newPeriod.periodEndDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+  };
+
+  const handlePeriodStartDateChange = (val, period) => {
+    const newDate = val?.$d;
+    const isoDate = newDate?.toISOString() ?? null;
+    const newPeriod = { ...period, periodStartDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const periodEndDate = new Date(period.periodEndDate);
+    if (newDate > periodEndDate) newPeriod.periodEndDate = null;
+
+    updateReviewPeriodDates(newPeriod);
+  };
+
+  const handlePeriodEndDateChange = (val, period) => {
+    const newDate = val?.$d;
+    const isoDate = newDate?.toISOString() ?? null;
+    const newPeriod = { ...period, periodEndDate: isoDate };
+
+    // Clear dates that are not correctly ordered.
+    const periodStartDate = new Date(period.periodStartDate);
+    const closeDate = new Date(period.closeDate);
+    if (newDate < periodStartDate) newPeriod.periodStartDate = null;
+    if (newDate > closeDate) newPeriod.closeDate = null;
 
     updateReviewPeriodDates(newPeriod);
   };
@@ -492,32 +561,20 @@ const TeamReviews = ({ onBack, periodId }) => {
       }
     };
 
-    const getReviewRequests = async teamMemberIdBatches => {
-      for (const teamMemberIds of teamMemberIdBatches) {
-        const res = await findReviewRequestsByPeriodAndTeamMembers(
-          period,
-          teamMemberIds,
-          csrf
-        );
-        let data =
-          res &&
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-            ? res.payload.data
-            : null;
-        if (data && data.length > 0) {
-          data = data.filter(
-            review => 'canceled'.toUpperCase() !== review?.status?.toUpperCase()
-          );
-          data.forEach(review => {
-            if (!newReviews[review.requesteeId]) {
-              newReviews[review.requesteeId] = [];
+    const getReviewRequests = async () => {
+      const res = await findReviewRequestsByPeriod(period, csrf);
+      const data =
+        res?.payload?.status === 200 && !res.error ? res.payload.data : null;
+
+      if (data?.length) {
+        data
+          .filter(review => review?.status?.toUpperCase() !== 'CANCELED')
+          .forEach(request => {
+            if (!newReviews[request.recipientId]) {
+              newReviews[request.recipientId] = [];
             }
-            newReviews[review.requesteeId].push(review);
+            newReviews[request.recipientId].push(request);
           });
-        }
       }
     };
 
@@ -545,7 +602,7 @@ const TeamReviews = ({ onBack, periodId }) => {
       setSelfReviews({});
       setReviews(null);
       await getSelfReviewRequests(teamMemberIdBatches);
-      await getReviewRequests(teamMemberIdBatches);
+      await getReviewRequests();
       loadingReviews.current = false;
       loadedReviews.current = true;
       setSelfReviews({ ...newSelfReviews });
@@ -566,15 +623,25 @@ const TeamReviews = ({ onBack, periodId }) => {
     );
     if (!assignment) return;
 
-    const { id } = assignment;
-    const res = await resolve({
-      method: 'DELETE',
-      url: `${reviewAssignmentsUrl}/${id}`,
-      headers: { 'X-CSRF-Header': csrf }
-    });
-    if (res.error) return;
+    const { id, revieweeId, reviewerId } = assignment;
+    if (id) {
+      const res = await removeReviewAssignment(id, csrf);
 
-    setAssignments(assignments.filter(a => a.id !== id));
+      if (res.error) {
+        console.error('Error deleting assignment:', res.error);
+        return;
+      }
+
+      setAssignments(assignments.filter(a => a.id !== id));
+    } else {
+      // This reviewer does not have an assignment id.  Therefore, we just
+      // need to remove the reviewer from the assignment list.
+      setAssignments(
+        assignments.filter(
+          a => !(a.revieweeId === revieweeId && a.reviewerId === reviewerId)
+        )
+      );
+    }
   };
 
   const validateReviewPeriod = period => {
@@ -583,28 +650,18 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (!period.selfReviewCloseDate)
       return 'No self-review date was specified.';
     if (!period.closeDate) return 'No close date was specified.';
-    if (teamMembers.length === 0) return 'No members were added.';
-    const haveReviewers = teamMembers.every(
-      member => getReviewers(member).length > 0
+    if (!period.periodStartDate) return 'No period-start-date was specified.';
+    if (!period.periodEndDate) return 'No period-end-date was specified.';
+    if (assignments.length === 0) return 'No members were added.';
+    const haveReviewers = assignments.every(
+      assignment => assignment.reviewerId != null
     );
     if (!haveReviewers) return 'One or more members have no reviewer.';
-    return null; // no validtation errors
+    return null; // no validation errors
   };
 
   const updateReviewPeriodStatus = async reviewStatus => {
-    const res = await resolve({
-      method: 'PUT',
-      url: '/services/review-periods',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'X-CSRF-Header': csrf
-      },
-      data: {
-        ...period,
-        reviewStatus
-      }
-    });
+    const res = await updateReviewPeriod({ ...period, reviewStatus }, csrf);
     if (res.error) return;
 
     onBack();
@@ -627,6 +684,223 @@ const TeamReviews = ({ onBack, periodId }) => {
     setValidationMessage(msg);
     if (msg) return;
 
+    const uniqueNamesWithNoSupervisor = [
+      ...new Set(
+        visibleTeamMembers()
+          .filter(member => member.supervisorid === null) // Filter by null supervisorid
+          .map(member => member.name) // Map to the name property
+      )
+    ].join(', ');
+    if (uniqueNamesWithNoSupervisor.trim().length > 0) {
+      setConfirmRevieweesWithNoSupervisorQuestionText(
+        uniqueNamesWithNoSupervisor
+      );
+      setConfirmRevieweesWithNoSupervisorOpen(true);
+    } else {
+      return requestApprovalPost();
+    }
+  };
+
+  const compareStrings = (s1, s2) => (s1 || '').localeCompare(s2 || '');
+
+  const sortMembers = members =>
+    members.sort((a, b) => {
+      let compare = compareStrings(a.lastName, b.lastName);
+      if (compare === 0) compare = compareStrings(a.firstName, b.firstName);
+      return compare;
+    });
+
+  const updateReviewers = async (member, reviewers) => {
+    const memberId = member.id;
+
+    let newAssignments = [...assignments];
+
+    // Remove all assignments for this member.
+    newAssignments = newAssignments.filter(a => a.revieweeId !== memberId);
+    for (let assignment of assignments) {
+      if (!newAssignments.find(a => a.id == assignment.id)) {
+        await removeReviewAssignment(assignment.id, csrf);
+      }
+    }
+
+    // Add assignments for these reviewers if they don't already exist.
+    // All objects in the assignments array are for the current review period.
+    const additional = [];
+    for (const reviewer of reviewers) {
+      additional.push({
+        reviewPeriodId: periodId,
+        reviewerId: reviewer.id,
+        revieweeId: member.id
+      });
+    }
+
+    // Create only the new assignments.
+    let res = await createReviewAssignments(periodId, additional, csrf);
+    if (res.error) return;
+
+    // Get the actual list of assignments back from the server.
+    res = await getReviewAssignments(periodId, csrf);
+    newAssignments = res.error ? [] : res.payload.data;
+    setAssignments(sortMembers(newAssignments));
+  };
+
+  const closeReviewerDialog = () => {
+    setSelectedMember(null);
+    setSelectedReviewers([]);
+    setReviewerSelectorOpen(false);
+  };
+
+  const isMemberApproved = member => {
+    const reviewer = getReviewers(member)[0];
+    return reviewer && reviewer.approved;
+  };
+
+  const getReviewRequest = (member, reviewer) => {
+    if (reviews && reviews[reviewer.id]) {
+      return reviews[reviewer.id].find(r => r.requesteeId === member.id);
+    }
+    return null;
+  };
+
+  const getSelfReviewRequest = member => {
+    if (reviews && reviews[member.id]) {
+      return reviews[member.id].find(
+        r => r.recipientId === member.id && r.requesteeId === member.id
+      );
+    }
+    return null;
+  };
+
+  const getReviewerURL = (request, selfReviewRequest) => {
+    let url;
+    if (openMode && (request || selfReviewRequest)) {
+      const recipientProfile = selectProfile(state, request?.recipientId);
+      const manages =
+        recipientProfile?.id === currentUser?.id ||
+        recipientProfile?.supervisorid === currentUser?.id;
+      const selfSubmitted = selfReviewRequest?.status == 'submitted';
+      if (manages) {
+        url = '/feedback/submit?tabs=true';
+        if (request) {
+          url += `&request=${request.id}`;
+        }
+        if (selfSubmitted) {
+          url += `&selfrequest=${selfReviewRequest.id}`;
+        }
+      }
+    }
+    return url;
+  };
+
+  const renderReviewer = (member, reviewer) => {
+    const hasReviewer = !!reviewer.name;
+    const backgroundColor = reviewer.approved
+      ? 'var(--mui-palette-action-green)'
+      : hasReviewer
+        ? 'var(--mui-palette-action-yellow)'
+        : 'var(--mui-palette-action-red)';
+    const request = getReviewRequest(member, reviewer);
+    const selfReviewRequest = getSelfReviewRequest(member);
+    const variant = 'outlined';
+    const reviewerName = reviewer.name ?? 'No Reviewer';
+    const statusLabel = `${reviewerName}: ${getReviewStatus(request)}`;
+    const url = getReviewerURL(request, selfReviewRequest);
+
+    return url ? (
+      <Link key={member?.id} to={url}>
+        <Chip
+          key={reviewer.id}
+          label={statusLabel}
+          variant={variant}
+          style={{ backgroundColor: backgroundColor }}
+        />
+      </Link>
+    ) : (
+      <Chip
+        key={reviewer.id}
+        label={openMode ? statusLabel : reviewerName}
+        variant={variant}
+        onDelete={
+          !openMode &&
+          hasReviewer &&
+          selectHasDeleteReviewAssignmentsPermission(state)
+            ? () => deleteReviewer(member, reviewer)
+            : null
+        }
+        style={{ backgroundColor: backgroundColor }}
+      />
+    );
+  };
+
+  const REVIEWER_LIMIT = 2;
+  const renderReviewers = member => {
+    // Sort the list of reviewers such that the current user comes first.
+    // In the event that the number of reviewers exceeds the limit, we need
+    // to ensure that the current user is still visible so that the chip
+    // link can be created (if in the open mode) in renderReviewer().
+    let reviewers = getReviewers(member).sort((l, r) =>
+      l.id === currentUser?.id ? -1 : r.id === currentUser?.id ? 1 : 0
+    );
+    const count = reviewers.length;
+    const excess = count - REVIEWER_LIMIT;
+    if (excess > 0) reviewers = reviewers.slice(0, REVIEWER_LIMIT);
+    return (
+      <>
+        {reviewers.map(reviewer => renderReviewer(member, reviewer))}
+        {excess > 0 && <div>and {excess} more </div>}
+      </>
+    );
+  };
+
+  const renderSelfReviewStatus = member => {
+    const recipientProfile = selectProfile(state, member.id);
+    const manages = recipientProfile.supervisorid == currentUser?.id;
+    const request = getReviewRequest(member, currentUser);
+    const isReviewer = request?.recipientId == currentUser?.id;
+    if (isAdmin || manages || isReviewer) {
+      const selfReviewRequest = getSelfReviewRequest(member);
+      return (
+        <Chip
+          key={member.id}
+          label={'Self-Review: ' + getReviewStatus(selfReviewRequest)}
+          variant="outlined"
+        />
+      );
+    } else {
+      return <></>;
+    }
+  };
+
+  const modifierButton = () => {
+    switch (period.reviewStatus) {
+      case ReviewStatus.PLANNING:
+        return <Button onClick={requestApproval}>Request Approval</Button>;
+      case ReviewStatus.AWAITING_APPROVAL:
+        return selectHasLaunchReviewPeriodPermission(state) ? (
+          <Button onClick={requestApproval}>Launch Review</Button>
+        ) : null;
+      case ReviewStatus.OPEN:
+        return selectHasCloseReviewPeriodPermission(state) ? (
+          <Button onClick={confirmClose}>Close Review</Button>
+        ) : null;
+      default:
+        return null;
+    }
+  };
+
+  const approveAll = () => {
+    visibleTeamMembers().map(member => approveMember(member, true));
+    setConfirmApproveAllOpen(false);
+  };
+
+  const approveAllAndLaunch = () => {
+    if (unapproved.length) approveAll();
+    updateReviewPeriodStatus(ReviewStatus.OPEN);
+    setConfirmationDialogOpen(false);
+    onBack();
+  };
+
+  const requestApprovalPost = async () => {
     if (period.reviewStatus === ReviewStatus.PLANNING) {
       updateReviewPeriodStatus(ReviewStatus.AWAITING_APPROVAL);
     } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
@@ -647,116 +921,6 @@ const TeamReviews = ({ onBack, periodId }) => {
       );
       setConfirmationDialogOpen(true);
     }
-  };
-
-  const compareStrings = (s1, s2) => (s1 || '').localeCompare(s2 || '');
-
-  const sortMembers = members =>
-    members.sort((a, b) => {
-      let compare = compareStrings(a.lastName, b.lastName);
-      if (compare === 0) compare = compareStrings(a.firstName, b.firstName);
-      return compare;
-    });
-
-  const updateReviewers = async (member, reviewers) => {
-    const memberId = member.id;
-
-    let newAssignments = [...assignments];
-
-    // Remove all assignments for this member.
-    newAssignments = newAssignments.filter(a => a.revieweeId !== memberId);
-
-    // Add assignments for these reviewers if they don't already exist.
-    // All objects in the assignments array are for the current review period.
-    for (const reviewer of reviewers) {
-      const exists = newAssignments.some(
-        a => a.reviewerId === reviewer.id && a.revieweeId === memberId
-      );
-      if (!exists) {
-        newAssignments.push({
-          reviewPeriodId: periodId,
-          reviewerId: reviewer.id,
-          revieweeId: member.id
-        });
-      }
-    }
-
-    const res = await resolve({
-      method: 'POST',
-      url: `${reviewAssignmentsUrl}/${periodId}`,
-      data: newAssignments,
-      headers: {
-        'X-CSRF-Header': csrf,
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-    });
-    if (res.error) return;
-
-    newAssignments = sortMembers(res.payload.data);
-    setAssignments(newAssignments);
-  };
-
-  const closeReviewerDialog = () => {
-    setSelectedMember(null);
-    setSelectedReviewers([]);
-    setReviewerSelectorOpen(false);
-  };
-
-  const isMemberApproved = member => {
-    const reviewer = getReviewers(member)[0];
-    return reviewer && reviewer.approved;
-  };
-
-  const REVIEWER_LIMIT = 2;
-  const renderReviewers = member => {
-    let reviewers = getReviewers(member);
-    const count = reviewers.length;
-    const excess = count - REVIEWER_LIMIT;
-    if (excess > 0) reviewers = reviewers.slice(0, REVIEWER_LIMIT);
-    return (
-      <>
-        {reviewers.map(reviewer => (
-          <Chip
-            key={reviewer.id}
-            label={reviewer.name}
-            variant="outlined"
-            onDelete={canUpdate ? () => deleteReviewer(member, reviewer) : null}
-            style={{
-              backgroundColor: reviewer.approved
-                ? 'var(--checkins-palette-action-green)'
-                : 'var(--checkins-palette-action-yellow)'
-            }}
-          />
-        ))}
-        {excess > 0 && <div>and {excess} more </div>}
-      </>
-    );
-  };
-
-  const approvalButton = () => {
-    switch (period.reviewStatus) {
-      case ReviewStatus.PLANNING:
-        return <Button onClick={requestApproval}>Request Approval</Button>;
-      case ReviewStatus.AWAITING_APPROVAL:
-        return selectHasLaunchReviewPeriodPermission(state) ? (
-          <Button onClick={requestApproval}>Launch Review</Button>
-        ) : null;
-      default:
-        return null;
-    }
-  };
-
-  const approveAll = () => {
-    visibleTeamMembers().map(member => approveMember(member, true));
-    setConfirmApproveAllOpen(false);
-  };
-
-  const approveAllAndLaunch = () => {
-    if (unapproved.length) approveAll();
-    updateReviewPeriodStatus(ReviewStatus.OPEN);
-    setConfirmationDialogOpen(false);
-    onBack();
   };
 
   const unapproveAll = () => {
@@ -796,21 +960,12 @@ const TeamReviews = ({ onBack, periodId }) => {
   };
 
   const approveReviewAssignment = async (assignment, approved) => {
-    const res = await resolve({
-      method: assignment.id === null ? 'POST' : 'PUT',
-      url: '/services/review-assignments',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'X-CSRF-Header': csrf
-      },
-      data: { ...assignment, approved }
-    });
+    await updateReviewAssignment({ ...assignment, approved }, csrf);
   };
 
   const visibleTeamMembers = () => {
     const query = nameQuery.trim().toLowerCase();
-    if (!approvalMode || query.length === 0) return teamMembers;
+    if (query.length === 0) return teamMembers;
 
     return teamMembers.filter(member =>
       member.name.toLowerCase().includes(query)
@@ -821,60 +976,10 @@ const TeamReviews = ({ onBack, periodId }) => {
     <Root className="team-reviews">
       <div className={classes.headerContainer}>
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
-        {period && isAdmin && (
-          <div>
-            {canUpdate && (
-              <Tooltip
-                title={
-                  period.reviewStatus === ReviewStatus.OPEN
-                    ? 'Archive'
-                    : 'Unarchive'
-                }
-              >
-                <IconButton
-                  onClick={toggleReviewPeriod}
-                  aria-label={
-                    period.reviewStatus === ReviewStatus.OPEN
-                      ? 'Archive'
-                      : 'Unarchive'
-                  }
-                >
-                  {period.reviewStatus === ReviewStatus.OPEN ? (
-                    <Archive />
-                  ) : (
-                    <Unarchive />
-                  )}
-                </IconButton>
-              </Tooltip>
-            )}
-
-            {selectHasDeleteReviewPeriodPermission(state) && (
-              <Tooltip title="Delete">
-                <IconButton
-                  onClick={confirmDelete}
-                  edge="end"
-                  aria-label="Delete"
-                >
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            )}
-
-            {approvalMode && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={showAll}
-                    onChange={() => setShowAll(b => !b)}
-                  />
-                }
-                label="Show All"
-                sx={{ marginLeft: '0.5rem' }}
-              />
-            )}
-          </div>
-        )}
       </div>
+
+      <ReviewPeriodStepper reviewPeriod={period} />
+
       {period && (
         <div className="date-pickers-row">
           <div className="date-pickers-container">
@@ -883,7 +988,6 @@ const TeamReviews = ({ onBack, periodId }) => {
               setDate={val => handleLaunchDateChange(val, period)}
               label="Launch Date"
               disabled={!canUpdate}
-              open={period?.reviewStatus === ReviewStatus?.PLANNING}
             />
             <DatePickerField
               date={period.selfReviewCloseDate}
@@ -897,8 +1001,20 @@ const TeamReviews = ({ onBack, periodId }) => {
               label="Close Date"
               disabled={!canUpdate}
             />
+            <DatePickerField
+              date={period.periodStartDate}
+              setDate={val => handlePeriodStartDateChange(val, period)}
+              label="Period Start Date"
+              disabled={!canUpdate}
+            />
+            <DatePickerField
+              date={period.periodEndDate}
+              setDate={val => handlePeriodEndDateChange(val, period)}
+              label="Period End Date"
+              disabled={!canUpdate}
+            />
           </div>
-          {approvalButton()}
+          {modifierButton()}
         </div>
       )}
       {validationMessage && (
@@ -907,25 +1023,46 @@ const TeamReviews = ({ onBack, periodId }) => {
         </Alert>
       )}
 
-      {approvalMode && (
-        <div id="approval-row">
-          <TextField
-            className="name-search-field"
-            label="Name"
-            placeholder="Search by member name"
-            variant="outlined"
-            value={nameQuery}
-            onChange={event => setNameQuery(event.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" color="gray">
-                  <Search />
-                </InputAdornment>
-              )
-            }}
-          />
-          {canUpdate && (
-            <div>
+      {(approvalState || hasShowAll) && (
+        <div
+          id="approval-row"
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {/* Wrapper div for TextField and Switch */}
+          <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            <TextField
+              className="name-search-field"
+              label="Name"
+              placeholder="Search by member name"
+              variant="outlined"
+              value={nameQuery}
+              onChange={event => setNameQuery(event.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" color="gray">
+                    <Search />
+                  </InputAdornment>
+                )
+              }}
+              style={{ flexGrow: 1, maxWidth: '400px' }}
+            />
+            {/* Add the Switch right next to the TextField */}
+            {period && hasShowAll && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showAll}
+                    onChange={() => setShowAll(b => !b)}
+                  />
+                }
+                label="Show All"
+                sx={{ marginLeft: '0.5rem' }}
+              />
+            )}
+          </div>
+          {/* Button aligned to the right */}
+          {canApprove && (
+            <div style={{ marginLeft: 'auto' }}>
               <Button onClick={() => setConfirmApproveAllOpen(true)}>
                 Approve All
               </Button>
@@ -957,23 +1094,28 @@ const TeamReviews = ({ onBack, periodId }) => {
               }
             />
             <div className="chip-row">
+              {openMode && renderSelfReviewStatus(member)}
+
               <Typography>Reviewers:</Typography>
               {renderReviewers(member)}
 
-              {canUpdate && (
-                <IconButton
-                  aria-label="Edit Reviewers"
-                  onClick={() => editReviewers(member)}
-                >
-                  <AddCircle />
-                </IconButton>
-              )}
+              {!openMode &&
+                selectHasCreateReviewAssignmentsPermission(state) &&
+                selectHasDeleteReviewAssignmentsPermission(state) && (
+                  <IconButton
+                    aria-label="Edit Reviewers"
+                    onClick={() => editReviewers(member)}
+                  >
+                    <AddCircle />
+                  </IconButton>
+                )}
 
-              {canUpdate && approvalMode && (
-                <Button onClick={() => toggleApproval(member)}>
-                  {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
-                </Button>
-              )}
+              {canApprove &&
+                selectHasUpdateReviewAssignmentsPermission(state) && (
+                  <Button onClick={() => toggleApproval(member)}>
+                    {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
+                  </Button>
+                )}
             </div>
           </ListItem>
         ))}
@@ -997,11 +1139,11 @@ const TeamReviews = ({ onBack, periodId }) => {
         }}
       />
       <ConfirmationDialog
-        open={confirmDeleteOpen}
-        onYes={deleteReviewPeriod}
-        question={`Are you sure you want to delete the review period ${selectReviewPeriod(state, toDelete)?.name}?`}
-        setOpen={setConfirmDeleteOpen}
-        title="Delete this review period?"
+        open={confirmCloseOpen}
+        onYes={closeReviewPeriod}
+        question={`Are you sure you want to close the review period ${selectReviewPeriod(state, toClose)?.name}?`}
+        setOpen={setConfirmCloseOpen}
+        title="Close this review period?"
       />
       <ConfirmationDialog
         open={confirmApproveAllOpen}
@@ -1016,6 +1158,13 @@ const TeamReviews = ({ onBack, periodId }) => {
         question={confirmationText}
         setOpen={setConfirmationDialogOpen}
         title="Approve and Launch"
+      />
+      <ConfirmationDialog
+        open={confirmRevieweesWithNoSupervisorOpen}
+        onYes={requestApprovalPost}
+        question={confirmRevieweesWithNoSupervisorQuestion}
+        setOpen={setConfirmRevieweesWithNoSupervisorOpen}
+        title="These reviewees have no supervisor. Continue?"
       />
     </Root>
   );

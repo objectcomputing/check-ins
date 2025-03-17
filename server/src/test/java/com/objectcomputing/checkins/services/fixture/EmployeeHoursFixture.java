@@ -17,4 +17,8 @@ public interface EmployeeHoursFixture extends RepositoryFixture {
             return getEmployeeHoursRepository().saveAll(EmployeeHoursCSVHelper.employeeHrsCsv(inputStream));
         }
     }
+
+    default EmployeeHours saveEmployeeHours(EmployeeHours hours) {
+      return getEmployeeHoursRepository().save(hours);
+    }
 }

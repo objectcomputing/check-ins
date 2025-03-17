@@ -19,21 +19,27 @@ import {
 } from '@mui/material';
 
 import { useQueryParameters } from '../../../helpers/query-parameters';
-import { ADD_REVIEW_PERIOD, UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../../context/actions';
+import {
+  ADD_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIODS,
+  UPDATE_TOAST
+} from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
-import { createReviewPeriod, getReviewPeriods } from '../../../api/reviewperiods.js';
+import {
+  createReviewPeriod,
+  getReviewPeriods
+} from '../../../api/reviewperiods.js';
 import { AppContext } from '../../../context/AppContext';
 import {
   selectCsrfToken,
   selectCurrentUserId,
   selectHasCreateReviewPeriodPermission,
   selectReviewPeriod,
-  selectReviewPeriods,
-  selectUserProfile
+  selectReviewPeriods
 } from '../../../context/selectors';
 
 import ReviewPeriodCard from './ReviewPeriodCard.jsx';
@@ -99,17 +105,23 @@ const ReviewStatus = {
   UNKNOWN: 'UNKNOWN'
 };
 
+// mode will be either "self" or undefined.
+const selfReviewMode = 'self';
+
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
 
   const [canSave, setCanSave] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [periods, setPeriods] = useState([]);
   const [periodToAdd, setPeriodToAdd] = useState({
     name: '',
     reviewStatus: ReviewStatus.PLANNING,
     launchDate: null,
     selfReviewCloseDate: null,
-    closeDate: null
+    closeDate: null,
+    periodStartDate: null,
+    periodEndDate: null
   });
   const [reviewStatus, setReviewStatus] = useState(ReviewStatus.CLOSED);
   const [selfReviews, setSelfReviews] = useState({});
@@ -117,8 +129,17 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   const currentUserId = selectCurrentUserId(state);
   const csrf = selectCsrfToken(state);
-  const periods = selectReviewPeriods(state);
-  const userProfile = selectUserProfile(state);
+
+  useEffect(() => {
+    setPeriods(
+      selectReviewPeriods(state).filter(
+        r =>
+          mode !== selfReviewMode ||
+          r.reviewStatus === ReviewStatus.OPEN ||
+          r.reviewStatus === ReviewStatus.CLOSED
+      )
+    );
+  }, [state, mode]);
 
   useQueryParameters([
     {
@@ -178,7 +199,9 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         reviewStatus: ReviewStatus.OPEN,
         launchDate: null,
         selfReviewCloseDate: null,
-        closeDate: null
+        closeDate: null,
+        periodStartDate: null,
+        periodEndDate: null
       });
     },
     [
@@ -251,6 +274,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
 
   useEffect(() => {
     const getSelfReviews = async () => {
+      setLoading(true);
       let reviews = {};
       Promise.all(
         periods.map(async period => {
@@ -276,7 +300,19 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
             });
           }
         })
-      ).then(() => setSelfReviews(reviews));
+      ).then(() => {
+        // Now that we have the reviews loaded, filter out closed
+        // self-review periods in which the current user is not involved.
+        if (mode == selfReviewMode) {
+          setPeriods(
+            periods.filter(
+              r => r.reviewStatus !== ReviewStatus.CLOSED || !!reviews[r.id]
+            )
+          );
+        }
+        setSelfReviews(reviews);
+        setLoading(false);
+      });
     };
     if (
       csrf &&
@@ -294,19 +330,21 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
       const status = selectReviewPeriod(state, id)?.reviewStatus;
       switch (status) {
         case ReviewStatus.PLANNING:
-          onPeriodSelected(id);
-          break;
         case ReviewStatus.AWAITING_APPROVAL:
-          // TODO: Check for the required permission.
-          onPeriodSelected(id);
+          if (mode !== selfReviewMode) {
+            onPeriodSelected(id);
+          }
           break;
         case ReviewStatus.OPEN:
-          alert(
-            'The page for viewing review periods in the OPEN state has not been created yet.'
-          );
+          onPeriodSelected(id);
+          break;
+        case ReviewStatus.CLOSED:
+          if (mode === selfReviewMode) {
+            onPeriodSelected(id);
+          }
           break;
         default:
-          // We do nothing if the status is CLOSED or UNKNOWN.
+          // We do nothing if the status is UNKNOWN.
           break;
       }
     },
@@ -367,20 +405,24 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
+              const aName = a.name || '';
               return a.reviewStatus === b.reviewStatus
-                ? (a.name || '').localeCompare(b.name)
+                ? aName.localeCompare(b.name)
                 : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
-                  : 1;
+                  : b.reviewStatus === ReviewStatus.OPEN
+                    ? 1
+                    : aName.localeCompare(b.name);
             })
-            .map(({ name, reviewStatus, id }, i) => (
-              <ReviewPeriodCard
-                key={`review-period-card-${id}`}
-                mode={mode}
-                onSelect={onPeriodClick}
-                periodId={id}
-                selfReviews={selfReviews}
-              />
+            .map(period => (
+              <div key={`review-period-card-${period.id}`}>
+                <ReviewPeriodCard
+                  mode={mode}
+                  onSelect={onPeriodClick}
+                  periodId={period.id}
+                  selfReviews={selfReviews}
+                />
+              </div>
             ))
         ) : (
           <Typography variant="body1">
@@ -470,8 +512,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     </Root>
   );
 };
-
 ReviewPeriods.propTypes = propTypes;
 ReviewPeriods.displayName = displayName;
-
 export default ReviewPeriods;

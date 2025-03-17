@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.skills.combineskills;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -32,10 +34,8 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         this.currentUserServices = currentUserServices;
     }
 
+    @RequiredPermission(Permission.CAN_EDIT_SKILLS)
     public Skill combine(@NotNull @Valid CombineSkillsDTO skillDTO) {
-        final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin);
-
         Set<Skill> existingSkills = skillServices.findByValue(skillDTO.getName(), null);
         for (Skill existingSkill : existingSkills) {
             if (existingSkill.getName().equals(skillDTO.getName())) {

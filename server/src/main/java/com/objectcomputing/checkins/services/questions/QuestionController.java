@@ -62,19 +62,16 @@ class QuestionController {
     }
 
     /**
-     * Find questions with a particular string, a particular categoryId or read all questions.
+     * Find questions with a particular string, or read all questions.
      *
      * @param text, the text of the question
-     * @param categoryId, the category id of the question
      * @return {@link Set<QuestionResponseDTO>}
      */
-    @Get("/{?text,categoryId}")
-    Set<QuestionResponseDTO> findByText(@Nullable String text, @Nullable UUID categoryId) {
+    @Get("/{?text}")
+    Set<QuestionResponseDTO> findByText(@Nullable String text) {
         Set<Question> questions;
         if (text != null) {
              questions = questionService.findByText(text);
-        } else if (categoryId != null) {
-            questions = questionService.findByCategoryId(categoryId);
         } else {
             questions = questionService.readAllQuestions();
         }
@@ -104,9 +101,6 @@ class QuestionController {
         QuestionResponseDTO qrdto = new QuestionResponseDTO();
         qrdto.setId(question.getId());
         qrdto.setText(question.getText());
-        if (question.getCategoryId() != null) {
-            qrdto.setCategoryId(question.getCategoryId());
-        }
         return qrdto;
     }
 
@@ -114,18 +108,12 @@ class QuestionController {
         Question model = new Question();
         model.setId(dto.getId());
         model.setText(dto.getText());
-        if (dto.getCategoryId() != null) {
-            model.setCategoryId(dto.getCategoryId());
-        }
         return model;
     }
 
     private Question toModel(QuestionCreateDTO dto) {
         Question model = new Question();
         model.setText(dto.getText());
-        if (dto.getCategoryId() != null) {
-            model.setCategoryId(dto.getCategoryId());
-        }
         return model;
     }
 

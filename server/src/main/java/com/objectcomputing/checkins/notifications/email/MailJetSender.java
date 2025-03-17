@@ -5,6 +5,7 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
+import ch.digitalfondue.mjml4j.Mjml4j;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.settings.SettingOption;
@@ -21,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Prototype
-//@Requires(bean = MailJetConfiguration.class)
 public class MailJetSender implements EmailSender {
+    public static final String MJMLPART = "MJMLPART";
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
@@ -30,8 +31,6 @@ public class MailJetSender implements EmailSender {
 
     public static final int MAILJET_RECIPIENT_LIMIT = 49;
 
-//    private final String fromAddress;
-//    private final String fromName;
     private String emailFormat;
 
     private String getFromAddress() {
@@ -52,12 +51,9 @@ public class MailJetSender implements EmailSender {
 
     public MailJetSender(
             MailjetClient client,
-//            MailJetConfiguration configuration,
             SettingsServices settingsServices
     ) {
         this.client = client;
-//        this.fromAddress = SettingsLoader.getSetting("FROM_ADDRESS").getValue();
-//        this.fromName = SettingsLoader.getSetting("FROM_NAME").getValue();
         this.emailFormat = Emailv31.Message.HTMLPART;
         this.settingsServices = settingsServices;
     }
@@ -123,33 +119,47 @@ public class MailJetSender implements EmailSender {
             return;
         }
 
-        List<JSONArray> emailBatches = getEmailBatches(recipients);
-        List<JSONArray> failedBatches = new ArrayList<>();
         JSONObject sender = new JSONObject()
                 .put("Email", fromAddress)
                 .put("Name", fromName);
 
-        emailBatches.forEach((recipientList) -> {
-            MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                    .property(Emailv31.MESSAGES, new JSONArray()
-                            .put(new JSONObject()
-                                    .put(Emailv31.Message.FROM, sender)
-                                    .put(Emailv31.Message.TO, new JSONArray().put(sender))
-                                    .put(Emailv31.Message.BCC, recipientList)
-                                    .put(Emailv31.Message.SUBJECT, subject)
-                                    .put(emailFormat, content)));
-            try {
-                MailjetResponse response = client.post(request);
-                LOG.info("Mailjet response status: {}", response.getStatus());
-                LOG.info("Mailjet response data: {}", response.getData());
-            } catch (MailjetException e) {
-                LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
-                failedBatches.add(recipientList);
-            }
-        });
+        String modifiedEmailFormat = emailFormat;
+        if (modifiedEmailFormat.equals(MJMLPART)) {
+            // Convert the MJML to HTML and update the local email format.
+            var configuration = new Mjml4j.Configuration("en");
+            content = Mjml4j.render(content, configuration);
+            modifiedEmailFormat = Emailv31.Message.HTMLPART;
+        }
+        final String localEmailFormat = modifiedEmailFormat;
+        final String localContent = content;
 
-        if (!failedBatches.isEmpty()) {
-            throw new BadArgException("Failed to send emails for " + failedBatches);
+        if (recipients.length == 1) {
+            final JSONArray to = new JSONArray()
+                           .put(new JSONObject().put("Email", recipients[0]));
+            try {
+                send(sender, to, null, subject, localEmailFormat, localContent);
+            } catch (MailjetException e) {
+                throw new BadArgException("Failed to send email for " + to);
+            }
+        } else {
+            List<JSONArray> emailBatches = getEmailBatches(recipients);
+            List<JSONArray> failedBatches = new ArrayList<>();
+            final JSONArray to =
+                new JSONArray()
+                .put(new JSONObject().put("Email", fromAddress));
+            emailBatches.forEach((recipientList) -> {
+                try {
+                    send(sender, to, recipientList,
+                         subject, localEmailFormat, localContent);
+                } catch (MailjetException e) {
+                    LOG.error("An unexpected error occurred while sending the upload notification: {}", e.getLocalizedMessage(), e);
+                    failedBatches.add(recipientList);
+                }
+            });
+
+            if (!failedBatches.isEmpty()) {
+                throw new BadArgException("Failed to send emails for " + failedBatches);
+            }
         }
     }
 
@@ -169,10 +179,30 @@ public class MailJetSender implements EmailSender {
 
     @Override
     public void setEmailFormat(String format) {
-        if (format.equals(Emailv31.Message.HTMLPART) || format.equals(Emailv31.Message.TEXTPART)) {
+        if (format.equals(MJMLPART) ||
+            format.equals(Emailv31.Message.HTMLPART) ||
+            format.equals(Emailv31.Message.TEXTPART)) {
             this.emailFormat = format;
         } else {
-            throw new BadArgException(String.format("Email format must be either HTMLPART or TEXTPART, got %s", format));
+            throw new BadArgException(String.format("Email format must be either HTMLPART, MJMLPART or TEXTPART, got %s", format));
         }
+    }
+
+    private void send(JSONObject from, JSONArray to, JSONArray bcc,
+                      String subject, String emailFormat, String content) throws MailjetException {
+        JSONObject values = new JSONObject()
+                                .put(Emailv31.Message.FROM, from)
+                                .put(Emailv31.Message.TO, to)
+                                .put(Emailv31.Message.SUBJECT, subject)
+                                .put(emailFormat, content);
+        if (bcc != null) {
+          values.put(Emailv31.Message.BCC, bcc);
+        }
+
+        MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                .property(Emailv31.MESSAGES, new JSONArray().put(values));
+        MailjetResponse response = client.post(request);
+        LOG.info("Mailjet response status: {}", response.getStatus());
+        LOG.info("Mailjet response data: {}", response.getData());
     }
 }

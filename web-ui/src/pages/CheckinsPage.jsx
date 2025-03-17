@@ -7,12 +7,16 @@ import { AppContext } from '../context/AppContext';
 import {
   selectMostRecentCheckin,
   selectCurrentUser,
-  selectIsAdmin,
   selectIsPDL,
   selectCsrfToken,
   selectCheckin,
   selectProfile,
-  selectCheckinsForMember
+  selectCheckinsForMember,
+  selectCanViewCheckinsPermission,
+  selectCanCreateCheckinsPermission,
+  selectCanUpdateCheckinsPermission,
+  selectCanViewPrivateNotesPermission,
+  selectCanUpdateAllCheckinsPermission
 } from '../context/selectors';
 import { getCheckins, createNewCheckin } from '../context/thunks';
 import { UPDATE_CHECKIN, UPDATE_TOAST } from '../context/actions';
@@ -20,7 +24,6 @@ import CheckinDocs from '../components/checkin/documents/CheckinDocs';
 import CheckinsHistory from '../components/checkin/CheckinHistory';
 import Profile from '../components/profile/Profile';
 import GuidesPanel from '../components/guides/GuidesPanel';
-import PDLGuidesPanel from '../components/guides/PDLGuidesPanel';
 import Note from '../components/notes/Note';
 import PrivateNote from '../components/private-note/PrivateNote';
 import Personnel from '../components/personnel/Personnel';
@@ -72,7 +75,7 @@ const CheckinsPage = () => {
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   useEffect(() => {
-    if (selectedProfile) {
+    if (selectedProfile && selectCanViewCheckinsPermission(state)) {
       getCheckins(memberId, selectedProfile.pdlId, dispatch, csrf);
     }
   }, [memberId, selectedProfile, csrf, dispatch]);
@@ -86,11 +89,12 @@ const CheckinsPage = () => {
   }, [currentUserId, memberId, checkinId, mostRecent, history]);
 
   const currentCheckin = selectCheckin(state, checkinId);
-  const isAdmin = selectIsAdmin(state);
+  const updateAll = selectCanUpdateAllCheckinsPermission(state);
   const isPdl = selectIsPDL(state);
 
   const canViewPrivateNote =
-    (isAdmin || selectedProfile?.pdlId === currentUserId) &&
+    selectCanViewPrivateNotesPermission(state) &&
+    (updateAll || selectedProfile?.pdlId === currentUserId) &&
     currentUserId !== memberId;
 
   const handleOpen = () => setOpen(true);
@@ -98,7 +102,7 @@ const CheckinsPage = () => {
   const handleClose = () => setOpen(false);
 
   const completeCheckin = async () => {
-    if (csrf) {
+    if (csrf && selectCanUpdateCheckinsPermission(state)) {
       const res = await updateCheckin(
         { ...currentCheckin, pdlId: selectedProfile.pdlId, completed: true },
         csrf
@@ -133,6 +137,7 @@ const CheckinsPage = () => {
             memberId={selectedProfile?.id || currentUserId}
             pdlId={selectedProfile ? selectedProfile.pdlId : null}
             checkinPdlId={currentCheckin ? currentCheckin.pdlId : null}
+            showButtons={false}
           />
           <div className={classes.navigate}>
             <CheckinsHistory
@@ -154,16 +159,17 @@ const CheckinsPage = () => {
                 aria-describedby="checkin-tooltip-wrapper"
                 className="create-checkin-tooltip-wrapper"
               >
-                {(isAdmin || isPdl || currentUserId === memberId) && (
-                  <Button
-                    disabled={hasOpenCheckins}
-                    className={classes.addButton}
-                    startIcon={<CheckCircleIcon />}
-                    onClick={handleCreate}
-                  >
-                    Create Check-In
-                  </Button>
-                )}
+                {(updateAll || isPdl || currentUserId === memberId) &&
+                  selectCanCreateCheckinsPermission(state) && (
+                    <Button
+                      disabled={hasOpenCheckins}
+                      className={classes.addButton}
+                      startIcon={<CheckCircleIcon />}
+                      onClick={handleCreate}
+                    >
+                      Create Check-In
+                    </Button>
+                  )}
               </div>
             </Tooltip>
           </div>
@@ -227,7 +233,6 @@ const CheckinsPage = () => {
           <div className="right-sidebar">
             {isPdl && <Personnel history={history} />}
             <GuidesPanel />
-            <PDLGuidesPanel />
           </div>
         </Grid>
       </Grid>

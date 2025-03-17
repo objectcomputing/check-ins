@@ -4,7 +4,9 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -13,7 +15,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Introspected
+@AllArgsConstructor
+@NoArgsConstructor
 public class TeamMemberSkillDTO {
+
     @NotNull
     @Schema(description = "UUID of the team member profile")
     private UUID id;
@@ -25,6 +30,5 @@ public class TeamMemberSkillDTO {
     @NotNull
     @Schema(description = "Skills of the team member")
     private List<SkillLevelDTO> skills;
-
 }
 

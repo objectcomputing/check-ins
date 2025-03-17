@@ -37,8 +37,10 @@ public class GuildMemberController {
     @Post
     public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
                                                   HttpRequest<?> request) {
-        GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildId(),
-                guildMember.getMemberId(), guildMember.getLead()));
+        GuildMember newGuildMember = guildMemberServices.save(
+                new GuildMember(guildMember.getGuildId(), guildMember.getMemberId(), guildMember.getLead()),
+                true
+        );
         return HttpResponse
                 .created(newGuildMember)
                 .headers(headers -> headers.location(
@@ -95,7 +97,7 @@ public class GuildMemberController {
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteGuildMember(@NotNull UUID id) {
-        guildMemberServices.delete(id);
+        guildMemberServices.delete(id, true);
         return HttpResponse
                 .ok();
     }

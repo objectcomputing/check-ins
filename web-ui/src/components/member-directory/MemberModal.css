@@ -1,5 +1,5 @@
 .member-modal {
-  background: var(--checkins-palette-background-paper);
+  background: var(--mui-palette-background-paper);
   border: 2px solid var(--muted);
   height: 75%;
   left: 50%;

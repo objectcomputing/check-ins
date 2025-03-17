@@ -7,7 +7,7 @@ import {
   selectOrderedPdls,
   selectCheckinPDLS,
   selectTeamMembersWithCheckinPDL,
-  selectTerminatedUserRoles,
+  selectTerminatedMemberRoles,
   selectTerminatedMembersAsOfDate,
   selectTerminatedMembersWithPDLRole,
   selectTerminatedMembersAsOfDateWithPDLRole,
@@ -20,7 +20,15 @@ import {
   selectSupervisorHierarchyIds,
   selectSubordinates,
   selectIsSubordinateOfCurrentUser,
-  selectHasReportPermission
+  selectHasReportPermission,
+  selectActiveOrInactiveProfile,
+  selectCanEditAllOrganizationMembers,
+  selectCanViewTerminatedMembers,
+  selectHasAnniversaryReportPermission,
+  selectHasBirthdayReportPermission,
+  selectHasCheckinsReportPermission,
+  selectHasSkillsReportPermission,
+  selectHasTeamSkillsReportPermission
 } from './selectors';
 
 describe('Selectors', () => {
@@ -345,7 +353,7 @@ describe('Selectors', () => {
         }
       ],
       roles: testRoles,
-      userRoles: testMemberRoles
+      memberRoles: testMemberRoles
     };
     expect(selectMappedPdls(testState)).toEqual(matchingMembers);
   });
@@ -462,7 +470,7 @@ describe('Selectors', () => {
         }
       ],
       roles: testRoles,
-      userRoles: testMemberRoles
+      memberRoles: testMemberRoles
     };
     expect(selectOrderedPdls(testState)).toEqual(matchingMembers);
   });
@@ -635,11 +643,11 @@ describe('Selectors', () => {
     );
   });
 
-  describe('selectTerminatedUserRoles', () => {
-    const mockSelectUserRoles = vi.fn();
+  describe('selectTerminatedMemberRoles', () => {
+    const mockSelectMemberRoles = vi.fn();
     const mockSelectTerminatedMemberIds = vi.fn();
     it('should filter user roles by terminated member ids', () => {
-      const userRoles = [
+      const memberRoles = [
         {
           memberRoleId: {
             memberId: '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
@@ -654,10 +662,13 @@ describe('Selectors', () => {
         }
       ];
       const memberIds = ['6207b3fd-042d-49aa-9e28-dcc04f537c2d'];
-      mockSelectUserRoles.mockReturnValue(userRoles);
+      mockSelectMemberRoles.mockReturnValue(memberRoles);
       mockSelectTerminatedMemberIds.mockReturnValue(memberIds);
 
-      const result = selectTerminatedUserRoles.resultFunc(userRoles, memberIds);
+      const result = selectTerminatedMemberRoles.resultFunc(
+        memberRoles,
+        memberIds
+      );
       expect(result).toEqual([
         {
           memberRoleId: {
@@ -688,11 +699,11 @@ describe('Selectors', () => {
   });
 
   describe('selectTerminatedMembersWithPDLRole', () => {
-    const mockSelectUserRoles = vi.fn();
+    const mockSelectMemberRoles = vi.fn();
     const mockSelectPdlRoles = vi.fn();
     const mockSelectProfileMapForTerminatedMembers = vi.fn();
     it('should filter terminated members with PDL role', () => {
-      const userRoles = [
+      const memberRoles = [
         {
           memberRoleId: {
             memberId: '6207b3fd-042d-49aa-9e28-dcc04f537c2d',
@@ -717,14 +728,14 @@ describe('Selectors', () => {
           name: 'Jane Doe'
         }
       };
-      mockSelectUserRoles.mockReturnValue(userRoles);
+      mockSelectMemberRoles.mockReturnValue(memberRoles);
       mockSelectPdlRoles.mockReturnValue(pdlRoles);
       mockSelectProfileMapForTerminatedMembers.mockReturnValue(
         terminatedMembersProfileMap
       );
 
       const result = selectTerminatedMembersWithPDLRole.resultFunc(
-        userRoles,
+        memberRoles,
         pdlRoles,
         terminatedMembersProfileMap
       );
@@ -1322,7 +1333,7 @@ describe('Selectors', () => {
 
     const testState = {
       userProfile: {
-        memberProfile: testMemberProfiles[0]
+        id: testMemberProfiles[0].id
       },
       memberProfiles: testMemberProfiles
     };
@@ -1402,7 +1413,7 @@ describe('Selectors', () => {
 
     const testState = {
       userProfile: {
-        memberProfile: testMemberProfiles[0]
+        id: testMemberProfiles[0].id
       },
       memberProfiles: testMemberProfiles
     };
@@ -1417,7 +1428,6 @@ describe('Selectors', () => {
       userProfile: {
         firstName: 'Huey',
         lastName: 'Emmerich',
-        role: 'MEMBER',
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
@@ -1428,62 +1438,53 @@ describe('Selectors', () => {
     expect(selectHasReportPermission(testState)).toBe(false);
   });
 
-  it("selectHasAnniversaryReportPermission should return false when user does not have 'CAN_VIEW_ANNIVERSARY_REPORT' permission", () => {
-    const testState1 = {
-      userProfile: {
-        firstName: 'Big',
-        lastName: 'Boss',
-        role: 'ADMIN',
-        permissions: [{ permission: 'CAN_VIEW_ANNIVERSARY_REPORT' }]
-      }
-    };
-    const testState2 = {
-      userProfile: {
-        firstName: 'Huey',
-        lastName: 'Emmerich',
-        role: 'MEMBER',
-        permissions: [
-          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
-        ]
-      }
-    };
-
-    expect(selectHasReportPermission(testState1)).toBe(true);
-    expect(selectHasReportPermission(testState2)).toBe(false);
-  });
-
-  it("selectHasBirthdayReportPermission should return false when user does not have 'CAN_VIEW_BIRTHDAY_REPORT' permission", () => {
-    const testState1 = {
-      userProfile: {
-        firstName: 'Big',
-        lastName: 'Boss',
-        role: 'ADMIN',
-        permissions: [{ permission: 'CAN_VIEW_BIRTHDAY_REPORT' }]
-      }
-    };
-    const testState2 = {
-      userProfile: {
-        firstName: 'Huey',
-        lastName: 'Emmerich',
-        role: 'MEMBER',
-        permissions: [
-          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
-          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
-        ]
-      }
-    };
-
-    expect(selectHasReportPermission(testState1)).toBe(true);
-    expect(selectHasReportPermission(testState2)).toBe(false);
-  });
-
-  it("selectHasCheckinsReportPermission should return false when user does not have 'CAN_VIEW_CHECKINS' permission", () => {
+  it("selectHasReportPermission should return true when user has a 'REPORT' permission", () => {
     const testState = {
       userProfile: {
         firstName: 'Huey',
         lastName: 'Emmerich',
-        role: 'MEMBER',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' },
+          { permission: 'CAN_VIEW_ANNIVERSARY_REPORT' }
+        ]
+      }
+    };
+
+    expect(selectHasReportPermission(testState)).toBe(true);
+  });
+
+  it("selectHasAnniversaryReportPermission should return false when user does not have 'CAN_VIEW_ANNIVERSARY_REPORT' permission", () => {
+    const testState2 = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
+        ]
+      }
+    };
+    expect(selectHasAnniversaryReportPermission(testState2)).toBe(false);
+  });
+
+  it("selectHasAnniversaryReportPermission should return true when user has 'CAN_VIEW_ANNIVERSARY_REPORT' permission", () => {
+    const testState1 = {
+      userProfile: {
+        firstName: 'Big',
+        lastName: 'Boss',
+        permissions: [{ permission: 'CAN_VIEW_ANNIVERSARY_REPORT' }]
+      }
+    };
+
+    expect(selectHasAnniversaryReportPermission(testState1)).toBe(true);
+  });
+
+  it("selectHasBirthdayReportPermission should return false when user does not have 'CAN_VIEW_BIRTHDAY_REPORT' permission", () => {
+    const testState2 = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
@@ -1491,7 +1492,46 @@ describe('Selectors', () => {
       }
     };
 
-    expect(selectHasReportPermission(testState)).toBe(false);
+    expect(selectHasBirthdayReportPermission(testState2)).toBe(false);
+  });
+
+  it("selectHasBirthdayReportPermission should return true when user has 'CAN_VIEW_BIRTHDAY_REPORT' permission", () => {
+    const testState1 = {
+      userProfile: {
+        firstName: 'Big',
+        lastName: 'Boss',
+        permissions: [{ permission: 'CAN_VIEW_BIRTHDAY_REPORT' }]
+      }
+    };
+
+    expect(selectHasBirthdayReportPermission(testState1)).toBe(true);
+  });
+
+  it("selectHasCheckinsReportPermission should return false when user does not have 'CAN_VIEW_CHECKINS_REPORT' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
+        ]
+      }
+    };
+
+    expect(selectHasCheckinsReportPermission(testState)).toBe(false);
+  });
+
+  it("selectHasCheckinsReportPermission should return true when user has 'CAN_VIEW_CHECKINS_REPORT' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [{ permission: 'CAN_VIEW_CHECKINS_REPORT' }]
+      }
+    };
+
+    expect(selectHasCheckinsReportPermission(testState)).toBe(true);
   });
 
   it("selectHasSkillsReportPermission should return false when user does not have 'CAN_VIEW_SKILLS_REPORT' permission", () => {
@@ -1499,7 +1539,6 @@ describe('Selectors', () => {
       userProfile: {
         firstName: 'Huey',
         lastName: 'Emmerich',
-        role: 'MEMBER',
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
@@ -1507,7 +1546,19 @@ describe('Selectors', () => {
       }
     };
 
-    expect(selectHasReportPermission(testState)).toBe(false);
+    expect(selectHasSkillsReportPermission(testState)).toBe(false);
+  });
+
+  it("selectHasSkillsReportPermission should return true when user has 'CAN_VIEW_SKILLS_REPORT' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }]
+      }
+    };
+
+    expect(selectHasSkillsReportPermission(testState)).toBe(true);
   });
 
   it("selectHasTeamSkillsReportPermission should return false when user does not have 'CAN_VIEW_SKILLS_REPORT' permission", () => {
@@ -1515,7 +1566,6 @@ describe('Selectors', () => {
       userProfile: {
         firstName: 'Huey',
         lastName: 'Emmerich',
-        role: 'MEMBER',
         permissions: [
           { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
           { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
@@ -1523,6 +1573,168 @@ describe('Selectors', () => {
       }
     };
 
-    expect(selectHasReportPermission(testState)).toBe(false);
+    expect(selectHasTeamSkillsReportPermission(testState)).toBe(false);
+  });
+
+  it("selectHasTeamSkillsReportPermission should return true when user has 'CAN_VIEW_SKILLS_REPORT' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [{ permission: 'CAN_VIEW_SKILLS_REPORT' }]
+      }
+    };
+
+    expect(selectHasTeamSkillsReportPermission(testState)).toBe(true);
+  });
+
+  it("selectCanEditAllOrganizationMembers should return false when user does not have 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
+        ]
+      }
+    };
+
+    expect(selectCanEditAllOrganizationMembers(testState)).toBe(false);
+  });
+
+  it("selectCanEditAllOrganizationMembers should return true when user has 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
+        ]
+      }
+    };
+
+    expect(selectCanEditAllOrganizationMembers(testState)).toBe(true);
+  });
+
+  it("selectCanViewTerminatedMembers should return false when user does not have 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' or 'CAN_VIEW_TERMINATED_MEMBERS' permission", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
+        ]
+      }
+    };
+
+    expect(selectCanViewTerminatedMembers(testState)).toBe(false);
+  });
+
+  it("selectCanViewTerminatedMembers should return true when user has 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' or 'CAN_VIEW_TERMINATED_MEMBERS' permissions", () => {
+    const testState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_EDIT_ALL_ORGANIZATION_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
+        ]
+      }
+    };
+    const otherTestState = {
+      userProfile: {
+        firstName: 'Huey',
+        lastName: 'Emmerich',
+        permissions: [
+          { permission: 'CAN_VIEW_FEEDBACK_REQUEST' },
+          { permission: 'CAN_VIEW_TERMINATED_MEMBERS' },
+          { permission: 'CAN_VIEW_FEEDBACK_ANSWER' }
+        ]
+      }
+    };
+
+    expect(selectCanViewTerminatedMembers(testState)).toBe(true);
+    expect(selectCanViewTerminatedMembers(otherTestState)).toBe(true);
+  });
+
+  it('selectActiveOrInactiveProfile should a profile if active or inactive', () => {
+    const activeTestMember = {
+      id: 1,
+      bioText: 'foo',
+      employeeId: 11,
+      name: 'A Person',
+      firstName: 'A',
+      lastName: 'PersonA',
+      location: 'St Louis',
+      title: 'engineer',
+      workEmail: 'employee@sample.com',
+      pdlId: 9,
+      startDate: [2012, 9, 29]
+    };
+    const inactiveTestMember = {
+      id: 2,
+      bioText: 'foo',
+      employeeId: 12,
+      name: 'B Person',
+      firstName: 'B',
+      lastName: 'PersonB',
+      location: 'St Louis',
+      title: 'engineer',
+      workEmail: 'employee@sample.com',
+      pdlId: 9,
+      startDate: [2012, 9, 29],
+      terminationDate: [2013, 9, 29]
+    };
+    /** @type MemberProfile[] */
+    const testActiveMemberProfiles = [
+      activeTestMember,
+      {
+        id: 3,
+        bioText: 'foo',
+        employeeId: 13,
+        name: 'C Person',
+        firstName: 'C',
+        lastName: 'PersonC',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: 9,
+        startDate: [2012, 9, 29]
+      }
+    ];
+    /** @type MemberProfile[] */
+    const testInactiveMemberProfiles = [
+      inactiveTestMember,
+      {
+        id: 4,
+        bioText: 'foo',
+        employeeId: 13,
+        name: 'D Person',
+        firstName: 'D',
+        lastName: 'PersonD',
+        location: 'St Louis',
+        title: 'engineer',
+        workEmail: 'employee@sample.com',
+        pdlId: 9,
+        startDate: [2012, 9, 29],
+        terminationDate: [2013, 9, 29]
+      }
+    ];
+    const testState = {
+      memberProfiles: testActiveMemberProfiles,
+      terminatedMembers: testInactiveMemberProfiles
+    };
+
+    expect(
+      selectActiveOrInactiveProfile(testState, activeTestMember.id)
+    ).toEqual(activeTestMember);
+    expect(
+      selectActiveOrInactiveProfile(testState, inactiveTestMember.id)
+    ).toEqual(inactiveTestMember);
   });
 });

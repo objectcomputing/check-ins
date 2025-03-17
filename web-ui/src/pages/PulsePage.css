@@ -12,3 +12,9 @@
     text-align: center;
   }
 }
+
+.submit-row {
+  align-items: center;
+  display: flex;
+  margin-top: 2rem; /* This is the default top margin for Buttons */
+}

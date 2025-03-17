@@ -20,7 +20,7 @@ const server = setupServer(
   })
 );
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -60,16 +60,16 @@ const initialState = {
       firstName: 'Current',
       lastName: 'User',
       role: ['MEMBER'],
+      id: currentUserProfile.id,
       imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
-      memberProfile: currentUserProfile
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
     checkins: [],
     guilds: [],
     teams: [testTeam, emptyTeam],
     skills: [],
     roles: [],
-    userRoles: [],
+    memberRoles: [],
     memberSkills: [],
     index: 0,
     memberProfiles: [

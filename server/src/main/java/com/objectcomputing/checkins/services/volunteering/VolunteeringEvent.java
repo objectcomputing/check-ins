@@ -54,8 +54,8 @@ public class VolunteeringEvent {
 
     @Column(name = "hours")
     @Schema(description = "number of hours spent volunteering")
-    @TypeDef(type = DataType.INTEGER)
-    private int hours;
+    @TypeDef(type = DataType.DOUBLE)
+    private double hours;
 
     @Nullable
     @Column(name = "notes")
@@ -63,7 +63,7 @@ public class VolunteeringEvent {
     @Schema(description = "notes about the volunteering event")
     private String notes;
 
-    public VolunteeringEvent(UUID relationshipId, LocalDate eventDate, int hours, String notes) {
+    public VolunteeringEvent(UUID relationshipId, LocalDate eventDate, double hours, String notes) {
         this(null, relationshipId, eventDate, hours, notes);
     }
 

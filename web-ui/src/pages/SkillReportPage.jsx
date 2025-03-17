@@ -1,8 +1,9 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 
 import { Button, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
+import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import { reportSkills } from '../api/memberskill.js';
 import SearchResults from '../components/search-results/SearchResults';
@@ -11,7 +12,9 @@ import { sortMembersBySkill } from '../helpers/checks.js';
 import {
   selectOrderedSkills,
   selectCsrfToken,
-  selectCurrentMemberIds
+  selectCurrentMemberIds,
+  selectHasSkillsReportPermission,
+  noPermission
 } from '../context/selectors';
 
 import { useQueryParameters } from '../helpers/query-parameters';
@@ -51,26 +54,27 @@ const SkillReportPage = props => {
     processedQPs
   );
 
-  const handleSearch = async searchRequestDTO => {
-    let res = await reportSkills(searchRequestDTO, csrf);
-    let memberSkillsFound;
-    if (res && res.payload) {
-      memberSkillsFound =
-        res.payload.data.teamMembers && !res.error
-          ? res.payload.data.teamMembers
-          : undefined;
-    }
-    // Filter out skills of terminated members
-    memberSkillsFound = memberSkillsFound.filter(memberSkill =>
-      memberIds.includes(memberSkill.id)
-    );
-    if (memberSkillsFound && memberIds) {
-      let newSort = sortMembersBySkill(memberSkillsFound);
-      setSearchResults(newSort);
-    } else {
-      setSearchResults([]);
-    }
-  };
+  useEffect(() => {
+    const handleSearch = async () => {
+      let memberSkillsFound = [];
+
+      if (searchSkills.length > 0) {
+        const searchRequestDTO = createRequestDTO(editedSearchRequest);
+        const res = await reportSkills(searchRequestDTO, csrf);
+        if (res && res.payload) {
+          memberSkillsFound =
+            !res.error && res.payload.data?.teamMembers
+              ? res.payload.data.teamMembers
+              : [];
+        }
+        memberSkillsFound = sortMembersBySkill(memberSkillsFound);
+      }
+
+      setSearchResults(memberSkillsFound);
+    };
+
+    handleSearch();
+  }, [searchSkills]);
 
   function skillsToSkillLevelDTO(skills) {
     return skills.map((skill, index) => {
@@ -100,7 +104,7 @@ const SkillReportPage = props => {
     setSearchSkills([...skillsCopy]);
   }
 
-  return (
+  return selectHasSkillsReportPermission(state) ? (
     <div className="skills-report-page">
       <div className="SkillReportModal">
         <h2>Select desired skills...</h2>
@@ -121,19 +125,11 @@ const SkillReportPage = props => {
             />
           )}
         />
-        <div className="SkillsSearch-actions fullWidth">
-          <Button
-            onClick={() => {
-              handleSearch(createRequestDTO(editedSearchRequest));
-            }}
-            color="primary"
-          >
-            Run Search
-          </Button>
-        </div>
       </div>
       <SearchResults searchResults={searchResults} />
     </div>
+  ) : (
+    <h3>{noPermission}</h3>
   );
 };
 

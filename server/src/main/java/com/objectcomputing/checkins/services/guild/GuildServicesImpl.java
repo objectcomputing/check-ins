@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.Environments;
+import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -14,7 +16,6 @@ import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -38,8 +39,6 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class GuildServicesImpl implements GuildServices {
 
-    public static final String WEB_ADDRESS = "check-ins.web-address";
-
     private static final Logger LOG = LoggerFactory.getLogger(GuildServicesImpl.class);;
 
     private final GuildRepository guildsRepo;
@@ -48,7 +47,7 @@ public class GuildServicesImpl implements GuildServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final GuildMemberServices guildMemberServices;
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
 
@@ -59,7 +58,7 @@ public class GuildServicesImpl implements GuildServices {
                              GuildMemberServices guildMemberServices,
                              @Named(MailJetFactory.HTML_FORMAT) EmailSender emailSender,
                              Environment environment,
-                             @Property(name = WEB_ADDRESS) String webAddress
+                             CheckInsConfiguration checkInsConfiguration
     ) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
@@ -68,12 +67,8 @@ public class GuildServicesImpl implements GuildServices {
         this.memberProfileServices = memberProfileServices;
         this.guildMemberServices = guildMemberServices;
         this.emailSender = emailSender;
-        this.webAddress = webAddress;
+        this.webAddress = checkInsConfiguration.getWebAddress();
         this.environment = environment;
-    }
-
-    public void setEmailSender (EmailSender emailSender){
-        this.emailSender = emailSender;
     }
 
     public boolean validateLink (String link ) {
@@ -141,8 +136,8 @@ public class GuildServicesImpl implements GuildServices {
 
     public GuildResponseDTO update(GuildUpdateDTO guildDTO) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-        if (isAdmin || (currentUser != null &&
+        boolean canAdminister = hasAdministerPermission();
+        if (canAdminister || (currentUser != null &&
                 !guildMemberServices.findByFields(guildDTO.getId(), currentUser.getId(), true).isEmpty())) {
             // Guild newGuildEntity = null;
             GuildResponseDTO updated= null;
@@ -178,7 +173,7 @@ public class GuildServicesImpl implements GuildServices {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter(existing -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                         if(first.isEmpty()) {
-                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
+                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId()), false), existingMember));
                             addedMembers.add(existingMember);
                         } else {
                             newMembers.add(fromMemberEntity(guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
@@ -187,8 +182,8 @@ public class GuildServicesImpl implements GuildServices {
 
                     //delete any removed members from guild
                     existingGuildMembers.forEach(existingMember -> {
-                        if(!guildDTO.getGuildMembers().stream().filter(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
-                            guildMemberServices.delete(existingMember.getId());
+                        if(guildDTO.getGuildMembers().stream().noneMatch(updatedTeamMember -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId()))) {
+                            guildMemberServices.delete(existingMember.getId(), false);
                             removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
                         }
                     });
@@ -242,9 +237,9 @@ public class GuildServicesImpl implements GuildServices {
 
     public boolean delete(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
+        boolean canAdminister = hasAdministerPermission();
 
-        if (isAdmin || (currentUser != null && !guildMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
+        if (canAdminister || (currentUser != null && !guildMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
             guildMemberHistoryRepository.deleteByGuildId(id);
             guildMemberRepo.deleteByGuildId(id.toString());
             guildsRepo.deleteById(id);
@@ -258,7 +253,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
+        return new Guild(dto.getId(), dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity(), dto.isActive());
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
@@ -282,7 +277,7 @@ public class GuildServicesImpl implements GuildServices {
             return null;
         }
         GuildResponseDTO dto = new GuildResponseDTO(entity.getId(), entity.getName(), entity.getDescription(),
-                entity.getLink(), entity.isCommunity());
+                entity.getLink(), entity.isCommunity(), entity.isActive());
         dto.setGuildMembers(memberEntities);
         return dto;
     }
@@ -291,7 +286,7 @@ public class GuildServicesImpl implements GuildServices {
         if (dto == null) {
             return null;
         }
-        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity());
+        return new Guild(null, dto.getName(), dto.getDescription(), dto.getLink(), dto.isCommunity(), dto.isActive());
     }
 
     private GuildMemberResponseDTO fromMemberEntity(GuildMember guildMember, MemberProfile memberProfile) {
@@ -346,5 +341,9 @@ public class GuildServicesImpl implements GuildServices {
        String subject = "You have been assigned as a guild leader of " + guild.getName();
        String body = "Congratulations, you have been assigned as a guild leader of " + guild.getName();
        emailSender.sendEmail(null, null, subject, body, guildLeadersEmails.toArray(new String[0]));
+    }
+
+    private boolean hasAdministerPermission() {
+        return currentUserServices.hasPermission(Permission.CAN_ADMINISTER_GUILDS);
     }
 }

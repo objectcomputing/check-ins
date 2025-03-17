@@ -15,7 +15,7 @@ const teams = [
     description: '',
     teamMembers: [
       {
-        memberid: '3fa4-5717-4562-b3fc-2c963f66afa9',
+        memberId: '3fa4-5717-4562-b3fc-2c963f66afa9',
         name: 'testname',
         lead: true
       }
@@ -27,17 +27,20 @@ const initialState = {
   state: {
     userProfile: {
       name: 'holmes',
-      memberProfile: {
-        id: '3fa4-5717-4562-b3fc-2c963f66afa9',
-        pdlId: '',
-        title: 'Tester',
-        workEmail: 'test@tester.com'
-      },
+      id: '3fa4-5717-4562-b3fc-2c963f66afa9',
       role: ['MEMBER'],
       imageUrl:
         'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
-    teams
+    teams,
+    memberProfiles: [
+      {
+        id: '3fa4-5717-4562-b3fc-2c963f66afa9',
+        pdlId: '',
+        title: 'Tester',
+        workEmail: 'test@tester.com'
+      }
+    ]
   }
 };
 

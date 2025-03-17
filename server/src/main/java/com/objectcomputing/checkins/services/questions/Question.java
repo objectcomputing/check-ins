@@ -37,17 +37,6 @@ public class Question {
     @Schema(description = "text of the question being asked")
     private String text;
 
-    @Nullable
-    @Column(name="categoryid")
-    @TypeDef(type= DataType.STRING)
-    @Schema(description = "id of the category this question is associated with")
-    private UUID categoryId;
-
-    public Question(@NotBlank String text, @Nullable UUID categoryId) {
-        this.text = text;
-        this.categoryId = categoryId;
-    }
-
     public Question(@NotBlank String text) {
         this.text = text;
     }
@@ -61,13 +50,12 @@ public class Question {
         if (!(o instanceof Question)) return false;
         Question question = (Question) o;
         return Objects.equals(id, question.id) &&
-                Objects.equals(text, question.text) &&
-                Objects.equals(categoryId, question.categoryId);
+                Objects.equals(text, question.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, text, categoryId);
+        return Objects.hash(id, text);
     }
 
     @Override
@@ -75,7 +63,6 @@ public class Question {
         return "Question{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
-                ", categoryId=" + categoryId +
                 '}';
     }
 

@@ -6,14 +6,19 @@ exports[`DiscreteSlider > renders slider with title 1`] = `
     class="discrete-slider"
   >
     <p
-      class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom css-d3wcwz-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom css-vjrxpc-MuiTypography-root"
       id="discrete-slider-restrict"
     >
       Some skill
     </p>
     <div
       class="css-cg7vlo"
-    />
+    >
+      <input
+        data-testid="discrete-slider"
+        type="range"
+      />
+    </div>
   </div>
 </div>
 `;

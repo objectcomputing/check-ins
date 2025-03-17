@@ -10,5 +10,6 @@ public interface FileServices {
     Set<FileInfoDTO> findFiles(UUID checkInId);
     File downloadFiles(String uploadDocId);
     FileInfoDTO uploadFile(UUID checkInID, CompletedFileUpload file);
+    FileInfoDTO uploadDocument(String directory, String name, String text);
     boolean deleteFile(String uploadDocId);
 }

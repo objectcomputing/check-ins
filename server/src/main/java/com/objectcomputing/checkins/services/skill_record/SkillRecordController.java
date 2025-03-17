@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.skill_record;
 
-import com.objectcomputing.checkins.services.permissions.Permission;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -15,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 @Controller("/services/skills/records")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -27,14 +26,13 @@ class SkillRecordController {
         this.skillRecordServices = skillRecordServices;
     }
 
-    @RequiredPermission(Permission.CAN_VIEW_SKILL_CATEGORIES)
     @Get(value = "/csv", produces = MediaType.TEXT_CSV)
     HttpResponse<File> generateCsv() {
         try {
             File file = skillRecordServices.generateFile();
             return HttpResponse.ok(file)
                     .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=%s", file.getName()));
-        } catch (Exception error) {
+        } catch (IOException error) {
             LOG.error("Something went terribly wrong during export... ", error);
             return HttpResponse.serverError();
         }

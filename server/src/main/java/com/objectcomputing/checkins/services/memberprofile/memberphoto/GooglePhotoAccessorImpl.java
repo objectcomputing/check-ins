@@ -18,7 +18,8 @@ import java.util.Base64;
 import java.util.Optional;
 
 @Singleton
-class GooglePhotoAccessorImpl implements GooglePhotoAccessor {
+// Public so that this class can be replaced during testing.
+public class GooglePhotoAccessorImpl implements GooglePhotoAccessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(GooglePhotoAccessorImpl.class);
 
