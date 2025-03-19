@@ -1,19 +1,19 @@
 .ReceivedRequestCard-redTypography {
-  color: var(--checkins-palette-red);
+  color: var(--mui-palette-red);
 }
 
 .ReceivedRequestCard-yellowTypography {
-  color: var(--checkins-palette-yellow);
+  color: var(--mui-palette-yellow);
 }
 
 .ReceivedRequestCard-greenTypography {
-  color: var(--checkins-palette-green);
+  color: var(--mui-palette-green);
 }
 
 .ReceivedRequestCard-darkGrayTypography {
-  color: var(--checkins-palette-gray-dark);
+  color: var(--mui-palette-gray-dark);
 }
 
 .ReceivedRequestCard-grayTypography {
-  color: var(--checkins-palette-gray);
+  color: var(--mui-palette-gray);
 }

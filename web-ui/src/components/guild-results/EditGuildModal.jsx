@@ -12,7 +12,7 @@ import {
   Modal,
   Switch,
   TextField,
-  Checkbox,
+  Checkbox
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import './EditGuildModal.css';
@@ -167,19 +167,22 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
             value={editedGuild.name ? editedGuild.name : ''}
             onChange={e => setGuild({ ...editedGuild, name: e.target.value })}
           />
-          {guild.id && (<>
-          <Checkbox
-            id="guild-active-input"
-            label="Active"
-            variant="outlined"
-            className="halfWidth"
-            checked={editedGuild.active ? editedGuild.active : false}
-            onChange={event => {
-              const { checked } = event.target;
-              setGuild({ ...editedGuild, active: checked });
-            }}
-          /> Active
-          </>)}
+          {guild.id && (
+            <>
+              <Checkbox
+                id="guild-active-input"
+                label="Active"
+                variant="outlined"
+                className="halfWidth"
+                checked={editedGuild.active ? editedGuild.active : false}
+                onChange={event => {
+                  const { checked } = event.target;
+                  setGuild({ ...editedGuild, active: checked });
+                }}
+              />{' '}
+              Active
+            </>
+          )}
         </div>
         <div>
           <FormControlLabel

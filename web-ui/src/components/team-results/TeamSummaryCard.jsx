@@ -1,15 +1,22 @@
-import React, {useContext, useState} from 'react';
-import {styled} from '@mui/material/styles';
-import {AppContext} from '../../context/AppContext';
-import {UPDATE_TEAMS} from '../../context/actions';
+import React, { useContext, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { AppContext } from '../../context/AppContext';
+import { UPDATE_TEAMS } from '../../context/actions';
 import EditTeamModal from './EditTeamModal';
 import KudosDialog from '../kudos_dialog/KudosDialog';
-import {Link} from 'react-router-dom';
-import {Card, CardActions, CardContent, CardHeader, Tooltip, Typography,} from '@mui/material';
+import { Link } from 'react-router-dom';
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Tooltip,
+  Typography
+} from '@mui/material';
 import PropTypes from 'prop-types';
-import {updateTeam} from '../../api/team.js';
+import { updateTeam } from '../../api/team.js';
 import SplitButton from '../split-button/SplitButton';
-import {selectCurrentUser, selectIsAdmin} from "../../context/selectors.js";
+import { selectCurrentUser, selectIsAdmin } from '../../context/selectors.js';
 
 const PREFIX = 'TeamSummaryCard';
 const classes = {
@@ -24,7 +31,7 @@ const StyledCard = styled(Card)({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    position: 'relative',
+    position: 'relative'
   },
   [`& .${classes.header}`]: {
     width: '100%'
@@ -37,8 +44,8 @@ const StyledCard = styled(Card)({
 });
 
 const inactiveStyle = {
-  'color': 'var(--action-disabled)',
-  'font-size': '0.75em',
+  color: 'var(--action-disabled)',
+  'font-size': '0.75em'
 };
 
 const propTypes = {
@@ -112,9 +119,8 @@ const TeamSummaryCard = ({ team, index, onTeamSelect, selectedTeamId }) => {
       />
       <CardContent>
         {!team.active && (
-          <Typography sx={{ position: 'absolute', top: 10, right: 10,
-                            ...inactiveStyle,
-                          }}
+          <Typography
+            sx={{ position: 'absolute', top: 10, right: 10, ...inactiveStyle }}
           >
             Inactive
           </Typography>

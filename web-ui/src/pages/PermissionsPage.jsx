@@ -19,7 +19,7 @@ import {
   selectRoles,
   selectHasPermissionAssignmentPermission,
   selectHasViewPermissionPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 

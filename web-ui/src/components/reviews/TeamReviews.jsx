@@ -9,12 +9,7 @@ import React, {
 } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 
-import {
-  AddCircle,
-  Archive,
-  Search,
-  Unarchive
-} from '@mui/icons-material';
+import { AddCircle, Archive, Search, Unarchive } from '@mui/icons-material';
 import {
   Alert,
   Button,
@@ -37,7 +32,7 @@ import {
   getReviewAssignments,
   createReviewAssignments,
   updateReviewAssignment,
-  removeReviewAssignment,
+  removeReviewAssignment
 } from '../../api/reviewassignments.js';
 import {
   findReviewRequestsByPeriod,
@@ -69,7 +64,7 @@ import {
   selectHasCreateReviewAssignmentsPermission,
   selectHasDeleteReviewAssignmentsPermission,
   selectHasUpdateReviewAssignmentsPermission,
-  selectCanAdministerFeedbackRequests,
+  selectCanAdministerFeedbackRequests
 } from '../../context/selectors';
 
 import MemberSelector from '../member_selector/MemberSelector';
@@ -77,8 +72,7 @@ import MemberSelectorDialog from '../member_selector/member_selector_dialog/Memb
 import DatePickerField from '../date-picker-field/DatePickerField.jsx';
 import '../date-picker-field/DatePickerField.css';
 import './TeamReviews.css';
-import ReviewPeriodStepper from "./periods/ReviewPeriodStepper.jsx";
-
+import ReviewPeriodStepper from './periods/ReviewPeriodStepper.jsx';
 
 const propTypes = {
   onBack: PropTypes.func,
@@ -150,8 +144,14 @@ const TeamReviews = ({ onBack, periodId }) => {
   const [toClose, setToClose] = useState(null);
   const [unapproved, setUnapproved] = useState([]);
   const [validationMessage, setValidationMessage] = useState(null);
-  const [confirmRevieweesWithNoSupervisorOpen, setConfirmRevieweesWithNoSupervisorOpen] = useState(false);
-  const [confirmRevieweesWithNoSupervisorQuestion, setConfirmRevieweesWithNoSupervisorQuestionText] = useState('');
+  const [
+    confirmRevieweesWithNoSupervisorOpen,
+    setConfirmRevieweesWithNoSupervisorOpen
+  ] = useState(false);
+  const [
+    confirmRevieweesWithNoSupervisorQuestion,
+    setConfirmRevieweesWithNoSupervisorQuestionText
+  ] = useState('');
 
   const loadedReviews = useRef(false);
   const loadingReviews = useRef(false);
@@ -179,13 +179,12 @@ const TeamReviews = ({ onBack, periodId }) => {
     }
 
     setOpenMode(period?.reviewStatus === ReviewStatus.OPEN);
-    setCanUpdate(!openMode &&
-                 selectHasUpdateReviewPeriodPermission(state));
-    setCanApprove(approvalState &&
-                  selectHasUpdateReviewAssignmentsPermission(state));
+    setCanUpdate(!openMode && selectHasUpdateReviewPeriodPermission(state));
+    setCanApprove(
+      approvalState && selectHasUpdateReviewAssignmentsPermission(state)
+    );
 
-
-    setHasShowAll((isManager || selectHasUpdateReviewPeriodPermission(state)));
+    setHasShowAll(isManager || selectHasUpdateReviewPeriodPermission(state));
   }, [state]);
 
   useEffect(() => {
@@ -220,16 +219,17 @@ const TeamReviews = ({ onBack, periodId }) => {
         : selectTeamMembersBySupervisorId(state, myId);
 
       // And others that the current user may be assigned to review.
-      assignments.filter(a => a.reviewerId == currentUser.id)
-                 .forEach(a => {
-        if (!source.some(s => s.id == a.revieweeId)) {
-          // Add this user to the list of members to show by default.
-          const member = currentMembers.find(m => m.id == a.revieweeId);
-          if (member) {
-            source.push(member);
+      assignments
+        .filter(a => a.reviewerId == currentUser.id)
+        .forEach(a => {
+          if (!source.some(s => s.id == a.revieweeId)) {
+            // Add this user to the list of members to show by default.
+            const member = currentMembers.find(m => m.id == a.revieweeId);
+            if (member) {
+              source.push(member);
+            }
           }
-        }
-      });
+        });
     }
 
     // Always filter the members down to existing selected assignments.
@@ -245,8 +245,9 @@ const TeamReviews = ({ onBack, periodId }) => {
     if (res.error) return;
 
     // Match up the review assignments with the team members.
-    const existing = res.payload.data
-                     .filter(a => teamMembers.find(m => m.id == a.revieweeId));
+    const existing = res.payload.data.filter(a =>
+      teamMembers.find(m => m.id == a.revieweeId)
+    );
 
     // Create a set of team members that do not yet have review assignments,
     // each with a default reviewer.
@@ -270,7 +271,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     let assignments = res.error ? [] : res.payload.data;
 
     // Remove review assignments for members no longer selected.
-    for(let assignment of assignments) {
+    for (let assignment of assignments) {
       if (!teamMembers.find(m => m.id == assignment.revieweeId)) {
         // Delete review assignments if we do not have the matching member.
         await removeReviewAssignment(assignment.id, csrf);
@@ -286,11 +287,9 @@ const TeamReviews = ({ onBack, periodId }) => {
     setTeamMembers(teamMembers);
   };
 
-  const addAssignmentForMemberWithNone = async (members) => {
+  const addAssignmentForMemberWithNone = async members => {
     members.forEach(member => {
-      const exists = assignments.some(
-          a => a.revieweeId === member.id
-      );
+      const exists = assignments.some(a => a.revieweeId === member.id);
       if (!!!exists && member.supervisorid) {
         const reviewers = [{ id: member.supervisorid }];
         updateReviewers(member, reviewers);
@@ -299,7 +298,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         updateReviewers(member, reviewers);
       }
     });
-  }
+  };
 
   const getReviewStatus = useCallback(
     review => {
@@ -564,17 +563,18 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     const getReviewRequests = async () => {
       const res = await findReviewRequestsByPeriod(period, csrf);
-      const data = res?.payload?.status === 200 && !res.error ?
-                          res.payload.data : null;
+      const data =
+        res?.payload?.status === 200 && !res.error ? res.payload.data : null;
 
       if (data?.length) {
-        data.filter(review => review?.status?.toUpperCase() !== 'CANCELED')
-            .forEach(request => {
-          if (!newReviews[request.recipientId]) {
-            newReviews[request.recipientId] = [];
-          }
-          newReviews[request.recipientId].push(request);
-        });
+        data
+          .filter(review => review?.status?.toUpperCase() !== 'CANCELED')
+          .forEach(request => {
+            if (!newReviews[request.recipientId]) {
+              newReviews[request.recipientId] = [];
+            }
+            newReviews[request.recipientId].push(request);
+          });
       }
     };
 
@@ -636,15 +636,19 @@ const TeamReviews = ({ onBack, periodId }) => {
     } else {
       // This reviewer does not have an assignment id.  Therefore, we just
       // need to remove the reviewer from the assignment list.
-      setAssignments(assignments.filter(a =>
-        !(a.revieweeId === revieweeId && a.reviewerId === reviewerId)));
+      setAssignments(
+        assignments.filter(
+          a => !(a.revieweeId === revieweeId && a.reviewerId === reviewerId)
+        )
+      );
     }
   };
 
   const validateReviewPeriod = period => {
     if (!period) return 'No review period was created.';
     if (!period.launchDate) return 'No launch date was specified.';
-    if (!period.selfReviewCloseDate) return 'No self-review date was specified.';
+    if (!period.selfReviewCloseDate)
+      return 'No self-review date was specified.';
     if (!period.closeDate) return 'No close date was specified.';
     if (!period.periodStartDate) return 'No period-start-date was specified.';
     if (!period.periodEndDate) return 'No period-end-date was specified.';
@@ -680,13 +684,17 @@ const TeamReviews = ({ onBack, periodId }) => {
     setValidationMessage(msg);
     if (msg) return;
 
-    const uniqueNamesWithNoSupervisor = [...new Set(
+    const uniqueNamesWithNoSupervisor = [
+      ...new Set(
         visibleTeamMembers()
-            .filter(member => member.supervisorid === null)  // Filter by null supervisorid
-            .map(member => member.name)                      // Map to the name property
-    )].join(', ');
+          .filter(member => member.supervisorid === null) // Filter by null supervisorid
+          .map(member => member.name) // Map to the name property
+      )
+    ].join(', ');
     if (uniqueNamesWithNoSupervisor.trim().length > 0) {
-      setConfirmRevieweesWithNoSupervisorQuestionText(uniqueNamesWithNoSupervisor);
+      setConfirmRevieweesWithNoSupervisorQuestionText(
+        uniqueNamesWithNoSupervisor
+      );
       setConfirmRevieweesWithNoSupervisorOpen(true);
     } else {
       return requestApprovalPost();
@@ -709,7 +717,7 @@ const TeamReviews = ({ onBack, periodId }) => {
 
     // Remove all assignments for this member.
     newAssignments = newAssignments.filter(a => a.revieweeId !== memberId);
-    for(let assignment of assignments) {
+    for (let assignment of assignments) {
       if (!newAssignments.find(a => a.id == assignment.id)) {
         await removeReviewAssignment(assignment.id, csrf);
       }
@@ -749,15 +757,16 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const getReviewRequest = (member, reviewer) => {
     if (reviews && reviews[reviewer.id]) {
-      return reviews[reviewer.id].find((r) => r.requesteeId === member.id);
+      return reviews[reviewer.id].find(r => r.requesteeId === member.id);
     }
     return null;
   };
 
-  const getSelfReviewRequest = (member) => {
+  const getSelfReviewRequest = member => {
     if (reviews && reviews[member.id]) {
-      return reviews[member.id].find((r) => r.recipientId === member.id &&
-                                            r.requesteeId === member.id);
+      return reviews[member.id].find(
+        r => r.recipientId === member.id && r.requesteeId === member.id
+      );
     }
     return null;
   };
@@ -766,11 +775,12 @@ const TeamReviews = ({ onBack, periodId }) => {
     let url;
     if (openMode && (request || selfReviewRequest)) {
       const recipientProfile = selectProfile(state, request?.recipientId);
-      const manages = recipientProfile?.id === currentUser?.id ||
-                      recipientProfile?.supervisorid === currentUser?.id;
+      const manages =
+        recipientProfile?.id === currentUser?.id ||
+        recipientProfile?.supervisorid === currentUser?.id;
       const selfSubmitted = selfReviewRequest?.status == 'submitted';
       if (manages) {
-        url = "/feedback/submit?tabs=true";
+        url = '/feedback/submit?tabs=true';
         if (request) {
           url += `&request=${request.id}`;
         }
@@ -784,36 +794,42 @@ const TeamReviews = ({ onBack, periodId }) => {
 
   const renderReviewer = (member, reviewer) => {
     const hasReviewer = !!reviewer.name;
-    const backgroundColor = reviewer.approved ?
-                              'var(--checkins-palette-action-green)' :
-                              (hasReviewer ?
-                                'var(--checkins-palette-action-yellow)' :
-                                'var(--checkins-palette-action-red)');
+    const backgroundColor = reviewer.approved
+      ? 'var(--mui-palette-action-green)'
+      : hasReviewer
+        ? 'var(--mui-palette-action-yellow)'
+        : 'var(--mui-palette-action-red)';
     const request = getReviewRequest(member, reviewer);
     const selfReviewRequest = getSelfReviewRequest(member);
     const variant = 'outlined';
-    const reviewerName = reviewer.name ?? "No Reviewer";
+    const reviewerName = reviewer.name ?? 'No Reviewer';
     const statusLabel = `${reviewerName}: ${getReviewStatus(request)}`;
     const url = getReviewerURL(request, selfReviewRequest);
 
-    return (url ?
-            <Link key={member?.id} to={url}>
-            <Chip
-              key={reviewer.id}
-              label={statusLabel}
-              variant={variant}
-              style={{backgroundColor: backgroundColor}}
-            />
-          </Link> :
-          <Chip
-            key={reviewer.id}
-            label={openMode ? statusLabel : reviewerName}
-            variant={variant}
-            onDelete={!openMode && hasReviewer &&
-                      selectHasDeleteReviewAssignmentsPermission(state) ?
-                          () => deleteReviewer(member, reviewer) : null}
-            style={{backgroundColor: backgroundColor}}
-          />);
+    return url ? (
+      <Link key={member?.id} to={url}>
+        <Chip
+          key={reviewer.id}
+          label={statusLabel}
+          variant={variant}
+          style={{ backgroundColor: backgroundColor }}
+        />
+      </Link>
+    ) : (
+      <Chip
+        key={reviewer.id}
+        label={openMode ? statusLabel : reviewerName}
+        variant={variant}
+        onDelete={
+          !openMode &&
+          hasReviewer &&
+          selectHasDeleteReviewAssignmentsPermission(state)
+            ? () => deleteReviewer(member, reviewer)
+            : null
+        }
+        style={{ backgroundColor: backgroundColor }}
+      />
+    );
   };
 
   const REVIEWER_LIMIT = 2;
@@ -823,7 +839,7 @@ const TeamReviews = ({ onBack, periodId }) => {
     // to ensure that the current user is still visible so that the chip
     // link can be created (if in the open mode) in renderReviewer().
     let reviewers = getReviewers(member).sort((l, r) =>
-      (l.id === currentUser?.id ? -1 : (r.id === currentUser?.id ? 1 : 0))
+      l.id === currentUser?.id ? -1 : r.id === currentUser?.id ? 1 : 0
     );
     const count = reviewers.length;
     const excess = count - REVIEWER_LIMIT;
@@ -846,11 +862,12 @@ const TeamReviews = ({ onBack, periodId }) => {
       return (
         <Chip
           key={member.id}
-          label={"Self-Review: " + getReviewStatus(selfReviewRequest)}
+          label={'Self-Review: ' + getReviewStatus(selfReviewRequest)}
           variant="outlined"
-        />);
+        />
+      );
     } else {
-      return (<></>);
+      return <></>;
     }
   };
 
@@ -889,22 +906,22 @@ const TeamReviews = ({ onBack, periodId }) => {
     } else if (period.reviewStatus === ReviewStatus.AWAITING_APPROVAL) {
       const visibleIds = new Set(visibleTeamMembers().map(m => m.id));
       const unapproved = assignments.filter(
-          a => !a.approved && visibleIds.has(a.revieweeId)
+        a => !a.approved && visibleIds.has(a.revieweeId)
       );
       // logAssignments(unapproved); // for debugging
       setUnapproved(unapproved);
       setConfirmationText(
-          unapproved.length === 0
-              ? 'Are you sure you want to launch the review period?'
-              : unapproved.length === 1
-                  ? 'There is one visible, unapproved review assignment. ' +
-                  'Would you like to approve it and launch this review period?'
-                  : `There are ${unapproved.length} visible, unapproved review assignments. ` +
-                  'Would you like to approve all of them and launch this review period?'
+        unapproved.length === 0
+          ? 'Are you sure you want to launch the review period?'
+          : unapproved.length === 1
+            ? 'There is one visible, unapproved review assignment. ' +
+              'Would you like to approve it and launch this review period?'
+            : `There are ${unapproved.length} visible, unapproved review assignments. ` +
+              'Would you like to approve all of them and launch this review period?'
       );
       setConfirmationDialogOpen(true);
     }
-  }
+  };
 
   const unapproveAll = () => {
     visibleTeamMembers().map(member => approveMember(member, false));
@@ -961,10 +978,7 @@ const TeamReviews = ({ onBack, periodId }) => {
         <Typography variant="h4">{period?.name ?? ''} Team Reviews</Typography>
       </div>
 
-      <ReviewPeriodStepper
-          reviewPeriod={period}
-      />
-
+      <ReviewPeriodStepper reviewPeriod={period} />
 
       {period && (
         <div className="date-pickers-row">
@@ -988,16 +1002,16 @@ const TeamReviews = ({ onBack, periodId }) => {
               disabled={!canUpdate}
             />
             <DatePickerField
-                date={period.periodStartDate}
-                setDate={val => handlePeriodStartDateChange(val, period)}
-                label="Period Start Date"
-                disabled={!canUpdate}
+              date={period.periodStartDate}
+              setDate={val => handlePeriodStartDateChange(val, period)}
+              label="Period Start Date"
+              disabled={!canUpdate}
             />
             <DatePickerField
-                date={period.periodEndDate}
-                setDate={val => handlePeriodEndDateChange(val, period)}
-                label="Period End Date"
-                disabled={!canUpdate}
+              date={period.periodEndDate}
+              setDate={val => handlePeriodEndDateChange(val, period)}
+              label="Period End Date"
+              disabled={!canUpdate}
             />
           </div>
           {modifierButton()}
@@ -1010,49 +1024,52 @@ const TeamReviews = ({ onBack, periodId }) => {
       )}
 
       {(approvalState || hasShowAll) && (
-          <div id="approval-row" style={{ display: 'flex', alignItems: 'center' }}>
-            {/* Wrapper div for TextField and Switch */}
-            <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-              <TextField
-                  className="name-search-field"
-                  label="Name"
-                  placeholder="Search by member name"
-                  variant="outlined"
-                  value={nameQuery}
-                  onChange={event => setNameQuery(event.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end" color="gray">
-                          <Search />
-                        </InputAdornment>
-                    )
-                  }}
-                  style={{ flexGrow: 1, maxWidth: '400px' }}
-              />
-              {/* Add the Switch right next to the TextField */}
-              {period && hasShowAll && (
-                  <FormControlLabel
-                      control={
-                        <Switch
-                            checked={showAll}
-                            onChange={() => setShowAll(b => !b)}
-                        />
-                      }
-                      label="Show All"
-                      sx={{ marginLeft: '0.5rem' }}
+        <div
+          id="approval-row"
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {/* Wrapper div for TextField and Switch */}
+          <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            <TextField
+              className="name-search-field"
+              label="Name"
+              placeholder="Search by member name"
+              variant="outlined"
+              value={nameQuery}
+              onChange={event => setNameQuery(event.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" color="gray">
+                    <Search />
+                  </InputAdornment>
+                )
+              }}
+              style={{ flexGrow: 1, maxWidth: '400px' }}
+            />
+            {/* Add the Switch right next to the TextField */}
+            {period && hasShowAll && (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showAll}
+                    onChange={() => setShowAll(b => !b)}
                   />
-              )}
-            </div>
-            {/* Button aligned to the right */}
-            {canApprove && (
-                <div style={{ marginLeft: 'auto' }}>
-                  <Button onClick={() => setConfirmApproveAllOpen(true)}>
-                    Approve All
-                  </Button>
-                  <Button onClick={unapproveAll}>Unapprove All</Button>
-                </div>
+                }
+                label="Show All"
+                sx={{ marginLeft: '0.5rem' }}
+              />
             )}
           </div>
+          {/* Button aligned to the right */}
+          {canApprove && (
+            <div style={{ marginLeft: 'auto' }}>
+              <Button onClick={() => setConfirmApproveAllOpen(true)}>
+                Approve All
+              </Button>
+              <Button onClick={unapproveAll}>Unapprove All</Button>
+            </div>
+          )}
+        </div>
       )}
 
       {canUpdate && (
@@ -1083,22 +1100,22 @@ const TeamReviews = ({ onBack, periodId }) => {
               {renderReviewers(member)}
 
               {!openMode &&
-               selectHasCreateReviewAssignmentsPermission(state) &&
-               selectHasDeleteReviewAssignmentsPermission(state) && (
-                <IconButton
-                  aria-label="Edit Reviewers"
-                  onClick={() => editReviewers(member)}
-                >
-                  <AddCircle />
-                </IconButton>
-              )}
+                selectHasCreateReviewAssignmentsPermission(state) &&
+                selectHasDeleteReviewAssignmentsPermission(state) && (
+                  <IconButton
+                    aria-label="Edit Reviewers"
+                    onClick={() => editReviewers(member)}
+                  >
+                    <AddCircle />
+                  </IconButton>
+                )}
 
               {canApprove &&
-               selectHasUpdateReviewAssignmentsPermission(state) && (
-                <Button onClick={() => toggleApproval(member)}>
-                  {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
-                </Button>
-              )}
+                selectHasUpdateReviewAssignmentsPermission(state) && (
+                  <Button onClick={() => toggleApproval(member)}>
+                    {isMemberApproved(member) ? 'Unapprove' : 'Approve'}
+                  </Button>
+                )}
             </div>
           </ListItem>
         ))}
@@ -1143,11 +1160,11 @@ const TeamReviews = ({ onBack, periodId }) => {
         title="Approve and Launch"
       />
       <ConfirmationDialog
-          open={confirmRevieweesWithNoSupervisorOpen}
-          onYes={requestApprovalPost}
-          question={confirmRevieweesWithNoSupervisorQuestion}
-          setOpen={setConfirmRevieweesWithNoSupervisorOpen}
-          title="These reviewees have no supervisor. Continue?"
+        open={confirmRevieweesWithNoSupervisorOpen}
+        onYes={requestApprovalPost}
+        question={confirmRevieweesWithNoSupervisorQuestion}
+        setOpen={setConfirmRevieweesWithNoSupervisorOpen}
+        title="These reviewees have no supervisor. Continue?"
       />
     </Root>
   );

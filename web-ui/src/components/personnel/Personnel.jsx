@@ -8,7 +8,7 @@ import {
   selectCurrentUserId,
   selectMostRecentCheckin,
   selectCsrfToken,
-  selectCanViewCheckinsPermission,
+  selectCanViewCheckinsPermission
 } from '../../context/selectors';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';

@@ -81,17 +81,24 @@ const convertMemberDates = member => {
 export const reducer = (state, action) => {
   switch (action.type) {
     case MY_PROFILE_UPDATE:
-      state.userProfile = { id: action.payload.memberProfile.id, role: action.payload.role, permissions: action.payload.permissions };
+      state.userProfile = {
+        id: action.payload.memberProfile.id,
+        role: action.payload.role,
+        permissions: action.payload.permissions
+      };
       break;
     case UPDATE_CURRENT_USER_PROFILE:
       convertMemberDates(action.payload);
       const profileId = action.payload.id;
-      const memberProfiles = state.memberProfiles.reduce((acc, current) => {
-        if(current.id !== profileId) {
-          acc.push({...current});
-        }
-        return acc;
-      }, [{ ...action.payload }])
+      const memberProfiles = state.memberProfiles.reduce(
+        (acc, current) => {
+          if (current.id !== profileId) {
+            acc.push({ ...current });
+          }
+          return acc;
+        },
+        [{ ...action.payload }]
+      );
       state.memberProfiles = memberProfiles;
       break;
     case ADD_CHECKIN:
@@ -165,7 +172,7 @@ export const reducer = (state, action) => {
       state.teams.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case UPDATE_TEAMS_LOADING:
-      state.loading = { ...state.loading, teams: !state.loading.teams };
+      state.loading = { ...state.loading, teams: !state?.loading?.teams };
       break;
     case UPDATE_PEOPLE_LOADING:
       state.loading = { ...state.loading, memberProfiles: action.payload };
@@ -173,12 +180,12 @@ export const reducer = (state, action) => {
     case UPDATE_MEMBER_PROFILES:
       action.payload.forEach(convertMemberDates);
       const currentProfileId = state?.userProfile?.id;
-      const currentProfile = action.payload.find((current) => {
-        if(currentProfileId && current.id === currentProfileId) {
+      const currentProfile = action.payload.find(current => {
+        if (currentProfileId && current.id === currentProfileId) {
           return current;
         }
       });
-      if(currentProfile) {
+      if (currentProfile) {
         state.userProfile.memberProfile = { ...currentProfile };
       }
       state.memberProfiles = action.payload;

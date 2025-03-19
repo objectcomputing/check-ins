@@ -23,7 +23,7 @@ import {
   selectCsrfToken,
   selectCurrentUser,
   selectProfileMap,
-  selectHasVolunteeringEventsPermission,
+  selectHasVolunteeringEventsPermission
 } from '../../context/selectors';
 import { formatDate } from '../../helpers/datetime';
 
@@ -42,7 +42,11 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const [relationshipMap, setRelationshipMap] = useState({});
   const [relationships, setRelationships] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [newOrganization, setNewOrganization] = useState({ name: '', description: '', website: '' });
+  const [newOrganization, setNewOrganization] = useState({
+    name: '',
+    description: '',
+    website: ''
+  });
   const [sortAscending, setSortAscending] = useState(true);
   const [sortColumn, setSortColumn] = useState('Relationship');
 
@@ -73,7 +77,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     if (onlyMe) {
       events = events.filter(e => Boolean(relationshipMap[e.relationshipId]));
     }
-    events.sort((event1, event2) => event1.eventDate.localeCompare(event2.eventDate));
+    events.sort((event1, event2) =>
+      event1.eventDate.localeCompare(event2.eventDate)
+    );
     setEvents(events);
   }, [csrf, relationshipMap]);
 
@@ -90,7 +96,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
     if (res.error) return;
 
     const organizations = res.payload.data;
-    setOrganizationMap(organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {}));
+    setOrganizationMap(
+      organizations.reduce((acc, org) => ({ ...acc, [org.id]: org }), {})
+    );
   }, [csrf]);
 
   const loadRelationships = useCallback(async () => {
@@ -115,7 +123,9 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       return member1.name.localeCompare(member2.name);
     });
     setRelationships(relationships);
-    setRelationshipMap(relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {}));
+    setRelationshipMap(
+      relationships.reduce((acc, rel) => ({ ...acc, [rel.id]: rel }), {})
+    );
   }, [csrf, onlyMe, profileMap]);
 
   useEffect(() => {
@@ -183,105 +193,130 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   const saveOrganizationAndRelationship = useCallback(async () => {
     const { name, description, website } = newOrganization;
     if (!name || !description) {
-        console.error('Missing organization name or description');
-        return;
+      console.error('Missing organization name or description');
+      return;
     }
 
     try {
-        // Step 1: Create the organization
-        const res = await resolve({
-            method: 'POST',
-            url: organizationBaseUrl,
-            headers: {
-                'X-CSRF-Header': csrf,
-                Accept: 'application/json',
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            data: { name, description, website }
-        });
+      // Step 1: Create the organization
+      const res = await resolve({
+        method: 'POST',
+        url: organizationBaseUrl,
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: { name, description, website }
+      });
 
-        if (res.error) {
-            console.error('Error creating organization', res.error);
-            return;
+      if (res.error) {
+        console.error('Error creating organization', res.error);
+        return;
+      }
+
+      const createdOrg = res.payload.data;
+
+      // Step 2: Create a relationship between the current user and the newly created organization
+      const relationshipRes = await resolve({
+        method: 'POST',
+        url: relationshipBaseUrl, // Ensure the correct URL is used
+        headers: {
+          'X-CSRF-Header': csrf,
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        data: {
+          memberId: currentUser.id,
+          organizationId: createdOrg.id,
+          startDate: formatDate(new Date()), // Set the start date as the current date
+          endDate: null // Leave endDate as null for an active relationship
         }
+      });
 
-        const createdOrg = res.payload.data;
+      if (relationshipRes.error) {
+        console.error('Error creating relationship', relationshipRes.error);
+        return;
+      }
 
-        // Step 2: Create a relationship between the current user and the newly created organization
-        const relationshipRes = await resolve({
-            method: 'POST',
-            url: relationshipBaseUrl, // Ensure the correct URL is used
-            headers: {
-                'X-CSRF-Header': csrf,
-                Accept: 'application/json',
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            data: {
-                memberId: currentUser.id,
-                organizationId: createdOrg.id,
-                startDate: formatDate(new Date()), // Set the start date as the current date
-                endDate: null // Leave endDate as null for an active relationship
-            }
-        });
+      const createdRelationship = relationshipRes.payload.data;
 
-        if (relationshipRes.error) {
-            console.error('Error creating relationship', relationshipRes.error);
-            return;
-        }
+      // Step 3: Update the organization and relationship maps
+      setOrganizationMap(prev => ({ ...prev, [createdOrg.id]: createdOrg }));
+      setRelationshipMap(prev => ({
+        ...prev,
+        [createdRelationship.id]: createdRelationship
+      }));
 
-        const createdRelationship = relationshipRes.payload.data;
+      // Step 4: Update selectedEvent with the new relationship
+      setSelectedEvent({
+        ...selectedEvent,
+        relationshipId: createdRelationship.id // Set the new relationship ID
+      });
 
-        // Step 3: Update the organization and relationship maps
-        setOrganizationMap(prev => ({ ...prev, [createdOrg.id]: createdOrg }));
-        setRelationshipMap(prev => ({ ...prev, [createdRelationship.id]: createdRelationship }));
-
-        // Step 4: Update selectedEvent with the new relationship
-        setSelectedEvent({
-            ...selectedEvent,
-            relationshipId: createdRelationship.id // Set the new relationship ID
-        });
-
-        // Step 5: Close organization dialog and open event dialog
-        setOrganizationDialogOpen(false);
-        setEventDialogOpen(true);
-
+      // Step 5: Close organization dialog and open event dialog
+      setOrganizationDialogOpen(false);
+      setEventDialogOpen(true);
     } catch (error) {
-        console.error('Failed to create organization and relationship', error);
+      console.error('Failed to create organization and relationship', error);
     }
-}, [newOrganization, csrf, currentUser.id, selectedEvent]);
+  }, [newOrganization, csrf, currentUser.id, selectedEvent]);
 
   const eventDialog = useCallback(
     () => (
-      <Dialog classes={{ root: 'volunteer-dialog' }} open={eventDialogOpen} onClose={cancelEvent}>
+      <Dialog
+        classes={{ root: 'volunteer-dialog' }}
+        open={eventDialogOpen}
+        onClose={cancelEvent}
+      >
         <DialogTitle>{selectedEvent?.id ? 'Edit' : 'Add'} Event</DialogTitle>
         <DialogContent>
-        <Autocomplete
-          disableClearable
-          getOptionLabel={(option) => 
-            option === 'new' ? 'Create a New Organization' : (relationshipMap[option]?.organizationId && organizationMap[relationshipMap[option].organizationId]?.name) || ''
-          }
-          options={['new', ...relationships.filter((rel) => !rel.endDate).map((rel) => rel.id)]} // Use relationship IDs
-          onChange={(event, value) => {
-            if (value === 'new') {
-              openCreateOrganizationDialog(); // Open the organization creation dialog
-            } else {
-              setSelectedEvent({
-                ...selectedEvent,
-                relationshipId: value // Set relationshipId correctly
-              });
+          <Autocomplete
+            disableClearable
+            getOptionLabel={option =>
+              option === 'new'
+                ? 'Create a New Organization'
+                : (relationshipMap[option]?.organizationId &&
+                    organizationMap[relationshipMap[option].organizationId]
+                      ?.name) ||
+                  ''
             }
-          }}
-          renderInput={(params) => <TextField {...params} className="fullWidth" label="Organization" />}
-          value={selectedEvent?.relationshipId || ''} // Bind to the correct relationship ID
-        />
+            options={[
+              'new',
+              ...relationships.filter(rel => !rel.endDate).map(rel => rel.id)
+            ]} // Use relationship IDs
+            onChange={(event, value) => {
+              if (value === 'new') {
+                openCreateOrganizationDialog(); // Open the organization creation dialog
+              } else {
+                setSelectedEvent({
+                  ...selectedEvent,
+                  relationshipId: value // Set relationshipId correctly
+                });
+              }
+            }}
+            renderInput={params => (
+              <TextField
+                {...params}
+                className="fullWidth"
+                label="Organization"
+              />
+            )}
+            value={selectedEvent?.relationshipId || ''} // Bind to the correct relationship ID
+          />
           <DatePickerField
             date={getDate(selectedEvent?.eventDate)}
             label="Date"
-            setDate={(date) => setSelectedEvent({ ...selectedEvent, eventDate: formatDate(date) })}
+            setDate={date =>
+              setSelectedEvent({
+                ...selectedEvent,
+                eventDate: formatDate(date)
+              })
+            }
           />
           <TextField
             label="Hours You Volunteered"
-            onChange={(e) => {
+            onChange={e => {
               const hours = Number(e.target.value);
               if (hours >= 0) setSelectedEvent({ ...selectedEvent, hours });
             }}
@@ -290,13 +325,17 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           />
           <TextField
             label="Notes"
-            onChange={(e) => setSelectedEvent({ ...selectedEvent, notes: e.target.value })}
+            onChange={e =>
+              setSelectedEvent({ ...selectedEvent, notes: e.target.value })
+            }
             value={selectedEvent?.notes ?? ''}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelEvent}>Cancel</Button>
-          <Button disabled={!validEvent()} onClick={saveEvent}>Save</Button>
+          <Button disabled={!validEvent()} onClick={saveEvent}>
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     ),
@@ -304,22 +343,26 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
   );
 
   const eventRow = useCallback(
-    (event) => {
+    event => {
       const relationship = relationshipMap[event.relationshipId];
-  
+
       if (!relationship) {
-        console.error(`Relationship ${event.relationshipId} not found in relationshipMap.`);
+        console.error(
+          `Relationship ${event.relationshipId} not found in relationshipMap.`
+        );
         return null;
       }
-  
+
       const member = profileMap[relationship?.memberId];
       const org = organizationMap[relationship?.organizationId];
-  
+
       if (!member || !org) {
-        console.error(`Member or Organization not found for relationship ${event.relationshipId}`);
+        console.error(
+          `Member or Organization not found for relationship ${event.relationshipId}`
+        );
         return null;
       }
-  
+
       return (
         <tr key={event.id}>
           <td>{onlyMe ? org.name : `${member.name} - ${org.name}`}</td>
@@ -328,19 +371,26 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           <td>{event.notes}</td>
           <td>
             {(member.id == currentUser.id ||
-              selectHasVolunteeringEventsPermission(state)) &&
-            <>
-            <Tooltip title="Edit">
-              <IconButton aria-label="Edit" onClick={() => editEvent(event)}>
-                <Edit />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton aria-label="Delete" onClick={() => confirmDelete(event)}>
-                <Delete />
-              </IconButton>
-            </Tooltip>
-            </>}
+              selectHasVolunteeringEventsPermission(state)) && (
+              <>
+                <Tooltip title="Edit">
+                  <IconButton
+                    aria-label="Edit"
+                    onClick={() => editEvent(event)}
+                  >
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton
+                    aria-label="Delete"
+                    onClick={() => confirmDelete(event)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
           </td>
         </tr>
       );
@@ -359,7 +409,11 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           <thead>
             <tr>
               {sortableTableColumns.map(column => (
-                <th key={column} onClick={() => sortTable(column)} style={{ cursor: 'pointer' }}>
+                <th
+                  key={column}
+                  onClick={() => sortTable(column)}
+                  style={{ cursor: 'pointer' }}
+                >
                   {column}
                   {sortIndicator(column)}
                 </th>
@@ -371,13 +425,25 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           </thead>
           <tbody>{events.map(eventRow)}</tbody>
         </table>
-        {(onlyMe || selectHasVolunteeringEventsPermission(state)) &&
-        <IconButton aria-label="Add Volunteer Event" classes={{ root: 'add-button' }} onClick={addEvent}>
-          <AddCircleOutline />
-        </IconButton>}
+        {(onlyMe || selectHasVolunteeringEventsPermission(state)) && (
+          <IconButton
+            aria-label="Add Volunteer Event"
+            classes={{ root: 'add-button' }}
+            onClick={addEvent}
+          >
+            <AddCircleOutline />
+          </IconButton>
+        )}
       </div>
     );
-  }, [events, organizationMap, profileMap, relationshipMap, sortAscending, sortColumn]);
+  }, [
+    events,
+    organizationMap,
+    profileMap,
+    relationshipMap,
+    sortAscending,
+    sortColumn
+  ]);
 
   const getDate = dateString => {
     if (!dateString) return null;
@@ -413,19 +479,19 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
 
   const saveEvent = useCallback(async () => {
     const { id, relationshipId, eventDate, hours, notes } = selectedEvent;
-    
+
     // Check if relationshipId is valid
     if (!relationshipId) {
       console.error('No relationship selected for the event.');
       return;
     }
-  
+
     // Check that all required fields are filled in
     if (!eventDate || hours <= 0) {
-      console.error("Missing required fields: date or hours.");
+      console.error('Missing required fields: date or hours.');
       return;
     }
-  
+
     try {
       // Ensure the relationship exists
       const relationshipCheck = await resolve({
@@ -437,12 +503,12 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
           'Content-Type': 'application/json;charset=UTF-8'
         }
       });
-  
+
       if (relationshipCheck.error || !relationshipCheck.payload) {
         console.error(`Relationship ${relationshipId} doesn't exist.`);
         return;
       }
-  
+
       // Proceed with saving the event
       const res = await resolve({
         method: id ? 'PUT' : 'POST',
@@ -454,12 +520,12 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
         },
         data: { relationshipId, eventDate, hours, notes }
       });
-  
+
       if (res.error) {
         console.error('Error saving event:', res.error);
         return;
       }
-  
+
       // Update event list and close dialog
       const newEvent = res.payload.data;
       if (id) {
@@ -468,7 +534,7 @@ const VolunteerEvents = ({ forceUpdate = () => {}, onlyMe = false }) => {
       } else {
         events.push(newEvent);
       }
-  
+
       sortEvents(events);
       setEvents(events);
       setSelectedEvent(null);

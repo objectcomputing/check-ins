@@ -1,15 +1,15 @@
-import { resolve } from "./api.js";
+import { resolve } from './api.js';
 
-const kudosUrl = "/services/kudos";
+const kudosUrl = '/services/kudos';
 
 export const createKudos = async (kudos, cookie) => {
   return resolve({
-    method: "post",
+    method: 'post',
     url: kudosUrl,
     data: kudos,
-    responseType: "json",
+    responseType: 'json',
     headers: {
-      "X-CSRF-Header": cookie,
+      'X-CSRF-Header': cookie,
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=UTF-8'
     }
@@ -22,8 +22,8 @@ export const getReceivedKudos = async (memberId, cookie) => {
     params: {
       recipientId: memberId
     },
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie, Accept: 'application/json' }
+    responseType: 'json',
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
@@ -33,15 +33,15 @@ export const getSentKudos = async (memberId, cookie) => {
     params: {
       senderId: memberId
     },
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie, Accept: 'application/json' }
+    responseType: 'json',
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
-export const getRecentKudos = async (cookie) => {
+export const getRecentKudos = async cookie => {
   return resolve({
     url: `${kudosUrl}/recent`,
-    responseType: "json",
+    responseType: 'json',
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
@@ -52,42 +52,44 @@ export const getAllKudos = async (cookie, isPending) => {
     params: {
       isPending: isPending
     },
-    responseType: "json",
+    responseType: 'json',
     headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };
 
 export const updateKudos = async (kudos, cookie) => {
   return resolve({
-    method: "put",
+    method: 'put',
     url: kudosUrl,
     data: kudos,
-    responseType: "json",
+    responseType: 'json',
     headers: {
-      "X-CSRF-Header": cookie,
+      'X-CSRF-Header': cookie,
       Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'}
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
 export const approveKudos = async (kudos, cookie) => {
   return resolve({
-    method: "put",
+    method: 'put',
     url: `${kudosUrl}/approve`,
     data: kudos,
-    responseType: "json",
+    responseType: 'json',
     headers: {
-      "X-CSRF-Header": cookie,
+      'X-CSRF-Header': cookie,
       Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'}
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   });
 };
 
 export const deleteKudos = async (kudosId, cookie) => {
   return resolve({
-    method: "delete",
+    method: 'delete',
     url: `${kudosUrl}/${kudosId}`,
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie, Accept: 'application/json' }
+    responseType: 'json',
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
   });
 };

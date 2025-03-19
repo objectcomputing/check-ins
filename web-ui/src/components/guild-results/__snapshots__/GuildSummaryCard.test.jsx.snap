@@ -3,21 +3,22 @@
 exports[`renders correctly 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1g0qwi7-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-4qklib-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
   >
     <div
-      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+      class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
     >
       <div
-        class="MuiCardHeader-content GuildSummaryCard-header css-1qbkelo-MuiCardHeader-content"
+        class="MuiCardHeader-content GuildSummaryCard-header css-1jkp9bu-MuiCardHeader-content"
       >
         <span
-          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title css-1qvr50w-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title css-16xl4zq-MuiTypography-root"
         >
           string
         </span>
         <span
-          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title css-nrdprl-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title css-1ro85z9-MuiTypography-root"
         >
           <div
             aria-label="string"
@@ -30,10 +31,10 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <div
-      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <p
-        class="MuiTypography-root MuiTypography-body1 css-19pemnp-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-po2bup-MuiTypography-root"
       >
         Inactive
       </p>
@@ -48,12 +49,12 @@ exports[`renders correctly 1`] = `
       None Assigned
     </div>
     <div
-      class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+      class="MuiCardActions-root MuiCardActions-spacing css-1q4nm6f-MuiCardActions-root"
     />
     <svg
       aria-hidden="true"
       aria-label="icon meaning"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1li5fkl-MuiSvgIcon-root"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hfg5b4-MuiSvgIcon-root"
       data-mui-internal-clone-element="true"
       data-testid="ConstructionIcon"
       focusable="false"
@@ -70,21 +71,22 @@ exports[`renders correctly 1`] = `
 exports[`renders correctly for ADMIN 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1g0qwi7-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-4qklib-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
   >
     <div
-      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+      class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
     >
       <div
-        class="MuiCardHeader-content GuildSummaryCard-header css-1qbkelo-MuiCardHeader-content"
+        class="MuiCardHeader-content GuildSummaryCard-header css-1jkp9bu-MuiCardHeader-content"
       >
         <span
-          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title css-1qvr50w-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title css-16xl4zq-MuiTypography-root"
         >
           string
         </span>
         <span
-          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title css-nrdprl-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title css-1ro85z9-MuiTypography-root"
         >
           <div
             aria-label="string"
@@ -97,10 +99,10 @@ exports[`renders correctly for ADMIN 1`] = `
       </div>
     </div>
     <div
-      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <p
-        class="MuiTypography-root MuiTypography-body1 css-19pemnp-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-po2bup-MuiTypography-root"
       >
         Inactive
       </p>
@@ -115,23 +117,20 @@ exports[`renders correctly for ADMIN 1`] = `
       None Assigned
     </div>
     <div
-      class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+      class="MuiCardActions-root MuiCardActions-spacing css-1q4nm6f-MuiCardActions-root"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1uent87-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >
         Edit Guild
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
       </button>
     </div>
     <svg
       aria-hidden="true"
       aria-label="icon meaning"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1li5fkl-MuiSvgIcon-root"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hfg5b4-MuiSvgIcon-root"
       data-mui-internal-clone-element="true"
       data-testid="ConstructionIcon"
       focusable="false"
@@ -148,21 +147,22 @@ exports[`renders correctly for ADMIN 1`] = `
 exports[`renders correctly for guild lead 1`] = `
 <div>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-1g0qwi7-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root GuildSummaryCard-card css-4qklib-MuiPaper-root-MuiCard-root"
+    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
   >
     <div
-      class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+      class="MuiCardHeader-root css-149tc0y-MuiCardHeader-root"
     >
       <div
-        class="MuiCardHeader-content GuildSummaryCard-header css-1qbkelo-MuiCardHeader-content"
+        class="MuiCardHeader-content GuildSummaryCard-header css-1jkp9bu-MuiCardHeader-content"
       >
         <span
-          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title css-1qvr50w-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title GuildSummaryCard-title css-16xl4zq-MuiTypography-root"
         >
           stuff
         </span>
         <span
-          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title css-nrdprl-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 MuiCardHeader-subheader GuildSummaryCard-title css-1ro85z9-MuiTypography-root"
         >
           <div
             aria-label=""
@@ -173,7 +173,7 @@ exports[`renders correctly for guild lead 1`] = `
       </div>
     </div>
     <div
-      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <strong>
         Guild Leads: 
@@ -190,23 +190,20 @@ exports[`renders correctly for guild lead 1`] = `
       </strong>
     </div>
     <div
-      class="MuiCardActions-root MuiCardActions-spacing css-dnrpxu-MuiCardActions-root"
+      class="MuiCardActions-root MuiCardActions-spacing css-1q4nm6f-MuiCardActions-root"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1e6y48t-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1uent87-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >
         Edit Guild
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
       </button>
     </div>
     <svg
       aria-hidden="true"
       aria-label="icon meaning"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1li5fkl-MuiSvgIcon-root"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hfg5b4-MuiSvgIcon-root"
       data-mui-internal-clone-element="true"
       data-testid="ConstructionIcon"
       focusable="false"

@@ -16,7 +16,7 @@ import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 import {
   selectCsrfToken,
   selectHasBirthdayReportPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 import { useQueryParameters } from '../helpers/query-parameters';
 
@@ -62,16 +62,18 @@ const BirthdayReportPage = () => {
   const handleSearch = async monthsToSearch => {
     setLoading(true);
     try {
-      const birthdayResults = await getBirthdays(noBirthday ? null :
-                                                   monthsToSearch, csrf);
+      const birthdayResults = await getBirthdays(
+        noBirthday ? null : monthsToSearch,
+        csrf
+      );
       setSearchBirthdayResults(sortBirthdays(birthdayResults));
       setHasSearched(true);
-    } catch(e) {
+    } catch (e) {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: 'error',
-          toast: e,
+          toast: e
         }
       });
     }
@@ -139,11 +141,11 @@ const BirthdayReportPage = () => {
         </Button>
       </div>
       <div>
-        {
-          loading ?
+        {loading ? (
           Array.from({ length: 10 }).map((_, index) => (
-                        <SkeletonLoader key={index} type="feedback_requests" />
-                     )) :
+            <SkeletonLoader key={index} type="feedback_requests" />
+          ))
+        ) : (
           <div className="search-results">
             <SearchBirthdayAnniversaryResults
               hasSearched={hasSearched}
@@ -151,7 +153,7 @@ const BirthdayReportPage = () => {
               results={searchBirthdayResults}
             />
           </div>
-        }
+        )}
       </div>
     </div>
   ) : (

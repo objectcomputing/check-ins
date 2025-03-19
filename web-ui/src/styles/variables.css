@@ -25,7 +25,7 @@
   --primary: var(--oci-dark-blue);
   --primary-light: color-mix(in oklab, var(--oci-dark-blue), var(--white) 10%);
   --primary-dark: #1a2e4f;
-  --secondary: var(--oci-orange) --secondary-main: var(--oci-light-blue);
+  --secondary: var(--oci-orange);
   --primary-text: var(--black);
   --primary-link-light: var(--primary-light);
   --primary-link-light-hover: #6084d1;
@@ -39,36 +39,39 @@
   --action-disabled: color-mix(in oklab, var(--black), var(--white) 5%);
   --muted: color-mix(in oklab, var(--black), var(--white) 47%);
 
-  --checkins-palette-action-disabledOpacity: 0.58;
+  --mui-palette-action-disabledOpacity: 0.58;
 
   /* MUI Prefixes */
-  --checkins-palette-primary-main: var(--primary-light);
-  --checkins-palette-primary-mainChannel: 118, 200, 212;
-  --checkins-palette-primary-link: var(--primary-light);
-  --checkins-palette-primary-link-hover: var(--primary-link-light-hover);
-  --checkins-palette-primary-text: var(--primary-text);
-  --checkins-palette-primary-contrastText: var(--white);
-  --checkins-palette-primary-menuItem: #111;
-  --checkins-palette-secondary-main: var(--secondary);
-  --checkins-palette-alternate-main: rebeccapurple;
-  --checkins-palette-secondary-mainChannel: 240 184 125;
-  --checkins-palette-background-paper: var(--white);
-  --checkins-palette-background-default: #f5f5f5;
-  --checkins-palette-alternate-row-overlay: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05));
-  --checkins-palette-content-color: var(--checkins-palette-primary-menuItem);
-  --checkins-palette-gray-light: var(--gray-light);
-  --checkins-palette-gray-dark: var(--gray-dark);
-  --checkins-palette-gray: var(--gray);
-  --checkins-palette-red: var(--red);
-  --checkins-palette-yellow: var(--yellow);
-  --checkins-palette-green: var(--green);
-  --checkins-palette-action: var(--action);
-  --checkins-palette-action-disabled: var(--action-disabled);
-  --checkins-palette-action-yellow: lightyellow;
-  --checkins-palette-action-green: lightgreen;
-  --checkins-palette-action-red: darkred;
+  --mui-palette-primary-main: var(--primary-light);
+  --mui-palette-primary-mainChannel: 118, 200, 212;
+  --mui-palette-primary-link: var(--primary-light);
+  --mui-palette-primary-link-hover: var(--primary-link-light-hover);
+  --mui-palette-primary-text: var(--primary-text);
+  --mui-palette-primary-contrastText: var(--white);
+  --mui-palette-primary-menuItem: #111;
+  --mui-palette-secondary-main: var(--secondary);
+  --mui-palette-alternate-main: rebeccapurple;
+  --mui-palette-secondary-mainChannel: 240 184 125;
+  --mui-palette-background-paper: var(--white);
+  --mui-palette-background-default: #f5f5f5;
+  --mui-palette-alternate-row-overlay: linear-gradient(
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.05)
+  );
+  --mui-palette-content-color: var(--mui-palette-primary-menuItem);
+  --mui-palette-gray-light: var(--gray-light);
+  --mui-palette-gray-dark: var(--gray-dark);
+  --mui-palette-gray: var(--gray);
+  --mui-palette-red: var(--red);
+  --mui-palette-yellow: var(--yellow);
+  --mui-palette-green: var(--green);
+  --mui-palette-action: var(--action);
+  --mui-palette-action-disabled: var(--action-disabled);
+  --mui-palette-action-yellow: lightyellow;
+  --mui-palette-action-green: lightgreen;
+  --mui-palette-action-red: darkred;
 
-  &[data-mui-color-scheme='dark'] {
+  &[data-dark] {
     --primary-text: color-mix(in oklab, var(--white), var(--black) 10%);
     --action: var(--white);
     --action-disabled: color-mix(in oklab, var(--white), var(--black) 30%);
@@ -80,20 +83,23 @@
       var(--oci-dark-blue),
       var(--white) 30%
     );
-    --checkins-palette-primary-main: var(--primary-link-dark);
-    --checkins-palette-primary-light: var(--primary-light);
-    --checkins-palette-primary-link: var(--primary-link-dark);
-    --checkins-palette-primary-link-hover: var(--primary-link-dark-hover);
-    --checkins-palette-primary-menuItem: var(--primary-link-light);
-    --checkins-palette-AppBar-darkBg: var(--checkins-palette-primary-main);
-    --checkins-palette-background-paper: #121212;
-    --checkins-palette-background-default: #121212;
-    --checkins-palette-alternate-row-overlay: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05));
-    --checkins-palette-content-color: var(--white);
-    --checkins-palette-gray-light: #e5e5e526;
-    --checkins-palette-gray-dark: var(--gray);
-    --checkins-palette-action-yellow: var(--orange);
-    --checkins-palette-action-green: var(--green);
+    --mui-palette-primary-main: var(--primary-link-dark);
+    --mui-palette-primary-light: var(--primary-light);
+    --mui-palette-primary-link: var(--primary-link-dark);
+    --mui-palette-primary-link-hover: var(--primary-link-dark-hover);
+    --mui-palette-primary-menuItem: var(--primary-link-light);
+    --mui-palette-AppBar-darkBg: var(--mui-palette-primary-main);
+    --mui-palette-background-paper: #121212;
+    --mui-palette-background-default: #121212;
+    --mui-palette-alternate-row-overlay: linear-gradient(
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.05)
+    );
+    --mui-palette-content-color: var(--white);
+    --mui-palette-gray-light: #e5e5e526;
+    --mui-palette-gray-dark: var(--gray);
+    --mui-palette-action-yellow: var(--orange);
+    --mui-palette-action-green: var(--green);
   }
 
   /* Sizing */

@@ -23,7 +23,7 @@ export const putOption = async (option, cookie) => {
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=UTF-8'
     },
-    data: option,
+    data: option
   });
 };
 
@@ -36,6 +36,6 @@ export const postOption = async (option, cookie) => {
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=UTF-8'
     },
-    data: option,
+    data: option
   });
 };

@@ -88,7 +88,7 @@ const TeamResults = () => {
                   const { checked } = event.target;
                   setActiveTeams(checked);
                 }}
-             />
+              />
             }
             label="Active Teams Only"
           />
@@ -99,20 +99,19 @@ const TeamResults = () => {
           ? Array.from({ length: 20 }).map((_, index) => (
               <SkeletonLoader key={index} type="team" />
             ))
-          : teams.filter((team) => !activeTeams ||
-                                   (activeTeams && team.active))
-                 .map((team, index) => {
-              return (
-                <TeamSummaryCard
-                  key={`team-summary-${team.id}`}
-                  index={index}
-                  team={team}
-                  onTeamSelect={setSelectedTeamId}
-                  selectedTeamId={selectedTeamId}
-                />
-              );
-            })
-        }
+          : teams
+              .filter(team => !activeTeams || (activeTeams && team.active))
+              .map((team, index) => {
+                return (
+                  <TeamSummaryCard
+                    key={`team-summary-${team.id}`}
+                    index={index}
+                    team={team}
+                    onTeamSelect={setSelectedTeamId}
+                    selectedTeamId={selectedTeamId}
+                  />
+                );
+              })}
       </div>
     </Root>
   );

@@ -16,7 +16,7 @@ import { createLabelId } from '../../../helpers/strings.js';
 const SettingsBoolean = ({ name, description, value, handleChange }) => {
   const labelId = createLabelId(name);
   const checked =
-    typeof(value) === 'boolean' ? value : value.toLowerCase() == "true";
+    typeof value === 'boolean' ? value : value.toLowerCase() == 'true';
   return (
     <div className="settings-type">
       <label htmlFor={labelId}>

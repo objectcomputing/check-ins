@@ -1,5 +1,12 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField
+} from '@mui/material';
 import PropTypes from 'prop-types';
 
 const OrganizationDialog = ({
@@ -19,7 +26,9 @@ const OrganizationDialog = ({
           fullWidth
           margin="dense"
           value={organization.name}
-          onChange={e => setOrganization({ ...organization, name: e.target.value })}
+          onChange={e =>
+            setOrganization({ ...organization, name: e.target.value })
+          }
           required
         />
         <TextField
@@ -27,7 +36,9 @@ const OrganizationDialog = ({
           fullWidth
           margin="dense"
           value={organization.description}
-          onChange={e => setOrganization({ ...organization, description: e.target.value })}
+          onChange={e =>
+            setOrganization({ ...organization, description: e.target.value })
+          }
           required
         />
         <TextField
@@ -35,12 +46,19 @@ const OrganizationDialog = ({
           fullWidth
           margin="dense"
           value={organization.website}
-          onChange={e => setOrganization({ ...organization, website: e.target.value })}
+          onChange={e =>
+            setOrganization({ ...organization, website: e.target.value })
+          }
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onSave} disabled={!organization.name || !organization.description}>Save</Button>
+        <Button
+          onClick={onSave}
+          disabled={!organization.name || !organization.description}
+        >
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );

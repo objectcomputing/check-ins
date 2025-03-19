@@ -113,11 +113,7 @@ const FeedbackSubmitPage = () => {
       });
     }
 
-    if (
-      csrf &&
-      currentUserId &&
-      selfRequestQuery
-    ) {
+    if (csrf && currentUserId && selfRequestQuery) {
       getFeedbackRequest(selfRequestQuery, csrf).then(request => {
         if (request) {
           setSelfReviewRequest(request);
@@ -145,8 +141,11 @@ const FeedbackSubmitPage = () => {
 
       // If we know the current user and it's not the recipient or someone in the person having feedback given's
       // management heirarchy, then we should issue an error and send them home...
-      if (currentUserId && feedbackRequest?.recipientId != currentUserId &&
-          !selectIsSubordinateOfCurrentUser(feedbackRequest?.requesteeId)) {
+      if (
+        currentUserId &&
+        feedbackRequest?.recipientId != currentUserId &&
+        !selectIsSubordinateOfCurrentUser(feedbackRequest?.requesteeId)
+      ) {
         // The current user is not the recipients's manager, we need to leave.
         history.push('/');
         window.snackDispatch({
@@ -171,7 +170,7 @@ const FeedbackSubmitPage = () => {
   return (
     <Root data-testid={requestQuery} className="feedback-submit-page">
       {requestCanceled ? (
-        <Typography className={classes.announcement} variant="h3">
+        <Typography data-testid={requestQuery+"-canceled"} className={classes.announcement} variant="h3">
           This feedback request has been canceled.
         </Typography>
       ) : tabs || requestSubmitted || selfReviewRequest ? (

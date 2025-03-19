@@ -44,7 +44,7 @@ import {
   selectSubordinates,
   selectSupervisors,
   selectTeamMembersBySupervisorId,
-  selectActiveTeams,
+  selectActiveTeams
 } from '../../../context/selectors';
 import { UPDATE_TOAST } from '../../../context/actions';
 import { getMembersByTeam } from '../../../api/team';

@@ -19,13 +19,20 @@ import {
 } from '@mui/material';
 
 import { useQueryParameters } from '../../../helpers/query-parameters';
-import { ADD_REVIEW_PERIOD, UPDATE_REVIEW_PERIODS, UPDATE_TOAST } from '../../../context/actions';
+import {
+  ADD_REVIEW_PERIOD,
+  UPDATE_REVIEW_PERIODS,
+  UPDATE_TOAST
+} from '../../../context/actions';
 
 import { styled } from '@mui/material/styles';
 
 import { findSelfReviewRequestsByPeriodAndTeamMember } from '../../../api/feedback.js';
 import { getAllFeedbackTemplates } from '../../../api/feedbacktemplate.js';
-import { createReviewPeriod, getReviewPeriods } from '../../../api/reviewperiods.js';
+import {
+  createReviewPeriod,
+  getReviewPeriods
+} from '../../../api/reviewperiods.js';
 import { AppContext } from '../../../context/AppContext';
 import {
   selectCsrfToken,
@@ -99,7 +106,7 @@ const ReviewStatus = {
 };
 
 // mode will be either "self" or undefined.
-const selfReviewMode = "self";
+const selfReviewMode = 'self';
 
 const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -124,10 +131,14 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
   const csrf = selectCsrfToken(state);
 
   useEffect(() => {
-    setPeriods(selectReviewPeriods(state)
-                 .filter((r) => mode !== selfReviewMode ||
-                                r.reviewStatus === ReviewStatus.OPEN ||
-                                r.reviewStatus === ReviewStatus.CLOSED));
+    setPeriods(
+      selectReviewPeriods(state).filter(
+        r =>
+          mode !== selfReviewMode ||
+          r.reviewStatus === ReviewStatus.OPEN ||
+          r.reviewStatus === ReviewStatus.CLOSED
+      )
+    );
   }, [state, mode]);
 
   useQueryParameters([
@@ -290,16 +301,18 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
           }
         })
       ).then(() => {
-               // Now that we have the reviews loaded, filter out closed
-               // self-review periods in which the current user is not involved.
-               if (mode == selfReviewMode) {
-                 setPeriods(periods.filter((r) =>
-                              r.reviewStatus !== ReviewStatus.CLOSED ||
-                              !!reviews[r.id]));
-               }
-               setSelfReviews(reviews);
-               setLoading(false);
-             });
+        // Now that we have the reviews loaded, filter out closed
+        // self-review periods in which the current user is not involved.
+        if (mode == selfReviewMode) {
+          setPeriods(
+            periods.filter(
+              r => r.reviewStatus !== ReviewStatus.CLOSED || !!reviews[r.id]
+            )
+          );
+        }
+        setSelfReviews(reviews);
+        setLoading(false);
+      });
     };
     if (
       csrf &&
@@ -310,7 +323,7 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     ) {
       getSelfReviews();
     }
-  }, [csrf, periods, currentUserId, selfReviews ]);
+  }, [csrf, periods, currentUserId, selfReviews]);
 
   const onPeriodClick = useCallback(
     id => {
@@ -392,16 +405,16 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
         ) : periods.length > 0 ? (
           periods
             .sort((a, b) => {
-              const aName = (a.name || '');
+              const aName = a.name || '';
               return a.reviewStatus === b.reviewStatus
                 ? aName.localeCompare(b.name)
                 : a.reviewStatus === ReviewStatus.OPEN
                   ? -1
-                  : (b.reviewStatus === ReviewStatus.OPEN
+                  : b.reviewStatus === ReviewStatus.OPEN
                     ? 1
-                    : aName.localeCompare(b.name));
+                    : aName.localeCompare(b.name);
             })
-            .map((period) => (
+            .map(period => (
               <div key={`review-period-card-${period.id}`}>
                 <ReviewPeriodCard
                   mode={mode}
@@ -499,8 +512,6 @@ const ReviewPeriods = ({ onPeriodSelected, mode }) => {
     </Root>
   );
 };
-
 ReviewPeriods.propTypes = propTypes;
 ReviewPeriods.displayName = displayName;
-
 export default ReviewPeriods;

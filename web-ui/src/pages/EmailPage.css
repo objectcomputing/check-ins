@@ -23,12 +23,19 @@
   margin: 0.5rem 3rem;
 }
 
+.email-page .email-format-container .email-format-button-selected {
+  color: #313131;
+  background-color: rgba(var(--mui-palette-primary-mainChannel) / var(--mui-palette-action-selectedOpacity));;
+  border: 2px solid green;
+  text-align: center;
+  margin: 0.5rem 3rem;
+}
+
 .email-page
   .email-format-container
-  .email-format-button
   .email-format-button-content {
   width: 250px;
-  color: var(--checkins-palette-primary-text);
+  color: var(--mui-palette-primary-text);
   height: 250px;
   padding: 1rem;
   display: flex;

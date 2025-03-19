@@ -28,7 +28,7 @@ import {
   selectCanEditAllOrganizationMembers,
   selectHasUploadHoursPermission,
   selectHasPermissionAssignmentPermission,
-  selectCurrentUser,
+  selectCurrentUser
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 
@@ -138,18 +138,38 @@ function Menu({ children }) {
   };
 
   const adminLinks = [
-    ['/admin/manage-kudos', 'Manage Kudos', () => selectHasAdministerKudosPermission(state)],
-    ['/admin/permissions', 'Permissions', () => selectHasPermissionAssignmentPermission(state)],
+    [
+      '/admin/manage-kudos',
+      'Manage Kudos',
+      () => selectHasAdministerKudosPermission(state)
+    ],
+    [
+      '/admin/permissions',
+      'Permissions',
+      () => selectHasPermissionAssignmentPermission(state)
+    ],
     ['/admin/roles', 'Roles', () => selectCanEditMemberRolesPermission(state)],
-    ['/admin/users', 'Users', () => selectHasCreateMembersPermission(state) ||
-                                    selectHasDeleteMembersPermission(state) ||
-                                    selectCanEditAllOrganizationMembers(state) ||
-                                    selectHasImpersonateMembersPermission(state)
+    [
+      '/admin/users',
+      'Users',
+      () =>
+        selectHasCreateMembersPermission(state) ||
+        selectHasDeleteMembersPermission(state) ||
+        selectCanEditAllOrganizationMembers(state) ||
+        selectHasImpersonateMembersPermission(state)
     ],
     ['/admin/email', 'Send Email', () => selectHasSendEmailPermission(state)],
     ['/admin/edit-skills', 'Skills', () => selectCanEditSkills(state)],
-    ['/admin/settings', 'Settings', () => selectHasViewSettingsPermission(state)],
-    [openHoursUpload, 'Upload Hours', () => selectHasUploadHoursPermission(state)],
+    [
+      '/admin/settings',
+      'Settings',
+      () => selectHasViewSettingsPermission(state)
+    ],
+    [
+      openHoursUpload,
+      'Upload Hours',
+      () => selectHasUploadHoursPermission(state)
+    ]
   ];
 
   const getReportLinks = () => {
@@ -187,8 +207,10 @@ function Menu({ children }) {
       links.push(['/merit-reports', 'Merit Report']);
     }
 
-    if (selectHasVolunteeringEventsPermission(state) ||
-        selectHasVolunteeringRelationshipsPermission(state)) {
+    if (
+      selectHasVolunteeringEventsPermission(state) ||
+      selectHasVolunteeringRelationshipsPermission(state)
+    ) {
       links.push(['/volunteer-reports', 'Volunteering']);
     }
 
@@ -304,7 +326,7 @@ function Menu({ children }) {
   };
 
   const createLinkJsx = (path, name, isSubLink) => {
-    if (typeof(path) === "function") {
+    if (typeof path === 'function') {
       return (
         <ListItemButton
           key={`$name$path`}
@@ -347,8 +369,8 @@ function Menu({ children }) {
     setSelectedFile(e.target.files[0]);
   };
 
-  const hasAtLeastOnePermission = (listArr) => {
-    for(let listItem of listArr) {
+  const hasAtLeastOnePermission = listArr => {
+    for (let listItem of listArr) {
       const [path, name, permFunc] = listItem;
       if (!permFunc || permFunc()) {
         return true;
@@ -358,12 +380,14 @@ function Menu({ children }) {
   };
 
   const createListJsx = (listArr, checkPermissions) => {
-    return listArr.map(listItem => {
-      const [path, name, permFunc] = listItem;
-      if (!checkPermissions || !permFunc || permFunc()) {
-        return createLinkJsx(path, name, true);
-      }
-    }).filter((e) => !!e);
+    return listArr
+      .map(listItem => {
+        const [path, name, permFunc] = listItem;
+        if (!checkPermissions || !permFunc || permFunc()) {
+          return createLinkJsx(path, name, true);
+        }
+      })
+      .filter(e => !!e);
   };
 
   const drawer = (

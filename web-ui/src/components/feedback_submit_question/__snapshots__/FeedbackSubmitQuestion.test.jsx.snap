@@ -6,88 +6,88 @@ exports[`renders the feedback submit question as a slider 1`] = `
     class="feedback-submit-question"
   >
     <p
-      class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
       style="padding-bottom: 1rem;"
     >
       Do you think the project is going well so far?
     </p>
     <span
-      class="MuiSlider-root MuiSlider-marked MuiSlider-colorPrimary MuiSlider-sizeMedium feedback-answer-slider css-ltlhnc-MuiSlider-root"
+      class="MuiSlider-root MuiSlider-marked MuiSlider-colorPrimary MuiSlider-sizeMedium feedback-answer-slider css-1e45yg4-MuiSlider-root"
     >
       <span
-        class="MuiSlider-rail css-7o8aqz-MuiSlider-rail"
+        class="MuiSlider-rail css-r64h58-MuiSlider-rail"
       />
       <span
-        class="MuiSlider-track css-ttgsjq-MuiSlider-track"
+        class="MuiSlider-track css-xvk2i-MuiSlider-track"
         style="left: 0%; width: 50%;"
       />
       <span
-        class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+        class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
         data-index="0"
         style="left: 0%;"
       />
       <span
         aria-hidden="true"
-        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-1ucwjgd-MuiSlider-markLabel"
+        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-swtyag-MuiSlider-markLabel"
         data-index="0"
         style="left: 0%;"
       >
         Strongly Disagree
       </span>
       <span
-        class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+        class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
         data-index="1"
         style="left: 25%;"
       />
       <span
         aria-hidden="true"
-        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-1ucwjgd-MuiSlider-markLabel"
+        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-swtyag-MuiSlider-markLabel"
         data-index="1"
         style="left: 25%;"
       >
         Disagree
       </span>
       <span
-        class="MuiSlider-mark MuiSlider-markActive css-z5sdnj-MuiSlider-mark"
+        class="MuiSlider-mark MuiSlider-markActive css-16kozi8-MuiSlider-mark"
         data-index="2"
         style="left: 50%;"
       />
       <span
         aria-hidden="true"
-        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-1ucwjgd-MuiSlider-markLabel"
+        class="MuiSlider-markLabel MuiSlider-markLabel MuiSlider-markLabelActive css-swtyag-MuiSlider-markLabel"
         data-index="2"
         style="left: 50%;"
       >
         Neither Agree nor Disagree
       </span>
       <span
-        class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+        class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
         data-index="3"
         style="left: 75%;"
       />
       <span
         aria-hidden="true"
-        class="MuiSlider-markLabel MuiSlider-markLabel css-1bvr8oc-MuiSlider-markLabel"
+        class="MuiSlider-markLabel MuiSlider-markLabel css-1qb795b-MuiSlider-markLabel"
         data-index="3"
         style="left: 75%;"
       >
         Agree
       </span>
       <span
-        class="MuiSlider-mark css-hzp7sc-MuiSlider-mark"
+        class="MuiSlider-mark css-lq5hqx-MuiSlider-mark"
         data-index="4"
         style="left: 100%;"
       />
       <span
         aria-hidden="true"
-        class="MuiSlider-markLabel MuiSlider-markLabel css-1bvr8oc-MuiSlider-markLabel"
+        class="MuiSlider-markLabel MuiSlider-markLabel css-1qb795b-MuiSlider-markLabel"
         data-index="4"
         style="left: 100%;"
       >
         Strongly Agree
       </span>
       <span
-        class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-cp2j25-MuiSlider-thumb"
+        class="MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-1xcmt9q-MuiSlider-thumb"
         data-index="0"
         style="left: 50%;"
       >
@@ -116,34 +116,34 @@ exports[`renders the feedback submit question as radio buttons 1`] = `
     class="feedback-submit-question"
   >
     <p
-      class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
       style="padding-bottom: 1rem;"
     >
       Do you think the project is going well so far?
     </p>
     <div
-      class="MuiFormGroup-root MuiFormGroup-row MuiRadioGroup-root MuiRadioGroup-row feedback-answer-radio css-qfz70r-MuiFormGroup-root"
+      class="MuiFormGroup-root MuiFormGroup-row MuiRadioGroup-root MuiRadioGroup-row feedback-answer-radio css-cis11t-MuiFormGroup-root"
       role="radiogroup"
     >
       <label
-        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
       >
         <span
-          class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-checked MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+          class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-checked MuiRadio-root MuiRadio-colorPrimary css-13lvt8g-MuiButtonBase-root-MuiRadio-root"
         >
           <input
             checked=""
-            class="PrivateSwitchBase-input css-1m9pwf3"
+            class="PrivateSwitchBase-input css-j8yymo"
             name=":r1:"
             type="radio"
             value="Yes"
           />
           <span
-            class="css-hyxlzm"
+            class="css-1qiat4j"
           >
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1rr0-MuiSvgIcon-root"
               data-testid="RadioButtonUncheckedIcon"
               focusable="false"
               viewBox="0 0 24 24"
@@ -154,7 +154,7 @@ exports[`renders the feedback submit question as radio buttons 1`] = `
             </svg>
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-11zohuh-MuiSvgIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-z8nmqa-MuiSvgIcon-root"
               data-testid="RadioButtonCheckedIcon"
               focusable="false"
               viewBox="0 0 24 24"
@@ -164,34 +164,31 @@ exports[`renders the feedback submit question as radio buttons 1`] = `
               />
             </svg>
           </span>
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </span>
         <span
-          class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-rizt0-MuiTypography-root"
         >
           Yes
         </span>
       </label>
       <label
-        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
       >
         <span
-          class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+          class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary MuiRadio-root MuiRadio-colorPrimary css-13lvt8g-MuiButtonBase-root-MuiRadio-root"
         >
           <input
-            class="PrivateSwitchBase-input css-1m9pwf3"
+            class="PrivateSwitchBase-input css-j8yymo"
             name=":r1:"
             type="radio"
             value="No"
           />
           <span
-            class="css-hyxlzm"
+            class="css-1qiat4j"
           >
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1bz1rr0-MuiSvgIcon-root"
               data-testid="RadioButtonUncheckedIcon"
               focusable="false"
               viewBox="0 0 24 24"
@@ -202,7 +199,7 @@ exports[`renders the feedback submit question as radio buttons 1`] = `
             </svg>
             <svg
               aria-hidden="true"
-              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hhw7if-MuiSvgIcon-root"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-o8rdeq-MuiSvgIcon-root"
               data-testid="RadioButtonCheckedIcon"
               focusable="false"
               viewBox="0 0 24 24"
@@ -212,12 +209,9 @@ exports[`renders the feedback submit question as radio buttons 1`] = `
               />
             </svg>
           </span>
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
         </span>
         <span
-          class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-rizt0-MuiTypography-root"
         >
           No
         </span>
@@ -233,20 +227,20 @@ exports[`renders the feedback submit question as text 1`] = `
     class="feedback-submit-question"
   >
     <p
-      class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
       style="padding-bottom: 1rem;"
     >
       How is the project going so far?
     </p>
     <div
-      class="MuiFormControl-root MuiTextField-root fullWidth feedback-answer-text-field css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+      class="MuiFormControl-root MuiTextField-root fullWidth feedback-answer-text-field css-1xp5r68-MuiFormControl-root-MuiTextField-root"
     >
       <div
-        class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root"
+        class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-multiline css-xrmkj5-MuiInputBase-root-MuiOutlinedInput-root"
       >
         <textarea
           aria-invalid="false"
-          class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+          class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input"
           id=":r0:"
           rows="5"
           style="height: 0px; overflow: hidden;"
@@ -255,19 +249,20 @@ exports[`renders the feedback submit question as text 1`] = `
         </textarea>
         <textarea
           aria-hidden="true"
-          class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1sqnrkk-MuiInputBase-input-MuiOutlinedInput-input"
+          class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-w4nesw-MuiInputBase-input-MuiOutlinedInput-input"
           readonly=""
           style="visibility: hidden; position: absolute; overflow: hidden; height: 0px; top: 0px; left: 0px; transform: translateZ(0); padding-top: 0px; padding-bottom: 0px; width: 100%;"
           tabindex="-1"
         />
         <fieldset
           aria-hidden="true"
-          class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+          class="MuiOutlinedInput-notchedOutline css-1ll44ll-MuiOutlinedInput-notchedOutline"
         >
           <legend
-            class="css-ihdtdm"
+            class="css-w4cd9x"
           >
             <span
+              aria-hidden="true"
               class="notranslate"
             >
               ​

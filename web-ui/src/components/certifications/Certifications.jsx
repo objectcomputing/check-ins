@@ -14,7 +14,7 @@ import {
   getCertifications,
   createCertification,
   updateCertification,
-  mergeCertification,
+  mergeCertification
 } from '../../api/certification';
 import { AppContext } from '../../context/AppContext';
 import { selectCsrfToken } from '../../context/selectors';
@@ -103,7 +103,9 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
           setBadgeUrl(foundCert.badgeUrl);
           setSelected(foundCert);
         }}
-        options={certifications.map(cert => cert.name).filter(name => name !== exclude)}
+        options={certifications
+          .map(cert => cert.name)
+          .filter(name => name !== exclude)}
         renderInput={params => {
           return (
             <TextField
@@ -238,10 +240,16 @@ const Certifications = ({ forceUpdate = () => {}, open, onClose }) => {
           Merge {selectedCertification?.name} Certification Into
         </DialogTitle>
         <DialogContent>
-          {certificationSelect('Target Certification',
-                               setSelectedTarget, selectedCertification?.name)}
+          {certificationSelect(
+            'Target Certification',
+            setSelectedTarget,
+            selectedCertification?.name
+          )}
           <div className="row">
-            <Button disabled={!selectedTarget} onClick={mergeSelectedCertification}>
+            <Button
+              disabled={!selectedTarget}
+              onClick={mergeSelectedCertification}
+            >
               Merge
             </Button>
             <Button

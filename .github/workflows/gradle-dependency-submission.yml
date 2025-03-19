@@ -3,7 +3,8 @@ name: Gradle Dependency Submission
 on:
   push:
     branches: [ 'develop', 'master', 'feature-2532/graal' ]
-
+env:
+  HUSKY: 0
 permissions:
   contents: write
 

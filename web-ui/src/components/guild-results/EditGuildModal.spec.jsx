@@ -35,13 +35,13 @@ const testGuild = {
     { id: 125, name: 'Guild Member' },
     { id: 126, name: 'Other Member' }
   ],
-  active: true,
+  active: true
 };
 
 const emptyGuild = {
   name: 'Test Guild',
   description: 'A guild used for testing.',
-  active: true,
+  active: true
 };
 
 const currentUserProfile = {
@@ -62,7 +62,7 @@ const initialState = {
       id: currentUserProfile.id,
       role: ['MEMBER'],
       imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg'
     },
     checkins: [],
     guilds: [testGuild, emptyGuild],

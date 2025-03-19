@@ -3,14 +3,13 @@ import ReceivedRequestsPage from './ReceivedRequestsPage';
 import { AppContextProvider } from '../context/AppContext';
 import { BrowserRouter } from 'react-router-dom';
 
-
 const initialState = {
   state: {
     userProfile: {
       name: 'Mitch Hedberg',
-      role: ['MEMBER'],
-    },
-  },
+      role: ['MEMBER']
+    }
+  }
 };
 
 it('renders correctly', () => {

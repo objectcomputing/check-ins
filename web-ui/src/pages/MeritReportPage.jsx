@@ -10,14 +10,12 @@ import {
   selectCsrfToken,
   selectOrderedMemberFirstName,
   selectHasMeritReportPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 
 import './MeritReportPage.css';
 import MemberSelector from '../components/member_selector/MemberSelector';
 import { useQueryParameters } from '../helpers/query-parameters';
-
-import markdown from 'markdown-builder';
 
 const MeritReportPage = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -78,13 +76,14 @@ const MeritReportPage = () => {
           : null;
       if (data) {
         let periods = data.reduce((result, item) => {
-                         if (item.closeDate) {
-                           result.push({label: item.name + ' - ' +
-                                               formatReviewDate(item.closeDate),
-                                        id: item.id});
-                         }
-                         return result;
-                       }, []);
+          if (item.closeDate) {
+            result.push({
+              label: item.name + ' - ' + formatReviewDate(item.closeDate),
+              id: item.id
+            });
+          }
+          return result;
+        }, []);
         setReviewPeriods(periods);
       }
     };
@@ -93,8 +92,7 @@ const MeritReportPage = () => {
     }
   }, [csrf, dispatch]);
 
-
-  const formatReviewDate = (str) => {
+  const formatReviewDate = str => {
     const date = new Date(Date.parse(str));
     return formatDate(date);
   };
@@ -117,17 +115,20 @@ const MeritReportPage = () => {
     }
 
     const files = [
-      {label: 'comp', file: selectedCompHist },
-      {label: 'curr', file: selectedCurrInfo },
-      {label: 'pos',  file: selectedPosHist  },
+      { label: 'comp', file: selectedCompHist },
+      { label: 'curr', file: selectedCurrInfo },
+      { label: 'pos', file: selectedPosHist }
     ];
 
     let formData = new FormData();
     for (let file of files) {
       formData.append(file.label, file.file);
     }
-    const res = await uploadData("/services/report/data/upload",
-                                 csrf, formData);
+    const res = await uploadData(
+      '/services/report/data/upload',
+      csrf,
+      formData
+    );
     if (res?.error) {
       const error = res?.error?.message;
       dispatch({
@@ -154,21 +155,22 @@ const MeritReportPage = () => {
 
     // Get the list of selected member ids.
     const selected = selectedMembers.reduce((result, item) => {
-                       result.push(item.id);
-                       return result;
-                     }, []);
+      result.push(item.id);
+      return result;
+    }, []);
 
     // Check for required parameters before calling the server.
     if (selected.length == 0) {
-      error = "Please select one or more members.";
+      error = 'Please select one or more members.';
     } else if (!reviewPeriodId || !reviewPeriodId.id) {
-      error = "Please select a review period.";
+      error = 'Please select a review period.';
     }
 
     if (!error) {
-      const res = await initiate("/services/report/data/generate",
-                                 csrf, {memberIds: selected,
-                                        reviewPeriodId: reviewPeriodId.id});
+      const res = await initiate('/services/report/data/generate', csrf, {
+        memberIds: selected,
+        reviewPeriodId: reviewPeriodId.id
+      });
       error = res?.error?.message;
     }
 
@@ -186,8 +188,10 @@ const MeritReportPage = () => {
         type: UPDATE_TOAST,
         payload: {
           severity: 'success',
-          toast: selected.length == 1 ? 'The report has been generated'
-                                      : 'The reports have been generated'
+          toast:
+            selected.length == 1
+              ? 'The report has been generated'
+              : 'The reports have been generated'
         }
       });
     }
@@ -202,8 +206,7 @@ const MeritReportPage = () => {
     formData.append('directory', directory);
     formData.append('name', name);
     formData.append('text', text);
-    let res = await uploadData("/services/files",
-                               csrf, formData);
+    let res = await uploadData('/services/files', csrf, formData);
 
     if (res?.error) {
       let error = res?.error?.message;
@@ -227,18 +230,18 @@ const MeritReportPage = () => {
     }
   };
 
-  const dateFromArray = (parts) => {
-    return (parts ? new Date(parts[0], parts[1] - 1, parts[2]) : null);
+  const dateFromArray = parts => {
+    return parts ? new Date(parts[0], parts[1] - 1, parts[2]) : null;
   };
 
-  const formatDate = (date) => {
+  const formatDate = date => {
     if (date) {
       // Date.toString() returns something like this: Wed Oct 05 2011
       // We will doctor it up to look like an American date.
       let str = date.toString().slice(4, 15);
-      return str.slice(0, 6) + "," + str.slice(6);
+      return str.slice(0, 6) + ',' + str.slice(6);
     } else {
-      return "";
+      return '';
     }
   };
 
@@ -246,7 +249,7 @@ const MeritReportPage = () => {
     setReviewPeriodId(newValue);
   };
 
-  const checkMark = "✓";
+  const checkMark = '✓';
 
   return selectHasMeritReportPermission(state) ? (
     <div className="merit-report-page">
@@ -304,7 +307,7 @@ const MeritReportPage = () => {
         <Autocomplete
           id="reviewPeriodSelect"
           options={reviewPeriods ? reviewPeriods : []}
-          getOptionLabel={(option) => option.label || ""}
+          getOptionLabel={option => option.label || ''}
           value={reviewPeriodId}
           onChange={onReviewPeriodChange}
           renderInput={params => (
@@ -317,8 +320,7 @@ const MeritReportPage = () => {
           )}
         />
       </div>
-      <Button color="primary"
-              onClick={createReportMarkdownDocuments}>
+      <Button color="primary" onClick={createReportMarkdownDocuments}>
         <label htmlFor="download">
           <h3>Generate Report</h3>
         </label>

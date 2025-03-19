@@ -4,18 +4,18 @@ const organizationBaseUrl = '/services/volunteer/organization';
 
 // Create New Organization
 export const createNewOrganization = async (csrf, newOrganization) => {
-    const res = await resolve({
-      method: 'POST',
-      url: organizationBaseUrl,
-      headers: {
-        'X-CSRF-Header': csrf,
-        'Content-Type': 'application/json',
-      },
-      data: newOrganization,
-    });
-  
-    return res;
-  };
+  const res = await resolve({
+    method: 'POST',
+    url: organizationBaseUrl,
+    headers: {
+      'X-CSRF-Header': csrf,
+      'Content-Type': 'application/json'
+    },
+    data: newOrganization
+  });
+
+  return res;
+};
 
 // Save New Organization
 export const saveNewOrganization = async (csrf, newOrganization) => {
@@ -46,4 +46,3 @@ export const saveNewEvent = async (csrf, newEvent) => {
 
   return res;
 };
-

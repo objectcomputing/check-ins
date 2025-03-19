@@ -1,6 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { useContext, useReducer, useState } from 'react';
-import { Box, Tab, Tabs, Typography, Card, CardHeader, CardContent, Avatar } from '@mui/material';
+import {
+  Box,
+  Tab,
+  Tabs,
+  Typography,
+  Card,
+  CardHeader,
+  CardContent,
+  Avatar
+} from '@mui/material';
 
 import { AppContext } from '../../context/AppContext';
 
@@ -61,7 +70,9 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
                 <Avatar sx={{ mr: 1 }}>
                   <HandshakeIcon />
                 </Avatar>
-                <Typography textTransform="none" variant='h5' component='h2'>Volunteer Orgs</Typography>
+                <Typography textTransform="none" variant="h5" component="h2">
+                  Volunteer Orgs
+                </Typography>
               </Box>
             }
             {...a11yProps(0)}
@@ -76,7 +87,9 @@ const VolunteerReportPage = ({ onlyMe = false }) => {
                 <Avatar sx={{ mr: 1 }}>
                   <EventIcon />
                 </Avatar>
-                <Typography textTransform="none" variant='h5' component='h2'>Events</Typography>
+                <Typography textTransform="none" variant="h5" component="h2">
+                  Events
+                </Typography>
               </Box>
             }
             {...a11yProps(1)}

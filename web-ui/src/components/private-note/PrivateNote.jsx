@@ -15,7 +15,7 @@ import {
   selectCanViewPrivateNotesPermission,
   selectCanCreatePrivateNotesPermission,
   selectCanUpdatePrivateNotesPermission,
-  selectCanAdministerCheckinDocuments,
+  selectCanAdministerCheckinDocuments
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import { debounce } from 'lodash/function';
@@ -65,8 +65,10 @@ const PrivateNote = () => {
           if (currentNote) {
             setNote(currentNote);
           } else if (currentUserId === pdlId) {
-            if (!noteRef.current.some(id => id === checkinId) &&
-                selectCanCreatePrivateNotesPermission(state)) {
+            if (
+              !noteRef.current.some(id => id === checkinId) &&
+              selectCanCreatePrivateNotesPermission(state)
+            ) {
               noteRef.current.push(checkinId);
               res = await createPrivateNote(
                 {
@@ -97,7 +99,7 @@ const PrivateNote = () => {
             }
           }
         } catch (e) {
-          console.error("getPrivateNotes: " + e);
+          console.error('getPrivateNotes: ' + e);
         }
         setIsLoading(false);
       }
@@ -160,6 +162,8 @@ const PrivateNote = () => {
               </div>
             </div>
           ) : (
+            <>
+            <div style={{ display: "none" }} data-testid="tiny-mce-checkin-private-notes" />
             <Editor
               apiKey="246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e"
               id="tiny-mce-checkin-private-notes"
@@ -177,17 +181,20 @@ const PrivateNote = () => {
                   'undo redo | blocks | ' +
                   'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
                   'alignright alignjustify | bullist numlist outdent indent | ' +
-                  'removeformat | help'
+                  'removeformat | help',
+                skin: document.querySelector('[data-dark]') ? 'oxide-dark' : 'oxide',
+                content_css: document.querySelector('[data-dark]') ? 'dark' : 'default'
               }}
               tinymceScriptSrc={
                 import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'
               }
             />
-          )}
-        </CardContent>
-      </Card>
-    )
-  );
-};
+            </>
+            )}
+            </CardContent>
+            </Card>
+            )
+            );
+          };
 
-export default PrivateNote;
+          export default PrivateNote;

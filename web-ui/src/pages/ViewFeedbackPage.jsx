@@ -31,7 +31,7 @@ import {
   selectSubordinates,
   selectCanViewFeedbackRequestPermission,
   noPermission,
-  selectCanAdministerFeedbackRequests,
+  selectCanAdministerFeedbackRequests
 } from '../context/selectors';
 import { getFeedbackTemplate } from '../api/feedbacktemplate';
 import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';

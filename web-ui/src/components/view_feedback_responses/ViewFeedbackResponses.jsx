@@ -1,6 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Autocomplete, Avatar, Button, Checkbox, Chip, TextField, Typography, Box } from '@mui/material';
+import {
+  Autocomplete,
+  Avatar,
+  Button,
+  Checkbox,
+  Chip,
+  TextField,
+  Typography,
+  Box
+} from '@mui/material';
 import FeedbackResponseCard from './feedback_response_card/FeedbackResponseCard';
 import { getQuestionsAndAnswers } from '../../api/feedbackanswer';
 import { getFeedbackRequestById } from '../../api/feedback';
@@ -11,7 +20,7 @@ import {
   selectCsrfToken,
   selectProfile,
   selectCanViewFeedbackAnswerPermission,
-  noPermission,
+  noPermission
 } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -72,7 +81,8 @@ const ViewFeedbackResponses = () => {
   const [searchText, setSearchText] = useState('');
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
-  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
+  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] =
+    useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -93,13 +103,14 @@ const ViewFeedbackResponses = () => {
           ...question,
           answers: question.answers.map(answer => ({
             ...answer,
-            answer: isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer),
+            answer: isEmptyOrWhitespace(answer.answer)
+              ? ' ⚠️ No response submitted'
+              : String(answer.answer)
           }))
         }));
 
         sanitizedResponses.sort((a, b) => a.questionNumber - b.questionNumber);
         setQuestionsAndAnswers(sanitizedResponses);
-
       } else {
         window.snackDispatch({
           type: UPDATE_TOAST,
@@ -163,7 +174,9 @@ const ViewFeedbackResponses = () => {
       );
 
       if (filteredAnswers.length === 0) {
-        filteredAnswers = [{ answer: 'No input due to recipient filter', responder: null }];
+        filteredAnswers = [
+          { answer: 'No input due to recipient filter', responder: null }
+        ];
       }
 
       if (searchText.trim()) {
@@ -190,14 +203,11 @@ const ViewFeedbackResponses = () => {
     setSelectedResponders(responderOptions);
   };
 
-
-  const isEmptyOrWhitespace = (text) => {
+  const isEmptyOrWhitespace = text => {
     return typeof text !== 'string' || !text.trim();
   };
 
-
   return selectCanViewFeedbackAnswerPermission(state) ? (
-
     <Root className="view-feedback-responses-page">
       <Typography
         variant="h4"
@@ -312,17 +322,21 @@ const ViewFeedbackResponses = () => {
               </Typography>
 
               {/* If the question has no answers or inputType is "NONE" */}
-              {!hasResponses || question.inputType === 'NONE' ? null : (
-                question.answers.map(answer => (
-                  <FeedbackResponseCard
-                    key={answer.id || answer.responder}
-                    responderId={answer.responder}
-                    answer={isEmptyOrWhitespace(answer.answer) ? ' ⚠️ No response submitted' : String(answer.answer)}
-                    inputType={question.inputType}
-                    sentiment={answer.sentiment}
-                  />
-                ))
-              )}
+              {!hasResponses || question.inputType === 'NONE'
+                ? null
+                : question.answers.map(answer => (
+                    <FeedbackResponseCard
+                      key={answer.id || answer.responder}
+                      responderId={answer.responder}
+                      answer={
+                        isEmptyOrWhitespace(answer.answer)
+                          ? ' ⚠️ No response submitted'
+                          : String(answer.answer)
+                      }
+                      inputType={question.inputType}
+                      sentiment={answer.sentiment}
+                    />
+                  ))}
             </div>
           );
         })}

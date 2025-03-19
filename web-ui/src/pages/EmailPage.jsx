@@ -35,7 +35,7 @@ import MemberSelector from '../components/member_selector/MemberSelector.jsx';
 import {
   selectCsrfToken,
   selectHasSendEmailPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 
 const Root = styled('div')({
@@ -71,12 +71,7 @@ const ChooseEmailFormatStep = ({
     <>
       <div className="email-format-container">
         <Button
-          className="email-format-button"
-          style={
-            emailFormat === 'file'
-              ? { borderColor: 'green', backgroundColor: '#f7fff7' }
-              : {}
-          }
+          className={emailFormat === 'file' ? "email-format-button-selected" : "email-format-button"}
           disabled={emailSent}
           onClick={() => handleFormatButtonClick('file')}
         >
@@ -101,12 +96,7 @@ const ChooseEmailFormatStep = ({
           </div>
         </Button>
         <Button
-          className="email-format-button"
-          style={
-            emailFormat === 'text'
-              ? { borderColor: 'green', backgroundColor: '#f7fff7' }
-              : {}
-          }
+          className={emailFormat === 'text' ? "email-format-button-selected" : "email-format-button"}
           disabled={emailSent}
           onClick={() => handleFormatButtonClick('text')}
         >
@@ -188,12 +178,12 @@ const ComposeEmailStep = ({
         try {
           const result = mjml2html(mjmlContent);
           onEmailContentsChange(result.html);
-        } catch(e) {
+        } catch (e) {
           window.snackDispatch({
             type: UPDATE_TOAST,
             payload: {
               severity: 'error',
-              toast: e.message,
+              toast: e.message
             }
           });
         }

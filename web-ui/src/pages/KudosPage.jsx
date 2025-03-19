@@ -1,61 +1,61 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { styled } from "@mui/material/styles";
-import { Button, Tab, Typography } from "@mui/material";
+import { styled } from '@mui/material/styles';
+import { Button, Tab, Typography } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { AppContext } from "../context/AppContext";
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { AppContext } from '../context/AppContext';
 import {
   selectCsrfToken,
   selectCurrentUser,
-  selectHasCreateKudosPermission,
-} from "../context/selectors";
-import { getReceivedKudos, getSentKudos, getAllKudos } from "../api/kudos";
-import { UPDATE_TOAST } from "../context/actions";
-import KudosCard from "../components/kudos_card/KudosCard";
+  selectHasCreateKudosPermission
+} from '../context/selectors';
+import { getReceivedKudos, getSentKudos, getAllKudos } from '../api/kudos';
+import { UPDATE_TOAST } from '../context/actions';
+import KudosCard from '../components/kudos_card/KudosCard';
 
-import "./KudosPage.css";
-import KudosDialog from "../components/kudos_dialog/KudosDialog";
-import StarIcon from "@mui/icons-material/Star";
+import './KudosPage.css';
+import KudosDialog from '../components/kudos_dialog/KudosDialog';
+import StarIcon from '@mui/icons-material/Star';
 
-import ArchiveIcon from "@mui/icons-material/Archive";
-import UnarchiveIcon from "@mui/icons-material/Unarchive";
+import ArchiveIcon from '@mui/icons-material/Archive';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 
-import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader";
+import SkeletonLoader from '../components/skeleton_loader/SkeletonLoader';
 
-const PREFIX = "KudosPage";
+const PREFIX = 'KudosPage';
 const classes = {
   expandOpen: `${PREFIX}-expandOpen`,
-  expandClose: `${PREFIX}-expandClose`,
+  expandClose: `${PREFIX}-expandClose`
 };
 
-const Root = styled("div")({
+const Root = styled('div')({
   [`& .${classes.expandOpen}`]: {
-    transform: "rotate(180deg)",
-    transition: "transform 0.1s linear",
-    marginLeft: "auto",
+    transform: 'rotate(180deg)',
+    transition: 'transform 0.1s linear',
+    marginLeft: 'auto'
   },
   [`& .${classes.expandClose}`]: {
-    transform: "rotate(0deg)",
-    transition: "transform 0.1s linear",
-    marginLeft: "auto",
-  },
+    transform: 'rotate(0deg)',
+    transition: 'transform 0.1s linear',
+    marginLeft: 'auto'
+  }
 });
 
-const validTabName = (name) => {
+const validTabName = name => {
   switch (name) {
-    case "received":
-    case "sent":
-    case "public":
+    case 'received':
+    case 'sent':
+    case 'public':
       break;
     default:
       name && console.warn(`Invalid tab: ${name}`);
-      name = "received";
+      name = 'received';
   }
   return name;
-}
+};
 
 const DateRange = {
   THREE_MONTHS: '3mo',
@@ -81,7 +81,7 @@ const KudosPage = () => {
   const [publicKudosLoading, setPublicKudosLoading] = useState(true);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
-  const isInRange = (requestDate) => {
+  const isInRange = requestDate => {
     const oldestDate = new Date();
     switch (dateRange) {
       case DateRange.SIX_MONTHS:
@@ -109,7 +109,7 @@ const KudosPage = () => {
     const res = await getReceivedKudos(currentUser.id, csrf);
     if (res?.payload?.data && !res.error) {
       setReceivedKudosLoading(false);
-      return res.payload.data.filter((k) => isInRange(k.dateCreated));
+      return res.payload.data.filter(k => isInRange(k.dateCreated));
     }
   }, [csrf, dispatch, currentUser.id, dateRange]);
 
@@ -118,7 +118,7 @@ const KudosPage = () => {
     const res = await getSentKudos(currentUser.id, csrf);
     if (res?.payload?.data && !res.error) {
       setSentKudosLoading(false);
-      return res.payload.data.filter((k) => isInRange(k.dateCreated));
+      return res.payload.data.filter(k => isInRange(k.dateCreated));
     }
   }, [csrf, dispatch, currentUser.id, dateRange]);
 
@@ -127,15 +127,15 @@ const KudosPage = () => {
     const res = await getAllKudos(csrf);
     if (res?.payload?.data && !res.error) {
       setPublicKudosLoading(false);
-      return res.payload.data.filter((k) => isInRange(k.dateCreated));
+      return res.payload.data.filter(k => isInRange(k.dateCreated));
     }
   }, [csrf, dispatch, currentUser.id, dateRange]);
 
   const loadAndSetReceivedKudos = () => {
-    loadReceivedKudos().then((data) => {
+    loadReceivedKudos().then(data => {
       if (data) {
-        const filtered = data.filter((kudo) =>
-          kudo.recipientMembers.some((member) => member.id === currentUser.id)
+        const filtered = data.filter(kudo =>
+          kudo.recipientMembers.some(member => member.id === currentUser.id)
         );
         setReceivedKudos(filtered);
       }
@@ -143,15 +143,15 @@ const KudosPage = () => {
   };
 
   const loadAndSetSentKudos = () => {
-    loadSentKudos().then((data) => {
+    loadSentKudos().then(data => {
       if (data) {
-        setSentKudos(data.filter((kudo) => kudo.senderId === currentUser.id));
+        setSentKudos(data.filter(kudo => kudo.senderId === currentUser.id));
       }
     });
   };
 
   const loadAndSetPublicKudos = () => {
-    loadPublicKudos().then((data) => {
+    loadPublicKudos().then(data => {
       if (data) {
         setPublicKudos(data);
       }
@@ -199,14 +199,16 @@ const KudosPage = () => {
             <MenuItem value={DateRange.ALL_TIME}>All time</MenuItem>
           </TextField>
         </FormControl>
-        {selectHasCreateKudosPermission(state) && <Button
-          className="kudos-dialog-open"
-          variant="outlined"
-          startIcon={<StarIcon />}
-          onClick={() => setKudosDialogOpen(true)}
-        >
-          Give Kudos
-        </Button>}
+        {selectHasCreateKudosPermission(state) && (
+          <Button
+            className="kudos-dialog-open"
+            variant="outlined"
+            startIcon={<StarIcon />}
+            onClick={() => setKudosDialogOpen(true)}
+          >
+            Give Kudos
+          </Button>
+        )}
       </div>
       <TabContext value={kudosTab}>
         <div className="kudos-tab-container">
@@ -231,7 +233,7 @@ const KudosPage = () => {
             />
           </TabList>
         </div>
-        <TabPanel value="received" style={{ padding: "1rem 0" }}>
+        <TabPanel value="received" style={{ padding: '1rem 0' }}>
           {receivedKudosLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <SkeletonLoader key={index} type="kudos" />
@@ -242,7 +244,7 @@ const KudosPage = () => {
                 kudo.recipientMembers[index]?.id === currentUser.id
             ) ? (
             <div className="received-kudos-list">
-              {receivedKudos.map((k) => (
+              {receivedKudos.map(k => (
                 <KudosCard
                   key={k.id}
                   kudos={k}
@@ -258,16 +260,20 @@ const KudosPage = () => {
             </div>
           )}
         </TabPanel>
-        <TabPanel value="sent" style={{ padding: "1rem 0" }}>
+        <TabPanel value="sent" style={{ padding: '1rem 0' }}>
           {sentKudosLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <SkeletonLoader key={index} type="kudos" />
             ))
           ) : sentKudos.length > 0 ? (
             <div>
-              {sentKudos.map((k) => (
-                <KudosCard key={k.id} kudos={k} includeEdit
-                  onKudosAction={loadAndSetSentKudos}/>
+              {sentKudos.map(k => (
+                <KudosCard
+                  key={k.id}
+                  kudos={k}
+                  includeEdit
+                  onKudosAction={loadAndSetSentKudos}
+                />
               ))}
             </div>
           ) : (
@@ -278,19 +284,15 @@ const KudosPage = () => {
             </div>
           )}
         </TabPanel>
-        <TabPanel value="public" style={{ padding: "1rem 0" }}>
+        <TabPanel value="public" style={{ padding: '1rem 0' }}>
           {publicKudosLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <SkeletonLoader key={index} type="kudos" />
             ))
-          ) : publicKudos.length > 0
-            ? (
+          ) : publicKudos.length > 0 ? (
             <div className="received-kudos-list">
-              {publicKudos.map((k) => (
-                <KudosCard
-                  key={k.id}
-                  kudos={k}
-                />
+              {publicKudos.map(k => (
+                <KudosCard key={k.id} kudos={k} />
               ))}
             </div>
           ) : (

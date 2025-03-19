@@ -18,7 +18,7 @@
 .volunteer-activities-card {
   width: 100%;
   margin: 1rem auto;
-  box-shadow: var(--checkins-palette-shadow);
+  box-shadow: var(--mui-palette-shadow);
 }
 
 .volunteer-tables {
@@ -53,7 +53,7 @@
   td,
   th {
     padding: 0.5rem;
-    color: var(--checkins-palette-text-primary);
+    color: var(--mui-palette-text-primary);
   }
 
   th {
@@ -66,12 +66,12 @@
   }
 
   tr:nth-child(even) {
-    background-color: var(--checkins-palette-background-default);
-    background-image: var(--checkins-palette-alternate-row-overlay);
+    background-color: var(--mui-palette-background-default);
+    background-image: var(--mui-palette-alternate-row-overlay);
   }
 
   tr:nth-child(odd) {
-    background-color: var(--checkins-palette-background-default);
+    background-color: var(--mui-palette-background-default);
   }
 
   .actions-th {
@@ -83,14 +83,13 @@
   }
 }
 
-
 .volunteer-tables .MuiIconButton-root {
-  color: var(--checkins-palette-text-primary);
+  color: var(--mui-palette-text-primary);
 }
 
 @media (prefers-color-scheme: dark) {
   .volunteer-tables .MuiIconButton-root {
-    color: var(--checkins-palette-text-primary);
+    color: var(--mui-palette-text-primary);
   }
 }
 

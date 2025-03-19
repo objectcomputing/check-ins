@@ -1,14 +1,14 @@
 .person-name {
-  color: var(--checkins-palette-content-color);
+  color: var(--mui-palette-content-color);
 }
 
 .response-link {
-  color: var(--checkins-palette-primary-link);
+  color: var(--mui-palette-primary-link);
   text-decoration: none;
   font-size: 1rem;
 
   &:hover {
-    background-color: var(--checkins-palette-background-default);
+    background-color: var(--mui-palette-background-default);
   }
 }
 
@@ -22,11 +22,11 @@
 
 .person-divider {
   min-width: 100%;
-  color: var(--checkins-palette-background-default);
+  color: var(--mui-palette-background-default);
 }
 
 .dark-gray-text {
-  color: var(--checkins-palette-gray-dark);
+  color: var(--mui-palette-gray-dark);
 }
 
 .person-row {

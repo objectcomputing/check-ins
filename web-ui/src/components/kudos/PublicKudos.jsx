@@ -4,7 +4,7 @@ import { UPDATE_TOAST } from '../../context/actions';
 import { AppContext } from '../../context/AppContext';
 import {
   selectCsrfToken,
-  selectHasCreateKudosPermission,
+  selectHasCreateKudosPermission
 } from '../../context/selectors';
 import { sortKudos } from '../../context/util';
 
@@ -48,13 +48,15 @@ const PublicKudos = () => {
     <div className="public-kudos">
       <div className="kudos-title">
         <h1>Kudos</h1>
-        {selectHasCreateKudosPermission(state) && <Button
-          className="kudos-dialog-open"
-          startIcon={<StarIcon />}
-          onClick={() => setKudosDialogOpen(true)}
-        >
-          Give Kudos
-        </Button>}
+        {selectHasCreateKudosPermission(state) && (
+          <Button
+            className="kudos-dialog-open"
+            startIcon={<StarIcon />}
+            onClick={() => setKudosDialogOpen(true)}
+          >
+            Give Kudos
+          </Button>
+        )}
       </div>
       <KudosDialog
         open={kudosDialogOpen}
@@ -70,7 +72,9 @@ const PublicKudos = () => {
             </div>
           ) : !kudosLoading && kudos?.length > 0 ? (
             <div className="kudos-list">
-              {kudos.map(k => (<KudosCard key={k.id} kudos={k} />))}
+              {kudos.map(k => (
+                <KudosCard key={k.id} kudos={k} />
+              ))}
             </div>
           ) : (
             <Typography variant="body2">

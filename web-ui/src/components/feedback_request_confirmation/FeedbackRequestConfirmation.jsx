@@ -5,7 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {
   selectProfile,
   selectHasCreateFeedbackPermission,
-  noPermission,
+  noPermission
 } from '../../context/selectors';
 import { AppContext } from '../../context/AppContext';
 import { Link, useLocation } from 'react-router-dom';

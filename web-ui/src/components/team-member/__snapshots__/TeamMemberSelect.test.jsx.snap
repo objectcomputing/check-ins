@@ -12,12 +12,12 @@ exports[`renders correctly 1`] = `
       class="team-member"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+        class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
         style="margin-left: 10px;"
       >
         <img
           alt="Team Member"
-          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
           src="../../images/default_profile.jpg"
         />
       </div>
@@ -31,12 +31,12 @@ exports[`renders correctly 1`] = `
       class="team-member"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+        class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
         style="margin-left: 10px;"
       >
         <img
           alt="Team Member"
-          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
           src="../../images/default_profile.jpg"
         />
       </div>
@@ -50,12 +50,12 @@ exports[`renders correctly 1`] = `
       class="team-member"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+        class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
         style="margin-left: 10px;"
       >
         <img
           alt="Team Member"
-          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
           src="../../images/default_profile.jpg"
         />
       </div>
@@ -69,12 +69,12 @@ exports[`renders correctly 1`] = `
       class="team-member"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+        class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
         style="margin-left: 10px;"
       >
         <img
           alt="Team Member"
-          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
           src="../../images/default_profile.jpg"
         />
       </div>
@@ -88,12 +88,12 @@ exports[`renders correctly 1`] = `
       class="team-member"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+        class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
         style="margin-left: 10px;"
       >
         <img
           alt="Team Member"
-          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
           src="../../images/default_profile.jpg"
         />
       </div>
@@ -107,12 +107,12 @@ exports[`renders correctly 1`] = `
       class="team-member"
     >
       <div
-        class="MuiAvatar-root MuiAvatar-circular css-1wlk0hk-MuiAvatar-root"
+        class="MuiAvatar-root MuiAvatar-circular css-fmeqll-MuiAvatar-root"
         style="margin-left: 10px;"
       >
         <img
           alt="Team Member"
-          class="MuiAvatar-img css-1pqm26d-MuiAvatar-img"
+          class="MuiAvatar-img css-1su80sj-MuiAvatar-img"
           src="../../images/default_profile.jpg"
         />
       </div>

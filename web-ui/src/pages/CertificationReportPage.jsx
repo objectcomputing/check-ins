@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 
 import {
   selectHasEarnedCertificationsPermission,
-  noPermission,
+  noPermission
 } from '../context/selectors';
 import { AppContext } from '../context/AppContext';
 import Certifications from '../components/certifications/Certifications';

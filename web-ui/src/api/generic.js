@@ -18,7 +18,7 @@ export const downloadData = (url, cookie, params) => {
     params: params,
     headers: {
       'X-CSRF-Header': cookie,
-      Accept: 'application/json',
+      Accept: 'application/json'
     },
     url: url
   });
@@ -33,6 +33,6 @@ export const initiate = (url, cookie, params) => {
       'Content-Type': 'application/json;charset=UTF-8'
     },
     url: url,
-    data: params,
+    data: params
   });
 };

@@ -27,7 +27,7 @@ import {
 import { resolve } from '../../api/api.js';
 import {
   getCertifications,
-  createCertification,
+  createCertification
 } from '../../api/certification.js';
 import DatePickerField from '../date-picker-field/DatePickerField';
 import ConfirmationDialog from '../dialogs/ConfirmationDialog';
@@ -191,7 +191,12 @@ const EarnedCertificationsTable = ({
         </DialogActions>
       </Dialog>
     ),
-    [badgeUrl, certificationDialogOpen, certificationDescription, certificationName]
+    [
+      badgeUrl,
+      certificationDialogOpen,
+      certificationDescription,
+      certificationName
+    ]
   );
 
   const confirmDelete = useCallback(earned => {
@@ -220,7 +225,9 @@ const EarnedCertificationsTable = ({
         <tr key={earned.id}>
           {!onlyMe && <td>{profile?.name ?? 'unknown'}</td>}
           <td>{certificationMap[earned.certificationId]?.name ?? 'unknown'}</td>
-          <td>{certificationMap[earned.certificationId]?.description ?? 'unknown'}</td>
+          <td>
+            {certificationMap[earned.certificationId]?.description ?? 'unknown'}
+          </td>
           <td>{formatDate(new Date(earned.earnedDate))}</td>
           <td>
             {earned.expirationDate
@@ -324,10 +331,11 @@ const EarnedCertificationsTable = ({
             }}
           />
           <DatePickerField
-            date={selectedEarned?.expirationDate
-                  ? new Date(selectedEarned?.expirationDate)
-                  : null
-                 }
+            date={
+              selectedEarned?.expirationDate
+                ? new Date(selectedEarned?.expirationDate)
+                : null
+            }
             label="Expiration"
             setDate={date => {
               setSelectedEarned({
@@ -369,7 +377,11 @@ const EarnedCertificationsTable = ({
     () => (
       <Card>
         <CardHeader
-          avatar={<Avatar sx={{ mr: 1 }}><EmojiEvents /></Avatar>}
+          avatar={
+            <Avatar sx={{ mr: 1 }}>
+              <EmojiEvents />
+            </Avatar>
+          }
           title="Earned Certifications"
           titleTypographyProps={{ variant: 'h5', component: 'h2' }}
         />
@@ -388,7 +400,9 @@ const EarnedCertificationsTable = ({
                       {sortIndicator(column)}
                     </th>
                   ))}
-                  <th className="actions-th" key="Actions">Actions</th>
+                  <th className="actions-th" key="Actions">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>{earnedCertifications.map(earnedCertificationRow)}</tbody>
@@ -463,9 +477,10 @@ const EarnedCertificationsTable = ({
       {
         name: certificationName,
         description: certificationDescription,
-        badgeUrl,
+        badgeUrl
       },
-      csrf);
+      csrf
+    );
     if (res.error) return;
 
     const newCert = res.payload.data;
@@ -482,7 +497,13 @@ const EarnedCertificationsTable = ({
     setBadgeUrl('');
     setCertificationDialogOpen(false);
     forceUpdate();
-  }, [certificationName, certificationDescription, badgeUrl, certifications, selectedCertification]);
+  }, [
+    certificationName,
+    certificationDescription,
+    badgeUrl,
+    certifications,
+    selectedCertification
+  ]);
 
   const saveEarnedCertification = useCallback(async () => {
     selectedEarned.memberId = selectedProfile?.id || currentUser.id;

@@ -15,30 +15,31 @@ exports[`renders correctly 1`] = `
           class="ReviewPeriods-headerContainer"
         >
           <h4
-            class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h4 css-f84ov1-MuiTypography-root"
           >
             Review Periods
           </h4>
         </div>
         <ul
-          class="MuiList-root MuiList-padding css-168pop2-MuiList-root"
+          class="MuiList-root MuiList-padding css-1plfnkf-MuiList-root"
         >
           <div>
             <div
-              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root review-period-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root review-period-card css-1j74uew-MuiPaper-root-MuiCard-root"
+              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
             >
               <div
                 class="row top-row"
               >
                 <div
-                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                  class="MuiListItemAvatar-root css-1ulznza-MuiListItemAvatar-root"
                 >
                   <div
-                    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-17o22dy-MuiAvatar-root"
+                    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-18k2bs-MuiAvatar-root"
                   >
                     <svg
                       aria-hidden="true"
-                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                       data-testid="MeetingRoomIcon"
                       focusable="false"
                       viewBox="0 0 24 24"
@@ -50,10 +51,10 @@ exports[`renders correctly 1`] = `
                   </div>
                 </div>
                 <div
-                  class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                  class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                 >
                   <span
-                    class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                   >
                     Review Period 2 - Open
                   </span>
@@ -63,20 +64,21 @@ exports[`renders correctly 1`] = `
           </div>
           <div>
             <div
-              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root review-period-card css-bhp9pd-MuiPaper-root-MuiCard-root"
+              class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root review-period-card css-1j74uew-MuiPaper-root-MuiCard-root"
+              style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
             >
               <div
                 class="row top-row"
               >
                 <div
-                  class="MuiListItemAvatar-root css-1e9lk82-MuiListItemAvatar-root"
+                  class="MuiListItemAvatar-root css-1ulznza-MuiListItemAvatar-root"
                 >
                   <div
-                    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-17o22dy-MuiAvatar-root"
+                    class="MuiAvatar-root MuiAvatar-circular MuiAvatar-colorDefault css-18k2bs-MuiAvatar-root"
                   >
                     <svg
                       aria-hidden="true"
-                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
                       data-testid="DoorFrontIcon"
                       focusable="false"
                       viewBox="0 0 24 24"
@@ -88,10 +90,10 @@ exports[`renders correctly 1`] = `
                   </div>
                 </div>
                 <div
-                  class="MuiListItemText-root css-tlelie-MuiListItemText-root"
+                  class="MuiListItemText-root css-cfq8qh-MuiListItemText-root"
                 >
                   <span
-                    class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-10hburv-MuiTypography-root"
+                    class="MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-rizt0-MuiTypography-root"
                   >
                     Review Period 1 - Closed
                   </span>

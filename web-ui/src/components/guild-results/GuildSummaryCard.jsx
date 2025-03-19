@@ -22,7 +22,7 @@ import {
   DialogActions,
   Link as StyledLink,
   Tooltip,
-  Typography,
+  Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { updateGuild } from '../../api/guild.js';
@@ -57,8 +57,8 @@ const StyledCard = styled(Card)(() => ({
 }));
 
 const inactiveStyle = {
-  'color': 'var(--action-disabled)',
-  'fontSize': '0.75em',
+  color: 'var(--action-disabled)',
+  fontSize: '0.75em'
 };
 
 const propTypes = {
@@ -147,9 +147,8 @@ const GuildSummaryCard = ({ guild, index, isOpen, onGuildSelect }) => {
       />
       <CardContent>
         {!guild.active && (
-          <Typography sx={{ position: 'absolute', top: 10, right: 10,
-                            ...inactiveStyle,
-                          }}
+          <Typography
+            sx={{ position: 'absolute', top: 10, right: 10, ...inactiveStyle }}
           >
             Inactive
           </Typography>

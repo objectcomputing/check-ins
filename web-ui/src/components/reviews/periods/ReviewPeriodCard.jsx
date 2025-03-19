@@ -27,7 +27,7 @@ import {
   selectHasUpdateReviewAssignmentsPermission,
   selectReviewPeriod,
   selectReviewPeriods,
-  selectHasViewReviewAssignmentsPermission,
+  selectHasViewReviewAssignmentsPermission
 } from '../../../context/selectors';
 import { titleCase } from '../../../helpers/strings.js';
 
@@ -112,9 +112,9 @@ const ReviewPeriodCard = ({ mode, onSelect, periodId, selfReviews }) => {
 
     // Get a list of all the supervisors in this period.
     const supervisorIds = new Set(assignments.map(a => a.revieweeSupervisorId));
-    const supervisors = [...supervisorIds].filter(id => !!id).map(id =>
-      currentMembers.find(m => m.id === id)
-    );
+    const supervisors = [...supervisorIds]
+      .filter(id => !!id)
+      .map(id => currentMembers.find(m => m.id === id));
     supervisors.sort((a, b) => a.name.localeCompare(b.name));
 
     // Build an array containing statistics for each supervisor.

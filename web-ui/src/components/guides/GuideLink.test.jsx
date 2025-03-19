@@ -13,7 +13,12 @@ it('renders correctly', () => {
 it('renders descriptions', () => {
   snapshot(
     <MemoryRouter>
-      <GuideLink id="some-id" name="myFileName" url="/pdfs/myFileName.pdf" description="My description" />
+      <GuideLink
+        id="some-id"
+        name="myFileName"
+        url="/pdfs/myFileName.pdf"
+        description="My description"
+      />
     </MemoryRouter>
   );
 });

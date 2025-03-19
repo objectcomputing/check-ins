@@ -7,7 +7,7 @@ const userStateWithPermission = {
     userProfile: {
       name: 'john watson',
       role: ['MEMBER'],
-      permissions: [{ permission: 'CAN_VIEW_ALL_PULSE_RESPONSES' }],
+      permissions: [{ permission: 'CAN_VIEW_ALL_PULSE_RESPONSES' }]
     }
   }
 };
