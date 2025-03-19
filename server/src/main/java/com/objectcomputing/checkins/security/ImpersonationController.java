@@ -103,6 +103,7 @@ public class ImpersonationController {
                             newAttributes.put("picture", "");
             newAttributes.put("roles", roles);
             newAttributes.put("permissions", permissions);
+            newAttributes.put("openIdToken", "");
 
             LOG.info("Building authentication");
             Authentication updatedAuth = Authentication.build(email, roles, newAttributes);
