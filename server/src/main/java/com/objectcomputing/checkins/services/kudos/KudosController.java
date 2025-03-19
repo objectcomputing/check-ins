@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.kudos;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +54,9 @@ public class KudosController {
     public List<KudosResponseDTO> getRecent() {
         return kudosServices.getRecent();
     }
+
+    @Get("/public")
+    public List<KudosResponseDTO> getPublic(@Nullable @Format("yyyy-MM-dd") LocalDate since) { return kudosServices.getPublic(since); }
 
     @Get("/{id}")
     public KudosResponseDTO getById(@NotNull UUID id) {
