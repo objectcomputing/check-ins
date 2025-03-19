@@ -6,6 +6,8 @@ import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,4 +56,14 @@ public interface KudosRepository extends CrudRepository<Kudos, UUID> {
                   AND (:includePending OR dateapproved IS NOT NULL)""", nativeQuery = true)
         List<Kudos> search(@Nullable String senderId, boolean includePending);
 
+        @Query(value = """
+                SELECT
+                    id,
+                    PGP_SYM_DECRYPT(cast(message as bytea), '${aes.key}') as message,
+                    senderid, teamid, datecreated, dateapproved, publiclyVisible
+                FROM kudos
+                WHERE publiclyVisible IS TRUE
+                  AND (CAST(:since as date) IS NULL OR dateapproved >= :since) 
+                ORDER BY datecreated DESC""", nativeQuery = true)
+        List<Kudos> getPublic(@Nullable LocalDate since);
 }

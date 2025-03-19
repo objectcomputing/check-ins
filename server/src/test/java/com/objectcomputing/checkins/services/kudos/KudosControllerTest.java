@@ -26,6 +26,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jnr.constants.platform.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -677,5 +678,54 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
                          () -> client.exchange(request, Kudos.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testGetAllPublicKudos() {
+        UUID recipientId = recipientMembers.getFirst().getId();
+        MemberProfile bob = memberWithoutBoss("bob");
+        UUID someOtherRecipientId = bob.getId();
+
+        Kudos kudos = createApprovedKudos(senderId);
+        Kudos kudos2 = createApprovedKudos(senderId);
+        Kudos kudos3 = createApprovedKudos(senderId);
+        createKudosRecipient(kudos.getId(), recipientId);
+        createKudosRecipient(kudos2.getId(), recipientId);
+        createKudosRecipient(kudos3.getId(), someOtherRecipientId);
+
+        MutableHttpRequest<Object> request = HttpRequest.GET("/public").basicAuth(bob.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
+
+        assertEquals(OK, response.getStatus());
+        List<KudosResponseDTO> body = response.body();
+        assertEquals(3, body.size());
+        assertEquals(List.of(kudos.getId(), kudos2.getId(), kudos3.getId()), List.of(body.get(0).getId(), body.get(1).getId(), body.get(2).getId()));
+    }
+
+    @Test
+    void testGetPublicKudosSince() {
+        UUID recipientId = recipientMembers.getFirst().getId();
+        MemberProfile bob = memberWithoutBoss("bob");
+        UUID someOtherRecipientId = bob.getId();
+
+        LocalDate now = LocalDate.now();
+        LocalDate since = now.minusMonths(3);
+        LocalDate before = since.minusDays(1);
+        LocalDate inRange = since.plusDays(Math.round(Math.ceil(Math.random()*30))); // up to 30 days
+
+        Kudos kudos = createApprovedKudos(senderId, since);
+        Kudos kudos2 = createApprovedKudos(senderId, before);
+        Kudos kudos3 = createApprovedKudos(senderId, inRange);
+        createKudosRecipient(kudos.getId(), recipientId);
+        createKudosRecipient(kudos2.getId(), recipientId);
+        createKudosRecipient(kudos3.getId(), someOtherRecipientId);
+
+        MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/public?since=%s", since)).basicAuth(bob.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
+
+        assertEquals(OK, response.getStatus());
+        List<KudosResponseDTO> body = response.body();
+        assertEquals(2, body.size());
+        assertEquals(List.of(kudos.getId(), kudos3.getId()), List.of(body.get(0).getId(), body.get(1).getId()));
     }
 }
