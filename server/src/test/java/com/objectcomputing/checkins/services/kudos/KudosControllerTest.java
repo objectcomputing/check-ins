@@ -728,4 +728,28 @@ class KudosControllerTest extends TestContainersSuite implements KudosFixture, T
         assertEquals(2, body.size());
         assertEquals(List.of(kudos.getId(), kudos3.getId()), List.of(body.get(0).getId(), body.get(1).getId()));
     }
+
+    @Test
+    void testGetsOnlyApprovedPublicKudos() {
+        UUID recipientId = recipientMembers.getFirst().getId();
+        MemberProfile bob = memberWithoutBoss("bob");
+        UUID someOtherRecipientId = bob.getId();
+
+        Kudos kudos = createApprovedKudos(senderId);
+        Kudos kudos2 = createApprovedKudos(senderId);
+        Kudos kudos3 = createApprovedKudos(senderId);
+        Kudos kudos4= createPublicKudos(senderId);
+        createKudosRecipient(kudos.getId(), recipientId);
+        createKudosRecipient(kudos2.getId(), recipientId);
+        createKudosRecipient(kudos3.getId(), someOtherRecipientId);
+        createKudosRecipient(kudos4.getId(), someOtherRecipientId);
+
+        MutableHttpRequest<Object> request = HttpRequest.GET("/public").basicAuth(bob.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<List<KudosResponseDTO>> response = client.exchange(request, Argument.listOf(KudosResponseDTO.class));
+
+        assertEquals(OK, response.getStatus());
+        List<KudosResponseDTO> body = response.body();
+        assertEquals(3, body.size());
+        assertEquals(List.of(kudos.getId(), kudos2.getId(), kudos3.getId()), List.of(body.get(0).getId(), body.get(1).getId(), body.get(2).getId()));
+    }
 }

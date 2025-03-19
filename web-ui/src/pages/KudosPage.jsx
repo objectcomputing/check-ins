@@ -12,7 +12,7 @@ import {
   selectCurrentUser,
   selectHasCreateKudosPermission
 } from '../context/selectors';
-import { getReceivedKudos, getSentKudos, getAllKudos } from '../api/kudos';
+import { getReceivedKudos, getSentKudos, getPublicKudos } from '../api/kudos';
 import { UPDATE_TOAST } from '../context/actions';
 import KudosCard from '../components/kudos_card/KudosCard';
 
@@ -81,8 +81,9 @@ const KudosPage = () => {
   const [publicKudosLoading, setPublicKudosLoading] = useState(true);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
-  const isInRange = requestDate => {
+  const getOldestDate = useCallback(() => {
     const oldestDate = new Date();
+    oldestDate.setHours(0, 0, 0, 0);
     switch (dateRange) {
       case DateRange.SIX_MONTHS:
         oldestDate.setMonth(oldestDate.getMonth() - 6);
@@ -96,6 +97,11 @@ const KudosPage = () => {
       default:
         oldestDate.setMonth(oldestDate.getMonth() - 3);
     }
+    return oldestDate;
+  }, [dateRange]);
+
+  const isInRange = requestDate => {
+    const oldestDate = getOldestDate();
 
     if (Array.isArray(requestDate)) {
       requestDate = new Date(requestDate.join('/'));
@@ -124,10 +130,11 @@ const KudosPage = () => {
 
   const loadPublicKudos = useCallback(async () => {
     setPublicKudosLoading(true);
-    const res = await getAllKudos(csrf);
+    const oldestDate = getOldestDate();
+    const res = await getPublicKudos(csrf, oldestDate === true ? undefined : oldestDate?.toISOString().split('T')[0]);
     if (res?.payload?.data && !res.error) {
       setPublicKudosLoading(false);
-      return res.payload.data.filter(k => isInRange(k.dateCreated));
+      return res.payload.data;
     }
   }, [csrf, dispatch, currentUser.id, dateRange]);
 

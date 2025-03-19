@@ -46,6 +46,17 @@ export const getRecentKudos = async cookie => {
   });
 };
 
+export const getPublicKudos = async (cookie, since) => {
+  return resolve({
+    url: `${kudosUrl}/public`,
+    params: {
+      since
+    },
+    responseType: 'json',
+    headers: { 'X-CSRF-Header': cookie, Accept: 'application/json' }
+  });
+};
+
 export const getAllKudos = async (cookie, isPending) => {
   return resolve({
     url: kudosUrl,

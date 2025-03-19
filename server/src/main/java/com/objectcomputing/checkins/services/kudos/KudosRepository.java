@@ -64,6 +64,7 @@ public interface KudosRepository extends CrudRepository<Kudos, UUID> {
                 FROM kudos
                 WHERE publiclyVisible IS TRUE
                   AND (CAST(:since as date) IS NULL OR dateapproved >= :since) 
+                  AND dateapproved IS NOT NULL
                 ORDER BY datecreated DESC""", nativeQuery = true)
         List<Kudos> getPublic(@Nullable LocalDate since);
 }
