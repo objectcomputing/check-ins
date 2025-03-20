@@ -71,7 +71,8 @@ jobs:
         uses: 'google-github-actions/auth@v2'
         with:
           project_id: ${{ secrets.PROJECT_ID }}
-          workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github/providers/my-repo'
+          workload_identity_provider: 'projects/243947551054/locations/global/workloadIdentityPools/github-wif-pool/providers/github-provider'
+          service_account: '${{secrets.AUTOMATION_SERVICE_ACCOUNT}}'
       - id: 'secrets'
         uses: 'google-github-actions/get-secretmanager-secrets@v2'
         with:
