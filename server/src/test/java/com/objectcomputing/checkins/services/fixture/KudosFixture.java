@@ -40,6 +40,17 @@ public interface KudosFixture extends RepositoryFixture, TeamFixture {
         return getKudosRepository().save(kudos);
     }
 
+    default Kudos createApprovedKudos(UUID senderId, LocalDate approved) {
+        Kudos kudos = new Kudos();
+        kudos.setMessage("Default Kudos");
+        kudos.setSenderId(senderId);
+        kudos.setPubliclyVisible(true);
+        kudos.setDateCreated(approved.minusDays(1));
+        kudos.setDateApproved(approved);
+
+        return getKudosRepository().save(kudos);
+    }
+
     default KudosRecipient createKudosRecipient(UUID kudosId, UUID memberId) {
         KudosRecipient kudosRecipient = new KudosRecipient(kudosId, memberId);
 

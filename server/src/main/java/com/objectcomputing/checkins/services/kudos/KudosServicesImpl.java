@@ -28,6 +28,7 @@ import com.objectcomputing.checkins.util.Util;
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.format.Format;
 import io.micronaut.transaction.annotation.Transactional;
 
 import jakarta.inject.Named;
@@ -291,6 +292,13 @@ class KudosServicesImpl implements KudosServices {
 
     public List<KudosResponseDTO> getRecent() {
         return kudosRepository.getRecentPublic()
+                .stream()
+                .map(this::constructKudosResponseDTO)
+                .toList();
+    }
+
+    public List<KudosResponseDTO> getPublic(@Nullable LocalDate since) {
+        return kudosRepository.getPublic(since)
                 .stream()
                 .map(this::constructKudosResponseDTO)
                 .toList();
