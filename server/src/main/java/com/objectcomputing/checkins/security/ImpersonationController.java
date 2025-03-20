@@ -29,7 +29,6 @@ import io.micronaut.security.event.LoginSuccessfulEvent;
 import io.micronaut.security.handlers.LoginHandler;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.security.token.jwt.generator.JwtTokenGenerator;
-import io.micronaut.security.token.jwt.validator.ReactiveJsonWebTokenValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
