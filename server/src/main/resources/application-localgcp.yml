@@ -1,0 +1,22 @@
+micronaut:
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedOriginsRegex:
+            - ^http(|s):\/\/localhost:.*$
+---
+datasources:
+  default:
+    url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
+    username: postgres
+    password: "postgres"
+---
+flyway:
+  enabled: enabled
+  datasources:
+    default:
+      locations:
+        - "classpath:db/common"
+        - "classpath:db/dev"
