@@ -60,7 +60,7 @@ VALUES
 INSERT INTO member_profile -- Derelict Reindeer
   (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, last_seen)
 VALUES
-    ('2b067cbb-45c2-4c3c-a6b2-eea370f9d969', PGP_SYM_ENCRYPT('Derelict','${aeskey}'), PGP_SYM_ENCRYPT('Reindeer','${aeskey}'), PGP_SYM_ENCRYPT('Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('rodecapd@objectcomputing.com','${aeskey}'), '122758121', '2012-09-29', PGP_SYM_ENCRYPT('Does stuff. Sometimes well, sometimes not','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2012-09-29');
+    ('2b067cbb-45c2-4c3c-a6b2-eea370f9d969', PGP_SYM_ENCRYPT('Derelict','${aeskey}'), PGP_SYM_ENCRYPT('Reindeer','${aeskey}'), PGP_SYM_ENCRYPT('Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('rodecapd@objectcomputing.com','${aeskey}'), '122758121', '2012-09-29', PGP_SYM_ENCRYPT('Does stuff. Sometimes well, sometimes not','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '2012-09-29');
 
 INSERT INTO member_profile -- Unreal Ulysses
   (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
