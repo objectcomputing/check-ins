@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.security;
 
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.objectcomputing.checkins.Environments;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -14,11 +17,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.micronaut.http.cookie.Cookie;
 import io.micronaut.http.cookie.SameSite;
 import io.micronaut.http.netty.cookies.NettyCookie;
@@ -29,16 +28,14 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.event.LoginSuccessfulEvent;
 import io.micronaut.security.handlers.LoginHandler;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.security.token.jwt.generator.JwtTokenGenerator;
+import io.micronaut.security.token.jwt.validator.ReactiveJsonWebTokenValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.text.ParseException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Requires(env = {Environments.LOCAL, Environment.DEVELOPMENT})
@@ -54,67 +51,90 @@ public class ImpersonationController {
     private final MemberProfileServices memberProfileServices;
     private final RoleServices roleServices;
     private final RolePermissionServices rolePermissionServices;
+    private final JwtTokenGenerator generator;
 
     /**
-     * @param loginHandler        A collaborator which helps to build HTTP response depending on success or failure.
-     * @param eventPublisher      The application event publisher
-     * @param roleServices              Role services
-     * @param rolePermissionServices    Role permission services
-     * @param memberProfileServices     Member profile services
+     * @param loginHandler           A collaborator which helps to build HTTP response depending on success or failure.
+     * @param eventPublisher         The application event publisher
+     * @param roleServices           Role services
+     * @param rolePermissionServices Role permission services
+     * @param memberProfileServices  Member profile services
+     * @param generator              Generator for creating and signing the new token
      */
     public ImpersonationController(LoginHandler loginHandler,
                                    ApplicationEventPublisher eventPublisher,
                                    RoleServices roleServices,
                                    RolePermissionServices rolePermissionServices,
-                                   MemberProfileServices memberProfileServices) {
+                                   MemberProfileServices memberProfileServices,
+                                   JwtTokenGenerator generator) {
         this.loginHandler = loginHandler;
         this.eventPublisher = eventPublisher;
         this.roleServices = roleServices;
         this.rolePermissionServices = rolePermissionServices;
         this.memberProfileServices = memberProfileServices;
+        this.generator = generator;
     }
 
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
     @Post("/begin")
     @RequiredPermission(Permission.CAN_IMPERSONATE_MEMBERS)
     public HttpResponse<Void> auth(HttpRequest<?> request, String email) {
-                final Cookie jwt = request.getCookies().get(JWT);
-                if (jwt == null) {
-                    // The user is required to be logged in.  If this is null,
-                    // we are in an impossible state!
-                    LOG.error("Unable to locate the JWT");
+        final Cookie jwt = request.getCookies().get(JWT);
+        if (jwt == null) {
+            // The user is required to be logged in.  If this is null,
+            // we are in an impossible state!
+            LOG.error("Unable to locate the JWT");
             return HttpResponse.unauthorized();
-                } else {
-            LOG.info("Processing request to switch to user \'{}\'", email);
+        } else {
+            LOG.info("Processing request to switch to user '{}'", email);
             Set<MemberProfile> memberProfiles = memberProfileServices.findByValues(null, null, null, null, email, null, Boolean.FALSE);
             Iterator<MemberProfile> iterator = memberProfiles.iterator();
-            if(!iterator.hasNext()) return HttpResponse.badRequest();
+            if (!iterator.hasNext()) return HttpResponse.badRequest();
 
             MemberProfile memberProfile = iterator.next();
-            LOG.info("Profile exists for \'{}\'", email);
-                            String firstName = memberProfile.getFirstName() != null ? memberProfile.getFirstName() : "";
-                            String lastName = memberProfile.getLastName() != null ? memberProfile.getLastName() : "";
+            LOG.info("Profile exists for '{}'", email);
+            String firstName = memberProfile.getFirstName() != null ? memberProfile.getFirstName() : "";
+            String lastName = memberProfile.getLastName() != null ? memberProfile.getLastName() : "";
             Set<String> roles = roleServices.findUserRoles(memberProfile.getId()).stream().map(role -> role.getRole()).collect(Collectors.toSet());
             Set<String> permissions = rolePermissionServices.findUserPermissions(memberProfile.getId()).stream().map(permission -> permission.name()).collect(Collectors.toSet());
 
             Map<String, Object> newAttributes = new HashMap<>();
-                            newAttributes.put("email", memberProfile.getWorkEmail());
-                            newAttributes.put("name", firstName + ' ' + lastName);
-                            newAttributes.put("picture", "");
+            newAttributes.put("email", memberProfile.getWorkEmail());
+            newAttributes.put("name", firstName + ' ' + lastName);
+            newAttributes.put("picture", "");
             newAttributes.put("roles", roles);
             newAttributes.put("permissions", permissions);
-            newAttributes.put("openIdToken", "");
+            JWTClaimsSet newSet = null;
+            try {
+                JWT parse = JWTParser.parse(jwt.getValue());
+                JWTClaimsSet jwtClaimsSet = parse.getJWTClaimsSet();
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("email", memberProfile.getWorkEmail());
+                claims.put("name", firstName + ' ' + lastName);
+                claims.put("picture", "");
+                claims.put("exp", ((Date) jwtClaimsSet.getClaims().get("exp")).getTime());
+                claims.put("iss", jwtClaimsSet.getClaims().get("iss"));
+                claims.put("aud", jwtClaimsSet.getClaims().get("aud"));
+                claims.put("sub", jwtClaimsSet.getClaims().get("sub"));
+                newSet = JWTClaimsSet.parse(claims);
+                Optional<String> signed = generator.generateToken(claims);
+
+                String token = signed.get();
+                if (newSet != null) newAttributes.put("openIdToken", token);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
 
             LOG.info("Building authentication");
             Authentication updatedAuth = Authentication.build(email, roles, newAttributes);
             LOG.info("Publishing login");
-                            eventPublisher.publishEvent(new LoginSuccessfulEvent(updatedAuth, null, Locale.getDefault()));
-                            // Store the old JWT to allow the user to revert the impersonation.
+            eventPublisher.publishEvent(new LoginSuccessfulEvent(updatedAuth, null, Locale.getDefault()));
+            // Store the old JWT to allow the user to revert the impersonation.
             LOG.info("Attempting to swap tokens");
-                            return ((MutableHttpResponse)loginHandler.loginSuccess(updatedAuth, request)).cookie(
-                                       new NettyCookie(originalJWT, jwt.getValue()).path("/").sameSite(SameSite.Strict)
-                                       .maxAge(jwt.getMaxAge()));
-                }
+            return ((MutableHttpResponse) loginHandler.loginSuccess(updatedAuth, request)).cookie(
+                    new NettyCookie(originalJWT, jwt.getValue()).path("/").sameSite(SameSite.Strict)
+                            .maxAge(jwt.getMaxAge()));
+        }
     }
 
     @Produces(MediaType.TEXT_HTML)
@@ -127,13 +147,13 @@ public class ImpersonationController {
             // Swap the OJWT back to the JWT and remove the original JWT
             Set<Cookie> cookies = new HashSet<Cookie>();
             cookies.add(new NettyCookie(JWT, ojwt.getValue()).path("/")
-                              .sameSite(SameSite.Strict)
-                              .maxAge(ojwt.getMaxAge()).httpOnly());
+                    .sameSite(SameSite.Strict)
+                    .maxAge(ojwt.getMaxAge()).httpOnly());
             cookies.add(new NettyCookie(originalJWT, "").path("/").maxAge(0));
 
             // Redirect to "/" while setting the cookies.
             return HttpResponse.temporaryRedirect(URI.create("/"))
-                                  .cookies(cookies);
+                    .cookies(cookies);
         }
     }
 }
