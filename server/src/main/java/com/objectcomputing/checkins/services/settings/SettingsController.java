@@ -73,8 +73,23 @@ public class SettingsController {
      */
     @Get("/options")
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
-    public List<SettingOption> getOptions() {
-        return SettingOption.getOptions();
+    public List<SettingsResponseDTO> getOptions() {
+        List<SettingOption> options = SettingOption.getOptions();
+        return options.stream().map(option -> {
+            String value = "";
+            UUID uuid = null;
+            try {
+                Setting s = settingsServices.findByName(option.name());
+                uuid = s.getId();
+                value = s.getValue();
+            } catch(NotFoundException ex) {
+            }
+            return new SettingsResponseDTO(
+                    uuid, option.name(), option.getDescription(),
+                    option.getCategory(), option.getType(),
+                    option.getValues(),
+                    value);
+        }).toList();
     }
 
     /**
