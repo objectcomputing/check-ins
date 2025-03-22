@@ -54,6 +54,12 @@ public class SettingsServicesImpl implements SettingsServices {
     }
 
     @Override
+    public Setting systemFindByName(@NotNull String name) {
+        return settingsRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException("Setting with name " + name + " not found."));
+    }
+
+    @Override
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<Setting> findAllSettings() {
         LOG.info("In SettingsServicesImpl.findAllSettigs()");

@@ -13,6 +13,8 @@ public interface SettingsServices {
 
     Setting findByName(@NotNull String name);
 
+    Setting systemFindByName(@NotNull String name);
+
     List<Setting> findAllSettings();
 
     boolean delete(UUID id);

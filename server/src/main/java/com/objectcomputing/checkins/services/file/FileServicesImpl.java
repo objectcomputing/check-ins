@@ -95,7 +95,7 @@ public class FileServicesImpl extends FileServicesBaseImpl {
     private String getRootDirId() {
         String rootDirId;
         try {
-            rootDirId = settingsServices.findByName(SettingOption.DIRECTORY_ID.name()).getValue();
+            rootDirId = settingsServices.systemFindByName(SettingOption.DIRECTORY_ID.name()).getValue();
         }
         catch (NotFoundException e ) {
             rootDirId = "";

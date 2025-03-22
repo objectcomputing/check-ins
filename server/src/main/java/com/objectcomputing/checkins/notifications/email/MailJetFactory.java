@@ -31,12 +31,12 @@ public class MailJetFactory {
         String mj_apikey_private;
 
         try {
-            mj_apikey_public = settingsServices.findByName(SettingOption.MJ_APIKEY_PUBLIC.name()).getValue();
+            mj_apikey_public = settingsServices.systemFindByName(SettingOption.MJ_APIKEY_PUBLIC.name()).getValue();
         } catch (NotFoundException e) {
             mj_apikey_public = "";
         }
         try {
-            mj_apikey_private = settingsServices.findByName(SettingOption.MJ_APIKEY_PRIVATE.name()).getValue();
+            mj_apikey_private = settingsServices.systemFindByName(SettingOption.MJ_APIKEY_PRIVATE.name()).getValue();
         } catch (NotFoundException e) {
             mj_apikey_private = "";
         }

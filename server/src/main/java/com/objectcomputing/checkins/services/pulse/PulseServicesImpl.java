@@ -78,7 +78,7 @@ public class PulseServicesImpl implements PulseServices {
                              .with(TemporalAdjusters.firstInMonth(emailDay));
 
       try {
-        Setting freq = settingsServices.findByName("PULSE_EMAIL_FREQUENCY");
+        Setting freq = settingsServices.systemFindByName("PULSE_EMAIL_FREQUENCY");
         if (frequency.containsKey(freq.getValue())) {
           setting = freq.getValue();
         } else {

@@ -35,7 +35,7 @@ public class MailJetSender implements EmailSender {
 
     private String getFromAddress() {
         try {
-            return settingsServices.findByName(SettingOption.FROM_ADDRESS.name()).getValue();
+            return settingsServices.systemFindByName(SettingOption.FROM_ADDRESS.name()).getValue();
         } catch (NotFoundException e) {
             return "";
         }
@@ -43,7 +43,7 @@ public class MailJetSender implements EmailSender {
 
     private String getFromName() {
         try {
-            return settingsServices.findByName(SettingOption.FROM_NAME.name()).getValue();
+            return settingsServices.systemFindByName(SettingOption.FROM_NAME.name()).getValue();
         } catch (NotFoundException e) {
             return "";
         }
@@ -104,12 +104,12 @@ public class MailJetSender implements EmailSender {
         String mj_apikey_public;
         String mj_apikey_private;
         try {
-            mj_apikey_public = settingsServices.findByName(SettingOption.MJ_APIKEY_PUBLIC.name()).getValue();
+            mj_apikey_public = settingsServices.systemFindByName(SettingOption.MJ_APIKEY_PUBLIC.name()).getValue();
         } catch (NotFoundException e) {
             mj_apikey_public = "";
         }
         try {
-            mj_apikey_private = settingsServices.findByName(SettingOption.MJ_APIKEY_PRIVATE.name()).getValue();
+            mj_apikey_private = settingsServices.systemFindByName(SettingOption.MJ_APIKEY_PRIVATE.name()).getValue();
         } catch (NotFoundException e) {
             mj_apikey_private = "";
         }
