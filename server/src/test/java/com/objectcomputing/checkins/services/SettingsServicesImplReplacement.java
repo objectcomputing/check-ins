@@ -51,6 +51,13 @@ public class SettingsServicesImplReplacement implements SettingsServices {
     }
 
     @Override
+    public Setting systemFindByName(String name) {
+        Setting found = map.get(name);
+        if(found == null) throw new NotFoundException("Setting with name " + name + " not found.");
+        return found;
+    }
+
+    @Override
     public List<Setting> findAllSettings() {
         List<Setting> settings = Arrays.<Setting>stream((Setting[]) map.values().toArray()).toList();
         return settings;
