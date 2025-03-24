@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - 'develop'
-      - 'feature-2486/create-new-pipeline-for-updated-env'
 env:
   HUSKY: 0
   PROJECT_NUMBER: ${{ secrets.PROJECT_NUM }}
@@ -44,7 +43,7 @@ jobs:
       id-token: 'write'
     runs-on: ubuntu-latest
     environment:
-      name: DEV-POC
+      name: Development
       url: ${{ env.TARGET_URL }}/
     steps:
       - uses: actions/checkout@v4
