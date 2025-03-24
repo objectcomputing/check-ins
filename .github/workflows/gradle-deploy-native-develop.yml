@@ -5,10 +5,12 @@ on:
       - 'develop'
 env:
   HUSKY: 0
-  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
+  PROJECT_NUMBER: ${{ secrets.PROJECT_NUM }}
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop-native
-  TARGET_URL: https://checkins-develop-native-832140020593.us-central1.run.app
+  TARGET_URL: https://checkins-develop-native.objectcomputing.com
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -46,11 +48,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up Node LTS
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Set up GraalVM 21
         uses: graalvm/setup-graalvm@v1.1.8
         with:
@@ -67,8 +69,15 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          project_id: 'oci-intern-2019'
-          workload_identity_provider: 'projects/832140020593/locations/global/workloadIdentityPools/github/providers/my-repo'
+          project_id: ${{ secrets.PROJECT_ID }}
+          workload_identity_provider: 'projects/${{secrets.PROJECT_NUM}}/locations/global/workloadIdentityPools/github-wif-pool/providers/github-provider'
+          service_account: '${{secrets.AUTOMATION_SERVICE_ACCOUNT}}'
+      - id: 'secrets'
+        uses: 'google-github-actions/get-secretmanager-secrets@v2'
+        with:
+          secrets: |-
+            cloud_db_connection_name:${{secrets.PROJECT_NUM}}/CLOUD_DB_CONNECTION_NAME
+            connector_id:${{secrets.PROJECT_NUM}}/CONNECTOR_ID
       - name: 'Set up Cloud SDK'
         uses: google-github-actions/setup-gcloud@v2
         with:
@@ -88,32 +97,27 @@ jobs:
         run: |-
           gcloud run deploy "$SERVICE_NAME" \
             --quiet \
+            --project "$PROJECT_ID" \
             --region "$RUN_REGION" \
             --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
             --memory 1Gi \
-            --add-cloudsql-instances ${{ secrets.DB_CONNECTION_NAME }} \
-            --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DB_CONNECTION_NAME }}" \
-            --set-env-vars "DB_NAME=${{ secrets.DB_NAME }}" \
-            --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-            --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.DB_USERNAME }}" \
-            --set-env-vars "AES_KEY=${{ secrets.AES_KEY }}" \
-            --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
-            --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
-            --set-env-vars "OAUTH_CALLBACK_URI"=${{ secrets.OAUTH_CALLBACK_URI }} \
-            --set-env-vars "DIRECTORY_ID=${{ secrets.DIRECTORY_ID }}" \
-            --set-env-vars "SERVICE_ACCOUNT_CREDENTIALS=${{ secrets.SERVICE_ACCOUNT_CREDENTIALS }}" \
-            --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
-            --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
-            --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
-            --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
-            --set-env-vars "WEB_ADDRESS=${{ env.TARGET_URL }}" \
-            --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
-            --set-env-vars "FROM_NAME=Check-Ins - DEVELOP" \
-            --set-env-vars "^@^MICRONAUT_ENVIRONMENTS=dev,cloud,google,gcp" \
-            --set-env-vars "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" \
-            --set-env-vars "SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}" \
-            --set-env-vars "SLACK_KUDOS_CHANNEL_ID=${{ secrets.SLACK_KUDOS_CHANNEL_ID }}" \
-            --set-env-vars "SLACK_SIGNING_SECRET=${{ secrets.SLACK_PULSE_SIGNING_SECRET }}" \
+            --add-cloudsql-instances ${{steps.secrets.outputs.cloud_db_connection_name }} \
+            --vpc-connector ${{steps.secrets.outputs.connector_id}} \
+            --set-secrets "CLOUD_DB_CONNECTION_NAME=CLOUD_DB_CONNECTION_NAME:latest" \
+            --set-secrets "DB_NAME=DB_NAME:latest" \
+            --set-secrets "DATASOURCES_DEFAULT_PASSWORD=DATASOURCES_DEFAULT_PASSWORD:latest" \
+            --set-secrets "DATASOURCES_DEFAULT_USERNAME=DATASOURCES_DEFAULT_USERNAME:latest" \
+            --set-secrets "AES_KEY=AES_KEY:latest" \
+            --set-secrets "OAUTH_CLIENT_ID=OAUTH_CLIENT_ID:latest" \
+            --set-secrets "OAUTH_CLIENT_SECRET=OAUTH_CLIENT_SECRET:latest" \
+            --set-secrets "GSUITE_SUPER_ADMIN=GSUITE_SUPER_ADMIN:latest" \
+            --set-secrets "SERVICE_ACCOUNT_CREDENTIALS=SERVICE_ACCOUNT_CREDENTIALS:latest" \
+            --set-secrets "WEB_ADDRESS=NATIVE_WEB_ADDRESS:latest" \
+            --set-secrets "MICRONAUT_ENVIRONMENTS=MICRONAUT_ENVIRONMENTS:latest" \
+            --set-secrets "SLACK_WEBHOOK_URL=SLACK_WEBHOOK_URL:latest" \
+            --set-secrets "SLACK_BOT_TOKEN=SLACK_BOT_TOKEN:latest" \
+            --set-secrets "SLACK_SIGNING_SECRET=SLACK_SIGNING_SECRET:latest" \
+            --set-secrets "SLACK_KUDOS_CHANNEL_ID=SLACK_KUDOS_CHANNEL_ID:latest" \
             --platform "managed" \
             --max-instances 2 \
             --allow-unauthenticated
