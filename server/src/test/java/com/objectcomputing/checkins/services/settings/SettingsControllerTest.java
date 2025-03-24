@@ -119,10 +119,14 @@ class SettingsControllerTest extends TestContainersSuite implements RoleFixture,
         updatedSetting.setValue("Missing");
         final HttpRequest<SettingsDTO> request = HttpRequest.
                 PUT("/", updatedSetting).basicAuth(lucy.getWorkEmail(),ADMIN_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-        assertEquals("Setting with name %s not found.".formatted(SettingOption.LOGO_URL.toString()), responseException.getMessage());
+
+        final HttpResponse<SettingsResponseDTO> response = client.toBlocking().exchange(request,SettingsResponseDTO.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(updatedSetting.getName(), response.body().getName());
+        assertEquals(updatedSetting.getValue(), response.body().getValue());
+
     }
 
     @Test

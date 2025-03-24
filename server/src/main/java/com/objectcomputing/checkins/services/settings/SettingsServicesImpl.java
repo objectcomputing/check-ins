@@ -6,12 +6,15 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.UUID;
 
 @Singleton
 public class SettingsServicesImpl implements SettingsServices {
+    private static final Logger LOG = LoggerFactory.getLogger(SettingsServicesImpl.class);
 
     private final SettingsRepository settingsRepository;
 
@@ -33,10 +36,14 @@ public class SettingsServicesImpl implements SettingsServices {
     @RequiredPermission(Permission.CAN_ADMINISTER_SETTINGS)
     public Setting update(String name, String value) {
         validateSettingOption(name);
-        Setting setting = settingsRepository.findByName(name)
-                .orElseThrow(() -> new NotFoundException("Setting with name " + name + " not found."));
-        setting.setValue(value);
-        return settingsRepository.update(setting);
+        try {
+            Setting setting = settingsRepository.findByName(name).orElseThrow(() -> new NotFoundException("Setting with name " + name + " not found."));
+            setting.setValue(value);
+            return settingsRepository.update(setting);
+
+        } catch (NotFoundException e ){
+            return settingsRepository.save(new Setting(name, value));
+        }
     }
 
     @Override
@@ -47,8 +54,15 @@ public class SettingsServicesImpl implements SettingsServices {
     }
 
     @Override
+    public Setting systemFindByName(@NotNull String name) {
+        return settingsRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException("Setting with name " + name + " not found."));
+    }
+
+    @Override
     @RequiredPermission(Permission.CAN_VIEW_SETTINGS)
     public List<Setting> findAllSettings() {
+        LOG.info("In SettingsServicesImpl.findAllSettigs()");
         return settingsRepository.findAll();
     }
 

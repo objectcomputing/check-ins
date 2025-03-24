@@ -3,48 +3,30 @@ package com.objectcomputing.checkins.services.file;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
-import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.CurrentUserServicesReplacement;
+import com.objectcomputing.checkins.services.SettingsServicesImplReplacement;
 import com.objectcomputing.checkins.services.FileServicesImplReplacement;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
-import com.objectcomputing.checkins.services.role.RoleType;
 
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.http.MediaType;
-import io.micronaut.security.authentication.Authentication;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.StringUtils;
 
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.io.OutputStream;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Optional;
@@ -57,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.fileservicesimpl", value = StringUtils.TRUE)
+@Property(name = "replace.settingsservicesimpl", value = StringUtils.TRUE)
 @Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
 class FileServicesImplTest extends TestContainersSuite
                            implements MemberProfileFixture, CheckInFixture, CheckInDocumentFixture, RoleFixture {
@@ -125,6 +108,9 @@ class FileServicesImplTest extends TestContainersSuite
     @Inject
     private FileServicesImplReplacement services;
 
+    @Inject
+    private SettingsServicesImplReplacement settingsService;
+
     private CheckIn checkIn;
     private MemberProfile pdl;
     private MemberProfile member;
@@ -132,6 +118,7 @@ class FileServicesImplTest extends TestContainersSuite
     @BeforeEach
     void reset() {
         services.reset();
+        settingsService.reset();
 
         createAndAssignRoles();
 

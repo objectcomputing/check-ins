@@ -7,6 +7,9 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 import ch.digitalfondue.mjml4j.Mjml4j;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.settings.SettingOption;
+import com.objectcomputing.checkins.services.settings.SettingsServices;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
@@ -19,27 +22,40 @@ import java.util.Collections;
 import java.util.List;
 
 @Prototype
-@Requires(bean = MailJetConfiguration.class)
 public class MailJetSender implements EmailSender {
     public static final String MJMLPART = "MJMLPART";
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
+    private final SettingsServices settingsServices;
 
     public static final int MAILJET_RECIPIENT_LIMIT = 49;
 
-    private final String fromAddress;
-    private final String fromName;
     private String emailFormat;
+
+    private String getFromAddress() {
+        try {
+            return settingsServices.systemFindByName(SettingOption.FROM_ADDRESS.name()).getValue();
+        } catch (NotFoundException e) {
+            return "";
+        }
+    }
+
+    private String getFromName() {
+        try {
+            return settingsServices.systemFindByName(SettingOption.FROM_NAME.name()).getValue();
+        } catch (NotFoundException e) {
+            return "";
+        }
+    }
 
     public MailJetSender(
             MailjetClient client,
-            MailJetConfiguration configuration
+            SettingsServices settingsServices
     ) {
         this.client = client;
-        this.fromAddress = configuration.getFromAddress();
-        this.fromName = configuration.getFromName();
         this.emailFormat = Emailv31.Message.HTMLPART;
+        this.settingsServices = settingsServices;
     }
 
     /**
@@ -82,10 +98,23 @@ public class MailJetSender implements EmailSender {
      */
     @Override
     public void sendEmail(String fromName, String fromAddress, String subject, String content, String... recipients) {
-        if(fromName == null) fromName = this.fromName;
-        if(fromAddress == null) fromAddress = this.fromAddress;
+        if(fromName == null) fromName = getFromName();
+        if(fromAddress == null) fromAddress = getFromAddress();
 
-        if(System.getenv("MJ_APIKEY_PUBLIC") == null || System.getenv("MJ_APIKEY_PRIVATE") == null) {
+        String mj_apikey_public;
+        String mj_apikey_private;
+        try {
+            mj_apikey_public = settingsServices.systemFindByName(SettingOption.MJ_APIKEY_PUBLIC.name()).getValue();
+        } catch (NotFoundException e) {
+            mj_apikey_public = "";
+        }
+        try {
+            mj_apikey_private = settingsServices.systemFindByName(SettingOption.MJ_APIKEY_PRIVATE.name()).getValue();
+        } catch (NotFoundException e) {
+            mj_apikey_private = "";
+        }
+
+        if(mj_apikey_public == "" || mj_apikey_private == "") {
             LOG.error("API key(s) are missing for MailJetSender");
             return;
         }
@@ -117,7 +146,7 @@ public class MailJetSender implements EmailSender {
             List<JSONArray> failedBatches = new ArrayList<>();
             final JSONArray to =
                 new JSONArray()
-                .put(new JSONObject().put("Email", this.fromAddress));
+                .put(new JSONObject().put("Email", fromAddress));
             emailBatches.forEach((recipientList) -> {
                 try {
                     send(sender, to, recipientList,

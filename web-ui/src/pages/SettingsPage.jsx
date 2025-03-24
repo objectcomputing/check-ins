@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { UPDATE_TOAST } from '../context/actions';
 import { AppContext } from '../context/AppContext';
 import { Button, Typography } from '@mui/material';
@@ -29,177 +29,120 @@ const componentMapping = {
   STRING: SettingsString
 };
 
+const constructFileHandler = setting => {
+    return (file) => {
+        console.log(`Pretend we saved that file for ${setting.name} somewhere (we didn't)...`);
+    };
+};
+
 const SettingsPage = () => {
   const fileRef = React.useRef(null);
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const [settingsControls, setSettingsControls] = useState([]);
-  const [update, setState] = useState();
+  const [settings, setSettings] = useState([]);
+  const [handlers, setHandlers] = useState({});
+  const [update, setUpdate] = useState(true);
+  const canView = selectHasViewSettingsPermission(state) ||
+                  selectHasAdministerSettingsPermission(state);
 
   useEffect(() => {
     const fetchData = async () => {
       // Get the options from the server
-      const allOptions =
-        selectHasViewSettingsPermission(state) ||
-        selectHasAdministerSettingsPermission(state)
-          ? (await getAllOptions()).payload.data
+      const allOptions = canView
+          ? (await getAllOptions(csrf)).payload.data
           : [];
 
-      if (allOptions) {
-        // Sort the options by category, store them, and upate the state.
-        setSettingsControls(
-          allOptions.sort((l, r) => {
-            if (l.category === r.category) {
-              return l.name.localeCompare(r.name);
-            } else {
-              return l.category.localeCompare(r.category);
-            }
-          })
-        );
+      if (allOptions?.length !== 0) {
+        // Sort the options by category, store them, and update the state.
+        const sorted = allOptions.sort((l, r) => {
+          if (l.category === r.category) {
+            return l.name.localeCompare(r.name);
+          } else {
+            return l.category.localeCompare(r.category);
+          }
+        });
+
+        setSettings(sorted);
+        setUpdate(false);
       }
     };
-    if (csrf) {
+    if (csrf && update) {
       fetchData();
     }
-  }, [state, csrf]);
+  }, [csrf, canView, update, setUpdate, setSettings]);
 
-  const handleLogoUrl = file => {
-    if (csrf) {
-      // TODO: Need to upload the file to a storage bucket...
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'warning',
-          toast: 'The Logo URL setting has yet to be implemented.'
-        }
-      });
-    }
-  };
-
-  const keyedHandler = (key, event) => {
-    if (handlers[key]) {
-      handlers[key].setting.value = event.target.value;
-      setState({ update: true });
-    }
-  };
-
-  const handlePulseEmailFrequency = event => {
-    keyedHandler('PULSE_EMAIL_FREQUENCY', event);
-  };
-
-  const handlers = {
-    // File handlers do not modify settings values and, therefore, do not
-    // need to keep a reference to the setting object.  However, they do need
-    // a file reference object.
-    LOGO_URL: {
-      onChange: handleLogoUrl,
-      setting: fileRef
-    },
-
-    // All others need to provide an `onChange` method and a `setting` object.
-    PULSE_EMAIL_FREQUENCY: {
-      onChange: handlePulseEmailFrequency,
-      setting: undefined
-    }
-  };
-
-  const addHandlersToSettings = settings => {
-    return settings
-      ? settings.map(setting => {
-          const handler = handlers[setting.name.toUpperCase()];
-          if (handler) {
-            if (setting.type.toUpperCase() === 'FILE') {
-              return {
-                ...setting,
-                handleFunction: handler.onChange,
-                fileRef: handler.setting
-              };
-            }
-
-            handler.setting = setting;
-            return { ...setting, handleChange: handler.onChange };
-          }
-
-          console.warn(`WARNING: No handler for ${setting.name}`);
-          return setting;
-        })
-      : [];
-  };
-
-  const save = async () => {
-    let errors;
-    let saved = 0;
-    for (let key of Object.keys(handlers)) {
-      const setting = handlers[key].setting;
-      // The settings controller does not allow blank values.
-      if (setting?.name && `${setting.value}` != '') {
-        let res;
-        if (setting.id) {
-          res = await putOption(
-            { name: setting.name, value: setting.value },
-            csrf
-          );
+  useEffect(() => {
+    if(settings?.length !== 0) {
+      setHandlers(settings.reduce((acc, curr) =>{
+        if(curr.type.toUpperCase() === "FILE") {
+          acc[curr.name] = constructFileHandler(curr);
         } else {
-          res = await postOption(
-            { name: setting.name, value: setting.value },
-            csrf
-          );
-          if (res?.payload?.data) {
-            setting.id = res.payload.data.id;
+          acc[curr.name] = (event) => {
+            const newSettings = [...settings];
+            const setting = newSettings.find(test => test.name === curr.name);
+            setting.value = event.target.value;
+            setSettings(newSettings);
           }
         }
-        if (res?.error) {
-          const error = res?.error?.message;
-          if (errors) {
-            errors += '\n' + error;
-          } else {
-            errors = error;
+        return acc;
+      }, {}));
+    }
+  }, [setHandlers, setSettings, settings])
+
+  const save = useCallback(async () => {
+    if(settings && settings.length > 0) {
+      let errors;
+      let promises = settings.filter(setting => setting.type.toUpperCase() !== "FILE").map(setting => {
+        let promise = setting.id ?
+          putOption({ name: setting.name, value: setting.value }, csrf) :
+          postOption({ name: setting.name, value: setting.value }, csrf);
+
+        return promise;
+      });
+
+      Promise.all(promises).then((results) => {
+        results.forEach((res) => {
+          if (res?.error) {
+            const error = res?.error?.message;
+            if (errors) {
+              errors += '\n' + error;
+            } else {
+              errors = error;
+            }
           }
-        }
-        if (res?.payload?.data) {
-          saved++;
-        }
-      } else {
-        console.warn(`WARNING: ${setting.name} not sent to the server`);
-      }
-    }
+        });
 
-    if (errors) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'error',
-          toast: errors
-        }
-      });
-    } else if (saved > 0) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: 'success',
-          toast: 'Settings have been saved'
+        // Trigger load of updated settings values and display errors or success.
+        setUpdate(true);
+        if (errors) {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'error',
+              toast: errors
+            }
+          });
+        } else {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: 'success',
+              toast: 'Settings have been saved'
+            }
+          });
         }
       });
     }
-  };
+  },[settings]);
 
-  /**
-   * @typedef {Object} Controls
-   * @property {ComponentName} componentName - The name of the component.
-   *
-   * @typedef {('SettingsBoolean'|'SettingsColor'|'SettingsFile'|'SettingsNumber'|'SettingsString')} ComponentName
-   */
-
-  /** @type {Controls[]} */
-  const updatedSettingsControls = addHandlersToSettings(settingsControls);
   const categories = {};
 
-  return selectHasViewSettingsPermission(state) ||
-    selectHasAdministerSettingsPermission(state) ? (
+  return canView ? (
     <div className="settings-page">
-      {updatedSettingsControls.map((componentInfo, index) => {
-        const Component = componentMapping[componentInfo.type.toUpperCase()];
-        const info = { ...componentInfo, name: titleCase(componentInfo.name) };
+      {settings.map((setting, index) => {
+        const Component = componentMapping[setting.type.toUpperCase()];
+        const info = { ...setting, name: titleCase(setting.name) };
+        setting.type === 'FILE' ? info.handleFunction = handlers[setting.name] : info.handleChange = handlers[setting.name];
         if (categories[info.category]) {
           return <Component key={index} {...info} />;
         } else {
@@ -222,8 +165,8 @@ const SettingsPage = () => {
       {
         // Check length against an explicit value.  If length is zero, it will
         // be displayed instead of evaluated to false.
-        settingsControls &&
-          settingsControls.length > 0 &&
+        settings &&
+          settings.length > 0 &&
           selectHasAdministerSettingsPermission(state) && (
             <div className="buttons">
               <Button disableRipple color="primary" onClick={save}>

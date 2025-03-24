@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.notifications.email;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.inject.qualifiers.Qualifiers;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Property(name = "replace.settingsservicesimpl", value = StringUtils.TRUE)
 class MailJetSenderTest extends TestContainersSuite {
 
     @Test

@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Property(name = "replace.currentuserservices", value = StringUtils.TRUE)
+@Property(name = "replace.settingsservicesimpl", value = StringUtils.TRUE)
 class SkillsReportServicesImplTest extends TestContainersSuite
                                    implements MemberProfileFixture, MemberSkillFixture, SkillFixture, RoleFixture {
     @Inject

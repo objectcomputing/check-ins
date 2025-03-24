@@ -14,6 +14,19 @@ export const getAllOptions = async cookie => {
   });
 };
 
+export const getSettings = async (option, cookie) => {
+  return resolve({
+    method: 'PUT',
+    url: settingsURL,
+    headers: {
+      'X-CSRF-Header': cookie,
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: option
+  });
+};
+
 export const putOption = async (option, cookie) => {
   return resolve({
     method: 'PUT',

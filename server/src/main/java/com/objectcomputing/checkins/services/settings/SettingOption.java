@@ -18,7 +18,13 @@ import java.util.stream.Stream;
 @JsonDeserialize(using = SettingOptionDeserializer.class)
 public enum SettingOption {
     LOGO_URL("The logo url", Category.THEME, Type.FILE),
+    FROM_NAME("Email From Name", Category.CHECK_INS, Type.STRING),
+    FROM_ADDRESS("From Address", Category.CHECK_INS, Type.STRING),
+    DIRECTORY_ID("Google Drive ID", Category.INTEGRATIONS, Type.STRING),
+    MJ_APIKEY_PUBLIC("MailJet Public API Key", Category.INTEGRATIONS, Type.STRING),
+    MJ_APIKEY_PRIVATE("MailJet Private API Key", Category.INTEGRATIONS, Type.STRING),
     PULSE_EMAIL_FREQUENCY("The Pulse Email Frequency", Category.CHECK_INS, Type.STRING, List.of("weekly", "bi-weekly", "monthly"));
+
 
     private final String description;
     private final Category category;

@@ -55,17 +55,22 @@ VALUES
 INSERT INTO member_profile -- Terrific Yak
   (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-  ('1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('Terrific','${aeskey}'), PGP_SYM_ENCRYPT('Yak','${aeskey}'), PGP_SYM_ENCRYPT('Senior Developer','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', PGP_SYM_ENCRYPT('Manchester, UK','${aeskey}'), PGP_SYM_ENCRYPT('yatest@objectcomputing.com','${aeskey}'), 'yak-12345678', '2024-05-08', PGP_SYM_ENCRYPT('Java developer for ages','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1999-12-31', '2024-03-29');
+    ('1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('Terrific','${aeskey}'), PGP_SYM_ENCRYPT('Yak','${aeskey}'), PGP_SYM_ENCRYPT('Senior Developer','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', PGP_SYM_ENCRYPT('Manchester, UK','${aeskey}'), PGP_SYM_ENCRYPT('yatest@objectcomputing.com','${aeskey}'), 'yak-12345678', '2024-05-08', PGP_SYM_ENCRYPT('Java developer for ages','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1999-12-31', '2024-03-29');
+
+INSERT INTO member_profile -- Derelict Reindeer
+  (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, last_seen)
+VALUES
+    ('2b067cbb-45c2-4c3c-a6b2-eea370f9d969', PGP_SYM_ENCRYPT('Derelict','${aeskey}'), PGP_SYM_ENCRYPT('Reindeer','${aeskey}'), PGP_SYM_ENCRYPT('Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('rodecapd@objectcomputing.com','${aeskey}'), '122758121', '2012-09-29', PGP_SYM_ENCRYPT('Does stuff. Sometimes well, sometimes not','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '2012-09-29');
 
 INSERT INTO member_profile -- Unreal Ulysses
-(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Unreal','${aeskey}'),  PGP_SYM_ENCRYPT('Ulysses','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', '1950-01-01', '2021-05-22');
+  ('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Unreal','${aeskey}'),  PGP_SYM_ENCRYPT('Ulysses','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', '1950-01-01', '2021-05-22');
 
 INSERT INTO member_profile -- Kazuhira Miller
-(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('a90be358-aa3d-49c8-945a-879a93646e45', PGP_SYM_ENCRYPT('Kazuhira','${aeskey}'),  PGP_SYM_ENCRYPT('Miller','${aeskey}'), PGP_SYM_ENCRYPT('Unit Coordinator','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('millerkaz@objectcomputing.com','${aeskey}'), '012345678', '2022-03-29', PGP_SYM_ENCRYPT('Bff with Big Boss','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29');
+  ('a90be358-aa3d-49c8-945a-879a93646e45', PGP_SYM_ENCRYPT('Kazuhira','${aeskey}'),  PGP_SYM_ENCRYPT('Miller','${aeskey}'), PGP_SYM_ENCRYPT('Unit Coordinator','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('millerkaz@objectcomputing.com','${aeskey}'), '012345678', '2022-03-29', PGP_SYM_ENCRYPT('Bff with Big Boss','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29');
 
 INSERT INTO member_profile -- Awesome Baboon
   (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, last_seen)
@@ -73,9 +78,9 @@ VALUES
   ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', PGP_SYM_ENCRYPT('Awesome','${aeskey}'), PGP_SYM_ENCRYPT('Baboon','${aeskey}'), PGP_SYM_ENCRYPT('System Administrator','${aeskey}'), 'a90be358-aa3d-49c8-945a-879a93646e45', PGP_SYM_ENCRYPT('St. Louis, MO','${aeskey}'), PGP_SYM_ENCRYPT('barbagliaa@objectcomputing.com','${aeskey}'), '123123450', '2012-09-29', PGP_SYM_ENCRYPT('Awesome Administrator','${aeskey}'), null, '2012-09-29');
 
 INSERT INTO member_profile -- Huey Emmerich
-(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('8d75c07e-6adc-437a-8659-7dd953ce6600', PGP_SYM_ENCRYPT('Huey','${aeskey}'),  PGP_SYM_ENCRYPT('Emmerich','${aeskey}'), PGP_SYM_ENCRYPT('Head of R&D','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('emmerichh@objectcomputing.com','${aeskey}'), '657483498', '2022-03-29', PGP_SYM_ENCRYPT('Waiting for love to bloom on the battlefield','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29');
+  ('8d75c07e-6adc-437a-8659-7dd953ce6600', PGP_SYM_ENCRYPT('Huey','${aeskey}'),  PGP_SYM_ENCRYPT('Emmerich','${aeskey}'), PGP_SYM_ENCRYPT('Head of R&D','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('emmerichh@objectcomputing.com','${aeskey}'), '657483498', '2022-03-29', PGP_SYM_ENCRYPT('Waiting for love to bloom on the battlefield','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29');
 
 INSERT INTO member_profile -- Jacked Vulture
   (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, last_seen)
@@ -93,25 +98,25 @@ VALUES
   ('5b90beb2-0e96-438b-bfd6-1487a89b339b', PGP_SYM_ENCRYPT('Alice','${aeskey}'), PGP_SYM_ENCRYPT('Admin','${aeskey}'), PGP_SYM_ENCRYPT('System Administrator','${aeskey}'), 'a90be358-aa3d-49c8-945a-879a93646e45', PGP_SYM_ENCRYPT('St. Louis, MO','${aeskey}'), PGP_SYM_ENCRYPT('admina@objectcomputing.com','${aeskey}'), '123123451', '2012-09-29', PGP_SYM_ENCRYPT('Amazing Administrator','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '2012-09-29');
 
 INSERT INTO member_profile -- Faux Freddy
-(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('2dee821c-de32-4d9c-9ecb-f73e5903d17a', PGP_SYM_ENCRYPT('Faux','${aeskey}'),  PGP_SYM_ENCRYPT('Freddy','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer','${aeskey}'), '1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing@objectcomputing.com','${aeskey}'), '010101011', '2021-05-22', PGP_SYM_ENCRYPT('Test user 1','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', '1950-01-01', '2021-05-22');
+  ('2dee821c-de32-4d9c-9ecb-f73e5903d17a', PGP_SYM_ENCRYPT('Faux','${aeskey}'),  PGP_SYM_ENCRYPT('Freddy','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer','${aeskey}'), '1c813446-c65a-4f49-b980-0193f7bfff8c', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing@objectcomputing.com','${aeskey}'), '010101011', '2021-05-22', PGP_SYM_ENCRYPT('Test user 1','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', '1950-01-01', '2021-05-22');
 
 INSERT INTO member_profile -- Revolver Ocelot
-(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Head of Sales, HR, Management','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29')
-;
+  ('105f2968-a182-45a3-892c-eeff76383fe0', PGP_SYM_ENCRYPT('Revolver','${aeskey}'),  PGP_SYM_ENCRYPT('Ocelot','${aeskey}'), PGP_SYM_ENCRYPT('Head of Sales, HR, Management','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Mother Base','${aeskey}'), PGP_SYM_ENCRYPT('ocelotr@objectcomputing.com','${aeskey}'), '489102361', '2022-03-29', PGP_SYM_ENCRYPT('Loves to reload during battle','${aeskey}'), 'dfe2f986-fac0-11eb-9a03-0242ac130003', '1943-07-04', '2022-03-29');
+
 INSERT INTO member_profile -- Lucky Bear
-(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('3455c391-c5dd-4c84-8d00-1e345711987f', PGP_SYM_ENCRYPT('Lucky','${aeskey}'),  PGP_SYM_ENCRYPT('Bear','${aeskey}'), PGP_SYM_ENCRYPT('Developer','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', PGP_SYM_ENCRYPT('South FL','${aeskey}'), PGP_SYM_ENCRYPT('belottol@objectcomputing.com','${aeskey}'), '728364519', '2021-09-07', PGP_SYM_ENCRYPT('You make your own luck','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1950-12-01', '2024-08-28')
-;
+  ('3455c391-c5dd-4c84-8d00-1e345711987f', PGP_SYM_ENCRYPT('Lucky','${aeskey}'),  PGP_SYM_ENCRYPT('Bear','${aeskey}'), PGP_SYM_ENCRYPT('Developer','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', PGP_SYM_ENCRYPT('South FL','${aeskey}'), PGP_SYM_ENCRYPT('belottol@objectcomputing.com','${aeskey}'), '728364519', '2021-09-07', PGP_SYM_ENCRYPT('You make your own luck','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1950-12-01', '2024-08-28');
+
 INSERT INTO member_profile -- Wiley Tiger
-(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
+  (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate, last_seen)
 VALUES
-('a44fc66a-86b0-4f15-8459-e7d4b4ecc330', PGP_SYM_ENCRYPT('Wiley','${aeskey}'),  PGP_SYM_ENCRYPT('Tiger','${aeskey}'), PGP_SYM_ENCRYPT('Developer','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('thelenw@objectcomputing.com','${aeskey}'), '728364510', '2024-09-23', PGP_SYM_ENCRYPT('You make your own luck','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1950-12-01', '2024-09-23')
-;
+  ('a44fc66a-86b0-4f15-8459-e7d4b4ecc330', PGP_SYM_ENCRYPT('Wiley','${aeskey}'),  PGP_SYM_ENCRYPT('Tiger','${aeskey}'), PGP_SYM_ENCRYPT('Developer','${aeskey}'), 'e4b2fe52-1915-4544-83c5-21b8f871f6db', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('thelenw@objectcomputing.com','${aeskey}'), '728364510', '2024-09-23', PGP_SYM_ENCRYPT('You make your own luck','${aeskey}'), '72655c4f-1fb8-4514-b31e-7f7e19fa9bd7', '1950-12-01', '2024-09-23');
+
 -- Roles
 INSERT INTO role
     (id, description, role)
@@ -134,6 +139,11 @@ INSERT INTO member_roles
     (roleid, memberid)
 VALUES
     ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'e4b2fe52-1915-4544-83c5-21b8f871f6db'); -- Mischievous Kangaroo
+
+INSERT INTO member_roles
+(roleid, memberid)
+VALUES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2b067cbb-45c2-4c3c-a6b2-eea370f9d969'); -- Derelict Reindeer
 
 INSERT INTO member_roles
     (roleid, memberid)
@@ -170,6 +180,11 @@ INSERT INTO member_roles
     (roleid, memberid)
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', 'e4b2fe52-1915-4544-83c5-21b8f871f6db'); -- Mischievous Kangaroo
+
+INSERT INTO member_roles
+(roleid, memberid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2b067cbb-45c2-4c3c-a6b2-eea370f9d969');
 
 INSERT INTO member_roles
     (roleid, memberid)
@@ -222,6 +237,11 @@ INSERT INTO member_roles
     (roleid, memberid)
 VALUES
     ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'c7406157-a38f-4d48-aaed-04018d846727'); -- Crazy Elephant
+
+INSERT INTO member_roles
+(roleid, memberid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2b067cbb-45c2-4c3c-a6b2-eea370f9d969'); -- Derelict Reindeer
 
 INSERT INTO member_roles
     (roleid, memberid)

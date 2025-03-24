@@ -54,7 +54,7 @@ micronaut:
               jws-algorithm: HS256
               secret: ${ JWT_GENERATOR_SIGNATURE_SECRET:'pleaseChangeThisSecretForANewOne' }
     oauth2:
-      callback-uri: ${ OAUTH_CALLBACK_URI }
+#      callback-uri: ${ OAUTH_CALLBACK_URI }
       clients:
         google:
           client-id: ${ OAUTH_CLIENT_ID }
@@ -119,12 +119,7 @@ flyway:
         aeskey: ${ AES_KEY }
 ---
 service-account-credentials:
-  directory-id: ${ DIRECTORY_ID }
   encoded-value: ${SERVICE_ACCOUNT_CREDENTIALS}
----
-mail-jet:
-  from-address: ${ FROM_ADDRESS }
-  from-name: ${ FROM_NAME }
 ---
 github-credentials:
   github-token: ${ GITHUB_TOKEN }
