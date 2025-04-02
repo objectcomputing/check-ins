@@ -46,7 +46,7 @@ function SchemeToggle() {
 
 const theme = createTheme({
   cssVariables: {
-    colorSchemeSelector: 'data',
+    colorSchemeSelector: 'data'
   },
   colorSchemes: {
     light: {

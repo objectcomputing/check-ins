@@ -131,7 +131,10 @@ const KudosPage = () => {
   const loadPublicKudos = useCallback(async () => {
     setPublicKudosLoading(true);
     const oldestDate = getOldestDate();
-    const res = await getPublicKudos(csrf, oldestDate === true ? undefined : oldestDate?.toISOString().split('T')[0]);
+    const res = await getPublicKudos(
+      csrf,
+      oldestDate === true ? undefined : oldestDate?.toISOString().split('T')[0]
+    );
     if (res?.payload?.data && !res.error) {
       setPublicKudosLoading(false);
       return res.payload.data;

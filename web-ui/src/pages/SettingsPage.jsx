@@ -30,9 +30,11 @@ const componentMapping = {
 };
 
 const constructFileHandler = setting => {
-    return (file) => {
-        console.log(`Pretend we saved that file for ${setting.name} somewhere (we didn't)...`);
-    };
+  return file => {
+    console.log(
+      `Pretend we saved that file for ${setting.name} somewhere (we didn't)...`
+    );
+  };
 };
 
 const SettingsPage = () => {
@@ -42,15 +44,16 @@ const SettingsPage = () => {
   const [settings, setSettings] = useState([]);
   const [handlers, setHandlers] = useState({});
   const [update, setUpdate] = useState(true);
-  const canView = selectHasViewSettingsPermission(state) ||
-                  selectHasAdministerSettingsPermission(state);
+  const canView =
+    selectHasViewSettingsPermission(state) ||
+    selectHasAdministerSettingsPermission(state);
 
   useEffect(() => {
     const fetchData = async () => {
       // Get the options from the server
       const allOptions = canView
-          ? (await getAllOptions(csrf)).payload.data
-          : [];
+        ? (await getAllOptions(csrf)).payload.data
+        : [];
 
       if (allOptions?.length !== 0) {
         // Sort the options by category, store them, and update the state.
@@ -72,36 +75,40 @@ const SettingsPage = () => {
   }, [csrf, canView, update, setUpdate, setSettings]);
 
   useEffect(() => {
-    if(settings?.length !== 0) {
-      setHandlers(settings.reduce((acc, curr) =>{
-        if(curr.type.toUpperCase() === "FILE") {
-          acc[curr.name] = constructFileHandler(curr);
-        } else {
-          acc[curr.name] = (event) => {
-            const newSettings = [...settings];
-            const setting = newSettings.find(test => test.name === curr.name);
-            setting.value = event.target.value;
-            setSettings(newSettings);
+    if (settings?.length !== 0) {
+      setHandlers(
+        settings.reduce((acc, curr) => {
+          if (curr.type.toUpperCase() === 'FILE') {
+            acc[curr.name] = constructFileHandler(curr);
+          } else {
+            acc[curr.name] = event => {
+              const newSettings = [...settings];
+              const setting = newSettings.find(test => test.name === curr.name);
+              setting.value = event.target.value;
+              setSettings(newSettings);
+            };
           }
-        }
-        return acc;
-      }, {}));
+          return acc;
+        }, {})
+      );
     }
-  }, [setHandlers, setSettings, settings])
+  }, [setHandlers, setSettings, settings]);
 
   const save = useCallback(async () => {
-    if(settings && settings.length > 0) {
+    if (settings && settings.length > 0) {
       let errors;
-      let promises = settings.filter(setting => setting.type.toUpperCase() !== "FILE").map(setting => {
-        let promise = setting.id ?
-          putOption({ name: setting.name, value: setting.value }, csrf) :
-          postOption({ name: setting.name, value: setting.value }, csrf);
+      let promises = settings
+        .filter(setting => setting.type.toUpperCase() !== 'FILE')
+        .map(setting => {
+          let promise = setting.id
+            ? putOption({ name: setting.name, value: setting.value }, csrf)
+            : postOption({ name: setting.name, value: setting.value }, csrf);
 
-        return promise;
-      });
+          return promise;
+        });
 
-      Promise.all(promises).then((results) => {
-        results.forEach((res) => {
+      Promise.all(promises).then(results => {
+        results.forEach(res => {
           if (res?.error) {
             const error = res?.error?.message;
             if (errors) {
@@ -133,7 +140,7 @@ const SettingsPage = () => {
         }
       });
     }
-  },[settings]);
+  }, [settings]);
 
   const categories = {};
 
@@ -142,7 +149,9 @@ const SettingsPage = () => {
       {settings.map((setting, index) => {
         const Component = componentMapping[setting.type.toUpperCase()];
         const info = { ...setting, name: titleCase(setting.name) };
-        setting.type === 'FILE' ? info.handleFunction = handlers[setting.name] : info.handleChange = handlers[setting.name];
+        setting.type === 'FILE'
+          ? (info.handleFunction = handlers[setting.name])
+          : (info.handleChange = handlers[setting.name]);
         if (categories[info.category]) {
           return <Component key={index} {...info} />;
         } else {

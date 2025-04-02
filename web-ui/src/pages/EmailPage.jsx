@@ -71,7 +71,11 @@ const ChooseEmailFormatStep = ({
     <>
       <div className="email-format-container">
         <Button
-          className={emailFormat === 'file' ? "email-format-button-selected" : "email-format-button"}
+          className={
+            emailFormat === 'file'
+              ? 'email-format-button-selected'
+              : 'email-format-button'
+          }
           disabled={emailSent}
           onClick={() => handleFormatButtonClick('file')}
         >
@@ -96,7 +100,11 @@ const ChooseEmailFormatStep = ({
           </div>
         </Button>
         <Button
-          className={emailFormat === 'text' ? "email-format-button-selected" : "email-format-button"}
+          className={
+            emailFormat === 'text'
+              ? 'email-format-button-selected'
+              : 'email-format-button'
+          }
           disabled={emailSent}
           onClick={() => handleFormatButtonClick('text')}
         >

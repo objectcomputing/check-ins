@@ -100,7 +100,7 @@ const Notes = props => {
     }
 
     setNote(note => {
-        const newNote = { ...note, description: content };
+      const newNote = { ...note, description: content };
       updateNote(newNote, csrf);
       return newNote;
     });
@@ -125,32 +125,39 @@ const Notes = props => {
           </div>
         ) : (
           <>
-          <div style={{display:"none"}} data-testid="tiny-mce-checkin-notes" />
-          <Editor
-            apiKey="246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e"
-            id="tiny-mce-checkin-notes"
-            value={note && note.description ? note.description : ''}
-            onEditorChange={handleNoteChange}
-            readOnly={
-              currentCheckin?.completed ||
-              note === undefined ||
-              Object.keys(note) === 0
-            }
-            init={{
-              promotion: false,
-              plugins: 'lists',
-              toolbar:
-                'undo redo | blocks | ' +
-                'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
-                'alignright alignjustify | bullist numlist outdent indent | ' +
-                'removeformat | help',
-              skin: document.querySelector('[data-dark]') ? 'oxide-dark' : 'oxide',
-              content_css: document.querySelector('[data-dark]') ? 'dark' : 'default'
-            }}
-            tinymceScriptSrc={
-              import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'
-            }
-          />
+            <div
+              style={{ display: 'none' }}
+              data-testid="tiny-mce-checkin-notes"
+            />
+            <Editor
+              apiKey="246ojmsp6c7qtnr9aoivktvi3mi5t7ywuf0vevn6wllfcn9e"
+              id="tiny-mce-checkin-notes"
+              value={note && note.description ? note.description : ''}
+              onEditorChange={handleNoteChange}
+              readOnly={
+                currentCheckin?.completed ||
+                note === undefined ||
+                Object.keys(note) === 0
+              }
+              init={{
+                promotion: false,
+                plugins: 'lists',
+                toolbar:
+                  'undo redo | blocks | ' +
+                  'bold italic underline strikethrough forecolor | alignleft aligncenter ' +
+                  'alignright alignjustify | bullist numlist outdent indent | ' +
+                  'removeformat | help',
+                skin: document.querySelector('[data-dark]')
+                  ? 'oxide-dark'
+                  : 'oxide',
+                content_css: document.querySelector('[data-dark]')
+                  ? 'dark'
+                  : 'default'
+              }}
+              tinymceScriptSrc={
+                import.meta.env.VITE_APP_API_URL + '/js/tinymce/tinymce.min.js'
+              }
+            />
           </>
         )}
       </CardContent>

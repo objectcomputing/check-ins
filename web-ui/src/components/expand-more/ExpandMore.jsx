@@ -9,24 +9,20 @@ const ExpandMore = styled(props => {
       {props.children ? props.children : <ExpandMoreIcon />}
     </IconButton>
   );
-})(({
-  theme
-}) => ({
+})(({ theme }) => ({
   transform: 'rotate(180deg)',
   marginLeft: 'auto',
   transition: theme.transitions.create('transform', {
     duration: theme.transitions.duration.shortest
   }),
-  variants: [{
-    props: (
-      {
-        expand
+  variants: [
+    {
+      props: ({ expand }) => !expand,
+      style: {
+        transform: 'rotate(0deg)'
       }
-    ) => !expand,
-    style: {
-      transform: 'rotate(0deg)'
     }
-  }]
+  ]
 }));
 
 export default ExpandMore;
