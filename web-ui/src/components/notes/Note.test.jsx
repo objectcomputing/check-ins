@@ -65,9 +65,12 @@ const notes = [
 ];
 
 const server = setupServer(
-  http.get(`http://localhost:8080/services/checkin-notes?checkinid=${checkin.id}`, () => {
-    return HttpResponse.json(notes);
-  }),
+  http.get(
+    `http://localhost:8080/services/checkin-notes?checkinid=${checkin.id}`,
+    () => {
+      return HttpResponse.json(notes);
+    }
+  )
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));
@@ -75,7 +78,8 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 it('renders correctly', async () => {
-  await waitForSnapshot('tiny-mce-checkin-notes',
+  await waitForSnapshot(
+    'tiny-mce-checkin-notes',
     <Router history={history}>
       <AppContextProvider value={initialState}>
         <Notes

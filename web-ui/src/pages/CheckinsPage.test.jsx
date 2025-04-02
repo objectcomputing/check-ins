@@ -81,9 +81,12 @@ const server = setupServer(
   http.get('http://localhost:8080/services/document/1', () => {
     return HttpResponse.json(mockuments);
   }),
-  http.get(`http://localhost:8080/services/checkin-notes?checkinid=${mockCheckinId}`, () => {
-    return HttpResponse.json(notes);
-  }),
+  http.get(
+    `http://localhost:8080/services/checkin-notes?checkinid=${mockCheckinId}`,
+    () => {
+      return HttpResponse.json(notes);
+    }
+  )
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest(request, print) {} }));

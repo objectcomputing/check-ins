@@ -170,7 +170,11 @@ const FeedbackSubmitPage = () => {
   return (
     <Root data-testid={requestQuery} className="feedback-submit-page">
       {requestCanceled ? (
-        <Typography data-testid={requestQuery+"-canceled"} className={classes.announcement} variant="h3">
+        <Typography
+          data-testid={requestQuery + '-canceled'}
+          className={classes.announcement}
+          variant="h3"
+        >
           This feedback request has been canceled.
         </Typography>
       ) : tabs || requestSubmitted || selfReviewRequest ? (
