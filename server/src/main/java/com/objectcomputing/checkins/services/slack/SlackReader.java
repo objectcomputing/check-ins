@@ -47,7 +47,9 @@ public class SlackReader {
                                                    .build());
 
                 if (response.isOk()) {
-                    return response.getMessages();
+                    List<Message> messages = response.getMessages();
+                    messages.forEach(message -> LOG.trace("Found message: {}", message.getText()));
+                    return messages;
                 } else {
                     LOG.error("Slack Response: " + response.getError() +
                               " - " + response.getNeeded());
