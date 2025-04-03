@@ -69,6 +69,7 @@ public class SlackSearch {
 
                 if (response.isOk()) {
                     for (Conversation conversation: response.getChannels()) {
+                        LOG.trace("Found conversation: {}", conversation);
                         if (conversation.getId().equals(channelId)) {
                             return conversation.getName();
                         }
