@@ -15,6 +15,7 @@ import io.micronaut.context.annotation.Value;
 import io.micronaut.core.io.Readable;
 import io.micronaut.core.io.IOUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,38 @@ public class SlackKudosCreator {
 
     private String processText(String text, List<UUID> recipients) {
         // First, process user references.
+        text = populateRecipientNames(text, recipients);
+
+        // Next, translate channel references to channel names.
+        text = populateChannelNames(text);
+
+        return text;
+    }
+
+    @NotNull
+    private String populateChannelNames(String text) {
+        Pattern channelRef = Pattern.compile("<#([^>]+)\\|>");
+        StringBuffer buffer = new StringBuffer(text.length());
+        Matcher action = channelRef.matcher(text);
+        while (action.find()) {
+            // Get the name of the channel.
+            String channelId = action.group(1);
+            String name = slackSearch.findChannelName(channelId);
+            if (name == null) {
+                name = "unknown_channel";
+            }
+            name = "#" + name;
+
+            // Replace the channel reference with the channel name.
+            action.appendReplacement(buffer, Matcher.quoteReplacement(name));
+        }
+        action.appendTail(buffer);
+        text = buffer.toString();
+        return text;
+    }
+
+    @NotNull
+    private String populateRecipientNames(String text, List<UUID> recipients) {
         StringBuffer buffer = new StringBuffer(text.length());
         Pattern userRef = Pattern.compile("<@([^>]+)>");
         Matcher action = userRef.matcher(StringEscapeUtils.unescapeHtml4(text));
@@ -113,25 +146,7 @@ public class SlackKudosCreator {
         }
         action.appendTail(buffer);
         text = buffer.toString();
-
-        // Next, translate channel references to channel names.
-        Pattern channelRef = Pattern.compile("<#([^>]+)\\|>");
-        buffer = new StringBuffer(text.length());
-        action = channelRef.matcher(text);
-        while (action.find()) {
-            // Get the name of the channel.
-            String channelId = action.group(1);
-            String name = slackSearch.findChannelName(channelId);
-            if (name == null) {
-                name = "unknown_channel";
-            }
-            name = "#" + name;
-
-            // Replace the channel reference with the channel name.
-            action.appendReplacement(buffer, Matcher.quoteReplacement(name));
-        }
-        action.appendTail(buffer);
-        return buffer.toString();
+        return text;
     }
 
     private void requestAction() {

@@ -124,11 +124,61 @@ const KudosCard = ({ kudos }) => {
     return names;
   };
 
-  const linkNames = kudos => {
+  const linkSlackUrls = textLine => {
+    // Regex to find <url> or <url|text>
+    // Group 1: URL
+    // Group 2: Optional Link Text (undefined if not present)
+    const slackLinkRegex = /<([^<>|]*)(?:\|([^<>]*))?>/g;
+    const components = [];
+    let lastIndex = 0;
+    let match;
+
+    // Find all matches in the text line
+    while ((match = slackLinkRegex.exec(textLine)) !== null) {
+      const url = match[1];
+      const linkText = match[2]; // Will be undefined if there's no |text part
+      const precedingText = textLine.slice(lastIndex, match.index);
+
+      // Add the text before the match (if any)
+      if (precedingText) {
+        components.push(precedingText);
+      }
+
+      // Create and add the link component
+      components.push(
+        <a
+          key={`slack-link-${match.index}`} // Unique key based on position
+          href={url}
+          target="_blank" // Open in new tab
+          rel="noopener noreferrer" // Security measure
+        >
+          {linkText || url}
+        </a>
+      );
+
+      // Update the index for the next slice
+      lastIndex = slackLinkRegex.lastIndex;
+    }
+
+    // Add any remaining text after the last match
+    const remainingText = textLine.slice(lastIndex);
+    if (remainingText) {
+      components.push(remainingText);
+    }
+
+    // If no links were found at all, return the original line in an array
+    if (components.length === 0) {
+      return [textLine];
+    }
+
+    return components;
+  };
+
+  const createLinks = kudos => {
     const lines = [];
     let index = 0;
     for (let line of kudos.message.split('\n')) {
-      const components = [line];
+      const components = linkSlackUrls(line);
       for (let member of kudos.recipientMembers) {
         const names = searchNames(member, kudos.recipientMembers);
         for (let name of names) {
@@ -228,7 +278,7 @@ const KudosCard = ({ kudos }) => {
         subheaderTypographyProps={{ variant: 'subtitle1' }}
       />
       <CardContent>
-        <>{linkNames(kudos)}</>
+        <>{createLinks(kudos)}</>
         {kudos.recipientTeam && (
           <AvatarGroup
             max={12}
