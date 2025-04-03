@@ -124,7 +124,7 @@ const KudosCard = ({ kudos }) => {
     return names;
   };
 
-  const linkSlackUrls = (textLine) => {
+  const linkSlackUrls = textLine => {
     // Regex to find <url> or <url|text>
     // Group 1: URL
     // Group 2: Optional Link Text (undefined if not present)
@@ -168,7 +168,7 @@ const KudosCard = ({ kudos }) => {
 
     // If no links were found at all, return the original line in an array
     if (components.length === 0) {
-        return [textLine];
+      return [textLine];
     }
 
     return components;
