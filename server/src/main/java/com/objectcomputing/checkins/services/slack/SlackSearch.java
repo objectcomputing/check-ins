@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
+import com.slack.api.methods.request.conversations.ConversationsInfoRequest;
+import com.slack.api.methods.response.conversations.ConversationsInfoResponse;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -63,17 +65,12 @@ public class SlackSearch {
         if (token != null) {
             try {
                 MethodsClient client = Slack.getInstance().methods(token);
-                ConversationsListResponse response = client.conversationsList(
-                    ConversationsListRequest.builder().build()
-                );
+                ConversationsInfoResponse conversationsInfoResponse = client.conversationsInfo(ConversationsInfoRequest.builder().channel(channelId).build());
 
-                if (response.isOk()) {
-                    for (Conversation conversation: response.getChannels()) {
-                        LOG.trace("Found conversation: {}", conversation);
-                        if (conversation.getId().equals(channelId)) {
-                            return conversation.getName();
-                        }
-                    }
+                if (conversationsInfoResponse.isOk()) {
+                    Conversation channel = conversationsInfoResponse.getChannel();
+                    LOG.trace("Found conversation: {}", channel);
+                    return channel.getName();
                 }
             } catch(IOException e) {
                 LOG.error("SlackSearch.findChannelName: " + e.toString());
