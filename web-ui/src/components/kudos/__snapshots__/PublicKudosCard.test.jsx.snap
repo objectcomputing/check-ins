@@ -93,44 +93,44 @@ exports[`renders correctly 1`] = `
     <div
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+      <div
+        class="MuiTypography-root MuiTypography-body1 css-15qos1-MuiTypography-root"
       >
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1orsvah-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-73o1y3-MuiTypography-root-MuiLink-root"
           href="/profile/6"
         >
           Brock
         </a>
          and 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1orsvah-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-73o1y3-MuiTypography-root-MuiLink-root"
           href="/profile/4"
         >
           Brockman
         </a>
          did a great job helping 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1orsvah-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-73o1y3-MuiTypography-root-MuiLink-root"
           href="/profile/3"
         >
           Clark
         </a>
         , Jimmy Olsen, 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1orsvah-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-73o1y3-MuiTypography-root-MuiLink-root"
           href="/profile/7"
         >
           Jimmy T. Olsen
         </a>
         , and 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1orsvah-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-73o1y3-MuiTypography-root-MuiLink-root"
           href="/profile/1"
         >
           Johnson
         </a>
-      </p>
+      </div>
     </div>
   </div>
 </div>

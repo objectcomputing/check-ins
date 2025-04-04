@@ -25,6 +25,7 @@
     "date-fns": "^2.24.0",
     "dayjs": "^1.11.11",
     "dompurify": "^3.2.4",
+    "emoji-picker-react": "^4.12.2",
     "fuse.js": "^6.4.6",
     "html-react-parser": "^5.1.12",
     "isomorphic-fetch": "^3.0.0",
