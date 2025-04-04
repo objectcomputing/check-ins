@@ -17,14 +17,11 @@ import {
 } from '../../context/selectors';
 import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
-import DateFnsUtils from '@date-io/date-fns';
 import TeamIcon from '@mui/icons-material/Groups';
 import { Emoji, EmojiStyle } from 'emoji-picker-react';
 
 import './PublicKudosCard.css';
 import emojis from 'emoji-picker-react/src/data/emojis.json';
-
-const dateUtils = new DateFnsUtils();
 
 const propTypes = {
   kudos: PropTypes.shape({
@@ -38,23 +35,26 @@ const propTypes = {
   }).isRequired
 };
 
+// TODO: Include support for custom Slack emojis and maybe move into it's own component and state
 const parseEmojiData = () => {
   let shortcodeMap = {};
-  for(const category in emojis) {
+  for (const category in emojis) {
     if (Object.hasOwn(emojis, category)) {
       let emojiList = emojis[category];
       shortcodeMap = emojiList.reduce((acc, current) => {
-        current?.n?.forEach(name => acc[name.replace(/\s/g, "_")] = { unified: current.u })
+        current?.n?.forEach(
+          name => (acc[name.replace(/\s/g, '_')] = { unified: current.u })
+        );
         return acc;
       }, shortcodeMap);
     }
   }
-  return shortcodeMap
+  return shortcodeMap;
 };
 
 const emojiShortcodeMap = parseEmojiData();
 
-const getEmojiDataByShortcode = (shortcode) => {
+const getEmojiDataByShortcode = shortcode => {
   return emojiShortcodeMap[shortcode.toLowerCase()] || null;
 };
 
@@ -64,126 +64,109 @@ const KudosCard = ({ kudos }) => {
 
   const sender = selectActiveOrInactiveProfile(state, kudos.senderId);
 
-  const regexIndexOf = (text, regex, start) => {
+  const regexIndexOf = useCallback((text, regex, start) => {
     const indexInSuffix = text.slice(start).search(regex);
     return indexInSuffix < 0 ? indexInSuffix : indexInSuffix + start;
-  };
+  }, []);
 
-  const linkMember = (member, name, message) => {
+  // Replaces occurrences of a specific name in a message string with a MUI Link component.
+  const linkMember = useCallback((member, name, message) => {
     const components = [];
-    let index = 0;
-    do {
-      index = regexIndexOf(
-        message,
+    let currentMessage = message;
+    let currentIndex = 0;
+    let lastIndex = 0;
+
+    while (currentIndex < currentMessage.length) {
+      const index = regexIndexOf(
+        currentMessage,
         new RegExp('\\b' + name + '\\b', 'i'),
-        index
+        currentIndex
       );
-      if (index != -1) {
-        const link = (
-          <Link key={`${member.id}-${index}`} href={`/profile/${member.id}`}>
+      if (index !== -1) {
+        if (index > lastIndex) {
+          components.push(currentMessage.slice(lastIndex, index));
+        }
+        components.push(
+          <Link
+            key={`${member.id}-${index}`}
+            href={`/profile/${member.id}`}
+            underline="hover"
+          >
             {name}
           </Link>
         );
-        if (index > 0) {
-          components.push(message.slice(0, index));
-        }
-        components.push(link);
-        message = message.slice(index + name.length);
+        currentIndex = index + name.length;
+        lastIndex = currentIndex;
+      } else {
+        break;
       }
-    } while (index != -1);
-    components.push(message);
-    return components;
-  };
-
-  const searchNames = (member, members) => {
-    const names = [];
-    if (member.middleName) {
-      names.push(`${member.firstName} ${member.middleName} ${member.lastName}`);
     }
+    if (lastIndex < currentMessage.length) {
+      components.push(currentMessage.slice(lastIndex));
+    }
+    return components.length === 0 ? [message] : components;
+  }, []);
+
+  // Generates a list of unique name variations for a member to be used for linking.
+  const searchNames = useCallback((member, members) => {
+    const names = [];
+    if (member.middleName)
+      names.push(`${member.firstName} ${member.middleName} ${member.lastName}`);
     const firstAndLast = `${member.firstName} ${member.lastName}`;
     if (
       !members.some(
-        k => k.id != member.id && firstAndLast == `${k.firstName} ${k.lastName}`
+        k =>
+          k.id !== member.id && firstAndLast === `${k.firstName} ${k.lastName}`
       )
-    ) {
+    )
       names.push(firstAndLast);
-    }
     if (
       !members.some(
         k =>
-          k.id != member.id &&
-          (member.lastName == k.lastName || member.lastName == k.firstName)
+          k.id !== member.id &&
+          (member.lastName === k.lastName || member.lastName === k.firstName)
       )
-    ) {
-      // If there are no other recipients with a name that contains this
-      // member's last name, we can replace based on that.
+    )
       names.push(member.lastName);
-    }
     if (
       !members.some(
         k =>
-          k.id != member.id &&
-          (member.firstName == k.lastName || member.firstName == k.firstName)
+          k.id !== member.id &&
+          (member.firstName === k.lastName || member.firstName === k.firstName)
       )
-    ) {
-      // If there are no other recipients with a name that contains this
-      // member's first name, we can replace based on that.
+    )
       names.push(member.firstName);
-    }
     return names;
-  };
+  }, []);
 
-  const linkSlackUrls = textLine => {
-    // Regex to find <url> or <url|text>
-    // Group 1: URL
-    // Group 2: Optional Link Text (undefined if not present)
+  // Converts Slack-style links (<url|text> or <url>) in a string to <a> elements.
+  const linkSlackUrls = useCallback(textLine => {
     const slackLinkRegex = /<([^<>|]*)(?:\|([^<>]*))?>/g;
     const components = [];
     let lastIndex = 0;
     let match;
-
-    // Find all matches in the text line
     while ((match = slackLinkRegex.exec(textLine)) !== null) {
       const url = match[1];
-      const linkText = match[2]; // Will be undefined if there's no |text part
-      const precedingText = textLine.slice(lastIndex, match.index);
-
-      // Add the text before the match (if any)
-      if (precedingText) {
-        components.push(precedingText);
-      }
-
-      // Create and add the link component
+      const linkText = match[2];
+      if (match.index > lastIndex)
+        components.push(textLine.slice(lastIndex, match.index));
       components.push(
         <a
-          key={`slack-link-${match.index}`} // Unique key based on position
+          key={`slack-link-${match.index}`}
           href={url}
-          target="_blank" // Open in new tab
-          rel="noopener noreferrer" // Security measure
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {linkText || url}
         </a>
       );
-
-      // Update the index for the next slice
       lastIndex = slackLinkRegex.lastIndex;
     }
+    if (lastIndex < textLine.length) components.push(textLine.slice(lastIndex));
+    return components.length === 0 ? [textLine] : components;
+  }, []);
 
-    // Add any remaining text after the last match
-    const remainingText = textLine.slice(lastIndex);
-    if (remainingText) {
-      components.push(remainingText);
-    }
-
-    // If no links were found at all, return the original line in an array
-    if (components.length === 0) {
-      return [textLine];
-    }
-
-    return components;
-  };
-
-  const renderTextWithEmojis = useCallback((text) => {
+  const renderTextWithEmojis = useCallback(text => {
     const emojiShortcodeRegex = /:([a-zA-Z0-9_+-]+):/g; // Regex to find :shortcodes:
     const components = [];
     let lastIndex = 0;
@@ -210,15 +193,13 @@ const KudosCard = ({ kudos }) => {
             />
           );
         } else if (emojiData.customUrl) {
-          // Render custom emoji using emojiUrl (or as an img tag)
+          // Render custom emoji using emojiUrl
           components.push(
             <Emoji
               key={`${match.index}-${shortcode}`}
               emojiUrl={emojiData.customUrl}
               size={20}
             />
-            // Alternative: Render as an img tag directly if preferred
-            // <img key={`${match.index}-${shortcode}`} src={emojiData.customUrl} alt={`:${shortcode}:`} style={{ width: 20, height: 20, verticalAlign: 'middle' }} />
           );
         }
       } else {
@@ -239,46 +220,90 @@ const KudosCard = ({ kudos }) => {
     return components.length === 0 ? [text] : components;
   }, []);
 
-  const createLinks = kudos => {
-    const lines = [];
-    let index = 0;
-    for (let line of kudos.message.split('\n')) {
-      const components = linkSlackUrls(line);
-      for (let member of kudos.recipientMembers) {
-        const names = searchNames(member, kudos.recipientMembers);
-        for (let name of names) {
-          for (let i = 0; i < components.length; i++) {
-            const component = components[i];
-            if (typeof component === 'string') {
-              const built = linkMember(member, name, component);
-              if (built.length > 1) {
-                components.splice(i, 1, ...built);
+  // Creates the final array of React components for the message body,
+  // processing Slack links, member names, and emojis.
+  const createLinksAndEmojis = useCallback(
+    kudosData => {
+      const lines = [];
+      let lineIndex = 0;
+      const recipients = Array.isArray(kudosData.recipientMembers)
+        ? kudosData.recipientMembers
+        : [];
+
+      for (const line of kudosData.message.split('\n')) {
+        let components = linkSlackUrls(line);
+
+        // Process Member Name Links
+        let componentsAfterNames = [];
+        for (const component of components) {
+          if (typeof component === 'string') {
+            let currentStringSegments = [component];
+            for (const member of recipients) {
+              const names = searchNames(member, recipients);
+              let nextStringSegments = [];
+              for (const segment of currentStringSegments) {
+                if (typeof segment === 'string') {
+                  let segmentProcessed = false;
+                  for (const name of names) {
+                    const built = linkMember(member, name, segment);
+                    if (
+                      built.length > 1 ||
+                      (built.length === 1 && built[0] !== segment)
+                    ) {
+                      nextStringSegments.push(...built);
+                      segmentProcessed = true;
+                      break;
+                    }
+                  }
+                  if (!segmentProcessed) nextStringSegments.push(segment);
+                } else {
+                  nextStringSegments.push(segment);
+                }
               }
+              currentStringSegments = nextStringSegments;
             }
+            componentsAfterNames.push(...currentStringSegments);
+          } else {
+            componentsAfterNames.push(component);
           }
         }
-      }
+        components = componentsAfterNames;
 
-      let finalComponents = [];
-      for (const comp of components) {
-        if (typeof comp === 'string') {
-          finalComponents.push(...renderTextWithEmojis(comp)); // Spread the result
-        } else {
-          finalComponents.push(comp); // Keep existing non-string components
+        let finalComponents = [];
+        for (const comp of components) {
+          if (typeof comp === 'string') {
+            finalComponents.push(...renderTextWithEmojis(comp)); // Spread the result
+          } else {
+            finalComponents.push(comp); // Keep existing non-string components
+          }
         }
+
+        lines.push(
+          <Typography
+            key={`${kudosData.id}-line-${lineIndex}`}
+            variant="body1"
+            component="div"
+            sx={{ lineHeight: '1.6' /* Improve spacing with emojis */ }}
+          >
+            {finalComponents}
+          </Typography>
+        );
+        lineIndex++;
       }
+      return lines;
+    },
+    [
+      kudos.id,
+      kudos.message,
+      kudos.recipientMembers,
+      linkMember,
+      linkSlackUrls,
+      searchNames,
+      renderTextWithEmojis
+    ]
+  );
 
-      lines.push(
-        <Typography key={kudos.id + '-' + index} variant="body1" sx={{ lineHeight: '1.6' }} >
-          {finalComponents}
-        </Typography>
-      );
-      index++;
-    }
-    return lines;
-  };
-
-  const multiTooltip = (num, list) => {
+  const multiTooltip = useCallback((num, list) => {
     let tooltip = '';
     let prefix = '';
     for (let member of list.slice(-num)) {
@@ -290,7 +315,7 @@ const KudosCard = ({ kudos }) => {
         <Typography>{`+${num}`}</Typography>
       </Tooltip>
     );
-  };
+  },[]);
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
@@ -353,7 +378,7 @@ const KudosCard = ({ kudos }) => {
         subheaderTypographyProps={{ variant: 'subtitle1' }}
       />
       <CardContent>
-        <>{createLinks(kudos)}</>
+        <>{createLinksAndEmojis(kudos)}</>
         {kudos.recipientTeam && (
           <AvatarGroup
             max={12}
