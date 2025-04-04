@@ -1,22 +1,14 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
   CardHeader,
   CardContent,
-  Divider,
   Typography,
   Avatar,
   Chip,
-  Button,
   AvatarGroup,
   Tooltip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  TextField,
   Link
 } from '@mui/material';
 import {
@@ -26,14 +18,11 @@ import {
 import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
 import DateFnsUtils from '@date-io/date-fns';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 import TeamIcon from '@mui/icons-material/Groups';
-
-import { approveKudos, deleteKudos } from '../../api/kudos';
-import { UPDATE_TOAST } from '../../context/actions';
+import { Emoji, EmojiStyle } from 'emoji-picker-react';
 
 import './PublicKudosCard.css';
+import emojis from 'emoji-picker-react/src/data/emojis.json';
 
 const dateUtils = new DateFnsUtils();
 
@@ -47,6 +36,26 @@ const propTypes = {
     dateApproved: PropTypes.array,
     recipientMembers: PropTypes.array
   }).isRequired
+};
+
+const parseEmojiData = () => {
+  let shortcodeMap = {};
+  for(const category in emojis) {
+    if (Object.hasOwn(emojis, category)) {
+      let emojiList = emojis[category];
+      shortcodeMap = emojiList.reduce((acc, current) => {
+        current?.n?.forEach(name => acc[name.replace(/\s/g, "_")] = { unified: current.u })
+        return acc;
+      }, shortcodeMap);
+    }
+  }
+  return shortcodeMap
+};
+
+const emojiShortcodeMap = parseEmojiData();
+
+const getEmojiDataByShortcode = (shortcode) => {
+  return emojiShortcodeMap[shortcode.toLowerCase()] || null;
 };
 
 const KudosCard = ({ kudos }) => {
@@ -174,6 +183,62 @@ const KudosCard = ({ kudos }) => {
     return components;
   };
 
+  const renderTextWithEmojis = useCallback((text) => {
+    const emojiShortcodeRegex = /:([a-zA-Z0-9_+-]+):/g; // Regex to find :shortcodes:
+    const components = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = emojiShortcodeRegex.exec(text)) !== null) {
+      const shortcode = match[1];
+      const emojiData = getEmojiDataByShortcode(shortcode);
+      const precedingText = text.slice(lastIndex, match.index);
+
+      // Add text before the emoji shortcode
+      if (precedingText) {
+        components.push(precedingText);
+      }
+
+      // Add the Emoji component or the original shortcode text
+      if (emojiData) {
+        if (emojiData.unified) {
+          components.push(
+            <Emoji
+              key={`${match.index}-${shortcode}`} // Unique key
+              unified={emojiData.unified}
+              size={20} // Adjust size as needed
+            />
+          );
+        } else if (emojiData.customUrl) {
+          // Render custom emoji using emojiUrl (or as an img tag)
+          components.push(
+            <Emoji
+              key={`${match.index}-${shortcode}`}
+              emojiUrl={emojiData.customUrl}
+              size={20}
+            />
+            // Alternative: Render as an img tag directly if preferred
+            // <img key={`${match.index}-${shortcode}`} src={emojiData.customUrl} alt={`:${shortcode}:`} style={{ width: 20, height: 20, verticalAlign: 'middle' }} />
+          );
+        }
+      } else {
+        // If shortcode not found in map, render the original text
+        components.push(match[0]);
+      }
+
+      lastIndex = emojiShortcodeRegex.lastIndex;
+    }
+
+    // Add any remaining text after the last shortcode
+    const remainingText = text.slice(lastIndex);
+    if (remainingText) {
+      components.push(remainingText);
+    }
+
+    // If the original text had no shortcodes, return it in an array
+    return components.length === 0 ? [text] : components;
+  }, []);
+
   const createLinks = kudos => {
     const lines = [];
     let index = 0;
@@ -193,9 +258,19 @@ const KudosCard = ({ kudos }) => {
           }
         }
       }
+
+      let finalComponents = [];
+      for (const comp of components) {
+        if (typeof comp === 'string') {
+          finalComponents.push(...renderTextWithEmojis(comp)); // Spread the result
+        } else {
+          finalComponents.push(comp); // Keep existing non-string components
+        }
+      }
+
       lines.push(
-        <Typography key={kudos.id + '-' + index} variant="body1">
-          {components}
+        <Typography key={kudos.id + '-' + index} variant="body1" sx={{ lineHeight: '1.6' }} >
+          {finalComponents}
         </Typography>
       );
       index++;
