@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Paper,
@@ -28,6 +28,7 @@ import {
 import MemberSelector from '../member_selector/MemberSelector';
 import { AppContext } from '../../context/AppContext';
 import { getAvatarURL } from '../../api/api';
+import { getCustomEmoji } from '../../api/emoji.js';
 import DateFnsUtils from '@date-io/date-fns';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -57,32 +58,11 @@ const propTypes = {
   onKudosAction: PropTypes.func
 };
 
-// TODO: Include support for custom Slack emojis and maybe move into it's own component and state
-const parseEmojiData = () => {
-  let shortcodeMap = {};
-  for (const category in emojis) {
-    if (Object.hasOwn(emojis, category)) {
-      let emojiList = emojis[category];
-      shortcodeMap = emojiList.reduce((acc, current) => {
-        current?.n?.forEach(
-          name => (acc[name.replace(/\s/g, '_')] = { unified: current.u })
-        );
-        return acc;
-      }, shortcodeMap);
-    }
-  }
-  return shortcodeMap;
-};
-
-const emojiShortcodeMap = parseEmojiData();
-
-const getEmojiDataByShortcode = shortcode => {
-  return emojiShortcodeMap[shortcode.toLowerCase()] || null;
-};
-
 const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const [ emojiShortcodeMap, setEmojiShortcodeMap ] = useState({});
+  const [ customLoaded, setCustomLoaded ] = useState(false);
 
   const [expanded, setExpanded] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -95,6 +75,65 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
   );
 
   const sender = selectActiveOrInactiveProfile(state, kudos.senderId);
+
+  useEffect(() => {
+    let shortcodeMap = {};
+    for (const category in emojis) {
+      if (Object.hasOwn(emojis, category)) {
+        let emojiList = emojis[category];
+        emojiList.reduce((acc, current) => {
+          current?.n?.forEach(
+            name => (acc[name.replace(/\s/g, '_')] = { unified: current.u })
+          );
+          return acc;
+        }, shortcodeMap);
+      }
+    }
+    setEmojiShortcodeMap(shortcodeMap);
+  }, []);
+
+  useEffect(() => {
+    const loadCustomEmoji = async () => {
+      let res = await getCustomEmoji(csrf);
+      if (res && res.payload && res.payload.data && !res.error) {
+        const shortcodeMap = { ...emojiShortcodeMap };
+        let aliases = {};
+        let customEmoji = res.payload.data;
+        for(const emoji in customEmoji) {
+          if(Object.hasOwn(customEmoji, emoji)) {
+            if(customEmoji[emoji].startsWith("alias:")) {
+              aliases[emoji] = { alias: customEmoji[emoji].substring("alias:".length) };
+            } else {
+              shortcodeMap[emoji] = { customUrl: customEmoji[emoji] };
+            }
+          }
+        }
+        for(const emoji in aliases) {
+          if (Object.hasOwn(aliases, emoji)) {
+            shortcodeMap[emoji] = shortcodeMap[aliases[emoji].alias];
+          }
+        }
+        setEmojiShortcodeMap(shortcodeMap);
+        setCustomLoaded(true);
+      } else {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: 'warning',
+            toast: `Custom emoji could not be loaded: ${res.error}`
+          }
+        });
+      }
+    }
+
+    if(csrf && !customLoaded) {
+      loadCustomEmoji();
+    }
+  }, [csrf, customLoaded, emojiShortcodeMap]);
+
+  const getEmojiDataByShortcode = useCallback(shortcode => {
+    return emojiShortcodeMap[shortcode.toLowerCase()] || null;
+  }, [emojiShortcodeMap]);
 
   const regexIndexOf = useCallback((text, regex, start) => {
     const indexInSuffix = text.slice(start).search(regex);
@@ -227,11 +266,13 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
         } else if (emojiData.customUrl) {
           // Render custom emoji using emojiUrl
           components.push(
-            <Emoji
-              key={`${match.index}-${shortcode}`}
-              emojiUrl={emojiData.customUrl}
-              size={20}
-            />
+            <img src={emojiData.customUrl} alt={shortcode} style={{ height: '20px', width: '20px', fontSize: '20px' }} />
+            // Not sure why the below doesn't work. It seems like it should according to the docs. :shrug:s
+            // <Emoji
+            //   key={`${match.index}-${shortcode}`}
+            //   emojiUrl={emojiData.customUrl}
+            //   size={20}
+            // />
           );
         }
       } else {
@@ -250,7 +291,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
 
     // If the original text had no shortcodes, return it in an array
     return components.length === 0 ? [text] : components;
-  }, []);
+  }, [getEmojiDataByShortcode]);
 
   // Creates the final array of React components for the message body,
   // processing Slack links, member names, and emojis.
