@@ -81,7 +81,7 @@ const KudosCard = ({ kudos }) => {
         }
         for(const emoji in aliases) {
           if (Object.hasOwn(aliases, emoji)) {
-            shortcodeMap[emoji] = shortcodeMap[aliases[emoji]];
+            shortcodeMap[emoji] = shortcodeMap[aliases[emoji].alias];
           }
         }
         setEmojiShortcodeMap(shortcodeMap);
@@ -237,11 +237,13 @@ const KudosCard = ({ kudos }) => {
         } else if (emojiData.customUrl) {
           // Render custom emoji using emojiUrl
           components.push(
-            <Emoji
-              key={`${match.index}-${shortcode}`}
-              emojiUrl={emojiData.customUrl}
-              size={20}
-            />
+            <img src={emojiData.customUrl} alt={shortcode} style={{ height: '20px', width: '20px', fontSize: '20px' }} />
+            // Not sure why the below doesn't work. It seems like it should according to the docs. :shrug:s
+            // <Emoji
+            //   key={`${match.index}-${shortcode}`}
+            //   emojiUrl={emojiData.customUrl}
+            //   size={20}
+            // />
           );
         }
       } else {
