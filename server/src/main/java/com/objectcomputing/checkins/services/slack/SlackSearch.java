@@ -2,7 +2,9 @@ package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.slack.api.methods.request.conversations.ConversationsInfoRequest;
+import com.slack.api.methods.request.emoji.EmojiListRequest;
 import com.slack.api.methods.response.conversations.ConversationsInfoResponse;
+import com.slack.api.methods.response.emoji.EmojiListResponse;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -20,6 +22,7 @@ import jakarta.inject.Inject;
 
 import java.util.List;
 import java.io.IOException;
+import java.util.Map;
 
 import jnr.ffi.annotations.In;
 import org.slf4j.Logger;
@@ -118,6 +121,27 @@ public class SlackSearch {
                 LOG.error("SlackSearch.findUserEmail: " + e.toString());
             } catch(SlackApiException e) {
                 LOG.error("SlackSearch.findUserEmail: " + e.toString());
+            }
+        }
+        return null;
+    }
+
+
+
+    public Map<String, String> getCustomEmoji() {
+        String token = configuration.getApplication().getSlack().getBotToken();
+        if (token != null) {
+            try {
+                MethodsClient client = Slack.getInstance().methods(token);
+                EmojiListResponse response = client.emojiList(EmojiListRequest.builder().build());
+
+                if (response.isOk()) {
+                    return response.getEmoji();
+                }
+            } catch(IOException e) {
+                LOG.error("SlackSearch.getCustomEmoji: " + e.toString());
+            } catch(SlackApiException e) {
+                LOG.error("SlackSearch.getCustomEmoji: " + e.toString());
             }
         }
         return null;
