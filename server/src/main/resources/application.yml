@@ -15,7 +15,8 @@ micronaut:
       maximum-size: 600
     role-permission-cache:
       expire-after-write: 1d # 1 day
-
+    slack-cache:
+      expire-after-write: 1800s # 30 minutes
   router:
     static-resources:
       swagger:

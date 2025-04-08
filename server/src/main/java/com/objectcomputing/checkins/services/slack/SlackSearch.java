@@ -17,6 +17,8 @@ import com.slack.api.methods.response.users.UsersLookupByEmailResponse;
 import com.slack.api.methods.request.users.UsersInfoRequest;
 import com.slack.api.methods.response.users.UsersInfoResponse;
 
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.Cacheable;
 import jakarta.inject.Singleton;
 import jakarta.inject.Inject;
 
@@ -28,6 +30,7 @@ import jnr.ffi.annotations.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@CacheConfig("slack-cache")
 @Singleton
 public class SlackSearch {
     private static final Logger LOG = LoggerFactory.getLogger(SlackSearch.class);
@@ -127,7 +130,7 @@ public class SlackSearch {
     }
 
 
-
+    @Cacheable
     public Map<String, String> getCustomEmoji() {
         String token = configuration.getApplication().getSlack().getBotToken();
         if (token != null) {
