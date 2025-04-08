@@ -21,6 +21,7 @@ delete from document;
 delete from role;
 delete from kudos_recipient;
 delete from kudos;
+delete from automated_kudos;
 delete from team_member;
 delete from team;
 delete from feedback_answers;
