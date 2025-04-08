@@ -2,7 +2,9 @@ package com.objectcomputing.checkins.services.slack;
 
 import com.objectcomputing.checkins.configuration.CheckInsConfiguration;
 import com.slack.api.methods.request.conversations.ConversationsInfoRequest;
+import com.slack.api.methods.request.emoji.EmojiListRequest;
 import com.slack.api.methods.response.conversations.ConversationsInfoResponse;
+import com.slack.api.methods.response.emoji.EmojiListResponse;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -15,16 +17,20 @@ import com.slack.api.methods.response.users.UsersLookupByEmailResponse;
 import com.slack.api.methods.request.users.UsersInfoRequest;
 import com.slack.api.methods.response.users.UsersInfoResponse;
 
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.Cacheable;
 import jakarta.inject.Singleton;
 import jakarta.inject.Inject;
 
 import java.util.List;
 import java.io.IOException;
+import java.util.Map;
 
 import jnr.ffi.annotations.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@CacheConfig("slack-cache")
 @Singleton
 public class SlackSearch {
     private static final Logger LOG = LoggerFactory.getLogger(SlackSearch.class);
@@ -118,6 +124,27 @@ public class SlackSearch {
                 LOG.error("SlackSearch.findUserEmail: " + e.toString());
             } catch(SlackApiException e) {
                 LOG.error("SlackSearch.findUserEmail: " + e.toString());
+            }
+        }
+        return null;
+    }
+
+
+    @Cacheable
+    public Map<String, String> getCustomEmoji() {
+        String token = configuration.getApplication().getSlack().getBotToken();
+        if (token != null) {
+            try {
+                MethodsClient client = Slack.getInstance().methods(token);
+                EmojiListResponse response = client.emojiList(EmojiListRequest.builder().build());
+
+                if (response.isOk()) {
+                    return response.getEmoji();
+                }
+            } catch(IOException e) {
+                LOG.error("SlackSearch.getCustomEmoji: " + e.toString());
+            } catch(SlackApiException e) {
+                LOG.error("SlackSearch.getCustomEmoji: " + e.toString());
             }
         }
         return null;
