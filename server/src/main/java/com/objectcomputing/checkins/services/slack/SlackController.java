@@ -44,8 +44,4 @@ public class SlackController {
                 .headers(headers -> headers.location(URI.create("/services/slack/emoji")))
                 .body(customEmoji);
     }
-
-    protected URI location(UUID uuid) {
-        return URI.create("/services/slack/" + uuid);
-    }
 }
