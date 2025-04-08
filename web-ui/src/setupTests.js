@@ -46,3 +46,5 @@ global.window = global.window || {};
 global.window.requestAnimationFrame = global.requestAnimationFrame =
   requestAnimationFrame;
 //global.window.addEventListener = global.addEventListener;
+
+global.window.snackDispatch = vi.fn();
