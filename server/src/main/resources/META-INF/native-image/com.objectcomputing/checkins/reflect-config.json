@@ -1,5 +1,14 @@
 [
   {
+    "name": "java.lang.reflect.RecordComponent",
+    "allPublicMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.auth.AuthTestResponse",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
     "name": "com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true
