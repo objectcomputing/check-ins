@@ -13,6 +13,15 @@
     "queryAllDeclaredMethods": true
   },
   {
+    "name": "com.slack.api.methods.response.chat.ChatPostMessageResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
     "name": "com.slack.api.methods.response.conversations.ConversationsInfoResponse",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
