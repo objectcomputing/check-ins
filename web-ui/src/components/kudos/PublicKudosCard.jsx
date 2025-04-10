@@ -50,7 +50,7 @@ const KudosCard = ({ kudos }) => {
         <Typography>{`+${num}`}</Typography>
       </Tooltip>
     );
-  },[]);
+  }, []);
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {

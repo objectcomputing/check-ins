@@ -1,14 +1,8 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Typography,
-  Link
-} from '@mui/material';
+import { Typography, Link } from '@mui/material';
 import { AppContext } from '../../context/AppContext';
-import {
-  selectCsrfToken,
-  selectActiveOrInactiveProfile
-} from '../../context/selectors';
+import { selectCsrfToken } from '../../context/selectors';
 import { UPDATE_TOAST } from '../../context/actions';
 import { getCustomEmoji } from '../../api/emoji.js';
 import { Emoji } from 'emoji-picker-react';
@@ -24,14 +18,14 @@ const propTypes = {
     dateCreated: PropTypes.array.isRequired,
     dateApproved: PropTypes.array,
     recipientMembers: PropTypes.array
-  }).isRequired,
+  }).isRequired
 };
 
-const EnhancedKudos = ({kudos}) => {
+const EnhancedKudos = ({ kudos }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const [ emojiShortcodeMap, setEmojiShortcodeMap ] = useState({});
-  const [ customLoaded, setCustomLoaded ] = useState(false);
+  const [emojiShortcodeMap, setEmojiShortcodeMap] = useState({});
+  const [customLoaded, setCustomLoaded] = useState(false);
 
   useEffect(() => {
     let shortcodeMap = {};
@@ -56,16 +50,18 @@ const EnhancedKudos = ({kudos}) => {
         const shortcodeMap = { ...emojiShortcodeMap };
         let aliases = {};
         let customEmoji = res.payload.data;
-        for(const emoji in customEmoji) {
-          if(Object.hasOwn(customEmoji, emoji)) {
-            if(customEmoji[emoji].startsWith("alias:")) {
-              aliases[emoji] = { alias: customEmoji[emoji].substring("alias:".length) };
+        for (const emoji in customEmoji) {
+          if (Object.hasOwn(customEmoji, emoji)) {
+            if (customEmoji[emoji].startsWith('alias:')) {
+              aliases[emoji] = {
+                alias: customEmoji[emoji].substring('alias:'.length)
+              };
             } else {
               shortcodeMap[emoji] = { customUrl: customEmoji[emoji] };
             }
           }
         }
-        for(const emoji in aliases) {
+        for (const emoji in aliases) {
           if (Object.hasOwn(aliases, emoji)) {
             shortcodeMap[emoji] = shortcodeMap[aliases[emoji].alias];
           }
@@ -81,16 +77,19 @@ const EnhancedKudos = ({kudos}) => {
           }
         });
       }
-    }
+    };
 
-    if(csrf && !customLoaded) {
+    if (csrf && !customLoaded) {
       loadCustomEmoji();
     }
   }, [csrf, customLoaded, emojiShortcodeMap]);
 
-  const getEmojiDataByShortcode = useCallback(shortcode => {
-    return emojiShortcodeMap[shortcode.toLowerCase()] || null;
-  }, [emojiShortcodeMap]);
+  const getEmojiDataByShortcode = useCallback(
+    shortcode => {
+      return emojiShortcodeMap[shortcode.toLowerCase()] || null;
+    },
+    [emojiShortcodeMap]
+  );
 
   const regexIndexOf = useCallback((text, regex, start) => {
     const indexInSuffix = text.slice(start).search(regex);
@@ -194,61 +193,68 @@ const EnhancedKudos = ({kudos}) => {
     return components.length === 0 ? [textLine] : components;
   }, []);
 
-  const renderTextWithEmojis = useCallback(text => {
-    const emojiShortcodeRegex = /:([a-zA-Z0-9_+-]+):/g; // Regex to find :shortcodes:
-    const components = [];
-    let lastIndex = 0;
-    let match;
+  const renderTextWithEmojis = useCallback(
+    text => {
+      const emojiShortcodeRegex = /:([a-zA-Z0-9_+-]+):/g; // Regex to find :shortcodes:
+      const components = [];
+      let lastIndex = 0;
+      let match;
 
-    while ((match = emojiShortcodeRegex.exec(text)) !== null) {
-      const shortcode = match[1];
-      const emojiData = getEmojiDataByShortcode(shortcode);
-      const precedingText = text.slice(lastIndex, match.index);
+      while ((match = emojiShortcodeRegex.exec(text)) !== null) {
+        const shortcode = match[1];
+        const emojiData = getEmojiDataByShortcode(shortcode);
+        const precedingText = text.slice(lastIndex, match.index);
 
-      // Add text before the emoji shortcode
-      if (precedingText) {
-        components.push(precedingText);
-      }
-
-      // Add the Emoji component or the original shortcode text
-      if (emojiData) {
-        if (emojiData.unified) {
-          components.push(
-            <Emoji
-              key={`${match.index}-${shortcode}`} // Unique key
-              unified={emojiData.unified}
-              size={20} // Adjust size as needed
-            />
-          );
-        } else if (emojiData.customUrl) {
-          // Render custom emoji using emojiUrl
-          components.push(
-            <img src={emojiData.customUrl} alt={shortcode} style={{ height: '20px', width: '20px', fontSize: '20px' }} />
-            // Not sure why the below doesn't work. It seems like it should according to the docs. :shrug:s
-            // <Emoji
-            //   key={`${match.index}-${shortcode}`}
-            //   emojiUrl={emojiData.customUrl}
-            //   size={20}
-            // />
-          );
+        // Add text before the emoji shortcode
+        if (precedingText) {
+          components.push(precedingText);
         }
-      } else {
-        // If shortcode not found in map, render the original text
-        components.push(match[0]);
+
+        // Add the Emoji component or the original shortcode text
+        if (emojiData) {
+          if (emojiData.unified) {
+            components.push(
+              <Emoji
+                key={`${match.index}-${shortcode}`} // Unique key
+                unified={emojiData.unified}
+                size={20} // Adjust size as needed
+              />
+            );
+          } else if (emojiData.customUrl) {
+            // Render custom emoji using emojiUrl
+            components.push(
+              <img
+                src={emojiData.customUrl}
+                alt={shortcode}
+                style={{ height: '20px', width: '20px', fontSize: '20px' }}
+              />
+              // Not sure why the below doesn't work. It seems like it should according to the docs. :shrug:s
+              // <Emoji
+              //   key={`${match.index}-${shortcode}`}
+              //   emojiUrl={emojiData.customUrl}
+              //   size={20}
+              // />
+            );
+          }
+        } else {
+          // If shortcode not found in map, render the original text
+          components.push(match[0]);
+        }
+
+        lastIndex = emojiShortcodeRegex.lastIndex;
       }
 
-      lastIndex = emojiShortcodeRegex.lastIndex;
-    }
+      // Add any remaining text after the last shortcode
+      const remainingText = text.slice(lastIndex);
+      if (remainingText) {
+        components.push(remainingText);
+      }
 
-    // Add any remaining text after the last shortcode
-    const remainingText = text.slice(lastIndex);
-    if (remainingText) {
-      components.push(remainingText);
-    }
-
-    // If the original text had no shortcodes, return it in an array
-    return components.length === 0 ? [text] : components;
-  }, [getEmojiDataByShortcode]);
+      // If the original text had no shortcodes, return it in an array
+      return components.length === 0 ? [text] : components;
+    },
+    [getEmojiDataByShortcode]
+  );
 
   // Creates the final array of React components for the message body,
   // processing Slack links, member names, and emojis.
