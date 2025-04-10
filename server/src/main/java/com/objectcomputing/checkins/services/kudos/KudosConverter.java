@@ -15,6 +15,8 @@ import com.slack.api.util.json.GsonFactory;
 import com.google.gson.Gson;
 
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.List;
@@ -26,6 +28,8 @@ public class KudosConverter {
     private final KudosRecipientServices kudosRecipientServices;
     private final SlackSearch slackSearch;
 
+    private static final Logger LOG = LoggerFactory.getLogger(KudosConverter.class);
+
     public KudosConverter(MemberProfileServices memberProfileServices,
                           KudosRecipientServices kudosRecipientServices,
                           SlackSearch slackSearch) {
@@ -35,6 +39,7 @@ public class KudosConverter {
     }
 
     public String toSlackBlock(Kudos kudos) {
+        LOG.info("Kudos message: {}", kudos.getMessage());
         // Build the message text out of the Kudos data.
         List<RichTextElement> content = new ArrayList<>();
         content.add(
@@ -57,6 +62,7 @@ public class KudosConverter {
             .elements(content).build();
         RichTextBlock richTextBlock = RichTextBlock.builder()
             .elements(List.of(element)).build();
+        LOG.info("RichTextBlock: {}", richTextBlock.toString());
         Gson mapper = GsonFactory.createSnakeCase();
         return mapper.toJson(List.of(richTextBlock));
     }
