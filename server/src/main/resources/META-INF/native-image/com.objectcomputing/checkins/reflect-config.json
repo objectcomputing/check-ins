@@ -4,6 +4,15 @@
     "allPublicMethods": true
   },
   {
+    "name": "com.slack.api.model.ErrorResponseMetadata",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
     "name": "com.slack.api.methods.response.auth.AuthTestResponse",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
