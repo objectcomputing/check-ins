@@ -5,33 +5,57 @@
   },
   {
     "name": "com.slack.api.methods.response.auth.AuthTestResponse",
+    "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "com.slack.api.methods.response.conversations.ConversationsInfoResponse",
+    "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "com.slack.api.methods.response.emoji.EmojiListResponse",
+    "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "com.slack.api.methods.response.conversations.ConversationsListResponse",
+    "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "com.slack.api.methods.response.users.UsersLookupByEmailResponse",
+    "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "com.slack.api.methods.response.users.UsersInfoResponse",
+    "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer",
