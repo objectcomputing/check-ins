@@ -9,6 +9,31 @@
     "allPublicConstructors" : true
   },
   {
+    "name": "com.slack.api.methods.response.conversations.ConversationsInfoResponse",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name": "com.slack.api.methods.response.emoji.EmojiListResponse",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name": "com.slack.api.methods.response.conversations.ConversationsListResponse",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name": "com.slack.api.methods.response.users.UsersLookupByEmailResponse",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name": "com.slack.api.methods.response.users.UsersInfoResponse",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true
+  },
+  {
     "name": "com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true
