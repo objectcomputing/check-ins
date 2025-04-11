@@ -4,6 +4,33 @@
     "allPublicMethods": true
   },
   {
+    "name": "com.slack.api.model.BotProfile",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.BotProfile$Icons",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.Message",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
     "name": "com.slack.api.model.block.LayoutBlock",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
@@ -40,7 +67,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.LimitedTextStyle",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$LimitedTextStyle",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -49,7 +76,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.TextStyle",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$TextStyle",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -58,7 +85,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Color",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Color",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -67,7 +94,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Broadcast",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Broadcast",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -76,7 +103,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.UserGroup",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$UserGroup",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -85,7 +112,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Team",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Team",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -94,7 +121,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Emoji",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Emoji",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -103,7 +130,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.User",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$User",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -112,7 +139,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Channel",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Channel",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -121,7 +148,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Date",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Date",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -130,7 +157,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Link",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Link",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -139,7 +166,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "com.slack.api.model.block.element.RichTextSectionElement.Text",
+    "name": "com.slack.api.model.block.element.RichTextSectionElement$Text",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
@@ -176,6 +203,15 @@
   },
   {
     "name": "com.slack.api.methods.response.conversations.ConversationsInfoResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.conversations.ConversationsHistoryResponse",
     "allDeclaredFields": true,
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
