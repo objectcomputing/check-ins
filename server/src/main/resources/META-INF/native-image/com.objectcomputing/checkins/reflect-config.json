@@ -1,5 +1,225 @@
 [
   {
+    "name": "java.lang.reflect.RecordComponent",
+    "allPublicMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.LayoutBlock",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.RichTextBlock",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextElement",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.LimitedTextStyle",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.TextStyle",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Color",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Broadcast",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.UserGroup",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Team",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Emoji",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.User",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Channel",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Date",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Link",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.block.element.RichTextSectionElement.Text",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.model.ErrorResponseMetadata",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.auth.AuthTestResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.chat.ChatPostMessageResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.conversations.ConversationsInfoResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.emoji.EmojiListResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.conversations.ConversationsListResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.users.UsersLookupByEmailResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.slack.api.methods.response.users.UsersInfoResponse",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allPublicMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
     "name": "com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true

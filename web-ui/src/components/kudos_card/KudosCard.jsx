@@ -83,7 +83,7 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
         <Typography>{`+${num}`}</Typography>
       </Tooltip>
     );
-  },[]);
+  }, []);
 
   const getRecipientComponent = useCallback(() => {
     if (kudos.recipientTeam) {
@@ -93,9 +93,9 @@ const KudosCard = ({ kudos, includeActions, includeEdit, onKudosAction }) => {
           key={kudos.recipientTeam.id}
           title={kudos.recipientTeam.name}
         >
-            <Avatar>
-              <TeamIcon />
-            </Avatar>
+          <Avatar>
+            <TeamIcon />
+          </Avatar>
         </Tooltip>
       );
     }

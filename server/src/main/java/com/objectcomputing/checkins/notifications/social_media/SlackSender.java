@@ -69,6 +69,9 @@ public class SlackSender {
                     .blocksAsString(slackBlocks)
                     .build();
 
+                LOG.info("Slack Blocks: {}", slackBlocks);
+                LOG.info("Chat Post Request: {}", request.toString());
+
                 // Send it to Slack
                 ChatPostMessageResponse response = client.chatPostMessage(request);
 
