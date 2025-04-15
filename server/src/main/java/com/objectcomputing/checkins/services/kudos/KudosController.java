@@ -63,7 +63,7 @@ public class KudosController {
         return kudosServices.getById(id);
     }
 
-    @Get("/{?recipientId,?senderId,?isPending}")
+    @Get("/{?recipientId,senderId,isPending}")
     public List<KudosResponseDTO> get(@Nullable UUID recipientId, @Nullable UUID senderId, @Nullable Boolean isPending) {
         return kudosServices.findByValues(recipientId, senderId, isPending);
     }

@@ -1,4 +1,7 @@
 micronaut:
+  test:
+    resources:
+      port: 8081
   server:
     cors:
       enabled: true

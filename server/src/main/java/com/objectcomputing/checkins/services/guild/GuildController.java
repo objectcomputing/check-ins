@@ -69,8 +69,8 @@ public class GuildController {
      * return all guilds that match the filled in params
      */
     @Get("/{?name,memberid}")
-    public Set<GuildResponseDTO> findGuilds(@Nullable String name, @Nullable UUID memberId) {
-        return guildService.findByFields(name, memberId);
+    public Set<GuildResponseDTO> findGuilds(@Nullable String name, @Nullable UUID memberid) {
+        return guildService.findByFields(name, memberid);
     }
 
     /**

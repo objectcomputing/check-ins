@@ -28,7 +28,6 @@ import java.util.function.Function;
 
 import static com.objectcomputing.checkins.services.validate.PermissionsValidation.NOT_AUTHORIZED_MSG;
 
-@Singleton
 abstract public class FileServicesBaseImpl implements FileServices {
     private static final Logger LOG = LoggerFactory.getLogger(FileServicesBaseImpl.class);
 

@@ -36,10 +36,10 @@ You can use any email that the system has in its loaded test data. The "password
 If you wish to use the native executables built with GraalVM, you will need to switch over to that Java compiler using the following command:
 
 ```shell
-nvm use java 21.0.2-graalce
+sdk use java 23.0.2-graalce
 ```
 
-21.0.2-graalce is the most recent version of GraalVM Community Edition, as of the time this was written. You can replace that version with a different Graal distribution as appropriate.
+23.0.2-graalce is the most recent version of GraalVM Community Edition, as of the time this was written. You can replace that version with a different Graal distribution as appropriate.
 
 You can then run a native build using:
 

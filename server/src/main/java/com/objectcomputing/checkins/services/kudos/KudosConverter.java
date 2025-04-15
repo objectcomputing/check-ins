@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
-import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.block.RichTextBlock;
 import com.slack.api.model.block.element.RichTextElement;
 import com.slack.api.model.block.element.RichTextSectionElement;
