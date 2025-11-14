@@ -107,7 +107,7 @@ dependencies {
 
     implementation("io.swagger.core.v3:swagger-annotations")
 
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
     implementation "commons-io:commons-io:2.17.0"
     implementation 'org.apache.commons:commons-csv:1.11.0'
 
